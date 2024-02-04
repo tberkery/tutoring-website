@@ -1,5 +1,7 @@
+require("dotenv").config();
+
 const mongoose = require("mongoose");
-const URI = "mongodb+srv://hw1-oose:4dxM89cyyu3Nofcw@hw1-oose.8zkpbgx.mongodb.net/"
+const URI = process.env.ATLAS_URI
 
 async function connect() {
   try {
