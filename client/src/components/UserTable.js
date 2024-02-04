@@ -14,16 +14,6 @@ import axios from "axios"
 
 class UserTable extends Component {
 
-  getData = async () => {
-    const api = "http://localhost:6300/all";
-    try {
-      const response = await axios.get(api);
-      console.log(response.data)
-    } catch (err) {
-      console.log(err);
-    }
-  }
-
   constructor(props) {
     super(props);
     this.state = {
@@ -32,7 +22,7 @@ class UserTable extends Component {
   }
 
   componentDidMount() {
-    axios.get("http://localhost:6300/all")
+    axios.get("https://oose-team02-0b139de22250.herokuapp.com/all")
       .then(result => {
         const data = result.data.data
         // console.log(data)

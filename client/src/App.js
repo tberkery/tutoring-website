@@ -18,16 +18,7 @@ class App extends Component {
       </ChakraProvider>
     );
   };
-
-  getData = async () => {
-    const api = "http://localhost:6300/all";
-    try {
-      const response = await axios.get(api);
-      console.log(response.data)
-    } catch (err) {
-      console.log(err);
-    }
-  }
+  
 }
 
 export default App;
