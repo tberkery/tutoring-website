@@ -1,3 +1,9 @@
+Our hello world app is deployed at https://oose-team02-helloworld.netlify.app/
+
+It's built using the MERN stack and other technologies detailed in our "Tech Stack" github issue
+
+(Below is for once we start developing the project itself)
+
 # Name of the app 
 
 A brief description of it (elevator pitch goes here).
