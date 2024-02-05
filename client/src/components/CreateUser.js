@@ -13,7 +13,7 @@ class CreateUser extends Component {
 
   addUser = async (event) => {
     event.preventDefault();
-    const api = "http://localhost:6300/";
+    const api = "https://oose-team02-0b139de22250.herokuapp.com/";
     const name = this.state.name;
     try {
       const response = await axios.post(api, { name });
