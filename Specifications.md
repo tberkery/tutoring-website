@@ -13,7 +13,7 @@ Our target clients over the course of this project would be JHU affiliates. Howe
 ## Functional Requirements
 - Create Account: As a new user, I want to create an account so that I can access the tutoring app.
 - SSO Auth: As a user, I want to sign in using single sign-on authentication so that I can conveniently access the app with my existing Hopkins credentials.
-- CRUD Profile: As a user, I want to create, read, update, and delete my profile information so that I can maintain an accurate representation of myself on the platform.
+- CRUD Profile: As a user, I want to view and update my profile information so that I can maintain an accurate representation of myself on the platform.
 - CRUD Courses Willing to Tutor: As a tutor, I want to list the courses I'm willing to tutor so that potential tutees can see them and connect with me.
 - About Me: As a user, I want to share information about myself on my profile so that other users can learn more about me.
 - Upload Profile Photo: As a user, I want to upload a profile photo so that my profile is personalized and recognizable to other users.
