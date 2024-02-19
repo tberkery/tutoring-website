@@ -28,7 +28,6 @@ Before you begin, ensure you have met the following requirements:
 
 3. Install frontend dependencies:
    ```bash
-   npm install react react-dom react-router-dom tailwindcss
    npm install
    ```
 
@@ -39,13 +38,12 @@ Before you begin, ensure you have met the following requirements:
 
 5. Install backend dependencies:
    ```bash
-   npm install cors mongoose mongodb express nodemon
    npm install
    ```
 
 ## Configuration
 
-1. Create a .env file. Update the variable with your MongoDB connection:
+1. Create a .env file in the server directory. Set a variable called ATLAS_URI to the connection string (with user and pwd included) from your MongoDB collection
    ```plaintext
    ATLAS_URI={YOUR_ATLAS_URI}
    ```
@@ -65,9 +63,4 @@ Before you begin, ensure you have met the following requirements:
 3. Start the frontend development server:
    ```bash
    npm run start
-   ```
-
-4. If you're modifying code, tailwind development command
-   ```bash
-   npx tailwindcss -i ./src/input.css -o ./src/output.css --watch
    ```
