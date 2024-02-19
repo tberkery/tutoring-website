@@ -2,30 +2,72 @@ Our hello world app is deployed at https://oose-team02-helloworld.netlify.app/
 
 It's built using the MERN stack and other technologies detailed in our "Tech Stack" github issue
 
-(Below is for once we start developing the project itself)
-
 # Name of the app 
 
-A brief description of it (elevator pitch goes here).
+TutorHub
 
 ## Installing / Getting started
 
-A quick introduction of the minimal setup you need to get the app up & running on a local computer. For example, your advisor might use the instruction here to run the application locally.
+## Prerequisites
 
-```shell
-commands here
-```
+Before you begin, ensure you have met the following requirements:
+- You have Node.js and npm installed on your machine.
+- You have MongoDB installed locally or you have access to a MongoDB instance.
 
-## Developing
+## Installation
 
-Detailed and step-by-step documentation for setting up local development. For example, a new team member will use these instructions to start developing the project further. 
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/cs421sp24-homework/project-team-02.git
+   ```
 
-```shell
-commands here
-```
+2. Navigate to the frontend directory:
+   ```bash
+   cd project-team-02/client
+   ```
 
-You should include what is needed (e.g. all of the configurations) to set up the dev environment. For instance, global dependencies or any other tools (include download links), explaining what database (and version) has been used, etc. If there is any virtual environment, local server, ..., explain here. 
+3. Install frontend dependencies:
+   ```bash
+   npm install react react-dom react-router-dom tailwindcss
+   npm install
+   ```
 
-Additionally, describe and show how to run the tests, explain your code style and show how to check it.
+4. Navigate to the backend directory:
+   ```bash
+   cd ../backend
+   ```
 
-If your project needs some additional steps for the developer to build the project after some code changes, state them here. Moreover, give instructions on how to build and release a new version. In case there's some step you have to take that publishes this project to a server, it must be stated here. 
+5. Install backend dependencies:
+   ```bash
+   npm install cors mongoose mongodb express nodemon
+   npm install
+   ```
+
+## Configuration
+
+1. Create a .env file. Update the variable with your MongoDB connection:
+   ```plaintext
+   ATLAS_URI={YOUR_ATLAS_URI}
+   ```
+
+## Running the app
+
+1. Start the backend server:
+   ```bash
+   node server/server.js
+   ```
+
+2. In another terminal, navigate to the frontend directory:
+   ```bash
+   cd client
+   ```
+
+3. Start the frontend development server:
+   ```bash
+   npm run start
+   ```
+
+4. If you're modifying code, tailwind development command
+   ```bash
+   npx tailwindcss -i ./src/input.css -o ./src/output.css --watch
+   ```
