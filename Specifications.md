@@ -20,7 +20,6 @@ Our target clients over the course of this project would be JHU affiliates. Howe
 - Automatic Academic Posts from Completed Profile: As a tutor, I want the information I encoded in my profile to automatically be translated to posts indicating my ability to tutor in courses I indicated so that I don’t have to make a separate post for every course by hand.
 - Manual Posts for Non-Academic Tutoring Options: As a tutor, I want to have the ability to manually make a post about a non-academic skill I can tutor in so people interested in that skill can easily find me.
 - View Reviews People Left You: As a user, I want to see the reviews that others have left on my profile so that I can gauge my performance and reputation.
-- View Bookmarked Posts: As a user, I want to view the posts I have bookmarked so that I can easily access them later.
 - View Other Users' Profile Page: As a user, I want to view the profile page of other users so that I can learn more about them and their offerings.
 - Inbox Page: As a user, I want access to my inbox so that I can communicate with other users efficiently.
 - Message Other Users (Accessible from Profile): As a user, I want to be able to message other users directly from their profile pages so that I can initiate conversations easily.
@@ -39,7 +38,7 @@ Nice-to-Have Requirements:
 - Optional Anonymous Reviews: As a user, I would appreciate the option to leave anonymous reviews for tutors, providing feedback without concerns about potential repercussions.
 - Filter Reviews: As a user, I would like to be able to filter reviews based on different criteria such as rating or date, to find the most relevant and helpful feedback.
 - Bookmark Posts: As a user, I want to be able to bookmark posts for later reference so that I can easily access them again.
-
+- View Bookmarked Posts: As a user, I want to view the posts I have bookmarked so that I can easily access them later.
 
 ## Software Architecture & Technology Stack
 Type of Application: Web Application
