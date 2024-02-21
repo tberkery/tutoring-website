@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 
 export default function CreateUser() {
@@ -19,8 +19,9 @@ export default function CreateUser() {
   };
 
   return (
-    <div>
+    <div className="flex justify-center">
       <input
+        className="text-lg border-black border-2"
         value={name}
         onChange={ (event) => setName(event.target.value) }
         placeholder="Enter name"
