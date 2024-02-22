@@ -1,11 +1,10 @@
 require("dotenv").config();
-
-const mongoose = require("mongoose");
+const mg = require("mongoose");
 const URI = process.env.ATLAS_URI
 
 async function connect() {
   try {
-    await mongoose.connect(URI);
+    await mg.connect(URI);
     console.log("Connected to MongoDB!");
   } catch (err) {
     console.log(err);
