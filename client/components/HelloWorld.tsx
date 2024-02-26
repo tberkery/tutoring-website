@@ -1,8 +1,8 @@
 // necessary if using react hooks like useState
 "use client";
-import { useState } from "react";
+import React, { FC, useState } from "react";
 
-export default function HelloWorld() {
+const HelloWorld : FC = () => {
 	const [inputText, setInputText] = useState("");
 	const [outputText, setOutputText] = useState("");
 
@@ -28,3 +28,5 @@ export default function HelloWorld() {
 		</div>
 	);
 }
+
+export default HelloWorld;
