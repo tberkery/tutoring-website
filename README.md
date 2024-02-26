@@ -33,7 +33,7 @@ Before you begin, ensure you have met the following requirements:
 
 4. Navigate to the backend directory:
    ```bash
-   cd ../backend
+   cd ../server
    ```
 
 5. Install backend dependencies:
