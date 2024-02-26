@@ -3,7 +3,7 @@ const exp = require("express");
 const cors = require("cors");
 const db = require("./data/db.ts");
 const usr = require("./routes/users.ts");
-const app = express();
+const app = exp();
 // const path = require("path")
 const port = process.env.PORT || 6300;
 
