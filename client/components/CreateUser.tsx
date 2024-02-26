@@ -1,9 +1,8 @@
 "use client";
-
-import { useState } from "react";
+import React, { FC, useState } from "react";
 import axios from "axios";
 
-export default function CreateUser() {
+const CreateUser : FC = () => {
 
   const [ name, setName ] = useState("");
 
@@ -35,3 +34,5 @@ export default function CreateUser() {
   );
 
 };
+
+export default CreateUser;

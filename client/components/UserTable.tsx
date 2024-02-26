@@ -1,9 +1,8 @@
 "use client";
-
-import React, { useEffect, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import axios from "axios"
 
-export default function UserTable() {
+const UserTable : FC = () => {
 
   const [ data, setData ] = useState([]);
 
@@ -23,11 +22,13 @@ export default function UserTable() {
         </thead>
         <tbody>
           {
-            data.map((record, index) => {
-              <tr key={index}>
-                <td>{ record._id }</td>
-                <td>{ record.name }</td>
-              </tr>
+            data.map((record : { _id: number; name: string }, index : number) => {
+              return (
+                <tr key={index}>
+                  <td>{ record._id }</td>
+                  <td>{ record.name }</td>
+                </tr>
+              )
             })
           }
         </tbody>
@@ -36,3 +37,5 @@ export default function UserTable() {
   )
 
 }
+
+export default UserTable;
