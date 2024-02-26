@@ -1,6 +1,7 @@
 // necessary if using react hooks like useState
 "use client";
 import React, { FC, useState } from "react";
+import { Button } from "../@/components/ui/button";
 
 const HelloWorld : FC = () => {
 	const [inputText, setInputText] = useState("");
@@ -16,14 +17,12 @@ const HelloWorld : FC = () => {
 				onChange={ (event) => setInputText(event.target.value) }
 				placeholder="Hello World!"
 			/>
-			<button 
-				className="
-					text-lg px-2 rounded-md bg-sky-300 border-black border-2
-					hover:bg-sky-600 hover:text-white active:bg-sky-900"
+			<Button
+				className="text-lg"
 				onClick={ () => setOutputText(inputText) }
 			>
 				Echo
-			</button>
+			</Button>
 			<h1 className="text-4xl">{ outputText }</h1>
 		</div>
 	);
