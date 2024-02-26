@@ -1,13 +1,12 @@
-const User = require("../model/User");
+const User = require("../model/User.ts");
 const mongoose = require("mongoose");
 
-class UserDao {
-  async create({name}) {
-    const data = await User.create({name});
+export class UserDao {
+  async create({ name }: { name: string }) {
+    const data = await User.create({ name });
     return data;
   }
-
-  async read(id) {
+  async read({ id }: { id: string}) {
     const data = await User.findById(id).lean().select("-__v");
     return data;
   }
@@ -17,5 +16,3 @@ class UserDao {
     return data;
   }
 }
-
-module.exports = UserDao;
