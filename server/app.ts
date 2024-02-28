@@ -1,4 +1,5 @@
 //server/app.js
+export {}
 
 require("dotenv").config({ path: "./config.env" });
 
@@ -7,7 +8,7 @@ const bodyParser = require('body-parser')
 const path = require('path')
 const cors = require('cors');
 const { connect } = require('./database');
-
+const router = require('./controller');
 
 class App {
 
@@ -32,6 +33,7 @@ class App {
     }
 
     setRouting() {
+        this.app.use(router)
     }
 }
 

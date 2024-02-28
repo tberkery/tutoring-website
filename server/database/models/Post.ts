@@ -1,4 +1,6 @@
-const mongoose = require("mongoose");
+export {}
+
+const { mongoose } = require('./db');
 
 const PostSchema = new mongoose.Schema({
     title: {
