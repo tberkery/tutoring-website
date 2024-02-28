@@ -1,18 +1,8 @@
-require("dotenv").config({ path: "./config.env" });
-const exp = require("express");
-const cors = require("cors");
-const db = require("./data/db.ts");
+// server/server.ts
 
-const app = exp();
-const path = require("path")
-const port = process.env.PORT || 6300;
+const app = require('./app.ts')
+const PORT = process.env.PORT || 6300;
 
-
-app.use(cors());
-app.use(exp.json());
-
-db.connect();
-
-app.listen(port, () => {
-  console.log(`Server is running on port: ${port}`);
+app.listen(PORT, () => {
+  console.log(`Server is running on port: ${PORT}...`);
 });

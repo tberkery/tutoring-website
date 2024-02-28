@@ -1,14 +1,14 @@
+// db.ts
+
 require("dotenv").config();
 const mg = require("mongoose");
-const URI = process.env.ATLAS_URI
+const URI = process.env.ATLAS_URI;
 
-async function connect() {
+export async function connect() {
   try {
     await mg.connect(URI);
     console.log("Connected to MongoDB!");
   } catch (err) {
-    console.log(err);
+    console.log("Unable to connect to MongoDB: " + err);
   }
 }
-
-module.exports = { connect };
