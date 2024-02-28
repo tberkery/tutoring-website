@@ -15,6 +15,27 @@ const UserSchema = new mongoose.Schema({
       type: String,
       required: true,
     },
+    department: { // for students AND for faculty
+      type: String,
+      required: true,
+    },
+    year: { // will be null for faculties
+      type: Number,
+      default: null
+    },
+    email: {
+      type: String,
+      required: true,
+    },
+    description: {
+      type: String,
+      default: null
+    },
+    profilePicture: { // TODO: wait for Kat and Tad
+      type: String,
+      default: null
+    },
+  
     posts: [
       {
         type: mongoose.Schema.Types.ObjectId,
