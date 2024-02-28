@@ -1,6 +1,6 @@
 export {}
 
-const { mongoose } = require('./db');
+const mongoose = require('mongoose');
 
 const CourseSchema = new mongoose.Schema({
     id: {

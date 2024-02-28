@@ -6,8 +6,8 @@ const router = Router()
 
 router.use('/user', require('./user'))
 
-//router.use('/question', require('./question'))
+router.use('/course', require('./course'))
 
-//router.use('/event', require('./event'))
+//router.use('/post', require('./post'))
 
 module.exports = router;
