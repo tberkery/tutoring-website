@@ -18,12 +18,21 @@ router.get('/', async (req: any, res: any) => {
 router.post('/register', async (req: any, res: any) => {
     console.log('req.body:', req.body);
     try {
-        const user = new Users(req.body);
-        await user.save();
-        res.send(user);
+        const users = await Users.find();
+        const largestIdUser = users.reduce((prev: any, current: any) => (prev.id > current.id) ? prev : current, { id: 0 });
+
+        const newUser = new Users({
+            id: largestIdUser.id + 1,
+            username: req.body.username,
+        });
+
+        await newUser.save();
+        res.send(newUser);
     } catch (error) {
         console.error('Error registering user:', error);
     }
 })
+
+
 
 module.exports = router
