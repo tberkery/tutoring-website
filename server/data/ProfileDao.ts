@@ -3,13 +3,13 @@ import hopkinsStatus = require("../utils/affiliationType");
 import mongoose = require("mongoose");
 
 export class ProfileDao {
-  async create(firstName: string, lastName: string, email: string, affiliation: hopkinsStatus, graduationYear: string, department: string) {
-    const data = await Profile.create({ firstName, lastName, email, affiliation, graduationYear, department });
+  async create(firstName: string, lastName: string, email: string, affiliation: hopkinsStatus, graduationYear: string, department: string, description: string) {
+    const data = await Profile.create({ firstName, lastName, email, affiliation, graduationYear, department, description });
     return data;
   }
 
-  async read({ email }: { email: string}) {
-    const data = await Profile.findById(email).lean().select("-__v");
+  async read({ _id }: { _id: string}) {
+    const data = await Profile.findById(_id).lean().select("-__v");
     return data;
   }
 
@@ -18,13 +18,13 @@ export class ProfileDao {
     return data;
   }
 
-  async update(id: Number, firstName: string, lastName: string, email: string, affiliation: hopkinsStatus, graduationYear: string, department: string){
-    const data = await Profile.findByIdAndUpdate(id, {firstName, lastName, email, affiliation, graduationYear, department})
+  async update(_id: Number, firstName: string, lastName: string, email: string, affiliation: hopkinsStatus, graduationYear: string, department: string, description: string, posts: []){
+    const data = await Profile.findByIdAndUpdate(_id, {firstName, lastName, email, affiliation, graduationYear, department, description, posts})
     return data;
   }
 
-  async delete(id:Number) {
-    const data = await Profile.findByIdAndDelete(id);
+  async delete(_id: Number) {
+    const data = await Profile.findByIdAndDelete(_id);
     return data;
   }
 }

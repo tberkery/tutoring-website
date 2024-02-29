@@ -1,5 +1,5 @@
-const User = require("../model/User.ts");
-const mongoose = require("mongoose");
+import User = require("../model/User");
+import mongoose = require("mongoose");
 
 export class UserDao {
   async create({ name }: { name: string }) {
@@ -16,3 +16,4 @@ export class UserDao {
     return data;
   }
 }
+

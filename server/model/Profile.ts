@@ -28,9 +28,14 @@ const ProfileSchema = new mongoose.Schema({
     },
     description: {
         type: String,
-        required: true,
-    }
-    //add post field
+        required: false,
+    },
+    posts: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Post',
+        default: null,
+    }]
+    
 
   });
 const Profile = mongoose.model("Profile", ProfileSchema);
