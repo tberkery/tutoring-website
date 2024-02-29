@@ -5,10 +5,9 @@ require("dotenv").config({ path: "./config.env" });
 
 const express = require('express')
 const bodyParser = require('body-parser')
-const path = require('path')
 const cors = require('cors');
-const { connect } = require('./database');
-const router = require('./controller');
+const { connect } = require('./data/db.ts');
+const router = require('./routes/courses.ts');
 
 class App {
 

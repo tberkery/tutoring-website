@@ -3,11 +3,6 @@ export {}
 const mongoose = require('mongoose');
 
 const CourseSchema = new mongoose.Schema({
-    id: {
-        type: Number,
-        required: true,
-        unique: true,
-    },
     courseTitle: {
       type: String,
       required: true,
@@ -15,6 +10,7 @@ const CourseSchema = new mongoose.Schema({
     courseCode: {
         type: String,
         required: true,
+        unique: true,
     },
     courseDepartment: {
         type: String,
