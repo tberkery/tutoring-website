@@ -8,6 +8,6 @@ router.use('/user', require('./user'))
 
 router.use('/course', require('./course'))
 
-//router.use('/post', require('./post'))
+router.use('/post', require('./post'))
 
 module.exports = router;

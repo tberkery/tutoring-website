@@ -1,6 +1,6 @@
 export {}
 
-const { mongoose } = require('./db');
+const mongoose = require('mongoose');
 
 const PostSchema = new mongoose.Schema({
     id: {
@@ -29,7 +29,7 @@ const PostSchema = new mongoose.Schema({
       default: null,
     },
     courseId: { // this field will be null if it's non-academic
-      type: mongoose.Schema.Types.ObjectId,
+      type: Number,
       ref: 'Course',
       default: null
     },

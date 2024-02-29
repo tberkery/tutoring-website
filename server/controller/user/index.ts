@@ -50,7 +50,7 @@ router.put('/:id', async (req: any, res: any) => {
     }
 });
 
-
+// TESTED deleting a user profile
 router.delete('/:id', async (req: any, res: any) => {
     try {
         await Users.findOneAndDelete({ id: req.params.id });
