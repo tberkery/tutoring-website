@@ -7,7 +7,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors');
 const { connect } = require('./data/db.ts');
-const router = require('./routes/courses.ts');
+const router = require('./routes/index.ts');
 
 class App {
 

@@ -1,14 +1,14 @@
 import exp from "constants";
 
 const router = require('express').Router();
-const CourseDaoClass = require('../data/CourseDao');
-const CourseDao = new CourseDaoClass();
+const PostDaoClass = require('../data/PostDao');
+const PostDao = new PostDaoClass();
 
 router.post("/", async (req: any, res: any) => {
   try {
-    const courseInfo = req.body;
-    const newCourse = await CourseDao.create({ courseInfo });
-    res.status(200).json({ newCourse });
+    const postInfo = req.body;
+    const newPost = await PostDao.create(postInfo);
+    res.status(200).json({ newPost });
   } catch (err) {
     console.log(err);
     res.status(500).send("Server Error");
@@ -18,22 +18,21 @@ router.post("/", async (req: any, res: any) => {
 router.get("/findOne/:id", async (req: any, res: any) => {
     const { id }: { id: number } = req.params;
     try {
-        console.log('id: ' + id)
-      const course = await CourseDao.readOne(id);
-      if (!course) {
-        return res.status(404).json({ msg: "Course not found" });
+      const post = await PostDao.readOne(id);
+      if (!post) {
+        return res.status(404).json({ msg: "Post not found" });
       }
-      res.status(200).json({ course });
+      res.status(200).json({ post });
     } catch (err) {
         console.log(err);
         res.status(500).send("Server Error");
     }
-  });
+});
 
-router.get("/all", async (req: any, res: any ) => {
+router.get("/", async (req: any, res: any ) => {
   try {
-    const courses = await CourseDao.readAll();
-    res.status(200).json({ courses });
+    const posts = await PostDao.readAll();
+    res.status(200).json({ posts });
   } catch (err) {
     console.log(err);
     res.status(500).send("Server Error");
@@ -42,13 +41,13 @@ router.get("/all", async (req: any, res: any ) => {
 
 router.put("/:id", async (req: any, res: any) => {
     const id : number = req.params.id;
-    const courseInfo = req.body;
+    const postInfo = req.body;
     try {
-        const course = await CourseDao.update( id, courseInfo );
-        if (!course) {
-        return res.status(404).json({ msg: "Course not found" });
+        const post = await PostDao.update( id, postInfo );
+        if (!post) {
+        return res.status(404).json({ msg: "Post not found" });
         }
-        res.status(200).json({ course });
+        res.status(200).json({ post });
     } catch (err) {
         console.log(err);
         res.status(500).send("Server Error");
@@ -58,11 +57,11 @@ router.put("/:id", async (req: any, res: any) => {
 router.delete("/:id", async (req: any, res: any) => {
     const id : number = req.params.id;
     try {
-        const course = await CourseDao.delete(id);
-        if (!course) {
-        return res.status(404).json({ msg: "Course not found" });
+        const post = await PostDao.delete(id);
+        if (!post) {
+        return res.status(404).json({ msg: "Post not found" });
         }
-        res.status(200).json({ course });
+        res.status(200).json({ post });
     } catch (err) {
         console.log(err);
         res.status(500).send("Server Error");
