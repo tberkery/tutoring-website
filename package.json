@@ -1,15 +1,11 @@
 {
   "dependencies": {
-    "faker": "^6.6.6",
-    "mongoose": "^8.2.0",
-    "nodemon": "^3.1.0"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start:api": "cd server && nodemon server.ts"
-  },
-  "devDependencies": {
-    "@types/node": "^20.11.20",
-    "ts-node": "^10.9.2"
+    "@hookform/resolvers": "^3.3.4",
+    "@radix-ui/react-label": "^2.0.2",
+    "@radix-ui/react-slot": "^1.0.2",
+    "react": "^18.2.0",
+    "react-hook-form": "^7.50.1",
+    "tailwind": "^4.0.0",
+    "zod": "^3.22.4"
   }
 }
