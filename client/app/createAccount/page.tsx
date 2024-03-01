@@ -9,6 +9,7 @@ import ComboBox from "@/components/ComboBox";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import axios from "axios";
 
 type course = {
 	"name" : string,
@@ -45,7 +46,7 @@ const Page : FC = () => {
 		setYear(value);
 	}
 
-	const checkAndSubmit = () => {
+	const checkAndSubmit = async () => {
 		if (firstName === "" || lastName === "" || department === "") {
 			// missing field!
 			alert("Please fill out all required fields")
@@ -53,14 +54,19 @@ const Page : FC = () => {
 		} else {
 			// form success!
 			alert(`Success! ${firstName} ${lastName}, ${affliiateType}`);
-			const body = {
+			let body = {
 				"firstName" : firstName,
 				"lastName" : lastName,
-				"email" : user.primaryEmailAddress,
+				"email" : user.primaryEmailAddress.toString(),
+				"affiliation" : affliiateType,
 				"description" : about,
 				"department" : department,
-				"affiliation" : affliiateType
 			}
+			if (affliiateType === "student") {
+				// TODO year is not working, it's a backend issue
+				body["year"] = year.toString();
+			}
+			await axios.post('http://localhost:6300/profiles', body);
 		}
 	}
 
