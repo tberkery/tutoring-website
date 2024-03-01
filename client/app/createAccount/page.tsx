@@ -53,7 +53,14 @@ const Page : FC = () => {
 		} else {
 			// form success!
 			alert(`Success! ${firstName} ${lastName}, ${affliiateType}`);
-			setRefilling(false);
+			const body = {
+				"firstName" : firstName,
+				"lastName" : lastName,
+				"email" : user.primaryEmailAddress,
+				"description" : about,
+				"department" : department,
+				"affiliation" : affliiateType
+			}
 		}
 	}
 
