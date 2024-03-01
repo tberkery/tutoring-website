@@ -1,6 +1,7 @@
 enum hopkinsStatus{
-    student,
-    faculty
+    student = "student",
+    faculty = "faculty",
+    other = "other"
 }
 export = hopkinsStatus;
 

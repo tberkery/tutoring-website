@@ -4,12 +4,18 @@ import mongoose = require("mongoose");
 
 export class ProfileDao {
   async create(firstName: string, lastName: string, email: string, affiliation: hopkinsStatus, graduationYear: string, department: string, description: string) {
+    console.log("in create")
     const data = await Profile.create({ firstName, lastName, email, affiliation, graduationYear, department, description });
+    console.log("data is ", data)
     return data;
   }
 
-  async read({ _id }: { _id: string}) {
+  async readById( _id: string) {
     const data = await Profile.findById(_id).lean().select("-__v");
+    return data;
+  }
+  async readByEmail(email:string) {
+    const data = await Profile.find({email:email});
     return data;
   }
 
