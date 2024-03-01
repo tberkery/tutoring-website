@@ -1,7 +1,7 @@
 // necessary if using react hooks like useState
 "use client";
 import React, { FC, useState } from "react";
-import { Button } from "../@/components/ui/button";
+import { Button } from "./ui/button";
 
 const HelloWorld : FC = () => {
 	const [inputText, setInputText] = useState("");
