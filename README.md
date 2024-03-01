@@ -1,6 +1,10 @@
-# TutorHub
+Our hello world app is deployed at https://oose-team02-helloworld.netlify.app/
 
-An online tutoring and activity-learning marketplace for the JHU community. It allows JHU affiliates to connect with others interested in teaching or learning both academic subjects, and non-academic topics. Users can be tutored in anything from Linear Algebra to doing a backflip.
+It's built using the MERN stack and other technologies detailed in our "Tech Stack" github issue
+
+# Name of the app 
+
+TutorHub
 
 ## Installing / Getting started
 
@@ -33,4 +37,12 @@ Before you begin, ensure you have met the following requirements:
 
 2. In another terminal, navigate to the frontend directory: ```cd client```
 
-3. Start the frontend development server: ```npm run dev```
+3. Start the frontend development server:
+   ```bash
+   npm run start
+   ```
+# Team 2: Object-Oriented Software Engineering
+
+The goal is to create TutorHub.
+
+Team members: Tad Berkery, Ilana Chalom, Matthew Flynn, Katherine Forbes, Nolan Fogarty, Dokyung Yang
