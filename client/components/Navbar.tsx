@@ -17,7 +17,7 @@ const NavBar: React.FC = () => {
         </Link>
       </div>
       <div>
-        <Link className="bg-sky-700 p-2 text-white rounded-sm" href="/signin">
+        <Link className="bg-custom-blue p-2 text-white rounded-sm" href="/signin">
         Sign In
         </Link>
       </div>

@@ -3,8 +3,8 @@ import React from 'react';
 
 interface Post {
   id: number;
-  user: string;
-    classNumber: string;
+  username: string;
+    courseId: string;
   title: string;
   description: string;
   imageUrl: string;
@@ -27,11 +27,11 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
       <div className="px-6 py-4">
         <div className="mb-2">
             <div className="font-bold text-xl">{post.title}</div>
-            <p className="text-gray-600 text-sm">{post.classNumber}</p>
+            <p className="text-gray-600 text-sm">{post.courseId}</p>
         </div>
         <p className="text-gray-700 text-base">{post.description}</p>
         <p className="text-gray-600 text-sm">From ${post.price}</p>
-        <p className="text-gray-600 text-sm">Created by {post.user}</p>
+        <p className="text-gray-600 text-sm">Created by {post.username}</p>
       </div>
     </div>
   );
