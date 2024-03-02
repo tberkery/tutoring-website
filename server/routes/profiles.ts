@@ -11,7 +11,7 @@ router.post("/", async (req: any, res: any) => {
   try {    
     console.log("in try")
     const {firstName, lastName, email, affiliation, graduationYear, department, description} : {firstName: string, lastName: string, email: string, affiliation: typeof hopkinsStatus, graduationYear: string, department: string, description: string} = req.body;
-    const data = await profiles.create( firstName, lastName, email, affiliation, graduationYear, department, description);
+    const data = await profiles.create( firstName, lastName, email, affiliation, department, {graduationYear, description});
     // res.status(201).json({ data });
     res.json({ data });
   } catch (err) {
@@ -63,7 +63,7 @@ router.put("/:_id", async (req: any, res: any) => {
     const { _id }: { _id: string } = req.params;
     const {firstName, lastName, email, affiliation, graduationYear, department, description, posts} : {firstName: string, lastName: string, email: string, affiliation: typeof hopkinsStatus, graduationYear: string, department: string, description: string, posts: []} = req.body;
     try {
-      const data = await profiles.update(_id, firstName, lastName, email, affiliation, graduationYear, department, description, posts);
+      const data = await profiles.update(_id, firstName, lastName, email, affiliation, department, {graduationYear, description, posts});
       if (!data) {
         res.status(404).json({ msg: "User not found" });
         return;
