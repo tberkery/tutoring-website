@@ -1,6 +1,6 @@
 require("dotenv").config();
 const mg = require("mongoose");
-const URI = process.env.ATLAS_URI_DEV
+const URI = process.env.ATLAS_URI
 
 async function connect() {
   try {
