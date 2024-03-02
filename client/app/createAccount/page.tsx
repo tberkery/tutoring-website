@@ -10,14 +10,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import axios from "axios";
-
-type course = {
-	"name" : string,
-	"number" : string
-}
+import { useRouter } from "next/navigation";
 
 const Page : FC = () => {
 	const { isLoaded, isSignedIn, user } = useUser();
+	const router = useRouter();
 
 	if (!isLoaded || !isSignedIn) {
 		return null;
@@ -30,10 +27,6 @@ const Page : FC = () => {
 	const [year, setYear] = useState(2024);
 	const [refilling, setRefilling] = useState(false);
 	const [affliiateType, setAffiliateType] = useState("student");
-	const [courseName, setCourseName] = useState("");
-	const [courseNumber, setCourseNumber] = useState("");
-	const [courses, setCourses] = useState<course[]>([]);
-	const [courseMessage, setCourseMessage] = useState("");
 
 	const checkAndSetYear = (input : string) => {
 		let value : number = parseInt(input);
@@ -44,6 +37,7 @@ const Page : FC = () => {
 			value = current - 4
 		}
 		setYear(value);
+		console.log(process.env.NEXT_PUBLIC_BACKEND_URL);
 	}
 
 	const checkAndSubmit = async () => {
@@ -59,36 +53,16 @@ const Page : FC = () => {
 				"lastName" : lastName,
 				"email" : user.primaryEmailAddress.toString(),
 				"affiliation" : affliiateType,
-				"description" : about,
 				"department" : department,
+				"description" : about,
 			}
 			if (affliiateType === "student") {
 				// TODO year is not working, it's a backend issue
-				body["year"] = year.toString();
+				body["graduationYear"] = year.toString();
 			}
-			await axios.post('http://localhost:6300/profiles', body);
+			await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/profiles`, body);
+			router.replace('/profile');
 		}
-	}
-
-	const addCourse = () => {
-		if (courseName === "" || courseNumber === "")
-		{
-			setCourseMessage("Please input a course name and number!");
-			return;
-		}
-		setCourseMessage("");
-		const newCourse : course = { "name": courseName, "number": courseNumber };
-		let newArray = courses.slice();
-		newArray.push(newCourse);
-		setCourses(newArray);
-		setCourseName("");
-		setCourseNumber("");
-	}
-
-	const removeCourse = (index: number) => {
-		let newArray = courses.slice();
-		newArray.splice(index, 1);
-		setCourses(newArray);
 	}
 
 	const departments = [
@@ -214,48 +188,6 @@ const Page : FC = () => {
 							""
 						}
 					</div>
-				</div>
-				<h3 className="mt-6 text-2xl font-bold">Academic Information</h3>
-				<hr/>
-				<p>
-					Please input any courses you'd like to offer tutoring in (if any)
-				</p>
-				<div className="flex flex-row mt-4 items-end">
-					<div className="flex flex-col flex-grow basis-4 mr-8">
-						<Label htmlFor="courseName">Course Name</Label>
-						<Input 
-							id="courseName"
-							className="mt-1"
-							placeholder="Course Name"
-							value={ courseName }
-							onChange={ (event) => setCourseName(event.target.value) }
-						/>
-					</div>
-					<div className="flex flex-col flex-grow basis-4 mr-8">
-						<Label htmlFor="courseNum">Course Number</Label>
-						<Input 
-							id="courseNum"
-							className="mt-1"
-							placeholder="Course Number"
-							value={ courseNumber }
-							onChange={ (event) => setCourseNumber(event.target.value) }
-						/>
-					</div>
-					<Button className="w-20" onClick={ addCourse }>Add</Button>
-				</div>
-				<div className="h-6">
-					<p className="text-red-500">{ courseMessage }</p>
-				</div>
-				<div className="flex flex-col">
-					{ courses.map((course : course, index : number) => {
-						return <div className="flex flex-row flex-grow mt-2">
-							<Input className="mr-8" disabled value={ course.name }/>
-							<Input className="mr-8" disabled value={ course.number }/>
-							<Button className="w-20" onClick={ () => removeCourse(index) }>
-								Remove
-							</Button>
-						</div>
-					}) }
 				</div>
 				<Button className="mt-8" onClick={ checkAndSubmit }>Finish</Button>
 			</div>
