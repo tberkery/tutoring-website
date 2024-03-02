@@ -1,5 +1,4 @@
 import mongoose = require("mongoose");
-import hopkinsStatus = require("../utils/affiliationType");
 
 const ProfileSchema = new mongoose.Schema({
     firstName: {

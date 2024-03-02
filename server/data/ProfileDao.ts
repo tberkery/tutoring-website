@@ -1,10 +1,8 @@
 import Profile = require("../model/Profile");
-import hopkinsStatus = require("../utils/affiliationType");
 import mongoose = require("mongoose");
 
 export class ProfileDao {
   async create(firstName: string, lastName: string, email: string, affiliation: string, department: string, options?: {graduationYear?: string, description?: string}) {
-    console.log("in create")
     let newProfile: any = {firstName, lastName, email, affiliation, department}
     if (options){
       if(options.graduationYear){
@@ -15,7 +13,6 @@ export class ProfileDao {
       }
     }
     const data = await Profile.create(newProfile);
-    console.log("data is ", data)
     return data;
   }
 
@@ -46,7 +43,6 @@ export class ProfileDao {
         newProfile.posts = options.posts;
       }
     }
-    console.log("the profile is ", newProfile);
     const data = await Profile.findByIdAndUpdate(_id, newProfile)
     return data;
   }

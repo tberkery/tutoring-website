@@ -1,13 +1,15 @@
 import { ObjectId } from "mongodb";
 
 export {}
+require('dotenv').config()
 const ProfileDao = require('../../data/ProfileDao');
 const {faker} = require('@faker-js/faker');
 const mg = require("mongoose");
+const URI = process.env.ATLAS_URI_TEST
 
 test('test create() with all fields', async ()=> {
     const profileDao = new ProfileDao();
-    await mg.connect("mongodb+srv://admin:B1NKvoyENFUexc1u@tutorhub.ntxpldz.mongodb.net/test?retryWrites=true&w=majority&appName=tutorHub");
+    await mg.connect(URI);
     const firstName = faker.person.firstName();
     const lastName = faker.person.lastName();
     const email = faker.internet.email();
@@ -15,7 +17,6 @@ test('test create() with all fields', async ()=> {
     const graduationYear = "2024";
     const department = faker.lorem.word();
     const description = faker.lorem.paragraph();
-    
     
     const profile =  await profileDao.create(firstName, lastName, email, affiliation, department, {graduationYear, description});
     expect(profile.firstName).toBe(firstName);
@@ -28,7 +29,7 @@ test('test create() with all fields', async ()=> {
 });
 
 test('test create() without optional fields', async ()=> {
-    await mg.connect("mongodb+srv://admin:B1NKvoyENFUexc1u@tutorhub.ntxpldz.mongodb.net/test?retryWrites=true&w=majority&appName=tutorHub");
+    await mg.connect(URI);
     const firstName = faker.person.firstName();
     const lastName = faker.person.lastName();
     const email = faker.internet.email();
@@ -45,7 +46,7 @@ test('test create() without optional fields', async ()=> {
 });
 
 test('test create() without grad year with description', async ()=> {
-    await mg.connect("mongodb+srv://admin:B1NKvoyENFUexc1u@tutorhub.ntxpldz.mongodb.net/test?retryWrites=true&w=majority&appName=tutorHub");
+    await mg.connect(URI);
     const firstName = faker.person.firstName();
     const lastName = faker.person.lastName();
     const email = faker.internet.email();
@@ -64,7 +65,7 @@ test('test create() without grad year with description', async ()=> {
 });
 
 test('test create() without description with grad year', async ()=> {
-    await mg.connect("mongodb+srv://admin:B1NKvoyENFUexc1u@tutorhub.ntxpldz.mongodb.net/test?retryWrites=true&w=majority&appName=tutorHub");
+    await mg.connect(URI);
     const firstName = faker.person.firstName();
     const lastName = faker.person.lastName();
     const email = faker.internet.email();
@@ -83,8 +84,7 @@ test('test create() without description with grad year', async ()=> {
 });
 
 test('test readById() for a valid id', async ()=> {
-    // await connect();
-    await mg.connect("mongodb+srv://admin:B1NKvoyENFUexc1u@tutorhub.ntxpldz.mongodb.net/test?retryWrites=true&w=majority&appName=tutorHub");
+    await mg.connect(URI);
     const firstName = faker.person.firstName();
     const lastName = faker.person.lastName();
     const email = faker.internet.email();
@@ -104,7 +104,6 @@ test('test readById() for a valid id', async ()=> {
     expect(profile.description).toBe(description);
 
     const id = profile._id;
-    console.log("id is ", id);
     const foundProfile = await profileDao.readById(id);
     expect(foundProfile.firstName).toBe(firstName);
     expect(foundProfile.lastName).toBe(lastName);
@@ -116,8 +115,7 @@ test('test readById() for a valid id', async ()=> {
 });
 
 test('test readById() for an invalid id', async ()=> {
-    // await connect();
-    await mg.connect("mongodb+srv://admin:B1NKvoyENFUexc1u@tutorhub.ntxpldz.mongodb.net/test?retryWrites=true&w=majority&appName=tutorHub");
+    await mg.connect(URI);
     const id = new ObjectId(1)
     const profileDao = new ProfileDao();
     const foundProfile = await profileDao.readById(id);
@@ -125,8 +123,7 @@ test('test readById() for an invalid id', async ()=> {
 });
 
 test('test readByEmail() for a valid email', async ()=> {
-    // await connect();
-    await mg.connect("mongodb+srv://admin:B1NKvoyENFUexc1u@tutorhub.ntxpldz.mongodb.net/test?retryWrites=true&w=majority&appName=tutorHub");
+    await mg.connect(URI);
     const firstName = faker.person.firstName();
     const lastName = faker.person.lastName();
     const email = faker.internet.email();
@@ -156,8 +153,7 @@ test('test readByEmail() for a valid email', async ()=> {
 });
 
 test('test readByEmail() for an invalid email', async ()=> {
-    // await connect();
-    await mg.connect("mongodb+srv://admin:B1NKvoyENFUexc1u@tutorhub.ntxpldz.mongodb.net/test?retryWrites=true&w=majority&appName=tutorHub");
+    await mg.connect(URI);
     const email = "fakeemail"
     const profileDao = new ProfileDao();
     const foundProfile = await profileDao.readByEmail(email);
@@ -167,9 +163,8 @@ test('test readByEmail() for an invalid email', async ()=> {
 
 test('test readAll() on non empty table', async ()=> {
     const profileDao = new ProfileDao();
-    // await connect();
     await profileDao.deleteAll()
-    await mg.connect("mongodb+srv://admin:B1NKvoyENFUexc1u@tutorhub.ntxpldz.mongodb.net/test?retryWrites=true&w=majority&appName=tutorHub");
+    await mg.connect(URI);
     for(let i = 0; i < 5; i++){
         const firstName = faker.person.firstName();
         const lastName = faker.person.lastName();
@@ -187,8 +182,7 @@ test('test readAll() on non empty table', async ()=> {
 
 
 test('test update()', async ()=> {
-    // await connect();
-    await mg.connect("mongodb+srv://admin:B1NKvoyENFUexc1u@tutorhub.ntxpldz.mongodb.net/test?retryWrites=true&w=majority&appName=tutorHub");
+    await mg.connect(URI);
     const firstName = faker.person.firstName();
     const lastName = faker.person.lastName();
     const email = faker.internet.email();
@@ -221,8 +215,7 @@ test('test update()', async ()=> {
 });
 
 test('test update() to add an optional param when none originally given', async ()=> {
-    // await connect();
-    await mg.connect("mongodb+srv://admin:B1NKvoyENFUexc1u@tutorhub.ntxpldz.mongodb.net/test?retryWrites=true&w=majority&appName=tutorHub");
+    await mg.connect(URI);
     const firstName = faker.person.firstName();
     const lastName = faker.person.lastName();
     const email = faker.internet.email();
@@ -250,8 +243,7 @@ test('test update() to add an optional param when none originally given', async 
 });
 
 test('test update() to add an optional param originally not given', async ()=> {
-    // await connect();
-    await mg.connect("mongodb+srv://admin:B1NKvoyENFUexc1u@tutorhub.ntxpldz.mongodb.net/test?retryWrites=true&w=majority&appName=tutorHub");
+    await mg.connect(URI);
     const firstName = faker.person.firstName();
     const lastName = faker.person.lastName();
     const email = faker.internet.email();
@@ -282,7 +274,7 @@ test('test update() to add an optional param originally not given', async ()=> {
 });
 
 test('test delete() with a valid ID', async ()=> {
-    await mg.connect("mongodb+srv://admin:B1NKvoyENFUexc1u@tutorhub.ntxpldz.mongodb.net/test?retryWrites=true&w=majority&appName=tutorHub");
+    await mg.connect(URI);
     const firstName = faker.person.firstName();
     const lastName = faker.person.lastName();
     const email = faker.internet.email();
@@ -307,8 +299,7 @@ test('test delete() with a valid ID', async ()=> {
 });
 
 test('test delete() for an invalid id', async ()=> {
-    // await connect();
-    await mg.connect("mongodb+srv://admin:B1NKvoyENFUexc1u@tutorhub.ntxpldz.mongodb.net/test?retryWrites=true&w=majority&appName=tutorHub");
+    await mg.connect(URI);
     const id = new ObjectId(1)
     const profileDao = new ProfileDao();
     const foundProfile = await profileDao.delete(id);
