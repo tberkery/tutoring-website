@@ -16,7 +16,7 @@ const Page : FC = () => {
 	const { isLoaded, isSignedIn, user } = useUser();
 	const router = useRouter();
 	const api : string = process.env.NEXT_PUBLIC_BACKEND_URL;
-	let checkedProfileExists = false;
+	const [checkedProfileExists, setCheckedExists] = useState(false);
 
 	const checkIfProfileExists = async () => {
 		if (!isLoaded)
@@ -30,11 +30,11 @@ const Page : FC = () => {
 		}
 		const email = user.primaryEmailAddress.toString();
 		const url = `${api}/profiles/getByEmail/${email}`;
-		const profiles = await axios.get(url);
+		const profiles = (await axios.get(url)).data;
 		if (profiles.data.length !== 0) {
 			router.replace('/profile');
 		} else {
-			checkedProfileExists = true;
+			setCheckedExists(true);
 		}
 	}
 	
