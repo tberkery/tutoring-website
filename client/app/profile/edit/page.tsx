@@ -5,7 +5,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import Navbar from "../../../components/Navbar";
-import { Button } from "../../../@/components/ui/button";
+import { Button } from "components/ui/button";
 import {
   Form,
   FormControl,
@@ -14,8 +14,8 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "../../../@/components/ui/form";
-import { Input } from "../../../@/components/ui/input";
+} from "components/ui/form";
+import { Input } from "components/ui/input";
 const MAX_BIO_LENGTH = 200;
 
 const formSchema = z.object({
