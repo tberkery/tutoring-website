@@ -1,5 +1,5 @@
 "use client";
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import "../../styles/global.css";
 
@@ -15,10 +15,30 @@ import { useRouter } from "next/navigation";
 const Page : FC = () => {
 	const { isLoaded, isSignedIn, user } = useUser();
 	const router = useRouter();
+	const api : string = process.env.NEXT_PUBLIC_BACKEND_URL;
+	let checkedProfileExists = false;
 
-	if (!isLoaded || !isSignedIn) {
-		return null;
+	const checkIfProfileExists = async () => {
+		if (!isLoaded)
+		{
+			return;
+		}
+		if (!isSignedIn)
+		{
+			router.replace('/');
+			return;
+		}
+		const email = user.primaryEmailAddress.toString();
+		const url = `${api}/profiles/getByEmail/${email}`;
+		const profiles = await axios.get(url);
+		if (profiles.data.length !== 0) {
+			router.replace('/profile');
+		} else {
+			checkedProfileExists = true;
+		}
 	}
+	
+	useEffect(() => { checkIfProfileExists() }, [user, router]);
 
 	const [firstName, setFirstName] = useState("");
 	const [lastName, setLastName] = useState("");
@@ -27,6 +47,10 @@ const Page : FC = () => {
 	const [year, setYear] = useState(2024);
 	const [refilling, setRefilling] = useState(false);
 	const [affliiateType, setAffiliateType] = useState("student");
+
+	if (!isLoaded || !isSignedIn || !checkedProfileExists) {
+		return <></>;
+	}
 
 	const checkAndSetYear = (input : string) => {
 		let value : number = parseInt(input);
@@ -47,7 +71,7 @@ const Page : FC = () => {
 			setRefilling(true);
 		} else {
 			// form success!
-			alert(`Success! ${firstName} ${lastName}, ${affliiateType}`);
+			alert(`Your account has been created!`);
 			let body = {
 				"firstName" : firstName,
 				"lastName" : lastName,
@@ -57,7 +81,6 @@ const Page : FC = () => {
 				"description" : about,
 			}
 			if (affliiateType === "student") {
-				// TODO year is not working, it's a backend issue
 				body["graduationYear"] = year.toString();
 			}
 			await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/profiles`, body);
