@@ -39,8 +39,9 @@ See the `package.json` and `package-lock.json` files.
 ### Configuration
 
 1. Create a .env file in the server directory. Set a variable called ATLAS_URI to the connection string (with user and pwd included) for your cluster:
-   ```ATLAS_URI={YOUR_ATLAS_URI}
-      ATLAS_URI_TEST={YOUR_ATLAS_URI_FOR_TESTING_CLUSTER
+   ```
+   ATLAS_URI={YOUR_ATLAS_URI}
+   ATLAS_URI_TEST={YOUR_ATLAS_URI_FOR_TESTING_CLUSTER
    ```
 
 3. Create a .env file in the client directory.
