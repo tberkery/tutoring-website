@@ -16,7 +16,7 @@ import {
 } from "components/ui/form";
 import { Input } from "components/ui/input";
 import axios from "axios";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/clerk-react";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
@@ -36,9 +36,10 @@ const postFormSchema = z.object({
   type PostFormData = z.infer<typeof postFormSchema>;
   
 
-export function CreatePost() {
+const CreatePost : FC = () => {
 	const { isLoaded, isSignedIn, user } = useUser();
   const [profileData, setProfileData] = React.useState(null);
+  const router = useRouter();
 
   const fetchProfile = async () => {
     if (!user) return;
@@ -81,6 +82,7 @@ export function CreatePost() {
     }
 
     const newPost = await axios.post(`${BACKEND_URL}/posts`, postData);
+    router.push('/profile')
   }
 
   return (
