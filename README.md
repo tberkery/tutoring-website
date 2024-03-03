@@ -38,14 +38,17 @@ See the `package.json` and `package-lock.json` files.
 
 1. Create a .env file in the server directory. Set a variable called ATLAS_URI to the connection string (with user and pwd included) for your cluster:
    ```ATLAS_URI={YOUR_ATLAS_URI}```
+2. Use AWS for object storage. Create an AWS account. After establishing your root user, create a new user role called `admin` with full read and write permissions in S3. Create an access key for the admin user role. Encode this info in a file called `aws.env` in the `server` directory in the following format (note that we have omitted our access key ID and secret access key for security reasons):
+
+```
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_REGION=us-east-2
+AWS_BUCKET_NAME=tutorhubprofilepics
+```
+
+3. Make sure you have installed the AWS SDK (one way to do this is `npm install aws-sdk`). Note that installing all contains of the `*.json` files above on the server-side should have already sufficiently accomplished this. This will be integral for ensuring the code and S3 are able to communicate and interact.
 
 ### Running the app
 
-1. From the root directory, start the backend server: ```npm run start:api```
-
-2. In another terminal, navigate to the frontend directory: ```cd client```
-
-3. Start the frontend development server:
-   ```bash
-   npm run start
-   ```
+From the root directory (after appropriate installation), start both the frontend and the backend server simultaneously by executing: ```npm run start:all```
