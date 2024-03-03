@@ -1,5 +1,4 @@
 import mongoose = require("mongoose");
-import hopkinsStatus = require("../utils/affiliationType");
 
 const ProfileSchema = new mongoose.Schema({
     firstName: {
@@ -15,12 +14,12 @@ const ProfileSchema = new mongoose.Schema({
         required: true,
     },
     affiliation: {
-        type: hopkinsStatus,
+        type: String,
         required: true,
     },
     graduationYear: {
         type: String,
-        required: true,
+        required: false,
     },
     department: {
         type: String,
@@ -28,13 +27,16 @@ const ProfileSchema = new mongoose.Schema({
     },
     description: {
         type: String,
-        required: false,
     },
     posts: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Post',
         default: null,
-    }]
+    }],
+    profilePicKey: {
+        type: String,
+        deafult: null,
+    }
     
 
   });

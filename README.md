@@ -1,3 +1,9 @@
+# Team 2: Object-Oriented Software Engineering
+
+The goal is to create TutorHub.
+
+Team members: Tad Berkery, Ilana Chalom, Matthew Flynn, Katherine Forbes, Nolan Fogarty, Dokyung Yang
+
 Our hello world app is deployed at https://oose-team02-helloworld.netlify.app/
 
 It's built using the MERN stack and other technologies detailed in our "Tech Stack" github issue
@@ -8,64 +14,46 @@ TutorHub
 
 ## Installing / Getting started
 
-## Prerequisites
+### Prerequisites
 
 Before you begin, ensure you have met the following requirements:
-- You have Node.js and npm installed on your machine.
-- You have MongoDB installed locally or you have access to a MongoDB instance.
+- You have Node.js (version 21.6.2) and npm installed on your machine.
+- You have created a MongoDB Atlas cluster for use with the app.
 
-## Installation
+### Installation
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/cs421sp24-homework/project-team-02.git
-   ```
+1. Clone the repository: ```git clone https://github.com/cs421sp24-homework/project-team-02.git```
 
-2. Navigate to the frontend directory:
-   ```bash
-   cd project-team-02/client
-   ```
+2. Navigate to the frontend directory: ```cd project-team-02/client```
 
-3. Install frontend dependencies:
-   ```bash
-   npm install
-   ```
+3. Install frontend dependencies: ```npm install```
 
-4. Navigate to the backend directory:
-   ```bash
-   cd ../backend
-   ```
+4. Navigate to the backend directory: ```cd ../server```
 
-5. Install backend dependencies:
-   ```bash
-   npm install
-   ```
+5. Install backend dependencies: ```npm install```
 
-## Configuration
+6. Navigate to the root directiory: ```cd ..```
 
-1. Create a .env file in the server directory. Set a variable called ATLAS_URI to the connection string (with user and pwd included) from your MongoDB collection
-   ```plaintext
-   ATLAS_URI={YOUR_ATLAS_URI}
-   ```
+See the `package.json` and `package-lock.json` files.
 
-## Running the app
+### Configuration
 
-1. Start the backend server:
-   ```bash
-   node server/server.js
-   ```
+1. Create a .env file in the server directory. Set a variable called ATLAS_URI to the connection string (with user and pwd included) for your cluster:
+   ```ATLAS_URI={YOUR_ATLAS_URI}```
+   ```ATLAS_URI_TEST={YOUR_ATLAS_URI_FOR_TESTING_CLUSTER```
+   
 
-2. In another terminal, navigate to the frontend directory:
-   ```bash
-   cd client
-   ```
+3. Use AWS for object storage. Create an AWS account. After establishing your root user, create a new user role called `admin` with full read and write permissions in S3. Create an access key for the admin user role. Encode this info in a file called `aws.env` in the `server` directory in the following format (note that we have omitted our access key ID and secret access key for security reasons):
 
-3. Start the frontend development server:
-   ```bash
-   npm run start
-   ```
-# Team 2: Object-Oriented Software Engineering
+```
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_REGION=us-east-2
+AWS_BUCKET_NAME=tutorhubprofilepics
+```
 
-The goal is to create TutorHub.
+3. Make sure you have installed the AWS SDK (one way to do this is `npm install aws-sdk`). Note that installing all contains of the `*.json` files above on the server-side should have already sufficiently accomplished this. This will be integral for ensuring the code and S3 are able to communicate and interact.
 
-Team members: Tad Berkery, Ilana Chalom, Matthew Flynn, Katherine Forbes, Nolan Fogarty, Dokyung Yang
+### Running the app
+
+From the root directory (after appropriate installation), start both the frontend and the backend server simultaneously by executing: ```npm run start:all```

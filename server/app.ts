@@ -1,14 +1,13 @@
 //server/app.js
-export {};
+export {}
 
 require("dotenv").config({ path: "./config.env" });
 
 const express = require('express')
 const bodyParser = require('body-parser')
-const path = require('path')
 const cors = require('cors');
 const { connect } = require('./data/db.ts');
-const router = require('./routes/profiles.ts');
+const router = require('./routes/index.ts');
 
 class App {
 
@@ -37,5 +36,7 @@ class App {
     }
 }
 
-// module.exports = App;
-module.exports = new App().app;
+module.exports = new App().app
+
+
+
