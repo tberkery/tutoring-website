@@ -48,7 +48,7 @@ const PostsSection: React.FC = () => {
       const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/profiles/getByEmail/${user.primaryEmailAddress.toString()}`);
       console.log(response.data);
       setProfileData(response.data);
-      const posts = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/posts`);
+      const posts = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/posts/findAllByUserId/${response.data.data[0]._id}`);
       console.log('setting posts to:', posts.data.posts);
       setPosts(posts.data.posts);
     } catch (error) {

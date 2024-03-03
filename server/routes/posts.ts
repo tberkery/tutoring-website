@@ -15,6 +15,17 @@ router.post("/", async (req: any, res: any) => {
   }
 });
 
+router.get("/findAllByUserId/:id", async (req: any, res: any) => {
+  const { id }: { id: number } = req.params;
+  try {
+    const posts = await PostDao.readAllByUserId(id);
+    res.status(200).json({ posts });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Server Error");
+  }
+});
+
 router.get("/findOne/:id", async (req: any, res: any) => {
     const { id }: { id: number } = req.params;
     try {

@@ -21,6 +21,14 @@ export class PostDao {
         const data = await Post.create(newPost);
         return data;
     }
+    async readAllByUserId(userId : any) {
+        try {
+            const posts = await Post.find({ userId: userId });
+            return posts
+        } catch (error) {
+            console.error('Error fetching posts:', error);
+        }
+    }
     async readOne( id : any ) { // find one Post by _id
         const post = await Post.findOne({ _id: id });
         return post;
