@@ -57,3 +57,7 @@ AWS_BUCKET_NAME=tutorhubprofilepics
 ### Running the app
 
 From the root directory (after appropriate installation), start both the frontend and the backend server simultaneously by executing: ```npm run start:all```
+
+### Navigating the App
+
+Since we haven't created a landing page, please click the poorly formatted 'Sign-In' button to create an account using your JHU email(must end in @jhu.edu). Once an account is created, add '/profile' to the URL to navigate to your profile page. From here, you should be able to Edit Profile as well as Create Posts. 
