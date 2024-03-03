@@ -2,10 +2,9 @@ const Course = require("../model/Course.ts");
 const mongoose = require("mongoose");
 
 export class CourseDao {
-    async create({ courseInfo }: { courseInfo: any }) {
-        const newCourse = new Course(courseInfo);
-        await newCourse.save();
-        return newCourse;
+    async create(courseTitle:string, courseCode:string, courseDepartment:string, isUpperLevel:boolean, courseDescription:string) {
+        const data = await Course.create({courseTitle, courseCode, courseDepartment, isUpperLevel, courseDescription});
+        return data;
     }
     async readOne( id : any ) { // find one course by _id
         const course = await Course.findOne({ _id: id });
@@ -19,18 +18,16 @@ export class CourseDao {
             console.error('Error fetching courses:', error);
         }
     }
-    async update( id: any, courseInfo: any ) {
-        let course = await Course.findOne({ _id: id });
-        if (!course) {
-            return "Course not found";
-        }
-        course.set(courseInfo);
-        await course.save();
-        return course;
+    async update( id: any, courseTitle:string, courseCode:string, courseDepartment:string, isUpperLevel:boolean, courseDescription:string ) {
+        const data = await Course.findByIdAndUpdate(id, {courseTitle, courseCode, courseDepartment, isUpperLevel, courseDescription})
+        return data;
     }
     async delete(id : any) {
-        await Course.findOneAndDelete({ _id: id });
-        return "Course deleted";
+        const data = await Course.findOneAndDelete({ _id: id });
+        return data;
+    }
+    async deleteAll(){
+        await Course.deleteMany({})
     }
 }
 module.exports = CourseDao;
