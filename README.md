@@ -1,3 +1,9 @@
+# Team 2: Object-Oriented Software Engineering
+
+The goal is to create TutorHub.
+
+Team members: Tad Berkery, Ilana Chalom, Matthew Flynn, Katherine Forbes, Nolan Fogarty, Dokyung Yang
+
 Our hello world app is deployed at https://oose-team02-helloworld.netlify.app/
 
 It's built using the MERN stack and other technologies detailed in our "Tech Stack" github issue
@@ -26,6 +32,8 @@ Before you begin, ensure you have met the following requirements:
 
 5. Install backend dependencies: ```npm install```
 
+See the `package.json` and `package-lock.json` files.
+
 ### Configuration
 
 1. Create a .env file in the server directory. Set a variable called ATLAS_URI to the connection string (with user and pwd included) for your cluster:
@@ -41,8 +49,3 @@ Before you begin, ensure you have met the following requirements:
    ```bash
    npm run start
    ```
-# Team 2: Object-Oriented Software Engineering
-
-The goal is to create TutorHub.
-
-Team members: Tad Berkery, Ilana Chalom, Matthew Flynn, Katherine Forbes, Nolan Fogarty, Dokyung Yang
