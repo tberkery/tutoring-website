@@ -16,6 +16,7 @@
     "zod": "^3.22.4"
   },
   "scripts": {
+    "start": "npm install && cd server && npm install && cd ../client && npm install && cd .. && concurrently \"npm run start:api\" \"npm run start:app\"",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start:api": "cd server && nodemon server.ts",
     "start:app": "cd client && npm run dev",
