@@ -39,10 +39,11 @@ See the `package.json` and `package-lock.json` files.
 ### Configuration
 
 1. Create a .env file in the server directory. Set a variable called ATLAS_URI to the connection string (with user and pwd included) for your cluster:
-   ```ATLAS_URI={YOUR_ATLAS_URI}```
-   ```ATLAS_URI_TEST={YOUR_ATLAS_URI_FOR_TESTING_CLUSTER```
+   ```ATLAS_URI={YOUR_ATLAS_URI}
+      ATLAS_URI_TEST={YOUR_ATLAS_URI_FOR_TESTING_CLUSTER
+   ```
 
-2. Create a .env file in the client directory.
+3. Create a .env file in the client directory.
    ```NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY={YOUR_CLERK_KEY}```
    ```CLERK_SECRET_KEY={YOUR_SECRET_KEY}```
    ```NEXT_PUBLIC_BACKEND_URL={YOUR_BACKEND_URL}```
