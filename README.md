@@ -56,6 +56,7 @@ AWS_BUCKET_NAME=tutorhubprofilepics
 
 ### Running the app
 
+Run ```npm i``` in root, server, and client directories to install necessary dependencies.
 From the root directory (after appropriate installation), start both the frontend and the backend server simultaneously by executing: ```npm run start:all```
 
 ### Navigating the App
