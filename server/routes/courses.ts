@@ -6,8 +6,8 @@ const CourseDao = new CourseDaoClass();
 
 router.post("/", async (req: any, res: any) => {
   try {
-    const courseInfo = req.body;
-    const newCourse = await CourseDao.create({ courseInfo });
+    const {courseTitle, courseCode, courseDepartment, isUpperLevel, courseDescription}: {courseTitle:string, courseCode:string, courseDepartment:string, isUpperLevel:boolean, courseDescription:string} = req.body;
+    const newCourse = await CourseDao.create(courseTitle, courseCode, courseDepartment, isUpperLevel, courseDescription);
     res.status(200).json({ newCourse });
   } catch (err) {
     console.log(err);
@@ -42,9 +42,9 @@ router.get("/all", async (req: any, res: any ) => {
 
 router.put("/:id", async (req: any, res: any) => {
     const id : number = req.params.id;
-    const courseInfo = req.body;
+    const {courseTitle, courseCode, courseDepartment, isUpperLevel, courseDescription}: {courseTitle:string, courseCode:string, courseDepartment:string, isUpperLevel:boolean, courseDescription:string} = req.body;
     try {
-        const course = await CourseDao.update( id, courseInfo );
+        const course = await CourseDao.update( id, courseTitle, courseCode, courseDepartment, isUpperLevel, courseDescription );
         if (!course) {
         return res.status(404).json({ msg: "Course not found" });
         }
