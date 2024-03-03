@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { FC, useEffect, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -15,6 +15,14 @@ import {
   FormMessage,
 } from "components/ui/form";
 import { Input } from "components/ui/input";
+import axios from "axios";
+import { useRouter } from "next/router";
+import { useUser } from "@clerk/clerk-react";
+
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+
+//const { isLoaded, isSignedIn, user } = useUser();
+
 
 const postFormSchema = z.object({
     username: z.string(),
@@ -29,6 +37,24 @@ const postFormSchema = z.object({
   
 
 export function CreatePost() {
+	const { isLoaded, isSignedIn, user } = useUser();
+  const [profileData, setProfileData] = React.useState(null);
+
+  const fetchProfile = async () => {
+    if (!user) return;
+    try {
+      const response = await axios.get(`${BACKEND_URL}/profiles/getByEmail/${user.primaryEmailAddress.toString()}`);
+      setProfileData(response.data);
+    } catch (error) {
+      console.error("Failed to fetch profile:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchProfile();
+  }, [user]);
+
+
   const form = useForm<PostFormData>({
     resolver: zodResolver(postFormSchema),
     defaultValues: {
@@ -41,8 +67,20 @@ export function CreatePost() {
     },
   });
 
-  function onSubmit(data: z.infer<typeof postFormSchema>) {
-    console.log(data);
+  
+
+  async function onSubmit(data: z.infer<typeof postFormSchema>) {
+    await fetchProfile();
+    const postData = {
+      userId: profileData.data[0]._id,
+      title: data.title,
+      description: data.description,
+      imageUrl: data.picture,
+      price: data.price,
+      courseId: data.courseId,
+    }
+
+    const newPost = await axios.post(`${BACKEND_URL}/posts`, postData);
   }
 
   return (
@@ -60,7 +98,7 @@ export function CreatePost() {
                 <FormItem className="mb-4">
                   <FormLabel className="font-bold" htmlFor="picture">Image</FormLabel>
                   <FormControl>
-                    <Input id="picture" type="file" {...field} />
+                    <Input className="border-black" id="picture" type="file" {...field} />
                   </FormControl>
                   {fieldState.error && <FormMessage>{fieldState.error.message}</FormMessage>}
                 </FormItem>
@@ -71,7 +109,7 @@ export function CreatePost() {
               <FormItem className="mb-4">
                 <FormLabel className="font-bold" htmlFor="title">Title</FormLabel>
                 <FormControl>
-                  <Input id="title" placeholder="Title" {...field} />
+                  <Input className="border-black" id="title" placeholder="Title" {...field} />
                 </FormControl>
                 {fieldState.error && <FormMessage>{fieldState.error.message}</FormMessage>}
               </FormItem>
@@ -81,7 +119,7 @@ export function CreatePost() {
               <FormItem className="mb-4">
                 <FormLabel className="font-bold" htmlFor="courseId">Course ID</FormLabel>
                 <FormControl>
-                  <Input id="courseId" placeholder="Course ID" {...field} />
+                  <Input className="border-black" id="courseId" placeholder="Course ID" {...field} />
                 </FormControl>
                 {fieldState.error && <FormMessage>{fieldState.error.message}</FormMessage>}
               </FormItem>
@@ -91,7 +129,7 @@ export function CreatePost() {
               <FormItem className="mb-4">
                 <FormLabel className="font-bold" htmlFor="description">Description</FormLabel>
                 <FormControl>
-                  <Input id="description" placeholder="Description" {...field} />
+                  <Input className="border-black" id="description" placeholder="Description" {...field} />
                 </FormControl>
                 {fieldState.error && <FormMessage>{fieldState.error.message}</FormMessage>}
               </FormItem>
@@ -101,7 +139,7 @@ export function CreatePost() {
               <FormItem className="mb-4">
                 <FormLabel className="font-bold" htmlFor="price">Price</FormLabel>
                 <FormControl>
-                  <Input id="price" placeholder="Price" {...field} />
+                  <Input className="border-black" id="price" placeholder="Price" {...field} />
                 </FormControl>
                 {fieldState.error && <FormMessage>{fieldState.error.message}</FormMessage>}
               </FormItem>
