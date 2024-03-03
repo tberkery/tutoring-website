@@ -8,6 +8,8 @@ router.post("/", async (req: any, res: any) => {
   try {
     const {userId, title, description, imageUrl, price, courseId}: {userId: string, title: string, description: string, imageUrl: string, price: string, courseId: Number} = req.body
     console.log("IN ROUTES");
+    console.log(req.body);
+    console.log('\n\n');
     const newPost = await PostDao.create(userId, title, {description, imageUrl, price, courseId});
     res.status(200).json({ newPost });
   } catch (err) {
