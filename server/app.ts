@@ -1,13 +1,11 @@
 //server/app.js
-export {}
-
 require("dotenv").config({ path: "./config.env" });
 
 const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors');
-const { connect } = require('./data/db.ts');
-const router = require('./routes/index.ts');
+import connect from './data/db';
+import router from './routes/index';
 
 class App {
 

@@ -1,6 +1,5 @@
 import { ObjectId } from "mongodb";
 
-export {}
 require('dotenv').config()
 const PostDao = require('../../data/PostDao');
 const {faker} = require('@faker-js/faker');
