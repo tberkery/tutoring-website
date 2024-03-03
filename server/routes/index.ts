@@ -11,4 +11,6 @@ router.use('/posts', require('./posts.ts'))
 
 router.use('/profiles', require('./profiles.ts'))
 
+router.use('/profilePics', require('./profilePics.ts'))
+
 module.exports = router;
