@@ -60,4 +60,4 @@ From the root directory (after appropriate installation), start both the fronten
 
 ### Navigating the App
 
-Since we haven't created a landing page, please click the poorly formatted 'Sign-In' button to create an account using your JHU email(must end in @jhu.edu). Once an account is created, add '/profile' to the URL to navigate to your profile page. From here, you should be able to Edit Profile as well as Create Posts. 
+Since we haven't created a landing page, please click the poorly formatted 'Sign-In' button to create an account using your JHU email(must end in @jhu.edu). Once an account is created, add '/profile' to the URL to navigate to your profile page. From here, you should be able to Edit Profile as well as Create Posts using the designated buttons. 
