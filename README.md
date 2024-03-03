@@ -41,9 +41,13 @@ See the `package.json` and `package-lock.json` files.
 1. Create a .env file in the server directory. Set a variable called ATLAS_URI to the connection string (with user and pwd included) for your cluster:
    ```ATLAS_URI={YOUR_ATLAS_URI}```
    ```ATLAS_URI_TEST={YOUR_ATLAS_URI_FOR_TESTING_CLUSTER```
-   
 
-3. Use AWS for object storage. Create an AWS account. After establishing your root user, create a new user role called `admin` with full read and write permissions in S3. Create an access key for the admin user role. Encode this info in a file called `aws.env` in the `server` directory in the following format (note that we have omitted our access key ID and secret access key for security reasons):
+2. Create a .env file in the client directory.
+   ```NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY={YOUR_CLERK_KEY}```
+   ```CLERK_SECRET_KEY={YOUR_SECRET_KEY}```
+   ```NEXT_PUBLIC_BACKEND_URL={YOUR_BACKEND_URL}```
+
+4. Use AWS for object storage. Create an AWS account. After establishing your root user, create a new user role called `admin` with full read and write permissions in S3. Create an access key for the admin user role. Encode this info in a file called `aws.env` in the `server` directory in the following format (note that we have omitted our access key ID and secret access key for security reasons):
 
 ```
 AWS_ACCESS_KEY_ID=
