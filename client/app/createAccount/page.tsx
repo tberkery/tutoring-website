@@ -12,6 +12,8 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 
+import FormData from "form-data";
+
 const Page : FC = () => {
 	const { isLoaded, isSignedIn, user } = useUser();
 	const router = useRouter();
@@ -47,6 +49,7 @@ const Page : FC = () => {
 	const [year, setYear] = useState(2024);
 	const [refilling, setRefilling] = useState(false);
 	const [affliiateType, setAffiliateType] = useState("student");
+	const [photoFile, setPhotoFile] = useState<File>(null);
 
 	if (!isLoaded || !isSignedIn || !checkedProfileExists) {
 		return <></>;
@@ -63,6 +66,11 @@ const Page : FC = () => {
 		setYear(value);
 		console.log(process.env.NEXT_PUBLIC_BACKEND_URL);
 	}
+
+	const handleFileSelected = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const files = Array.from(e.target.files)
+    setPhotoFile(files[0]);
+  }
 
 	const checkAndSubmit = async () => {
 		if (firstName === "" || lastName === "" || department === "") {
@@ -83,7 +91,15 @@ const Page : FC = () => {
 			if (affliiateType === "student") {
 				body["graduationYear"] = year.toString();
 			}
-			await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/profiles`, body);
+			const uri = `${api}/profiles`;
+			const response = (await axios.post(uri, body)).data;
+			if (photoFile !== null) {
+				const formData = new FormData();
+				formData.append("profilePicture", photoFile);
+				const photoUri = `${api}/profilePics/upload/${response.data._id}`;
+				const r2 = await axios.post(photoUri, formData);
+				console.log(r2);
+			}
 			router.replace('/profile');
 		}
 	}
@@ -148,7 +164,12 @@ const Page : FC = () => {
 					</div>
 					<div className="flex flex-col flex-grow basis-4 min-w-60">
 						<Label htmlFor="picture">Profile Picture</Label>
-						<Input id="picture" type="file" className="mt-1 cursor-pointer"/>
+						<Input
+							id="picture"
+							type="file"
+							className="mt-1 cursor-pointer"
+							onChange={ handleFileSelected }
+						/>
 					</div>
 				</div>
 				<Label htmlFor="about" className="inline-block mt-4">About Me</Label>

@@ -7,9 +7,6 @@ const PostDao = new PostDaoClass();
 router.post("/", async (req: any, res: any) => {
   try {
     const {userId, title, description, imageUrl, price, courseId}: {userId: string, title: string, description: string, imageUrl: string, price: string, courseId: Number} = req.body
-    console.log("IN ROUTES");
-    console.log(req.body);
-    console.log('\n\n');
     const newPost = await PostDao.create(userId, title, {description, imageUrl, price, courseId});
     res.status(200).json({ newPost });
   } catch (err) {
@@ -44,11 +41,11 @@ router.get("/", async (req: any, res: any ) => {
 
 router.put("/:id", async (req: any, res: any) => {
     const id : number = req.params.id;
-    const postInfo = req.body;
+    const {userId, title, description, imageUrl, price, courseId}: {userId: string, title: string, description: string, imageUrl: string, price: string, courseId: Number} = req.body
     try {
-        const post = await PostDao.update( id, postInfo );
+        const post = await PostDao.update( id, userId, title, {description, imageUrl, price, courseId});
         if (!post) {
-        return res.status(404).json({ msg: "Post not found" });
+          return res.status(404).json({ msg: "Post not found" });
         }
         res.status(200).json({ post });
     } catch (err) {
