@@ -2,10 +2,26 @@ const Post = require("../model/Post.ts");
 const mongoose = require("mongoose");
 
 export class PostDao {
-    async create( postInfo : any) {
-        const newPost = new Post(postInfo);
-        await newPost.save();
-        return newPost;
+    async create(userId: string, title: string, options?: {description?: string, imageUrl?: string, price?: string, courseId?: Number}) {
+        console.log("IN DAO CREATE ")
+        let newPost: any = {userId, title}
+        if (options){
+            if(options.description){
+                newPost.description = options.description
+            }
+            if (options.imageUrl){
+                newPost.imageUrl = options.imageUrl;
+            }
+            if (options.price){
+                newPost.price = options.price;
+            }
+            if (options.courseId){
+                newPost.courseId = options.courseId;
+            }
+        }
+        console.log("post is ", newPost);
+        const data = await Post.create(newPost);
+        return data;
     }
     async readOne( id : any ) { // find one Post by _id
         const post = await Post.findOne({ _id: id });
