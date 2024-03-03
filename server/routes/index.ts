@@ -13,4 +13,4 @@ router.use('/profiles', require('./profiles.ts'))
 
 router.use('/profilePics', require('./profilePics.ts'))
 
-module.exports = router;
+export default router;

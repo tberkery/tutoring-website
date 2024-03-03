@@ -1,4 +1,3 @@
-export {}
 const router = require('express').Router()
 // import { Request, Response } from "express";
 const ProfileDao = require('../data/ProfileDao');

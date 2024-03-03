@@ -11,4 +11,4 @@ async function connect() {
   }
 }
 
-module.exports = { connect };
+export default connect;
