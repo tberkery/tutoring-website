@@ -1,9 +1,8 @@
-const Post = require("../model/Post.ts");
+const ActivityPost = require("../model/ActivityPost.ts");
 const mongoose = require("mongoose");
 
-export class PostDao {
-    async create(userId: string, title: string, options?: {description?: string, imageUrl?: string, price?: string, courseId?: Number}) {
-        console.log("IN DAO CREATE ")
+export class ActivityPostDao {
+    async create(userId: string, title: string, options?: {description?: string, imageUrl?: string, price?: string, tags?: [String]}) {
         let newPost: any = {userId, title}
         if (options){
             if(options.description){
@@ -15,28 +14,28 @@ export class PostDao {
             if (options.price){
                 newPost.price = options.price;
             }
-            if (options.courseId){
-                newPost.courseId = options.courseId;
+            if (options.tags){
+                newPost.courseId = options.tags;
             }
         }
         console.log("post is ", newPost);
-        const data = await Post.create(newPost);
+        const data = await ActivityPost.create(newPost);
         return data;
     }
     async readOne( id : any ) { // find one Post by _id
-        const post = await Post.findOne({ _id: id });
+        const post = await ActivityPost.findOne({ _id: id });
         return post;
     }
     async readAll() {
         try {
-            const posts = await Post.find();
+            const posts = await ActivityPost.find();
             return posts
         } catch (error) {
             console.error('Error fetching posts:', error);
         }
     }
     async update( id: any, postInfo: any ) {
-        let post = await Post.findOne({ _id: id });
+        let post = await ActivityPost.findOne({ _id: id });
         if (!post) {
             return "Post not found";
         }
@@ -45,8 +44,8 @@ export class PostDao {
         return post;
     }
     async delete(id : any) {
-        await Post.findOneAndDelete({ _id: id });
+        await ActivityPost.findOneAndDelete({ _id: id });
         return "Post deleted";
     }
 }
-module.exports = PostDao;
+module.exports = ActivityPostDao;
