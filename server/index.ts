@@ -54,6 +54,10 @@ app.get('/', (req: any, res: any) => {
     res.json("Hello!")
 })
 
+(async () => {
+  await connect();
+})();
+
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
