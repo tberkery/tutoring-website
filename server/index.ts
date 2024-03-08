@@ -54,6 +54,8 @@ app.get('/', (req: any, res: any) => {
     res.json("Hello!")
 })
 
+app.use(router);
+
 // (async () => {
 //   await connect();
 // })();
