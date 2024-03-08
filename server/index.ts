@@ -45,9 +45,7 @@ class App {
 
 
 
-const app = new App().app
-
-
+const app = express()
 
 app.get('/', (req: any, res: any) => {
     res.json("Hello!")
