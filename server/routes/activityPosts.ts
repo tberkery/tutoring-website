@@ -6,9 +6,9 @@ const ActivityPostDao = new ActivityPostDaoClass();
 
 router.post("/", async (req: any, res: any) => {
   try {
-    const {userId, title, description, imageUrl, price, tags}: {userId: string, title: string, description: string, imageUrl: string, price: string, tags: [String]} = req.body
+    const {userId, activityTitle, activityDescription, imageUrl, price, tags}: {userId: string, activityTitle: string, activityDescription: string, imageUrl: string, price: string, tags: [String]} = req.body
     console.log("IN ROUTES");
-    const newPost = await ActivityPostDao.create(userId, title, {description, imageUrl, price, tags});
+    const newPost = await ActivityPostDao.create(userId, activityTitle, {activityDescription, imageUrl, price, tags});
     res.status(200).json({ newPost });
   } catch (err) {
     console.log(err);
