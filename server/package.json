@@ -4,12 +4,15 @@
   "description": "",
   "main": "index.ts",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "start": "nodemon --exec ts-node ./index.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.525.0",
+    "aws-sdk": "^2.1569.0",
     "@faker-js/faker": "^8.4.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",

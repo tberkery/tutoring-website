@@ -1,11 +1,13 @@
-//server/app.js
+//server/app.ts
+export{}
 require("dotenv").config({ path: "./config.env" });
 
 const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors');
-import connect from './data/db';
-import router from './routes/index';
+const connect = require('./data/db');
+const router  = require('./routes/index');
+
 
 class App {
 
@@ -19,6 +21,9 @@ class App {
     }
 
     setupMiddlewares() {
+        this.app.get('/', (req: any, res: any) => {
+            res.send('Hello World!')
+        })
         this.app.use(cors()); 
         this.app.use(express.json())
         this.app.use(bodyParser.json())
