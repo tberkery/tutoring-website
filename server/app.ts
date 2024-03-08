@@ -1,4 +1,4 @@
-//server/app.js
+//server/app.ts
 export{}
 require("dotenv").config({ path: "./config.env" });
 

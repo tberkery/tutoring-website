@@ -5,7 +5,7 @@ const router = Router()
 
 //router.use('/user', require('./user'))
 
-// router.use('/courses', require('./courses'))
+router.use('/courses', require('./courses'))
 
 // router.use('/posts', require('./posts.ts'))
 
