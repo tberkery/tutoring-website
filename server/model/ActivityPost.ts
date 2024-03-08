@@ -7,11 +7,11 @@ const ActivityPostSchema = new mongoose.Schema({
       type: String,
       required: true,
     },
-    title: {
+    activityTitle: {
       type: String,
       required: true,
     },
-    description: {
+    activityDescription: {
       type: String,
       default: null,
     },
