@@ -6,7 +6,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors');
 const connect = require('./data/db');
-//import connect from './data/db';
+const router = require('./routes/index');
 //import router from './routes/index';
 
 
@@ -25,9 +25,8 @@ app.get('/', (req: any, res: any) => {
 
 
 connect();
-// (async () => {
-//   await connect();
-// })();
+app.use(router);
+
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

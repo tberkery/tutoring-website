@@ -9,8 +9,8 @@ router.use('/courses', require('./courses.ts'))
 
 router.use('/posts', require('./posts.ts'))
 
-router.use('/profiles', require('./profiles.ts'))
+//router.use('/profiles', require('./profiles.ts'))
 
 router.use('/profilePics', require('./profilePics.ts'))
 
-export default router;
+module.exports = router;
