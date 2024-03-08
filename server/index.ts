@@ -44,6 +44,12 @@ import router from './routes/index';
 
 const app = express()
 
+app.get('/', (req: any, res: any) => {res.send('Hello World!')})
+app.use(cors()); 
+app.use(express.json())
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: false }))
+
 app.get('/', (req: any, res: any) => {
     res.json("Hello!")
 })
