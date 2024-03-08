@@ -14,11 +14,14 @@ class App {
     constructor(){
         this.app = express()
         this.setupMiddlewares()
-        this.dbConnection()
-        this.setRouting()
+        //this.dbConnection()
+        //this.setRouting()
     }
 
     setupMiddlewares() {
+        this.app.get('/', (req: any, res: any) => {
+            res.send('Hello World!')
+        })
         this.app.use(cors()); 
         this.app.use(express.json())
         this.app.use(bodyParser.json())
