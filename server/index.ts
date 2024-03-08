@@ -25,7 +25,7 @@ app.get('/', (req: any, res: any) => {
 
 
 connect();
-//app.use(router);
+app.use(router);
 
 
 app.listen(PORT, () => {
