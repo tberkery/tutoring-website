@@ -1,43 +1,45 @@
-// //server/app.js
-// require("dotenv").config({ path: "./config.env" });
+//server/app.js
+export{}
+require("dotenv").config({ path: "./config.env" });
 
-// const express = require('express')
-// const bodyParser = require('body-parser')
-// const cors = require('cors');
-// import connect from './data/db';
-// import router from './routes/index';
+const express = require('express')
+const bodyParser = require('body-parser')
+const cors = require('cors');
+const connect = require('./data/db');
+const router  = require('./routes/index');
 
-// class App {
 
-//     public app: any;
+class App {
 
-//     constructor(){
-//         this.app = express()
-//         //this.setupMiddlewares()
-//         //this.dbConnection()
-//         //this.setRouting()
-//     }
+    public app: any;
 
-//     setupMiddlewares() {
-//         this.app.get('/', (req: any, res: any) => {
-//             res.send('Hello World!')
-//         })
-//         this.app.use(cors()); 
-//         this.app.use(express.json())
-//         this.app.use(bodyParser.json())
-//         this.app.use(bodyParser.urlencoded({ extended: false }))
-//     }
+    constructor(){
+        this.app = express()
+        this.setupMiddlewares()
+        this.dbConnection()
+        this.setRouting()
+    }
 
-//     async dbConnection(){
-//         await connect()
-//     }
+    setupMiddlewares() {
+        this.app.get('/', (req: any, res: any) => {
+            res.send('Hello World!')
+        })
+        this.app.use(cors()); 
+        this.app.use(express.json())
+        this.app.use(bodyParser.json())
+        this.app.use(bodyParser.urlencoded({ extended: false }))
+    }
 
-//     setRouting() {
-//         this.app.use(router)
-//     }
-// }
+    async dbConnection(){
+        await connect()
+    }
 
-// module.exports = new App().app
+    setRouting() {
+        this.app.use(router)
+    }
+}
+
+module.exports = new App().app
 
 
 
