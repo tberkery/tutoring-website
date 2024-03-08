@@ -5,10 +5,10 @@ const PORT = process.env.PORT
 
 
 const express = require('express')
-// const bodyParser = require('body-parser')
-// const cors = require('cors');
-// import connect from './data/db';
-// import router from './routes/index';
+const bodyParser = require('body-parser')
+const cors = require('cors');
+import connect from './data/db';
+import router from './routes/index';
 
 // class App {
 
