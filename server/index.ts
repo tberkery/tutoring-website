@@ -6,7 +6,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors');
 const connect = require('./data/db');
-const router = require('./routes/index');
+//const router = require('./routes/index');
 //import router from './routes/index';
 
 
@@ -25,7 +25,7 @@ app.get('/', (req: any, res: any) => {
 
 
 connect();
-app.use(router);
+//app.use(router);
 
 
 app.listen(PORT, () => {
