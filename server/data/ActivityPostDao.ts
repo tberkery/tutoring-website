@@ -34,6 +34,44 @@ export class ActivityPostDao {
             console.error('Error fetching posts:', error);
         }
     }
+
+    async readSome( options: any) {
+        // Remark: consider our query options for ActivityPosts:
+        // - Query only by user_id
+        // - Query only by activity title
+        // - Query only by price
+        // - Query only by tags
+        // - Query any combination of these fields
+        const query: any = {};
+
+        // Iterate over the options object
+        for (const key in options) {
+            if (Object.prototype.hasOwnProperty.call(options, key)) {
+                if (options[key] !== undefined) {
+                    switch (key) {
+                        case 'userId':
+                            query.userId = options.userId;
+                        case 'activityTitle':
+                            query.activityTitle = options.activityTitle;
+                        case 'price':
+                            query.price = options.price;
+                        case 'tags':
+                            query.tags = options.tags;
+                        break;
+                    }
+                }
+            }
+        }
+        console.log("Here is your formatted query:", query)
+
+
+        // Fetch data from the database using the constructed query
+        const posts = await ActivityPost.find(query);
+
+        // Return the fetched posts
+        return posts;
+
+    }
     async update( id: any, postInfo: any ) {
         let post = await ActivityPost.findOne({ _id: id });
         if (!post) {
