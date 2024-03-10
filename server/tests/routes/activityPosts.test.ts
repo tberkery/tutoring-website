@@ -184,4 +184,48 @@ describe('Test activityPosts routes', () => {
         expect(res.status).toBe(200);
         expect(res.body.msg).toBe("Post deleted successfully");
     });
+
+    // Test for GET with simple query by userId
+    test('GET /activityPosts/query for simple, one-field query', async () => {
+        await activityPost.deleteMany({});
+
+        const example1PostData = {
+            userId: 'example1UserId',
+            activityTitle: 'Example1 Activity',
+            activityDescription: 'Example1 description',
+            imageUrl: 'example1ImageUrl',
+            price: 'example1Price',
+            tags: ['example1Tag1', 'example1Tag2']
+        };
+
+        const example2PostData = {
+            userId: 'example2UserId',
+            activityTitle: 'Example2 Activity',
+            activityDescription: 'Example2 description',
+            imageUrl: 'example2ImageUrl',
+            price: 'example2Price',
+            tags: ['example2Tag1', 'example2Tag2']
+        };
+        
+        // Make a POST request to create the post
+        const postRes1 = await request(app).post('/activityPosts').send(example1PostData);
+        
+        // Make a POST request to create the post
+        const postRes2 = await request(app).post('/activityPosts').send(example2PostData);
+
+        const res = await request(app).get('/activityPosts/query?userId=example2UserId');
+        console.log("RESPONSE BODY");
+        console.log(res)
+
+        expect(res.status).toBe(200);
+        expect(res.body).toHaveProperty('posts');
+        expect(res.body.posts).toHaveLength(1);
+
+        // Clean up everything (not just posts returned by query)
+        await activityPost.deleteMany({});
+    });
+
+    // Test for GET with complex query featuring all queryable fields
+
+    // Test for GET with query of multiple but not all fields
 });
