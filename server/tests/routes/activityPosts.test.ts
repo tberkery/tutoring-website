@@ -1,5 +1,9 @@
+export {}
 const request = require('supertest');
 const express = require('express');
+const app = require('../../../server/app.ts')
+const router = require('../../../server/routes/index.ts')
+const activityPost = require('../../../server/model/ActivityPost'); 
 
 app.use(express.json());
 app.use('/activityPosts', router);
@@ -28,7 +32,7 @@ describe('Test activityPosts routes', () => {
 
         // Clean up: Delete the post created during the test
         await request(app).delete(`/activityPosts/${postId}`);
-      });
+    });
 
   
     // Test for GET /activityPosts/:id
@@ -52,7 +56,7 @@ describe('Test activityPosts routes', () => {
 
         expect(res.status).toBe(200);
         expect(res.body).toHaveProperty('post');
-        expect(res.body.post).toBe(newPostData);
+        expect(res.body.post).toEqual(expect.objectContaining(newPostData));
 
         // Clean up: Delete the post created during the test
         await request(app).delete(`/activityPosts/${postId}`);
@@ -60,6 +64,7 @@ describe('Test activityPosts routes', () => {
     
     // Test for GET /activityPosts with empty database
     test('GET /activityPosts with empty database', async () => {
+        await activityPost.deleteMany({});
 
         const res = await request(app).get('/activityPosts');
     
@@ -69,6 +74,8 @@ describe('Test activityPosts routes', () => {
 
     // Test for GET /activityPosts with multiple posts in the database
     test('GET /activityPosts with multiple posts', async () => {
+        await activityPost.deleteMany({});
+
         const example1PostData = {
             userId: 'example1UserId',
             activityTitle: 'Example1 Activity',
@@ -143,7 +150,7 @@ describe('Test activityPosts routes', () => {
     
         expect(res.status).toBe(200);
         expect(res.body).toHaveProperty('post');
-        expect(res.body.post).toBe(finalPostData);
+        expect(res.body.post).toEqual(expect.objectContaining(finalPostData));
 
         // Clean up: Delete the post created during the test
         await request(app).delete(`/activityPosts/${postId}`);
