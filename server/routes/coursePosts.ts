@@ -40,6 +40,17 @@ router.get("/", async (req: any, res: any ) => {
   }
 });
 
+router.get("/findAllByUserId/:id", async (req: any, res: any ) => {
+  const {id} = req.params;
+  try {
+    const posts = await CoursePostDao.readAllByUser(id);
+    res.status(200).json({ posts });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server Error");
+  }
+});
+
 router.put("/:id", async (req: any, res: any) => {
     const id : number = req.params.id;
     const {userId, courseName, description, price, courseNumber, courseDepartment, gradeReceived, semesterTaken, professorTakenWith, takenAtHopkins, schoolTakenAt}: {userId: string, courseName: string, description: string, price: string, courseNumber: string, courseDepartment: string[], gradeReceived: string, semesterTaken: string, professorTakenWith: string, takenAtHopkins: boolean, schoolTakenAt: string} = req.body;

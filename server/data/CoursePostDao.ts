@@ -41,6 +41,12 @@ export class CoursePostDao {
         const post = await CoursePost.findOne({ _id: id });
         return post;
     }
+
+    async readAllByUser(userId: any){
+        const posts = await CoursePost.find({_id: userId});
+        return posts;
+    }
+    
     async readAll({courseName, courseNumber, price}: {courseName: string, courseNumber: string, price: string}) {
         const filter : any = {};
         if (courseName) {
