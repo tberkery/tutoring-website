@@ -72,9 +72,14 @@ router.delete("/:id", async (req: any, res: any) => {
     }
 });
 
-router.get("/activityposts", async (req: any, res: any) => {
+router.get("/query", async (req: any, res: any) => {
+  console.log("IN ACTIVITY POSTS GET")
   try {
     // Extract query parameters from the request
+    console.log("req.query")
+    console.log(req.query)
+    console.log("req.body")
+    console.log(req.body)
     const { userId, activityTitle, price, tags } = req.query;
 
     // Construct options object based on the provided query parameters
@@ -83,6 +88,9 @@ router.get("/activityposts", async (req: any, res: any) => {
     if (activityTitle) options.activityTitle = activityTitle;
     if (price) options.price = price;
     if (tags) options.tags = tags;
+
+    console.log("HERE'S OPTIONS:")
+    console.log(options)
 
     // Call the DAO method with the constructed options
     const posts = await ActivityPostDao.readSome(options);

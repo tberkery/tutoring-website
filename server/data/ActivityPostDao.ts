@@ -51,12 +51,16 @@ export class ActivityPostDao {
                     switch (key) {
                         case 'userId':
                             query.userId = options.userId;
+                            break;
                         case 'activityTitle':
                             query.activityTitle = options.activityTitle;
+                            break;
                         case 'price':
                             query.price = options.price;
+                            break;
                         case 'tags':
                             query.tags = options.tags;
+                            break;
                         break;
                     }
                 }
@@ -66,8 +70,9 @@ export class ActivityPostDao {
 
 
         // Fetch data from the database using the constructed query
-        const posts = await ActivityPost.find(query);
-
+        const posts = await ActivityPost.find(query).exec();
+        console.log("heres the posts found")
+        console.log(posts)
         // Return the fetched posts
         return posts;
 
