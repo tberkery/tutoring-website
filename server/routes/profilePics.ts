@@ -1,3 +1,5 @@
+export {}
+
 import { Request, Response } from 'express';
 
 const Profiles = require("../model/Profile.ts")
@@ -12,8 +14,6 @@ const multer = require('multer');
 const upload: Multer = multer();
 
 // Initialize instance of express
-const express = require('express');
-
 const router = require('express').Router();
 
 // AWS S3 Client Classes
@@ -30,6 +30,7 @@ const client = new S3Client({
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY 
   }
 });
+
 
 // Update 'image.jpeg' with parameter name passed in
 router.post('/upload/:objectID', upload.single('profilePicture'), async (req: Request, res: Response) => {
@@ -111,17 +112,17 @@ router.get('/get/:key', async (req: Request, res: Response) => {
     const response = await client.send(command);
 
     /*
-    * Retrieve the image from the S3 bucket based on the provided key.
-    * If the image is found, you have two options for sending the response:
-    * 1. Send back the S3 URL of the image:
-    *    res.status(200).json({ imageUrl: `http://tutorhubprofilepics.s3.amazonaws.com/${key}` });
-    * 2. Send the image file itself:
-    *    - Set the appropriate headers for the file:
-    *      res.set('Content-Type', response.ContentType);
-    *      res.set('Content-Disposition', `attachment; filename="${key}"`);
-    *    - Send the binary data of the image in the response body:
-    *      res.status(200).send(response.Body);
-    */
+  * Retrieve the image from the S3 bucket based on the provided key.
+  * If the image is found, you have two options for sending the response:
+  * 1. Send back the S3 URL of the image:
+  *    res.status(200).json({ imageUrl: `http://tutorhubprofilepics.s3.amazonaws.com/${key}` });
+  * 2. Send the image file itself:
+  *    - Set the appropriate headers for the file:
+  *      res.set('Content-Type', response.ContentType);
+  *      res.set('Content-Disposition', `attachment; filename="${key}"`);
+  *    - Send the binary data of the image in the response body:
+  *      res.status(200).send(response.Body);
+  */
     res.status(200).json({ imageUrl: `https://tutorhubprofilepics.s3.amazonaws.com/${key}` });
 
   } catch (err) {
@@ -178,3 +179,4 @@ const uploadToS3 = async (fileContent: Buffer, bucketName: string, key: string) 
 };
 
 module.exports = router;
+
