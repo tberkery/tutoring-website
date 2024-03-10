@@ -187,8 +187,10 @@ describe('Test activityPosts routes', () => {
 
     // Test for GET with simple query by userId
     test('GET /activityPosts/query for simple, one-field query', async () => {
+        // Clear all existing activity posts
         await activityPost.deleteMany({});
-
+    
+        // Create example data for activity posts
         const example1PostData = {
             userId: 'example1UserId',
             activityTitle: 'Example1 Activity',
@@ -197,7 +199,7 @@ describe('Test activityPosts routes', () => {
             price: 'example1Price',
             tags: ['example1Tag1', 'example1Tag2']
         };
-
+    
         const example2PostData = {
             userId: 'example2UserId',
             activityTitle: 'Example2 Activity',
@@ -207,24 +209,23 @@ describe('Test activityPosts routes', () => {
             tags: ['example2Tag1', 'example2Tag2']
         };
         
-        // Make a POST request to create the post
+        // Make POST requests to create the posts
         const postRes1 = await request(app).post('/activityPosts').send(example1PostData);
-        
-        // Make a POST request to create the post
         const postRes2 = await request(app).post('/activityPosts').send(example2PostData);
-
+    
+        // Make a GET request to query activity posts by userId
         const res = await request(app).get('/activityPosts/query?userId=example2UserId');
-        console.log("RESPONSE BODY");
-        console.log(res)
-
+    
+        // Assertions
         expect(res.status).toBe(200);
-        expect(res.body).toHaveProperty('posts');
-        expect(res.body.posts).toHaveLength(1);
-
-        // Clean up everything (not just posts returned by query)
+        console.log("HERE IS RES.BODY:")
+        console.log(res.body[0]);
+        expect(res.body).toEqual(example2PostData); // Check if the returned post matches example2PostData
+    
+        // Clean up: Delete all activity posts
         await activityPost.deleteMany({});
     });
-
+    
     // Test for GET with complex query featuring all queryable fields
 
     // Test for GET with query of multiple but not all fields
