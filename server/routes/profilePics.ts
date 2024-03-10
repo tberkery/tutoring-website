@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-const router = require('express').Router()
 
 const Profiles = require("../model/Profile.ts")
 
