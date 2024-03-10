@@ -30,7 +30,6 @@ router.get("/:_id", async (req: any, res: any) => {
     const data = await profiles.readById(_id);
     res.status(200).json({ data });
   } catch (err) {
-    console.log("hey bestie")
     res.status(500).send("Server Error");
   }
 });

@@ -59,12 +59,42 @@ export class CoursePostDao {
             console.error('Error fetching posts:', error);
         }
     }
-    async update( id: any, postInfo: any ) {
-        let post = await CoursePost.findOne({ _id: id });
+    async update( id: any, userId: string, courseName: string, options?: {description?: string, price?: string, courseNumber?: string, courseDepartment?: string[], gradeReceived?: string, semesterTaken?: string, professorTakenWith?: string, takenAtHopkins?: boolean, schoolTakenAt?: string} ) {
+        let newPost: any = {userId, courseName}
+        if (options){
+            if(options.description){
+                newPost.description = options.description
+            }
+            if (options.courseNumber){
+                newPost.courseNumber = options.courseNumber;
+            }
+            if (options.price){
+                newPost.price = options.price;
+            }
+            if (options.courseDepartment){
+                newPost.courseDepartment = options.courseDepartment;
+            }
+            if (options.gradeReceived){
+                newPost.gradeReceived = options.gradeReceived;
+            }
+            if (options.semesterTaken){
+                newPost.semesterTaken = options.semesterTaken;
+            }
+            if (options.professorTakenWith){
+                newPost.professorTakenWith = options.professorTakenWith;
+            }
+            if (options.takenAtHopkins){
+                newPost.takenAtHopkins = options.takenAtHopkins;
+            }
+            if (options.schoolTakenAt){
+                newPost.schoolTakenAt = options.schoolTakenAt;
+            }
+        }
+        let post = await CoursePost.findByIdAndUpdate(id, newPost );
         if (!post) {
             return "Post not found";
         }
-        post.set(postInfo);
+        post.set();
         await post.save();
         return post;
     }

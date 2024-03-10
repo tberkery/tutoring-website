@@ -31,7 +31,6 @@ const client = new S3Client({
   }
 });
 
-
 // Update 'image.jpeg' with parameter name passed in
 router.post('/upload/:objectID', upload.single('profilePicture'), async (req: Request, res: Response) => {
   try {
@@ -112,17 +111,17 @@ router.get('/get/:key', async (req: Request, res: Response) => {
     const response = await client.send(command);
 
     /*
-  * Retrieve the image from the S3 bucket based on the provided key.
-  * If the image is found, you have two options for sending the response:
-  * 1. Send back the S3 URL of the image:
-  *    res.status(200).json({ imageUrl: `http://tutorhubprofilepics.s3.amazonaws.com/${key}` });
-  * 2. Send the image file itself:
-  *    - Set the appropriate headers for the file:
-  *      res.set('Content-Type', response.ContentType);
-  *      res.set('Content-Disposition', `attachment; filename="${key}"`);
-  *    - Send the binary data of the image in the response body:
-  *      res.status(200).send(response.Body);
-  */
+    * Retrieve the image from the S3 bucket based on the provided key.
+    * If the image is found, you have two options for sending the response:
+    * 1. Send back the S3 URL of the image:
+    *    res.status(200).json({ imageUrl: `http://tutorhubprofilepics.s3.amazonaws.com/${key}` });
+    * 2. Send the image file itself:
+    *    - Set the appropriate headers for the file:
+    *      res.set('Content-Type', response.ContentType);
+    *      res.set('Content-Disposition', `attachment; filename="${key}"`);
+    *    - Send the binary data of the image in the response body:
+    *      res.status(200).send(response.Body);
+    */
     res.status(200).json({ imageUrl: `https://tutorhubprofilepics.s3.amazonaws.com/${key}` });
 
   } catch (err) {

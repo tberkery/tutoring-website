@@ -42,9 +42,9 @@ router.get("/", async (req: any, res: any ) => {
 
 router.put("/:id", async (req: any, res: any) => {
     const id : number = req.params.id;
-    const postInfo = req.body;
+    const {userId, courseName, description, price, courseNumber, courseDepartment, gradeReceived, semesterTaken, professorTakenWith, takenAtHopkins, schoolTakenAt}: {userId: string, courseName: string, description: string, price: string, courseNumber: string, courseDepartment: string[], gradeReceived: string, semesterTaken: string, professorTakenWith: string, takenAtHopkins: boolean, schoolTakenAt: string} = req.body;
     try {
-        const post = await CoursePostDao.update( id, postInfo );
+        const post = await CoursePostDao.update( id, userId, courseName, {description, price, courseNumber, courseDepartment, gradeReceived, semesterTaken, professorTakenWith, takenAtHopkins, schoolTakenAt} );
         if (!post) {
         return res.status(404).json({ msg: "Post not found" });
         }
