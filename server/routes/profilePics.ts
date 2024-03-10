@@ -12,7 +12,7 @@ const multer = require('multer');
 const upload: Multer = multer();
 
 // Initialize instance of express
-const express = require('express');
+const router = require('express').Router()
 
 const router = require('express').Router();
 
