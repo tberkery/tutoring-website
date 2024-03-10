@@ -3,7 +3,6 @@ const mongoose = require("mongoose");
 
 export class CoursePostDao {
     async create(userId: string, courseName: string, options?: {description?: string, price?: string, courseNumber?: string, courseDepartment?: string[], gradeReceived?: string, semesterTaken?: string, professorTakenWith?: string, takenAtHopkins?: boolean, schoolTakenAt?: string}) {
-        console.log("IN DAO CREATE ")
         let newPost: any = {userId, courseName}
         if (options){
             if(options.description){
@@ -35,7 +34,6 @@ export class CoursePostDao {
             }
 
         }
-        console.log("post is ", newPost);
         const data = await CoursePost.create(newPost);
         return data;
     }
