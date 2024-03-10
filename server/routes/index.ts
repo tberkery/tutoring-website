@@ -7,7 +7,7 @@ const router = Router()
 
 router.use('/courses', require('./courses.ts'))
 
-router.use('/posts', require('./posts.ts'))
+router.use('/coursePosts', require('./coursePosts.ts'))
 
 router.use('/profiles', require('./profiles.ts'))
 

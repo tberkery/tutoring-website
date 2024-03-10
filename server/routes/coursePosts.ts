@@ -1,14 +1,14 @@
 import exp from "constants";
 
 const router = require('express').Router();
-const PostDaoClass = require('../data/PostDao');
-const PostDao = new PostDaoClass();
+const CoursePostDaoClass = require('../data/CoursePostDao');
+const CoursePostDao = new CoursePostDaoClass();
 
 router.post("/", async (req: any, res: any) => {
   try {
-    const {userId, title, description, imageUrl, price, courseId}: {userId: string, title: string, description: string, imageUrl: string, price: string, courseId: Number} = req.body
+    const {userId, courseName, description, price, courseNumber, courseDepartment, gradeReceived, semesterTaken, professorTakenWith, takenAtHopkins, schoolTakenAt}: {userId: string, courseName: string, description: string, price: string, courseNumber: string, courseDepartment: string[], gradeReceived: string, semesterTaken: string, professorTakenWith: string, takenAtHopkins: boolean, schoolTakenAt: string} = req.body
     console.log("IN ROUTES");
-    const newPost = await PostDao.create(userId, title, {description, imageUrl, price, courseId});
+    const newPost = await CoursePostDao.create(userId, courseName, {description, price, courseNumber, courseDepartment, gradeReceived, semesterTaken, professorTakenWith, takenAtHopkins, schoolTakenAt});
     res.status(200).json({ newPost });
   } catch (err) {
     console.log(err);
@@ -19,7 +19,7 @@ router.post("/", async (req: any, res: any) => {
 router.get("/findOne/:id", async (req: any, res: any) => {
     const { id }: { id: number } = req.params;
     try {
-      const post = await PostDao.readOne(id);
+      const post = await CoursePostDao.readOne(id);
       if (!post) {
         return res.status(404).json({ msg: "Post not found" });
       }
@@ -31,8 +31,9 @@ router.get("/findOne/:id", async (req: any, res: any) => {
 });
 
 router.get("/", async (req: any, res: any ) => {
+  const {courseName, courseNumber, price} = req.query;
   try {
-    const posts = await PostDao.readAll();
+    const posts = await CoursePostDao.readAll({courseName, courseNumber, price});
     res.status(200).json({ posts });
   } catch (err) {
     console.log(err);
@@ -44,7 +45,7 @@ router.put("/:id", async (req: any, res: any) => {
     const id : number = req.params.id;
     const postInfo = req.body;
     try {
-        const post = await PostDao.update( id, postInfo );
+        const post = await CoursePostDao.update( id, postInfo );
         if (!post) {
         return res.status(404).json({ msg: "Post not found" });
         }
@@ -58,7 +59,7 @@ router.put("/:id", async (req: any, res: any) => {
 router.delete("/:id", async (req: any, res: any) => {
     const id : number = req.params.id;
     try {
-        const post = await PostDao.delete(id);
+        const post = await CoursePostDao.delete(id);
         if (!post) {
         return res.status(404).json({ msg: "Post not found" });
         }
