@@ -12,7 +12,7 @@ const multer = require('multer');
 const upload: Multer = multer();
 
 // Initialize instance of express
-const router = require('express').Router()
+const express = require('express');
 
 const router = require('express').Router();
 
@@ -179,4 +179,3 @@ const uploadToS3 = async (fileContent: Buffer, bucketName: string, key: string) 
 };
 
 module.exports = router;
-
