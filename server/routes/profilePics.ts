@@ -10,10 +10,11 @@ const multer = require('multer');
 
 // Initialize multer with desired configuration
 const upload: Multer = multer();
-// const upload = multer(); // specify the destination folder for uploaded files
 
 // Initialize instance of express
 const router = require('express').Router()
+
+const router = require('express').Router();
 
 // AWS S3 Client Classes
 const { PutObjectCommand, DeleteObjectCommand, GetObjectCommand, S3Client } = require("@aws-sdk/client-s3");

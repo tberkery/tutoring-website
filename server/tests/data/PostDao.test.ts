@@ -1,6 +1,5 @@
 import { ObjectId } from "mongodb";
 
-export {}
 require('dotenv').config()
 const PostDao = require('../../data/PostDao');
 const {faker} = require('@faker-js/faker');
@@ -10,141 +9,216 @@ const URI = process.env.ATLAS_URI_TEST
 test('test create() with all fields', async ()=> {
     const postDao = new PostDao();
     await mg.connect(URI);
-    const courseTitle = faker.lorem.word();
-    const courseCode =  faker.lorem.word();
-    const courseDescription =  faker.lorem.word();
-    const courseDepartment =  faker.lorem.word();
-    const isUpperLevel = true;
+    const userId = faker.lorem.word();
+    const title =  faker.lorem.word();
+    const description =  faker.lorem.sentence();
+    const imageUrl =  faker.internet.url();
+    const price = faker.lorem.word();
+    const courseId = Number(faker.finance.accountNumber());
     
-    const course =  await postDao.create(courseTitle, courseCode, courseDepartment, isUpperLevel, courseDescription);
-    expect(course.courseTitle).toBe(courseTitle);
-    expect(course.courseCode).toBe(courseCode);
-    expect(course.courseDepartment).toBe(courseDepartment);
-    expect(course.isUpperLevel).toBe(isUpperLevel);
-    expect(course.courseDescription).toBe(courseDescription);
+    const post =  await postDao.create(userId, title, {description, imageUrl, price, courseId});
+    expect(post.userId).toBe(userId);
+    expect(post.title).toBe(title);
+    expect(post.description).toBe(description);
+    expect(post.imageUrl).toBe(imageUrl);
+    expect(post.price).toBe(price);
+    expect(post.courseId).toBe(courseId);
 });
 
-// test('test readOne() for a valid id', async ()=> {
-//     const courseDao = new CourseDao();
-//     await mg.connect(URI);
-//     const courseTitle = faker.lorem.word();
-//     const courseCode =  faker.lorem.word();
-//     const courseDescription =  faker.lorem.word();
-//     const courseDepartment =  faker.lorem.word();
-//     const isUpperLevel = true;
+test('test create() without optional fields', async ()=> {
+    const postDao = new PostDao();
+    await mg.connect(URI);
+    const userId = faker.lorem.word();
+    const title =  faker.lorem.word();
     
-//     const course =  await courseDao.create(courseTitle, courseCode, courseDepartment, isUpperLevel, courseDescription);
-//     expect(course.courseTitle).toBe(courseTitle);
-//     expect(course.courseCode).toBe(courseCode);
-//     expect(course.courseDepartment).toBe(courseDepartment);
-//     expect(course.isUpperLevel).toBe(isUpperLevel);
-//     expect(course.courseDescription).toBe(courseDescription);
+    const post =  await postDao.create(userId, title);
+    expect(post.userId).toBe(userId);
+    expect(post.title).toBe(title);
+});
 
-//     const id = course._id;
-//     const foundCourse = await courseDao.readOne(id);
-//     expect(foundCourse.courseTitle).toBe(courseTitle);
-//     expect(foundCourse.courseCode).toBe(courseCode);
-//     expect(foundCourse.courseDepartment).toBe(courseDepartment);
-//     expect(foundCourse.isUpperLevel).toBe(isUpperLevel);
-//     expect(foundCourse.courseDescription).toBe(courseDescription);
-// });
-
-// test('test readOne() for an invalid id', async ()=> {
-//     const courseDao = new CourseDao();
-//     await mg.connect(URI);
-//     const id = new ObjectId(1)
-//     const foundCourse = await courseDao.readOne(id);
-//     expect(foundCourse).toBe(null);
-// });
-
-
-// test('test readAll() on non empty table', async ()=> {
-//     const courseDao = new CourseDao();
-//     await courseDao.deleteAll()
-//     await mg.connect(URI);
-//     for(let i = 0; i < 5; i++){
-//         const courseTitle = faker.lorem.word();
-//         const courseCode =  faker.lorem.word();
-//         const courseDescription =  faker.lorem.word();
-//         const courseDepartment =  faker.lorem.word();
-//         const isUpperLevel = true;
-//         const course =  await courseDao.create(courseTitle, courseCode, courseDepartment, isUpperLevel, courseDescription);
-//     }
-//     const courses = await courseDao.readAll();
-//     expect(courses.length).toBe(5);
-// });
-
-
-
-// test('test update()', async ()=> {
-//     const courseDao = new CourseDao();
-//     await mg.connect(URI);
-//     const courseTitle = faker.lorem.word();
-//     const courseCode =  faker.lorem.word();
-//     const courseDescription =  faker.lorem.word();
-//     const courseDepartment =  faker.lorem.word();
-//     const isUpperLevel = true;
+test('test create() with some optional fields', async ()=> {
+    const postDao = new PostDao();
+    await mg.connect(URI);
+    const userId = faker.lorem.word();
+    const title =  faker.lorem.word();
+    const description =  faker.lorem.sentence();
+    const imageUrl =  faker.internet.url();
+    const courseId = Number(faker.finance.accountNumber());
     
-//     const course =  await courseDao.create(courseTitle, courseCode, courseDepartment, isUpperLevel, courseDescription);
-//     expect(course.courseTitle).toBe(courseTitle);
-//     expect(course.courseCode).toBe(courseCode);
-//     expect(course.courseDepartment).toBe(courseDepartment);
-//     expect(course.isUpperLevel).toBe(isUpperLevel);
-//     expect(course.courseDescription).toBe(courseDescription);
+    const post =  await postDao.create(userId, title, {description, imageUrl, courseId});
+    expect(post.userId).toBe(userId);
+    expect(post.title).toBe(title);
+    expect(post.description).toBe(description);
+    expect(post.imageUrl).toBe(imageUrl);
+    expect(post.courseId).toBe(courseId);
+});
 
-//     const id = course._id;
-//     const newCourseDescription = faker.lorem.sentence();
-//     const updatingDescription = await courseDao.update(id, courseTitle, courseCode, courseDepartment, isUpperLevel, newCourseDescription);
-//     const updatedCourse = await courseDao.readOne(id)
-//     expect(updatedCourse.courseTitle).toBe(courseTitle);
-//     expect(updatedCourse.courseCode).toBe(courseCode);
-//     expect(updatedCourse.courseDepartment).toBe(courseDepartment);
-//     expect(updatedCourse.isUpperLevel).toBe(isUpperLevel);
-//     expect(updatedCourse.courseDescription).toBe(newCourseDescription);
+test('test readOne() for a valid id', async ()=> {
+    const postDao = new PostDao();
+    await mg.connect(URI);
+    const userId = faker.lorem.word();
+    const title =  faker.lorem.word();
+    const description =  faker.lorem.sentence();
+    const imageUrl =  faker.internet.url();
+    const price = faker.lorem.word();
+    const courseId = Number(faker.finance.accountNumber());
     
-// });
+    const post =  await postDao.create(userId, title, {description, imageUrl, price, courseId});
+    expect(post.userId).toBe(userId);
+    expect(post.title).toBe(title);
+    expect(post.description).toBe(description);
+    expect(post.imageUrl).toBe(imageUrl);
+    expect(post.price).toBe(price);
+    expect(post.courseId).toBe(courseId);
 
-// test('test update() on an invalid ID', async ()=> {
-//     const courseDao = new CourseDao();
-//     await mg.connect(URI);
-//     const courseTitle = faker.lorem.word();
-//     const courseCode =  faker.lorem.word();
-//     const courseDescription =  faker.lorem.word();
-//     const courseDepartment =  faker.lorem.word();
-//     const isUpperLevel = true;
-//     const id = new ObjectId(1)
-//     const updatingDescription = await courseDao.update(id, courseTitle, courseCode, courseDepartment, isUpperLevel, courseDescription);
-//     expect(updatingDescription).toBe(null);
+    const id = post._id;
+    const foundPost = await postDao.readOne(id);
+    expect(foundPost.userId).toBe(userId);
+    expect(foundPost.title).toBe(title);
+    expect(foundPost.description).toBe(description);
+    expect(foundPost.imageUrl).toBe(imageUrl);
+    expect(foundPost.price).toBe(price);
+    expect(foundPost.courseId).toBe(courseId);
+});
+
+test('test readOne() for an invalid id', async ()=> {
+    await mg.connect(URI);
+    const id = new ObjectId(1)
+    const postDao = new PostDao();
+    const foundPost = await postDao.readOne(id);
+    expect(foundPost).toBe(null);
+});
+
+
+test('test readAll() on non empty table', async ()=> {
+    const postDao = new PostDao();
+    await postDao.deleteAll()
+    await mg.connect(URI);
+    for(let i = 0; i < 5; i++){
+        const userId = faker.lorem.word();
+        const title =  faker.lorem.word();
+        const description =  faker.lorem.sentence();
+        const imageUrl =  faker.internet.url();
+        const price = faker.lorem.word();
+        const courseId = Number(faker.finance.accountNumber());
+        const post =  await postDao.create(userId, title, {description, imageUrl, price, courseId});
+    }
+    const profiles = await postDao.readAll();
+    expect(profiles.length).toBe(5);
+});
+
+
+
+test('test update()', async ()=> {
+    const postDao = new PostDao();
+    await mg.connect(URI);
+    const userId = faker.lorem.word();
+    const title =  faker.lorem.word();
+    const description =  faker.lorem.sentence();
+    const imageUrl =  faker.internet.url();
+    const price = faker.lorem.word();
+    const courseId = Number(faker.finance.accountNumber());
     
-// });
+    const post =  await postDao.create(userId, title, {description, imageUrl, price, courseId});
+    expect(post.userId).toBe(userId);
+    expect(post.title).toBe(title);
+    expect(post.description).toBe(description);
+    expect(post.imageUrl).toBe(imageUrl);
+    expect(post.price).toBe(price);
+    expect(post.courseId).toBe(courseId);
 
-// test('test delete() with a valid ID', async ()=> {
-//     const courseDao = new CourseDao();
-//     await mg.connect(URI);
-//     const courseTitle = faker.lorem.word();
-//     const courseCode =  faker.lorem.word();
-//     const courseDescription =  faker.lorem.word();
-//     const courseDepartment =  faker.lorem.word();
-//     const isUpperLevel = true;
+    const id = post._id;
+    const newTitle = faker.lorem.word();
+    const newPrice = faker.lorem.word();
+    const updatingPost = await postDao.update(id, userId, newTitle, {description, imageUrl, price:newPrice, courseId})
+    const updatedPost = await postDao.readOne(id);
+    expect(updatedPost.userId).toBe(userId);
+    expect(updatedPost.title).toBe(newTitle);
+    expect(updatedPost.description).toBe(description);
+    expect(updatedPost.imageUrl).toBe(imageUrl);
+    expect(updatedPost.price).toBe(newPrice);
+    expect(updatedPost.courseId).toBe(courseId);
+});
+
+test('test update() to add an optional param when none originally given', async ()=> {
+    const postDao = new PostDao();
+    await mg.connect(URI);
+    const userId = faker.lorem.word();
+    const title =  faker.lorem.word();
+    const description =  faker.lorem.sentence();
+    const imageUrl =  faker.internet.url();
+
+    const post =  await postDao.create(userId, title);
+    expect(post.userId).toBe(userId);
+    expect(post.title).toBe(title);
+
+    const id = post._id;
+    const updatingPost = await postDao.update(id, userId, title, {description, imageUrl})
+    const updatedPost = await postDao.readOne(id);
+    expect(updatedPost.userId).toBe(userId);
+    expect(updatedPost.title).toBe(title);
+    expect(updatedPost.description).toBe(description);
+    expect(updatedPost.imageUrl).toBe(imageUrl);
+
+});
+
+test('test update() to add an optional param originally not given', async ()=> {
+    const postDao = new PostDao();
+    await mg.connect(URI);
+    const userId = faker.lorem.word();
+    const title =  faker.lorem.word();
+    const description =  faker.lorem.sentence();
+    const imageUrl =  faker.internet.url();
+    const price = faker.lorem.word();
+    const courseId = Number(faker.finance.accountNumber());
     
-//     const course =  await courseDao.create(courseTitle, courseCode, courseDepartment, isUpperLevel, courseDescription);
-//     expect(course.courseTitle).toBe(courseTitle);
-//     expect(course.courseCode).toBe(courseCode);
-//     expect(course.courseDepartment).toBe(courseDepartment);
-//     expect(course.isUpperLevel).toBe(isUpperLevel);
-//     expect(course.courseDescription).toBe(courseDescription);
+    const post =  await postDao.create(userId, title, {description, imageUrl, price});
+    expect(post.userId).toBe(userId);
+    expect(post.title).toBe(title);
+    expect(post.description).toBe(description);
+    expect(post.imageUrl).toBe(imageUrl);
+    expect(post.price).toBe(price);
 
-//     const id = course._id;
-//     const deleting = await courseDao.delete(id);
-//     expect(deleting.courseTitle).toBe(courseTitle);
-//     const deleted = await courseDao.readOne(id);
-//     expect(deleted).toBe(null);
-// });
+    const id = post._id;
+    const updatingPost = await postDao.update(id, userId, title, {description, imageUrl, price, courseId})
+    const updatedPost = await postDao.readOne(id);
+    expect(updatedPost.userId).toBe(userId);
+    expect(updatedPost.title).toBe(title);
+    expect(updatedPost.description).toBe(description);
+    expect(updatedPost.imageUrl).toBe(imageUrl);
+    expect(updatedPost.price).toBe(price);
+    expect(updatedPost.courseId).toBe(courseId);
+});
 
-// test('test delete() for an invalid id', async ()=> {
-//     await mg.connect(URI);
-//     const id = new ObjectId(1)
-//     const courseDao = new CourseDao();
-//     const foundCourse = await courseDao.delete(id);
-//     expect(foundCourse).toBe(null);
-// });
+test('test delete() with a valid ID', async ()=> {
+    const postDao = new PostDao();
+    await mg.connect(URI);
+    const userId = faker.lorem.word();
+    const title =  faker.lorem.word();
+    const description =  faker.lorem.sentence();
+    const imageUrl =  faker.internet.url();
+    const price = faker.lorem.word();
+    const courseId = Number(faker.finance.accountNumber());
+    
+    const post =  await postDao.create(userId, title, {description, imageUrl, price, courseId});
+    expect(post.userId).toBe(userId);
+    expect(post.title).toBe(title);
+    expect(post.description).toBe(description);
+    expect(post.imageUrl).toBe(imageUrl);
+    expect(post.price).toBe(price);
+    expect(post.courseId).toBe(courseId);
+
+    const id = post._id;
+    const deleting = await postDao.delete(id);
+    expect(deleting.title).toBe(title);
+    const deleted = await postDao.readOne(id);
+    expect(deleted).toBe(null);
+});
+
+test('test delete() for an invalid id', async ()=> {
+    await mg.connect(URI);
+    const id = new ObjectId(1)
+    const postDao = new PostDao();
+    const foundPost = await postDao.delete(id);
+    expect(foundPost).toBe(null);
+});

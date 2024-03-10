@@ -1,3 +1,9 @@
+# Team 2: Object-Oriented Software Engineering
+
+The goal is to create TutorHub.
+
+Team members: Tad Berkery, Ilana Chalom, Matthew Flynn, Katherine Forbes, Nolan Fogarty, Dokyung Yang
+
 Our hello world app is deployed at https://oose-team02-helloworld.netlify.app/
 
 It's built using the MERN stack and other technologies detailed in our "Tech Stack" github issue
@@ -26,23 +32,28 @@ Before you begin, ensure you have met the following requirements:
 
 5. Install backend dependencies: ```npm install```
 
+6. Navigate to the root directiory: ```cd ..```
+
+See the `package.json` and `package-lock.json` files.
+
 ### Configuration
 
 1. Create a .env file in the server directory. Set a variable called ATLAS_URI to the connection string (with user and pwd included) for your cluster:
    ```ATLAS_URI={YOUR_ATLAS_URI}```
+   ```ATLAS_URI_TEST={YOUR_ATLAS_URI_FOR_TESTING_CLUSTER```
+   
+
+3. Use AWS for object storage. Create an AWS account. After establishing your root user, create a new user role called `admin` with full read and write permissions in S3. Create an access key for the admin user role. Encode this info in a file called `aws.env` in the `server` directory in the following format (note that we have omitted our access key ID and secret access key for security reasons):
+
+```
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_REGION=us-east-2
+AWS_BUCKET_NAME=tutorhubprofilepics
+```
+
+3. Make sure you have installed the AWS SDK (one way to do this is `npm install aws-sdk`). Note that installing all contains of the `*.json` files above on the server-side should have already sufficiently accomplished this. This will be integral for ensuring the code and S3 are able to communicate and interact.
 
 ### Running the app
 
-1. From the root directory, start the backend server: ```npm run start:api```
-
-2. In another terminal, navigate to the frontend directory: ```cd client```
-
-3. Start the frontend development server:
-   ```bash
-   npm run start
-   ```
-# Team 2: Object-Oriented Software Engineering
-
-The goal is to create TutorHub.
-
-Team members: Tad Berkery, Ilana Chalom, Matthew Flynn, Katherine Forbes, Nolan Fogarty, Dokyung Yang
+From the root directory (after appropriate installation), start both the frontend and the backend server simultaneously by executing: ```npm run start:all```
