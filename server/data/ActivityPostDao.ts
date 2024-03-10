@@ -2,8 +2,8 @@ const ActivityPost = require("../model/ActivityPost.ts");
 const mongoose = require("mongoose")
 
 export class ActivityPostDao {
-    async create(userId: string, title: string, options?: {description?: string, imageUrl?: string, price?: string, courseId?: Number}) {
-        let newPost: any = {userId, title}
+    async create(userId: string, activityTitle: string, options?: {description?: string, imageUrl?: string, price?: string, courseId?: Number}) {
+        let newPost: any = {userId, activityTitle}
         if (options){
             if (options.description){
                 newPost.description = options.description
