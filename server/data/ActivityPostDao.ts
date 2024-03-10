@@ -2,11 +2,11 @@ const ActivityPost = require("../model/ActivityPost.ts");
 const mongoose = require("mongoose")
 
 export class ActivityPostDao {
-    async create(userId: string, activityTitle: string, options?: {description?: string, imageUrl?: string, price?: string, courseId?: Number}) {
+    async create(userId: string, activityTitle: string, options?: {activityDescription?: string, imageUrl?: string, price?: string, tags?: Array<string>}) {
         let newPost: any = {userId, activityTitle}
         if (options){
-            if (options.description){
-                newPost.description = options.description
+            if (options.activityDescription){
+                newPost.activityDescription = options.activityDescription;
             }
             if (options.imageUrl){
                 newPost.imageUrl = options.imageUrl;
@@ -14,8 +14,8 @@ export class ActivityPostDao {
             if (options.price){
                 newPost.price = options.price;
             }
-            if (options.courseId){
-                newPost.courseId = options.courseId;
+            if (options.tags){
+                newPost.tags = options.tags;
             }
         }
         console.log("post is ", newPost);
