@@ -91,11 +91,6 @@ export class CoursePostDao {
             }
         }
         let post = await CoursePost.findByIdAndUpdate(id, newPost );
-        if (!post) {
-            return "Post not found";
-        }
-        post.set();
-        await post.save();
         return post;
     }
     async delete(id : any) {
