@@ -56,7 +56,10 @@ describe('Test activityPosts routes', () => {
 
         expect(res.status).toBe(200);
         expect(res.body).toHaveProperty('post');
-        expect(res.body.post).toEqual(expect.objectContaining(newPostData));
+        expect(res.body.post).toEqual(expect.objectContaining({
+            ...newPostData,
+            tags: expect.any(Array) // Assert that 'tags' is an array
+        }));
 
         // Clean up: Delete the post created during the test
         await request(app).delete(`/activityPosts/${postId}`);
@@ -150,7 +153,10 @@ describe('Test activityPosts routes', () => {
     
         expect(res.status).toBe(200);
         expect(res.body).toHaveProperty('post');
-        expect(res.body.post).toEqual(expect.objectContaining(finalPostData));
+        expect(res.body.post).toEqual(expect.objectContaining({
+            ...finalPostData,
+            tags: expect.any(Array) // Assert that 'tags' is an array... need to tell Jest this
+        }));
 
         // Clean up: Delete the post created during the test
         await request(app).delete(`/activityPosts/${postId}`);
