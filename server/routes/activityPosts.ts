@@ -72,7 +72,7 @@ router.delete("/:id", async (req: any, res: any) => {
     }
 });
 
-router.get("/activityPost", async (req: any, res: any) => {
+router.get("/activityposts", async (req: any, res: any) => {
   try {
     // Extract query parameters from the request
     const { userId, activityTitle, price, tags } = req.query;
