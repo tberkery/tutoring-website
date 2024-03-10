@@ -72,4 +72,27 @@ router.delete("/:id", async (req: any, res: any) => {
     }
 });
 
+router.get("/activityPost", async (req: any, res: any) => {
+  try {
+    // Extract query parameters from the request
+    const { userId, activityTitle, price, tags } = req.query;
+
+    // Construct options object based on the provided query parameters
+    const options: any = {};
+    if (userId) options.userId = userId;
+    if (activityTitle) options.activityTitle = activityTitle;
+    if (price) options.price = price;
+    if (tags) options.tags = tags;
+
+    // Call the DAO method with the constructed options
+    const posts = await ActivityPostDao.readSome(options);
+
+    // Return the fetched posts
+    res.status(200).json(posts);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server Error");
+  }
+});
+
 module.exports = router;
