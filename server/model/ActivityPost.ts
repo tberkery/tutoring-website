@@ -1,15 +1,17 @@
-import mongoose from "mongoose";
+export {}
 
-const PostSchema = new mongoose.Schema({
+const mongoose = require('mongoose');
+
+const ActivityPostSchema = new mongoose.Schema({
     userId: {
       type: String,
       required: true,
     },
-    title: {
+    activityTitle: {
       type: String,
       required: true,
     },
-    description: {
+    activityDescription: {
       type: String,
       default: null,
     },
@@ -21,13 +23,12 @@ const PostSchema = new mongoose.Schema({
       type: String,
       default: null,
     },
-    courseId: { // this field will be null if it's non-academic
-      type: Number,
-      ref: 'Course',
+    tags: {
+      type: [String],
       default: null
-    },
+    }
 });
 
-const Post = mongoose.model("Post", PostSchema);
+const ActivityPost = mongoose.model("ActivityPost", ActivityPostSchema);
 
-module.exports = Post;
+module.exports = ActivityPost;

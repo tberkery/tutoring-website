@@ -1,8 +1,10 @@
 {
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.529.1",
     "@hookform/resolvers": "^3.3.4",
     "@radix-ui/react-label": "^2.0.2",
     "@radix-ui/react-slot": "^1.0.2",
+    "aws-sdk": "^2.1574.0",
     "concurrently": "^8.2.2",
     "dotenv": "^16.4.5",
     "faker": "^6.6.6",

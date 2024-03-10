@@ -1,8 +1,10 @@
-// server/server.ts
-
-const app = require('./app.ts')
-const PORT = process.env.PORT || 6300;
+// server/index.ts
+require('dotenv').config();
+const PORT = process.env.PORT
+const app = require('./app');
 
 app.listen(PORT, () => {
-  console.log(`Server is running on port: ${PORT}...`);
+    console.log(`Server is running on port ${PORT}`);
 });
+
+module.exports = app;
