@@ -105,9 +105,6 @@ describe('Test activityPosts routes', () => {
 
         const res = await request(app).get('/activityPosts');
 
-        console.log("Focus on multiple posts res:")
-        console.log(res.body)
-
         expect(res.status).toBe(200);
         expect(res.body).toHaveLength(2);
         expect(res.body[0]).toMatchObject(example1PostData);
@@ -309,8 +306,6 @@ describe('Test activityPosts routes', () => {
 
         // Make a GET request to query activity posts by userId
         const res = await request(app).get('/activityPosts?userId=example2UserId');
-        console.log("Focus on userId res:")
-        console.log(res.body)
     
         // Assertions
         expect(res.status).toBe(200);
