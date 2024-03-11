@@ -18,7 +18,6 @@ export class ActivityPostDao {
                 newPost.tags = options.tags;
             }
         }
-        console.log("post is ", newPost);
         const data = await ActivityPost.create(newPost);
         return data;
     }
@@ -61,18 +60,14 @@ export class ActivityPostDao {
                         case 'tags':
                             query.tags = options.tags;
                             break;
-                        break;
                     }
                 }
             }
         }
-        console.log("Here is your formatted query:", query)
 
 
         // Fetch data from the database using the constructed query
         const posts = await ActivityPost.find(query).exec();
-        console.log("heres the posts found")
-        console.log(posts)
         // Return the fetched posts
         return posts;
 
