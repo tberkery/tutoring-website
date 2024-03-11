@@ -1,6 +1,5 @@
 import React, { FC, ReactNode } from "react";
 import { ClerkProvider } from "@clerk/nextjs";
-import { Inter as FontSans } from "next/font/google";
 import { cn } from "@/lib/utils";
 
 const RootLayout : FC<{ children : ReactNode }> = ({ children }) => {
@@ -10,8 +9,7 @@ const RootLayout : FC<{ children : ReactNode }> = ({ children }) => {
         <body
           className={cn(
             "min-h-screen bg-pageBg font-sans antialiased",
-            fontSans.variable
-          )}
+            "text-textPrimary dark:text-textPrimaryDark",)}
         >{children}</body>
       </html>
     </ClerkProvider>
@@ -19,8 +17,3 @@ const RootLayout : FC<{ children : ReactNode }> = ({ children }) => {
 }
 
 export default RootLayout;
-
-export const fontSans = FontSans({
-  subsets: ["latin"],
-  variable: "--font-sans",
-})
