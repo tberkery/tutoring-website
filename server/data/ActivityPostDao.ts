@@ -82,8 +82,14 @@ export class ActivityPostDao {
         return post;
     }
     async delete(id : any) {
-        await ActivityPost.findOneAndDelete({ _id: id });
+        const deletedPost = await ActivityPost.findOneAndDelete({ _id: id });
+        if (!deletedPost) {
+            return "Post not found"
+        }
         return "Post deleted";
+    }
+    async deleteAll(){
+        await ActivityPost.deleteMany({})
     }
 }
 module.exports = ActivityPostDao;
