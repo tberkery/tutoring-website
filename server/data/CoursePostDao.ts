@@ -99,9 +99,14 @@ export class CoursePostDao {
         let post = await CoursePost.findByIdAndUpdate(id, newPost );
         return post;
     }
-    async delete(id : any) {
-        await CoursePost.findOneAndDelete({ _id: id });
-        return "Post deleted";
+
+    async delete(_id: Number) {
+        const data = await CoursePost.findByIdAndDelete(_id);
+        return data;
+    }
+
+    async deleteAll(){
+        await CoursePost.deleteMany({})
     }
 }
 module.exports = CoursePostDao;
