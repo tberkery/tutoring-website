@@ -42,6 +42,7 @@ const ComboBox : FC<props> = (props : props) => {
 					role="combobox"
 					aria-expanded={open}
 					className={ `w-[200px] justify-between ${props.className}` }
+					id={props.id}
 				>
 					{value
 						? options.find((option) => option.toUpperCase() === value.toUpperCase())
