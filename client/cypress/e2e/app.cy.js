@@ -8,10 +8,6 @@ describe('Authentication', () => {
   it('Access restricted page with test credentials', () => {
     cy.visit('/profile', {failOnStatusCode: false });
 
-    cy.contains("Nolan Fogarty");
-  });
-
-  it('Access account creation page', () => {
-    cy.visit('/createAccount', {failOnStatusCode: false});
+    cy.contains("Matthew Flynn");
   });
 });

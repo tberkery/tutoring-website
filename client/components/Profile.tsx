@@ -8,11 +8,8 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL
 const Profile = () => {
   const { isLoaded, isSignedIn, user } = useUser();
 
-  if (!isSignedIn) {
-    return (<p>Please sign in</p>);
-  }
+  const [profileData, setProfileData] = useState(null);
 
-  const [profileData, setProfileData] = React.useState(null);
   useEffect(() => {
     const fetchProfile = async () => {
       if (!user) return;
@@ -26,6 +23,10 @@ const Profile = () => {
 
     fetchProfile();
   }, [user]);
+
+  if (!isSignedIn) {
+    return (<p>Please sign in</p>);
+  }
 
   if (!isLoaded) {
     return <div className="text-center mt-20">Loading your profile...</div>;
