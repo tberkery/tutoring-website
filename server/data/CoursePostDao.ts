@@ -2,7 +2,7 @@ const CoursePost = require("../model/CoursePost.ts");
 const mongoose = require("mongoose");
 
 export class CoursePostDao {
-    async create(userId: string, courseName: string, options?: {description?: string, price?: string, courseNumber?: string, courseDepartment?: string[], gradeReceived?: string, semesterTaken?: string, professorTakenWith?: string, takenAtHopkins?: boolean, schoolTakenAt?: string}) {
+    async create(userId: string, courseName: string, options?: {description?: string, price?: number, courseNumber?: string, courseDepartment?: string[], gradeReceived?: string, semesterTaken?: string, professorTakenWith?: string, takenAtHopkins?: boolean, schoolTakenAt?: string}) {
         let newPost: any = {userId, courseName}
         if (options){
             if(options.description){
@@ -47,7 +47,7 @@ export class CoursePostDao {
         return posts;
     }
 
-    async readAll({courseName, courseNumber, price}: {courseName: string, courseNumber: string, price: string}) {
+    async readAll({courseName, courseNumber, price}: {courseName: string, courseNumber: string, price: number}) {
         const filter : any = {};
         if (courseName) {
             filter.courseName = courseName;
@@ -65,7 +65,7 @@ export class CoursePostDao {
             console.error('Error fetching posts:', error);
         }
     }
-    async update( id: any, userId: string, courseName: string, options?: {description?: string, price?: string, courseNumber?: string, courseDepartment?: string[], gradeReceived?: string, semesterTaken?: string, professorTakenWith?: string, takenAtHopkins?: boolean, schoolTakenAt?: string} ) {
+    async update( id: any, userId: string, courseName: string, options?: {description?: string, price?: number, courseNumber?: string, courseDepartment?: string[], gradeReceived?: string, semesterTaken?: string, professorTakenWith?: string, takenAtHopkins?: boolean, schoolTakenAt?: string} ) {
         let newPost: any = {userId, courseName}
         if (options){
             if(options.description){
