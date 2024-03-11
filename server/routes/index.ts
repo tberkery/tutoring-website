@@ -7,10 +7,14 @@ const router = Router()
 
 router.use('/courses', require('./courses'))
 
-router.use('/posts', require('./posts.ts'))
+router.use('/coursePosts', require('./coursePosts.ts'))
 
 router.use('/profiles', require('./profiles.ts'))
 
 router.use('/profilePics', require('./profilePics.ts'))
+
+router.use('/activityPosts', require('./activityPosts.ts'))
+
+router.use('/allPosts', require('./allPosts.ts'))
 
 module.exports = router;

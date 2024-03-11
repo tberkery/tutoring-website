@@ -1,3 +1,5 @@
+export {}
+
 import { Request, Response } from 'express';
 
 const Profiles = require("../model/Profile.ts")
@@ -12,8 +14,6 @@ const multer = require('multer');
 const upload: Multer = multer();
 
 // Initialize instance of express
-const express = require('express');
-
 const router = require('express').Router();
 
 // AWS S3 Client Classes
