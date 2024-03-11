@@ -19,12 +19,8 @@ router.get("/", async (req: any, res: any ) => {
         allPosts.sort((a, b) => {
             const timestampA = a._id.getTimestamp().getTime();
             const timestampB = b._id.getTimestamp().getTime();
-            return timestampB - timestampA; 
+            return timestampB - timestampA;
         });
-
-        allPosts.forEach((post: any) => {
-            console.log('time: ' + post._id.getTimestamp());
-        })
 
         if (allPosts.length === 0) {
             return res.status(404).json({ msg: "No posts found" });
