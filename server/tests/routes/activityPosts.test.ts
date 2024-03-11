@@ -220,8 +220,10 @@ describe('Test activityPosts routes', () => {
         expect(res.status).toBe(200);
         console.log("HERE IS RES.BODY:")
         console.log(res.body[0]);
-        expect(res.body).toEqual(example2PostData); // Check if the returned post matches example2PostData
-    
+        expect(res.status).toBe(200);
+        expect(res.body).toHaveLength(1); // Ensure only one post is returned
+        expect(res.body[0]).toMatchObject(example2PostData); // Verify it matches contents of post that satisifes query
+
         // Clean up: Delete all activity posts
         await activityPost.deleteMany({});
     });
