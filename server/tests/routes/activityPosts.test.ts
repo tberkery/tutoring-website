@@ -16,7 +16,7 @@ describe('Test activityPosts routes', () => {
             activityTitle: 'Example Activity',
             activityDescription: 'Example description',
             imageUrl: 'exampleImageUrl',
-            price: 'examplePrice',
+            price: 1,
             tags: ['exampleTag1', 'exampleTag2']
         };
 
@@ -42,7 +42,7 @@ describe('Test activityPosts routes', () => {
             activityTitle: 'Example Activity',
             activityDescription: 'Example description',
             imageUrl: 'exampleImageUrl',
-            price: 'examplePrice',
+            price: 1,
             tags: ['exampleTag1', 'exampleTag2']
         };
         
@@ -84,7 +84,7 @@ describe('Test activityPosts routes', () => {
             activityTitle: 'Example1 Activity',
             activityDescription: 'Example1 description',
             imageUrl: 'example1ImageUrl',
-            price: 'example1Price',
+            price: 1,
             tags: ['example1Tag1', 'example1Tag2']
         };
 
@@ -93,7 +93,7 @@ describe('Test activityPosts routes', () => {
             activityTitle: 'Example2 Activity',
             activityDescription: 'Example2 description',
             imageUrl: 'example2ImageUrl',
-            price: 'example2Price',
+            price: 1,
             tags: ['example2Tag1', 'example2Tag2']
         };
         
@@ -123,7 +123,7 @@ describe('Test activityPosts routes', () => {
             activityTitle: 'Example Activity',
             activityDescription: 'Example description',
             imageUrl: 'exampleImageUrl',
-            price: 'examplePrice',
+            price: 1,
             tags: ['exampleTag1', 'exampleTag2']
         };
         
@@ -143,7 +143,7 @@ describe('Test activityPosts routes', () => {
             activityTitle: 'Updated Title',
             activityDescription: 'Updated Description',
             imageUrl: 'exampleImageUrl',
-            price: 'examplePrice',
+            price: 1,
             tags: ['exampleTag1', 'exampleTag2']
         };
     
@@ -169,7 +169,7 @@ describe('Test activityPosts routes', () => {
             activityTitle: 'Example Activity',
             activityDescription: 'Example description',
             imageUrl: 'exampleImageUrl',
-            price: 'examplePrice',
+            price: 1,
             tags: ['exampleTag1', 'exampleTag2']
         };
         
@@ -196,7 +196,7 @@ describe('Test activityPosts routes', () => {
             activityTitle: 'Example1 Activity',
             activityDescription: 'Example1 description',
             imageUrl: 'example1ImageUrl',
-            price: 'example1Price',
+            price: 1,
             tags: ['example1Tag1', 'example1Tag2']
         };
     
@@ -205,7 +205,7 @@ describe('Test activityPosts routes', () => {
             activityTitle: 'Example2 Activity',
             activityDescription: 'Example2 description',
             imageUrl: 'example2ImageUrl',
-            price: 'example2Price',
+            price: 1,
             tags: ['example2Tag1', 'example2Tag2']
         };
         
@@ -237,7 +237,7 @@ describe('Test activityPosts routes', () => {
             activityTitle: 'Example1 Activity',
             activityDescription: 'Example1 description',
             imageUrl: 'example1ImageUrl',
-            price: 'example1Price',
+            price: 1,
             tags: ['example1Tag1', 'example1Tag2']
         };
     
@@ -246,7 +246,7 @@ describe('Test activityPosts routes', () => {
             activityTitle: 'Example2 Activity',
             activityDescription: 'Example2 description',
             imageUrl: 'example2ImageUrl',
-            price: 'example2Price',
+            price: 1,
             tags: ['example2Tag1', 'example2Tag2']
         };
         
@@ -277,7 +277,7 @@ describe('Test activityPosts routes', () => {
             activityTitle: 'Example1 Activity',
             activityDescription: 'Example1 description',
             imageUrl: 'example1ImageUrl',
-            price: 'example1Price',
+            price: 1,
             tags: ['example1Tag1', 'example1Tag2']
         };
     
@@ -286,7 +286,7 @@ describe('Test activityPosts routes', () => {
             activityTitle: 'Example2 Activity',
             activityDescription: 'Example2 description',
             imageUrl: 'example2ImageUrl',
-            price: 'example2Price',
+            price: 1,
             tags: ['example2Tag1', 'example2Tag2']
         };
 
@@ -295,7 +295,7 @@ describe('Test activityPosts routes', () => {
             activityTitle: 'Example3 Activity',
             activityDescription: 'Example3 description',
             imageUrl: 'example3ImageUrl',
-            price: 'example3Price',
+            price: 1,
             tags: ['example3Tag1', 'example3Tag2']
         };
         
@@ -328,7 +328,7 @@ describe('Test activityPosts routes', () => {
             activityTitle: 'Example1 Activity',
             activityDescription: 'Example1 description',
             imageUrl: 'example1ImageUrl',
-            price: 'example1Price',
+            price: 1,
             tags: ['example1Tag1', 'example1Tag2']
         };
     
@@ -337,7 +337,7 @@ describe('Test activityPosts routes', () => {
             activityTitle: 'Example2 Activity',
             activityDescription: 'Example2 description',
             imageUrl: 'example2ImageUrl',
-            price: 'example2Price',
+            price: 1,
             tags: ['example2Tag1', 'example2Tag2']
         };
 
@@ -346,7 +346,7 @@ describe('Test activityPosts routes', () => {
             activityTitle: 'Example2 Activity', // NOTE the 2s here
             activityDescription: 'Example3 description',
             imageUrl: 'example3ImageUrl',
-            price: 'example3Price',
+            price: 1,
             tags: ['example3Tag1', 'example3Tag2']
         };
         
@@ -379,7 +379,7 @@ describe('Test activityPosts routes', () => {
             activityTitle: 'Example1 Activity',
             activityDescription: 'Example1 description',
             imageUrl: 'example1ImageUrl',
-            price: 'example1Price',
+            price: 1,
             tags: ['example1Tag1', 'example1Tag2']
         };
     
@@ -388,7 +388,7 @@ describe('Test activityPosts routes', () => {
             activityTitle: 'Example2 Activity',
             activityDescription: 'Example2 description',
             imageUrl: 'example2ImageUrl',
-            price: 'example2Price',
+            price: 2,
             tags: ['example2Tag1', 'example2Tag2']
         };
 
@@ -397,7 +397,7 @@ describe('Test activityPosts routes', () => {
             activityTitle: 'Example3 Activity',
             activityDescription: 'Example3 description',
             imageUrl: 'example3ImageUrl',
-            price: 'example2Price', // NOTE the 2s here
+            price: 2, // NOTE the 2s here
             tags: ['example3Tag1', 'example3Tag2']
         };
         
@@ -407,7 +407,7 @@ describe('Test activityPosts routes', () => {
         const postRes3 = await request(app).post('/activityPosts').send(example3PostData);
 
         // Make a GET request to query activity posts by userId
-        const res = await request(app).get('/activityPosts/query?price=example2Price');
+        const res = await request(app).get('/activityPosts/query?price=2');
     
         // Assertions
         expect(res.status).toBe(200);
@@ -430,7 +430,7 @@ describe('Test activityPosts routes', () => {
             activityTitle: 'Example1 Activity',
             activityDescription: 'Example1 description',
             imageUrl: 'example1ImageUrl',
-            price: 'example1Price',
+            price: 1,
             tags: ['example2Tag2', 'example1Tag1'] // Note the 2 but ONLY for Tag2
         };
     
@@ -439,7 +439,7 @@ describe('Test activityPosts routes', () => {
             activityTitle: 'Example2 Activity',
             activityDescription: 'Example2 description',
             imageUrl: 'example2ImageUrl',
-            price: 'example2Price',
+            price: 2,
             tags: ['example2Tag1', 'example2Tag2']
         };
 
@@ -448,7 +448,7 @@ describe('Test activityPosts routes', () => {
             activityTitle: 'Example3 Activity',
             activityDescription: 'Example3 description',
             imageUrl: 'example3ImageUrl',
-            price: 'example2Price',
+            price: 2,
             tags: ['example3Tag1', 'example3Tag2']
         };
         
@@ -480,7 +480,7 @@ describe('Test activityPosts routes', () => {
             activityTitle: 'Example1 Activity',
             activityDescription: 'Example1 description',
             imageUrl: 'example1ImageUrl',
-            price: 'example1Price',
+            price: 1,
             tags: ['example2Tag2', 'example1Tag1'] // Note the 2 but ONLY for Tag2
         };
     
@@ -489,7 +489,7 @@ describe('Test activityPosts routes', () => {
             activityTitle: 'Example2 Activity',
             activityDescription: 'Example2 description',
             imageUrl: 'example2ImageUrl',
-            price: 'example2Price',
+            price: 2,
             tags: ['example4Tag1', 'example2Tag2'] // Note the 4
         };
 
@@ -498,7 +498,7 @@ describe('Test activityPosts routes', () => {
             activityTitle: 'Example3 Activity',
             activityDescription: 'Example3 description',
             imageUrl: 'example3ImageUrl',
-            price: 'example2Price',
+            price: 2,
             tags: ['example3Tag1', 'example3Tag2']
         };
         
@@ -531,7 +531,7 @@ describe('Test activityPosts routes', () => {
             activityTitle: 'Example1 Activity',
             activityDescription: 'Example1 description',
             imageUrl: 'example1ImageUrl',
-            price: 'example1Price',
+            price: 1,
             tags: ['example1Tag1', 'example1Tag2']
         };
     
@@ -540,7 +540,7 @@ describe('Test activityPosts routes', () => {
             activityTitle: 'Example2 Activity',
             activityDescription: 'Example2 description',
             imageUrl: 'example2ImageUrl',
-            price: 'example2Price',
+            price: 2,
             tags: ['example1Tag1', 'example1Tag2', 'example1Tag3'] // Note the introduction of example1Tag3 (different than before and query)
         };
 
@@ -549,7 +549,7 @@ describe('Test activityPosts routes', () => {
             activityTitle: 'Example3 Activity',
             activityDescription: 'Example3 description',
             imageUrl: 'example3ImageUrl',
-            price: 'example2Price',
+            price: 2,
             tags: ['example1Tag1', 'example3Tag2'] // Note that only example1Tag1 is in common with prior examples
         };
         
