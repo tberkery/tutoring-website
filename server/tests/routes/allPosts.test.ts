@@ -20,12 +20,12 @@ app.use(express.json());
 app.use('/allPosts', router);
 
 async function addActivityWithDelay(postData: any) {
-    await new Promise(resolve => setTimeout(resolve, 1000)); // 1 second delay
+    await new Promise(resolve => setTimeout(resolve, 100)); // 1 second delay
     return request(app).post('/activityPosts').send(postData);
 }
 
 async function addCourseWithDelay(postData: any) {
-    await new Promise(resolve => setTimeout(resolve, 1000)); // 1 second delay
+    await new Promise(resolve => setTimeout(resolve, 100)); // 1 second delay
     return request(app).post('/coursePosts').send(postData);
 }
 
@@ -49,7 +49,7 @@ describe('Test allPosts routes', () => {
             courseName: 'Example Course 108',
             description: 'Example description',
             imageUrl: 'exampleImageUrl',
-            price: 'examplePrice',
+            price: 1,
         };
 
         const newCourseData2 = {
@@ -57,7 +57,7 @@ describe('Test allPosts routes', () => {
             courseName: 'Example Course 107',
             description: 'Example description',
             imageUrl: 'exampleImageUrl',
-            price: 'examplePrice',
+            price: 1, 
         };
 
         const newCourseData3 = {
@@ -65,7 +65,7 @@ describe('Test allPosts routes', () => {
             courseName: 'Example Course 106',
             description: 'Example description',
             imageUrl: 'exampleImageUrl',
-            price: 'examplePrice',
+            price: 1, 
         };
 
         const newCourseData4 = {
@@ -73,7 +73,7 @@ describe('Test allPosts routes', () => {
             courseName: 'Example Course 105',
             description: 'Example description',
             imageUrl: 'exampleImageUrl',
-            price: 'examplePrice',
+            price: 1, 
         };
 
         await activityPost.deleteMany({});
@@ -99,7 +99,7 @@ describe('Test allPosts routes', () => {
             activityTitle: 'Example Activity 108',
             activityDescription: 'Example description',
             imageUrl: 'exampleImageUrl',
-            price: 'examplePrice',
+            price: 1, 
             tags: ['exampleTag1', 'exampleTag2']
         };
 
@@ -108,7 +108,7 @@ describe('Test allPosts routes', () => {
             activityTitle: 'Example Activity 107',
             activityDescription: 'Example description',
             imageUrl: 'exampleImageUrl',
-            price: 'examplePrice',
+            price: 1, 
             tags: ['exampleTag1', 'exampleTag2']
         };
 
@@ -117,7 +117,7 @@ describe('Test allPosts routes', () => {
             activityTitle: 'Example Activity 106',
             activityDescription: 'Example description',
             imageUrl: 'exampleImageUrl',
-            price: 'examplePrice',
+            price: 1, 
             tags: ['exampleTag1', 'exampleTag2']
         };
 
@@ -126,7 +126,7 @@ describe('Test allPosts routes', () => {
             activityTitle: 'Example Activity 105',
             activityDescription: 'Example description',
             imageUrl: 'exampleImageUrl',
-            price: 'examplePrice',
+            price: 1, 
             tags: ['exampleTag1', 'exampleTag2']
         };
 
@@ -154,7 +154,7 @@ describe('Test allPosts routes', () => {
                 courseName: 'Example Course 108',
                 description: 'Example description',
                 imageUrl: 'exampleImageUrl',
-                price: 'examplePrice',
+                price: 2, 
             };
     
             const newPostData1 = {
@@ -162,7 +162,7 @@ describe('Test allPosts routes', () => {
                 activityTitle: 'Example Activity 108',
                 activityDescription: 'Example description',
                 imageUrl: 'exampleImageUrl',
-                price: 'examplePrice',
+                price: 2, 
                 tags: ['exampleTag1', 'exampleTag2']
             };
 
@@ -171,7 +171,7 @@ describe('Test allPosts routes', () => {
                 courseName: 'Example Course 107',
                 description: 'Example description',
                 imageUrl: 'exampleImageUrl',
-                price: 'examplePrice',
+                price: 2, 
             };
 
             const newPostData2 = {
@@ -179,7 +179,7 @@ describe('Test allPosts routes', () => {
                 activityTitle: 'Example Activity 107',
                 activityDescription: 'Example description',
                 imageUrl: 'exampleImageUrl',
-                price: 'examplePrice',
+                price: 2, 
                 tags: ['exampleTag1', 'exampleTag2']
             };
 
