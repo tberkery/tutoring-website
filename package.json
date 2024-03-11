@@ -9,7 +9,6 @@
     "dotenv": "^16.4.5",
     "faker": "^6.6.6",
     "mongoose": "^8.2.0",
-    "nodemon": "^3.1.0",
     "react": "^18.2.0",
     "react-hook-form": "^7.50.1",
     "tailwind": "^4.0.0",
