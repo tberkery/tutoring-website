@@ -21,7 +21,7 @@ test('test create() with all fields', async ()=> {
     const activityTitle =  faker.lorem.word();
     const activityDescription =  faker.lorem.word();
     const imageUrl = faker.image.avatar();
-    const price = faker.finance.amount()
+    const price = faker.random.int()
     const tags = [];
     for (let i = 0; i < 5; i++) {
         tags.push(faker.lorem.word());
@@ -43,7 +43,7 @@ test('test readOne() for a valid id', async ()=> {
     const activityTitle = faker.lorem.word();
     const activityDescription = faker.lorem.word();
     const imageUrl = faker.image.avatar();
-    const price = faker.finance.amount()
+    const price = faker.random.int()
     const tags = [];
     for (let i = 0; i < 5; i++) {
         tags.push(faker.lorem.word());
@@ -85,7 +85,7 @@ test('test readAll() on non empty table', async ()=> {
         const activityTitle = faker.lorem.word();
         const activityDescription = faker.lorem.word();
         const imageUrl = faker.image.avatar();
-        const price = faker.finance.amount()
+        const price = faker.random.int()
 
         const activityPost =  await activityPostDao.create(userId, activityTitle, {activityDescription, imageUrl, price});
     }
