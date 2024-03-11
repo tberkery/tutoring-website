@@ -1,7 +1,10 @@
 "use client";
-import React from 'react';
+import React, { FC, useEffect, useState } from "react";
 import PostCard from './PostCard'; 
-// Adjust the path as needed
+import axios from 'axios';
+import { useUser } from '@clerk/clerk-react';
+import { useRouter } from 'next/router';
+import { profile } from "console";
 
 const posts = [
     {
@@ -10,17 +13,17 @@ const posts = [
         title: 'OOSE',
         courseId: 'EN.601.421',
         description: 'I will teach you all about OOSE and how to make a great project!',
-        imageUrl: "",
+        imageUrl: "alsbdf",
         price: '150'
       },
       {
-        id: 3,
+        id: 2,
         username: 'Nolan Fogarty',
-        title: 'OOSE',
-        courseId: 'EN.601.421',
-        description: 'I will teach you all about OOSE and how to make a great project!',
-        classId: null,
-        price: '150'
+        title: '',
+        courseId: '',
+        description: '',
+        imageUrl: null,
+        price: ''
       },
       {
         id: 3,
@@ -34,8 +37,31 @@ const posts = [
 ];
 
 const PostsSection: React.FC = () => {
-    const isUserSignedIn = true; // This should be determined by your auth logic
+  const { isLoaded, isSignedIn, user } = useUser();
+  const [profileData, setProfileData] = React.useState(null);
+  const [posts, setPosts] = useState([]); 
+
+  const fetchProfile = async () => {
+    if (!user) return;
+    try {
+      console.log('\n\nstage 1...\n\n')
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/profiles/getByEmail/${user.primaryEmailAddress.toString()}`);
+      console.log(response.data);
+      setProfileData(response.data);
+      const posts = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/posts/findAllByUserId/${response.data.data[0]._id}`);
+      console.log('setting posts to:', posts.data.posts);
+      setPosts(posts.data.posts);
+    } catch (error) {
+      console.error("Failed to fetch profile:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchProfile();
+  }, [user]);
   
+
+
   
     return (
       <div className="container mx-auto px-6 py-8">

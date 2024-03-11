@@ -1,153 +1,225 @@
 "use client";
-import  React from "react";
+import React, { FC, useEffect, useState } from "react";
+import { useUser } from "@clerk/nextjs";
 import "../../../styles/global.css";
-import { useForm, SubmitHandler } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import Navbar from "../../../components/Navbar";
-import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import NavBar from "../../../components/Navbar";
+
 import { Input } from "@/components/ui/input";
-const MAX_BIO_LENGTH = 200;
+import { Label } from "@/components/ui/label";
+import ComboBox from "@/components/ComboBox";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 
-const formSchema = z.object({
-    picture: z.string(),
-    name: z.string().min(1, "Name is required"),
-    email: z.string().email("Invalid email address").nonempty("Email is required"),
-    department: z.string().min(1, "Department is required"),
-    year: z.string().min(1, "Year is required"),
-    description: z.string().min(1, "Description is required").max(MAX_BIO_LENGTH, `Bio must be at most ${MAX_BIO_LENGTH} characters`),
-});
+const Page : FC = () => {
+	const { isLoaded, isSignedIn, user } = useUser();
+	const router = useRouter();
+  const BACKEND_URL : string = process.env.NEXT_PUBLIC_BACKEND_URL;
 
-type ProfileFormData = z.infer<typeof formSchema>;
+	const [firstName, setFirstName] = useState("");
+	const [lastName, setLastName] = useState("");
+	const [about, setAbout] = useState("");
+	const [department, setDepartment] = useState("");
+	const [year, setYear] = useState(2024);
+	const [refilling, setRefilling] = useState(false);
+	const [affliiateType, setAffiliateType] = useState("student");
+  const [userId, setUserId] = useState("");
 
-export default function EditProfile() {
-  const form = useForm<ProfileFormData>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-        picture: "",
-        name: "",
-        email: "nfogart1@jhu.edu",
-        department: "",
-        year: "",
-        description: "",
-    },
-  });
+  const [profileData, setProfileData] = React.useState(null);
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (!user) return;
+      try {
+        const response = await axios.get(`${BACKEND_URL}/profiles/getByEmail/${user.primaryEmailAddress.toString()}`);
+        setProfileData(response.data);
+      } catch (error) {
+        console.error("Failed to fetch profile:", error);
+      }
+    };
 
-  function onSubmit(data: z.infer<typeof formSchema>) {
-    console.log(data);
-  }
+    fetchProfile();
+  }, [user]);
 
-  return (
-    <>
-      <Navbar />
-      <div className="flex justify-center min-h-screen">
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="w-1/3 space-y-6">
-          <h1 className="text-2xl font-bold mb-4">Edit Profile</h1>
-          {/*Picture Field */}
-          <FormField
-            control={form.control}
-            name="picture"
-            render={({ field, fieldState }) => (
-              <FormItem className="mb-4">
-                <FormLabel className="font-bold" htmlFor="picture">Profile Picture</FormLabel>
-                <FormControl>
-                  <Input id="picture" type="file" {...field} />
-                </FormControl>
-                {fieldState.error && <FormMessage>{fieldState.error.message}</FormMessage>}
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field, fieldState }) => (
-              <FormItem className="mb-4">
-                <FormLabel className="font-bold" htmlFor="name">Name</FormLabel>
-                <FormControl>
-                  <Input id="name" placeholder="Name" {...field} />
-                </FormControl>
-                {fieldState.error && <FormMessage>{fieldState.error.message}</FormMessage>}
-              </FormItem>
-            )}
-          />
-          {/* Email Field */}
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field, fieldState }) => (
-              <FormItem className="mb-4">
-                <FormLabel className="font-bold" htmlFor="email">Email</FormLabel>
-                <FormControl>
-                  <Input disabled className="bg-gray-400" id="email" placeholder="email@example.com" {...field} />
-                </FormControl>
-                <FormDescription>
-                This is your JHU email and cannot be changed. 
-              </FormDescription>
-                {fieldState.error && <FormMessage>{fieldState.error.message}</FormMessage>}
-              </FormItem>
-            )}
-          />
-          {/* Department Field */}
-          <FormField
-            control={form.control}
-            name="department"
-            render={({ field, fieldState }) => (
-              <FormItem className="mb-4">
-                <FormLabel className="font-bold" htmlFor="department">Major / Department</FormLabel>
-                <FormControl>
-                  <Input id="department" placeholder="Major / Department" {...field} />
-                </FormControl>
-                {fieldState.error && <FormMessage>{fieldState.error.message}</FormMessage>}
-              </FormItem>
-            )}
-          />
-          {/* Year Field */}
-          <FormField
-            control={form.control}
-            name="year"
-            render={({ field, fieldState }) => (
-              <FormItem className="mb-4">
-                <FormLabel className="font-bold" htmlFor="year">Year</FormLabel>
-                <FormControl>
-                  <Input id="year" placeholder="Year" {...field} />
-                </FormControl>
-                {fieldState.error && <FormMessage>{fieldState.error.message}</FormMessage>}
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="description"
-            render={({ field, fieldState }) => (
-                <FormItem className="mb-4">
-                <FormLabel className="font-bold" htmlFor="description">Bio</FormLabel>
-                <FormControl>
-                    <Input id="description" placeholder="Bio" maxLength={MAX_BIO_LENGTH} {...field} />
-                </FormControl>
-                <div className="text-right text-sm">
-                    {`${field.value?.length || 0} / ${MAX_BIO_LENGTH} characters`}
-                </div>
-                {fieldState.error && <FormMessage>{fieldState.error.message}</FormMessage>}
-                </FormItem>
-            )}
-            />
-            <Button type="submit" className="mt-6 bg-custom-blue hover:bg-blue-900 text-white font-bold py-2 px-4 rounded-md">
-              Submit
-            </Button>
-        </form>
-      </Form>
-      </div>
-    </>
-  );
-}
 
+  useEffect(() => {
+    if (profileData) {
+      setFirstName(profileData.data[0].firstName);
+      setLastName(profileData.data[0].lastName);
+      setAbout(profileData.data[0].description);
+      setDepartment(profileData.data[0].department);
+      setYear(profileData.data[0].graduationYear);
+      setUserId(profileData.data[0]._id);
+    }
+  }, [profileData]);
+
+	if (!isLoaded || !isSignedIn) {
+		return <></>;
+	}
+
+	const checkAndSetYear = (input : string) => {
+		let value : number = parseInt(input);
+		const current : number = (new Date()).getFullYear();
+		if (value > current + 6) {
+			value = current + 6;
+		} else if (value < current - 4) {
+			value = current - 4
+		}
+		setYear(value);
+		console.log(process.env.NEXT_PUBLIC_BACKEND_URL);
+	}
+
+	const checkAndSubmit = async () => {
+		if (firstName === "" || lastName === "" || department === "") {
+			// missing field!
+			alert("Please fill out all required fields")
+			setRefilling(true);
+		} else {
+			// form success!
+			let body = {
+				"firstName" : firstName,
+				"lastName" : lastName,
+				"email" : user.primaryEmailAddress.toString(),
+				"affiliation" : affliiateType,
+				"department" : department,
+				"description" : about,
+			}
+			if (affliiateType === "student") {
+				body["graduationYear"] = year.toString();
+			}
+      console.log(body);
+			await axios.put(`${process.env.NEXT_PUBLIC_BACKEND_URL}/profiles/${userId}`, body);
+			router.replace('/profile');
+		}
+	}
+
+	const departments = [
+		"Computer Science",
+		"Applied Math",
+		"Physics",
+		"Really Really Really Long Department Name",
+	]
+
+  return <>
+    <NavBar />
+		<div className="flex flex-col justify-center items-center my-6 mx-24">
+			<div className="
+				bg-background flex-grow w-full max-w-4xl p-12 rounded-xl
+				shadow-2xl"
+			>
+				<h1 className="text-4xl font-bold">Edit Profile</h1>
+				<hr/>
+				<h3 className="mt-4 text-2xl font-bold">Personal Information</h3>
+				<hr/>
+				<div className="flex flex-row flex-wrap gap-x-8 gap-y-4 mt-4">
+					<div className="flex flex-col flex-grow min-w-60">
+						<Label htmlFor="firstName">First Name*</Label>
+						<Input 
+							id="firstName"
+							placeholder="First Name"
+							className={ `mt-1 ${ firstName.length === 0 && refilling
+								? "outline outline-red-500"
+								: ''
+							}` }
+							defaultValue={ firstName }
+							onChange={ (event) => setFirstName(event.target.value) } 
+						/>
+					</div>
+					<div className="flex flex-col flex-grow min-w-60">
+						<Label htmlFor="lastName">Last Name*</Label>
+						<Input
+							id="lastName"
+							placeholder="Last Name"
+							className={ `mt-1 ${ lastName.length === 0 && refilling
+								? "outline outline-red-500"
+								: ''
+							}` }
+							defaultValue={ lastName }
+							onChange={ (event) => setLastName(event.target.value) }
+						/>
+					</div>
+				</div>
+				<div className="flex flex-row flex-wrap gap-x-8 gap-y-4 mt-4">
+					<div className="flex flex-col flex-grow basis-4 min-w-60">
+						<Label htmlFor="email">Email*</Label>
+						<Input 
+							disabled
+							id="email"
+							className="mt-1 bg-gray-300"
+							defaultValue={ user.primaryEmailAddress.toString() }
+						/>
+					</div>
+					<div className="flex flex-col flex-grow basis-4 min-w-60">
+						<Label htmlFor="picture">Profile Picture</Label>
+						<Input id="picture" type="file" className="mt-1 cursor-pointer"/>
+					</div>
+				</div>
+				<Label htmlFor="about" className="inline-block mt-4">About Me</Label>
+				<Textarea
+					className="resize-none"
+					defaultValue={ about }
+					onChange={ (event) => setAbout(event.target.value) }
+				/>
+				<h3 className="mt-6 text-2xl font-bold">Hopkins Information</h3>
+				<hr/>
+				<div className="flex flex-row flex-wrap gap-x-8 gap-y-4 mt-4">
+					<div className="flex flex-col">
+						<Label className="inline-block">Affiliate Type</Label>
+						<RadioGroup 
+							className="mt-2"
+							defaultValue="student"
+							onValueChange={ (value) => setAffiliateType(value) }
+						>
+							<div className="flex items-center space-x-2">
+								<RadioGroupItem value="student" id="option-student" />
+								<Label htmlFor="option-student">Student</Label>
+							</div>
+							<div className="flex items-center space-x-2">
+								<RadioGroupItem value="faculty" id="option-faculty" />
+								<Label htmlFor="option-faculty">Faculty</Label>
+							</div>
+							<div className="flex items-center space-x-2">
+								<RadioGroupItem value="otherAffiliate" id="option-otherAff" />
+								<Label htmlFor="option-otherAff">Other</Label>
+							</div>
+						</RadioGroup>
+					</div>
+					<div className="flex flex-col flex-grow min-w-60">
+						<div className="flex flex-col flex-grow">
+							<Label>Department*</Label>
+							<ComboBox 
+								className={ `w-auto mt-1 ${ department.length === 0 && refilling
+									? "outline outline-red-500"
+									: ''
+								}` }
+								prompt="Select Department"
+								options={ departments }
+								setValueProp={ setDepartment }
+							/>
+						</div>
+						{ affliiateType === "student" ?
+							<div className="flex flex-col flex-grow mt-4 min-w-60">
+								<Label htmlFor="year">Graduation Year</Label>
+								<Input 
+									className="mt-1"
+									id="year"
+									type="number"
+									placeholder="Non-students, leave blank"
+									value={ year }
+									onChange={ (event) => setYear(parseInt(event.target.value)) }
+									onBlur={ (event) => checkAndSetYear(event.target.value) }
+								/>
+							</div>
+						:
+							""
+						}
+					</div>
+				</div>
+				<Button className="mt-8" onClick={ checkAndSubmit }>Finish</Button>
+			</div>
+		</div>
+	</>;
+};
+
+export default Page;

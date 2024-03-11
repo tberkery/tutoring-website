@@ -1,10 +1,8 @@
-export {}
-
-const mongoose = require('mongoose');
+import mongoose from "mongoose";
 
 const PostSchema = new mongoose.Schema({
     userId: {
-      type: Number,
+      type: String,
       required: true,
     },
     title: {
@@ -20,7 +18,7 @@ const PostSchema = new mongoose.Schema({
       default: null,
     },
     price: {
-      type: Number,
+      type: String,
       default: null,
     },
     courseId: { // this field will be null if it's non-academic
