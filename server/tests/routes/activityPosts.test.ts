@@ -105,15 +105,18 @@ describe('Test activityPosts routes', () => {
 
         const res = await request(app).get('/activityPosts');
 
-        expect(res.status).toBe(200);
-        expect(res.body).toHaveProperty('posts');
-        expect(res.body.posts).toHaveLength(2);
+        console.log("Focus on multiple posts res:")
+        console.log(res.body)
 
-        // Iterate over each post and delete it
-        for (const post of res.body.posts) {
-            const postId = post._id;
-            await request(app).delete(`/activityPosts/${postId}`);
-        }
+        expect(res.status).toBe(200);
+        expect(res.body).toHaveLength(2);
+        expect(res.body[0]).toMatchObject(example1PostData);
+        expect(res.body[1]).toMatchObject(example2PostData);
+        
+        const post1Id = postRes1.body.newPost._id
+        const post2Id = postRes2.body.newPost._id
+        await request(app).delete(`/activityPosts/${post1Id}`);
+        await request(app).delete(`/activityPosts/${post2Id}`);
     });
 
     // Test for PUT /activityPosts/:id
@@ -186,7 +189,7 @@ describe('Test activityPosts routes', () => {
     });
 
     // Test for GET with simple query by userId
-    test('GET /activityPosts/query for simple, one-field query', async () => {
+    test('GET /activityPosts/ for simple, one-field query', async () => {
         // Clear all existing activity posts
         await activityPost.deleteMany({});
     
@@ -214,7 +217,7 @@ describe('Test activityPosts routes', () => {
         const postRes2 = await request(app).post('/activityPosts').send(example2PostData);
     
         // Make a GET request to query activity posts by userId
-        const res = await request(app).get('/activityPosts/query?userId=example2UserId');
+        const res = await request(app).get('/activityPosts?userId=example2UserId');
     
         // Assertions
         expect(res.status).toBe(200);
@@ -227,7 +230,7 @@ describe('Test activityPosts routes', () => {
     });
     
     // Test for GET with query featuring multiple but not all fields for single-post right answer.
-    test('GET /activityPosts/query with query featuring multiple but not all fields for single-post right answer', async () => {
+    test('GET /activityPosts with query featuring multiple but not all fields for single-post right answer', async () => {
         // Clear all existing activity posts
         await activityPost.deleteMany({});
     
@@ -255,7 +258,7 @@ describe('Test activityPosts routes', () => {
         const postRes2 = await request(app).post('/activityPosts').send(example2PostData);
     
         // Make a GET request to query activity posts by userId
-        const res = await request(app).get('/activityPosts/query?userId=example2UserId&activityTitle=Example2 Activity');
+        const res = await request(app).get('/activityPosts?userId=example2UserId&activityTitle=Example2 Activity');
     
         // Assertions
         expect(res.status).toBe(200);
@@ -267,7 +270,7 @@ describe('Test activityPosts routes', () => {
     });
 
     // Test for GET with query for userId
-    test('GET /activityPosts/query with a focus on userId', async () => {
+    test('GET /activityPosts with a focus on userId', async () => {
         // Clear all existing activity posts
         await activityPost.deleteMany({});
     
@@ -305,7 +308,9 @@ describe('Test activityPosts routes', () => {
         const postRes3 = await request(app).post('/activityPosts').send(example3PostData);
 
         // Make a GET request to query activity posts by userId
-        const res = await request(app).get('/activityPosts/query?userId=example2UserId');
+        const res = await request(app).get('/activityPosts?userId=example2UserId');
+        console.log("Focus on userId res:")
+        console.log(res.body)
     
         // Assertions
         expect(res.status).toBe(200);
@@ -318,7 +323,7 @@ describe('Test activityPosts routes', () => {
     });
 
     // Test for GET with query for activityTitle
-    test('GET /activityPosts/query with a focus on activityTitle', async () => {
+    test('GET /activityPosts with a focus on activityTitle', async () => {
         // Clear all existing activity posts
         await activityPost.deleteMany({});
     
@@ -356,7 +361,7 @@ describe('Test activityPosts routes', () => {
         const postRes3 = await request(app).post('/activityPosts').send(example3PostData);
 
         // Make a GET request to query activity posts by userId
-        const res = await request(app).get('/activityPosts/query?activityTitle=Example2 Activity');
+        const res = await request(app).get('/activityPosts?activityTitle=Example2 Activity');
     
         // Assertions
         expect(res.status).toBe(200);
@@ -369,7 +374,7 @@ describe('Test activityPosts routes', () => {
     });
 
     // Test for GET with query for price
-    test('GET /activityPosts/query with a focus on price', async () => {
+    test('GET /activityPosts with a focus on price', async () => {
         // Clear all existing activity posts
         await activityPost.deleteMany({});
     
@@ -407,7 +412,7 @@ describe('Test activityPosts routes', () => {
         const postRes3 = await request(app).post('/activityPosts').send(example3PostData);
 
         // Make a GET request to query activity posts by userId
-        const res = await request(app).get('/activityPosts/query?price=2');
+        const res = await request(app).get('/activityPosts?price=2');
     
         // Assertions
         expect(res.status).toBe(200);
@@ -420,7 +425,7 @@ describe('Test activityPosts routes', () => {
     });
 
     // Test for GET with query for tags where tags are not added in same order
-    test('GET /activityPosts/query on tags where tags are not added in same order', async () => {
+    test('GET /activityPosts on tags where tags are not added in same order', async () => {
         // Clear all existing activity posts
         await activityPost.deleteMany({});
     
@@ -457,7 +462,7 @@ describe('Test activityPosts routes', () => {
         const postRes2 = await request(app).post('/activityPosts').send(example2PostData);
         const postRes3 = await request(app).post('/activityPosts').send(example3PostData);
 
-        const res = await request(app).get('/activityPosts/query?tags=example2Tag2');
+        const res = await request(app).get('/activityPosts?tags=example2Tag2');
     
         // Assertions
         expect(res.status).toBe(200);
@@ -470,7 +475,7 @@ describe('Test activityPosts routes', () => {
     });
 
     // Test for GET with query for tags
-    test('GET /activityPosts/query on tags where tags list is different but share common tag', async () => {
+    test('GET /activityPosts on tags where tags list is different but share common tag', async () => {
         // Clear all existing activity posts
         await activityPost.deleteMany({});
     
@@ -507,7 +512,7 @@ describe('Test activityPosts routes', () => {
         const postRes2 = await request(app).post('/activityPosts').send(example2PostData);
         const postRes3 = await request(app).post('/activityPosts').send(example3PostData);
 
-        const res = await request(app).get('/activityPosts/query?tags=example2Tag2');
+        const res = await request(app).get('/activityPosts?tags=example2Tag2');
     
         // Assertions
         expect(res.status).toBe(200);
@@ -521,7 +526,7 @@ describe('Test activityPosts routes', () => {
 
     // Test for GET with query containing multiple tags
     // REMARK: searching mulitiple tags (say tags A and B) yields all records with tag A, tag B, or both tag A and B
-    test('GET /activityPosts/query on multiple tags', async () => {
+    test('GET /activityPosts on multiple tags', async () => {
         // Clear all existing activity posts
         await activityPost.deleteMany({});
     
@@ -558,7 +563,7 @@ describe('Test activityPosts routes', () => {
         const postRes2 = await request(app).post('/activityPosts').send(example2PostData);
         const postRes3 = await request(app).post('/activityPosts').send(example3PostData);
 
-        const res = await request(app).get('/activityPosts/query?tags=example1Tag1,example1Tag2');
+        const res = await request(app).get('/activityPosts?tags=example1Tag1,example1Tag2');
     
         // Assertions
         expect(res.status).toBe(200);
