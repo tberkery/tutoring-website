@@ -4,10 +4,10 @@ import React from 'react';
 interface Post {
   id: number;
   username: string;
-    courseId: string;
+  courseId: string;
   title: string;
   description: string;
-  imageUrl: string;
+  imageUrl?: string;
   price: string;
 }
 

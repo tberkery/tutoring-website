@@ -25,15 +25,17 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./*", "@/*"]
-    }
+    },
+    "types": ["cypress", "node"]
   },
   "include": [
     "next-env.d.ts",
     ".next/types/**/*.ts",
     "**/*.ts",
-    "**/*.tsx"
+    "**/*.tsx", "cypress/e2e/app.cy.js", "cypress/support/e2e.js", "cypress/support/commands.js",
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "cypress",
   ]
 }

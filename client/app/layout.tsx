@@ -20,7 +20,7 @@ const RootLayout : FC<{ children : ReactNode }> = ({ children }) => {
 
 export default RootLayout;
 
-export const fontSans = FontSans({
+const fontSans = FontSans({
   subsets: ["latin"],
   variable: "--font-sans",
 })
