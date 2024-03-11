@@ -2,11 +2,11 @@ const ActivityPost = require("../model/ActivityPost.ts");
 const mongoose = require("mongoose")
 
 export class ActivityPostDao {
-    async create(userId: string, activityTitle: string, options?: {description?: string, imageUrl?: string, price?: string, courseId?: Number}) {
+    async create(userId: string, activityTitle: string, options?: {activityDescription?: string, imageUrl?: string, price?: string, tags?: Array<string>}) {
         let newPost: any = {userId, activityTitle}
         if (options){
-            if (options.description){
-                newPost.description = options.description
+            if (options.activityDescription){
+                newPost.activityDescription = options.activityDescription;
             }
             if (options.imageUrl){
                 newPost.imageUrl = options.imageUrl;
@@ -14,11 +14,10 @@ export class ActivityPostDao {
             if (options.price){
                 newPost.price = options.price;
             }
-            if (options.courseId){
-                newPost.courseId = options.courseId;
+            if (options.tags){
+                newPost.tags = options.tags;
             }
         }
-        console.log("post is ", newPost);
         const data = await ActivityPost.create(newPost);
         return data;
     }
@@ -61,18 +60,14 @@ export class ActivityPostDao {
                         case 'tags':
                             query.tags = options.tags;
                             break;
-                        break;
                     }
                 }
             }
         }
-        console.log("Here is your formatted query:", query)
 
 
         // Fetch data from the database using the constructed query
         const posts = await ActivityPost.find(query).exec();
-        console.log("heres the posts found")
-        console.log(posts)
         // Return the fetched posts
         return posts;
 
@@ -87,8 +82,14 @@ export class ActivityPostDao {
         return post;
     }
     async delete(id : any) {
-        await ActivityPost.findOneAndDelete({ _id: id });
+        const deletedPost = await ActivityPost.findOneAndDelete({ _id: id });
+        if (!deletedPost) {
+            return "Post not found"
+        }
         return "Post deleted";
+    }
+    async deleteAll(){
+        await ActivityPost.deleteMany({})
     }
 }
 module.exports = ActivityPostDao;

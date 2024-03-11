@@ -218,15 +218,357 @@ describe('Test activityPosts routes', () => {
     
         // Assertions
         expect(res.status).toBe(200);
-        console.log("HERE IS RES.BODY:")
-        console.log(res.body[0]);
-        expect(res.body).toEqual(example2PostData); // Check if the returned post matches example2PostData
-    
+        expect(res.status).toBe(200);
+        expect(res.body).toHaveLength(1); // Ensure only one post is returned
+        expect(res.body[0]).toMatchObject(example2PostData); // Verify it matches contents of post that satisifes query
+
         // Clean up: Delete all activity posts
         await activityPost.deleteMany({});
     });
     
-    // Test for GET with complex query featuring all queryable fields
+    // Test for GET with query featuring multiple but not all fields for single-post right answer.
+    test('GET /activityPosts/query with query featuring multiple but not all fields for single-post right answer', async () => {
+        // Clear all existing activity posts
+        await activityPost.deleteMany({});
+    
+        // Create example data for activity posts
+        const example1PostData = {
+            userId: 'example1UserId',
+            activityTitle: 'Example1 Activity',
+            activityDescription: 'Example1 description',
+            imageUrl: 'example1ImageUrl',
+            price: 'example1Price',
+            tags: ['example1Tag1', 'example1Tag2']
+        };
+    
+        const example2PostData = {
+            userId: 'example2UserId',
+            activityTitle: 'Example2 Activity',
+            activityDescription: 'Example2 description',
+            imageUrl: 'example2ImageUrl',
+            price: 'example2Price',
+            tags: ['example2Tag1', 'example2Tag2']
+        };
+        
+        // Make POST requests to create the posts
+        const postRes1 = await request(app).post('/activityPosts').send(example1PostData);
+        const postRes2 = await request(app).post('/activityPosts').send(example2PostData);
+    
+        // Make a GET request to query activity posts by userId
+        const res = await request(app).get('/activityPosts/query?userId=example2UserId&activityTitle=Example2 Activity');
+    
+        // Assertions
+        expect(res.status).toBe(200);
+        expect(res.body).toHaveLength(1); // Ensure only one post is returned
+        expect(res.body[0]).toMatchObject(example2PostData); // Verify it matches contents of post that satisifes query
 
-    // Test for GET with query of multiple but not all fields
+        // Clean up: Delete all activity posts
+        await activityPost.deleteMany({});
+    });
+
+    // Test for GET with query for userId
+    test('GET /activityPosts/query with a focus on userId', async () => {
+        // Clear all existing activity posts
+        await activityPost.deleteMany({});
+    
+        // Create example data for activity posts
+        const example1PostData = {
+            userId: 'example1UserId',
+            activityTitle: 'Example1 Activity',
+            activityDescription: 'Example1 description',
+            imageUrl: 'example1ImageUrl',
+            price: 'example1Price',
+            tags: ['example1Tag1', 'example1Tag2']
+        };
+    
+        const example2PostData = {
+            userId: 'example2UserId',
+            activityTitle: 'Example2 Activity',
+            activityDescription: 'Example2 description',
+            imageUrl: 'example2ImageUrl',
+            price: 'example2Price',
+            tags: ['example2Tag1', 'example2Tag2']
+        };
+
+        const example3PostData = { // will be used for case where only UserIds match
+            userId: 'example2UserId', // NOTE the 2s here
+            activityTitle: 'Example3 Activity',
+            activityDescription: 'Example3 description',
+            imageUrl: 'example3ImageUrl',
+            price: 'example3Price',
+            tags: ['example3Tag1', 'example3Tag2']
+        };
+        
+        // Make POST requests to create the posts
+        const postRes1 = await request(app).post('/activityPosts').send(example1PostData);
+        const postRes2 = await request(app).post('/activityPosts').send(example2PostData);
+        const postRes3 = await request(app).post('/activityPosts').send(example3PostData);
+
+        // Make a GET request to query activity posts by userId
+        const res = await request(app).get('/activityPosts/query?userId=example2UserId');
+    
+        // Assertions
+        expect(res.status).toBe(200);
+        expect(res.body).toHaveLength(2); // Ensure only one post is returned
+        // Remark: assumes (tolerably right now but perhaps not in time) that return order will be the same as creation order.
+        expect(res.body[0]).toMatchObject(example2PostData); // Verify it matches contents of post that satisifes query
+        expect(res.body[1]).toMatchObject(example3PostData); // Verify it matches contents of post that satisifes query
+        // Clean up: Delete all activity posts
+        await activityPost.deleteMany({});
+    });
+
+    // Test for GET with query for activityTitle
+    test('GET /activityPosts/query with a focus on activityTitle', async () => {
+        // Clear all existing activity posts
+        await activityPost.deleteMany({});
+    
+        // Create example data for activity posts
+        const example1PostData = {
+            userId: 'example1UserId',
+            activityTitle: 'Example1 Activity',
+            activityDescription: 'Example1 description',
+            imageUrl: 'example1ImageUrl',
+            price: 'example1Price',
+            tags: ['example1Tag1', 'example1Tag2']
+        };
+    
+        const example2PostData = {
+            userId: 'example2UserId',
+            activityTitle: 'Example2 Activity',
+            activityDescription: 'Example2 description',
+            imageUrl: 'example2ImageUrl',
+            price: 'example2Price',
+            tags: ['example2Tag1', 'example2Tag2']
+        };
+
+        const example3PostData = { // will be used for case where only activityTitles match
+            userId: 'example3UserId', 
+            activityTitle: 'Example2 Activity', // NOTE the 2s here
+            activityDescription: 'Example3 description',
+            imageUrl: 'example3ImageUrl',
+            price: 'example3Price',
+            tags: ['example3Tag1', 'example3Tag2']
+        };
+        
+        // Make POST requests to create the posts
+        const postRes1 = await request(app).post('/activityPosts').send(example1PostData);
+        const postRes2 = await request(app).post('/activityPosts').send(example2PostData);
+        const postRes3 = await request(app).post('/activityPosts').send(example3PostData);
+
+        // Make a GET request to query activity posts by userId
+        const res = await request(app).get('/activityPosts/query?activityTitle=Example2 Activity');
+    
+        // Assertions
+        expect(res.status).toBe(200);
+        expect(res.body).toHaveLength(2); // Ensure only one post is returned
+        // Remark: assumes (tolerably right now but perhaps not in time) that return order will be the same as creation order.
+        expect(res.body[0]).toMatchObject(example2PostData); // Verify it matches contents of post that satisifes query
+        expect(res.body[1]).toMatchObject(example3PostData); // Verify it matches contents of post that satisifes query
+        // Clean up: Delete all activity posts
+        await activityPost.deleteMany({});
+    });
+
+    // Test for GET with query for price
+    test('GET /activityPosts/query with a focus on price', async () => {
+        // Clear all existing activity posts
+        await activityPost.deleteMany({});
+    
+        // Create example data for activity posts
+        const example1PostData = {
+            userId: 'example1UserId',
+            activityTitle: 'Example1 Activity',
+            activityDescription: 'Example1 description',
+            imageUrl: 'example1ImageUrl',
+            price: 'example1Price',
+            tags: ['example1Tag1', 'example1Tag2']
+        };
+    
+        const example2PostData = {
+            userId: 'example2UserId',
+            activityTitle: 'Example2 Activity',
+            activityDescription: 'Example2 description',
+            imageUrl: 'example2ImageUrl',
+            price: 'example2Price',
+            tags: ['example2Tag1', 'example2Tag2']
+        };
+
+        const example3PostData = { // will be used for case where only price matches
+            userId: 'example3UserId', 
+            activityTitle: 'Example3 Activity',
+            activityDescription: 'Example3 description',
+            imageUrl: 'example3ImageUrl',
+            price: 'example2Price', // NOTE the 2s here
+            tags: ['example3Tag1', 'example3Tag2']
+        };
+        
+        // Make POST requests to create the posts
+        const postRes1 = await request(app).post('/activityPosts').send(example1PostData);
+        const postRes2 = await request(app).post('/activityPosts').send(example2PostData);
+        const postRes3 = await request(app).post('/activityPosts').send(example3PostData);
+
+        // Make a GET request to query activity posts by userId
+        const res = await request(app).get('/activityPosts/query?price=example2Price');
+    
+        // Assertions
+        expect(res.status).toBe(200);
+        expect(res.body).toHaveLength(2); // Ensure only one post is returned
+        // Remark: assumes (tolerably right now but perhaps not in time) that return order will be the same as creation order.
+        expect(res.body[0]).toMatchObject(example2PostData); // Verify it matches contents of post that satisifes query
+        expect(res.body[1]).toMatchObject(example3PostData); // Verify it matches contents of post that satisifes query
+        // Clean up: Delete all activity posts
+        await activityPost.deleteMany({});
+    });
+
+    // Test for GET with query for tags where tags are not added in same order
+    test('GET /activityPosts/query on tags where tags are not added in same order', async () => {
+        // Clear all existing activity posts
+        await activityPost.deleteMany({});
+    
+        // Create example data for activity posts
+        const example1PostData = {
+            userId: 'example1UserId',
+            activityTitle: 'Example1 Activity',
+            activityDescription: 'Example1 description',
+            imageUrl: 'example1ImageUrl',
+            price: 'example1Price',
+            tags: ['example2Tag2', 'example1Tag1'] // Note the 2 but ONLY for Tag2
+        };
+    
+        const example2PostData = {
+            userId: 'example2UserId',
+            activityTitle: 'Example2 Activity',
+            activityDescription: 'Example2 description',
+            imageUrl: 'example2ImageUrl',
+            price: 'example2Price',
+            tags: ['example2Tag1', 'example2Tag2']
+        };
+
+        const example3PostData = { // will be used for case where only price matches
+            userId: 'example3UserId', 
+            activityTitle: 'Example3 Activity',
+            activityDescription: 'Example3 description',
+            imageUrl: 'example3ImageUrl',
+            price: 'example2Price',
+            tags: ['example3Tag1', 'example3Tag2']
+        };
+        
+        // Make POST requests to create the posts
+        const postRes1 = await request(app).post('/activityPosts').send(example1PostData);
+        const postRes2 = await request(app).post('/activityPosts').send(example2PostData);
+        const postRes3 = await request(app).post('/activityPosts').send(example3PostData);
+
+        const res = await request(app).get('/activityPosts/query?tags=example2Tag2');
+    
+        // Assertions
+        expect(res.status).toBe(200);
+        expect(res.body).toHaveLength(2); // Ensure only one post is returned
+        // Remark: assumes (tolerably right now but perhaps not in time) that return order will be the same as creation order.
+        expect(res.body[0]).toMatchObject(example1PostData); // Verify it matches contents of post that satisifes query
+        expect(res.body[1]).toMatchObject(example2PostData); // Verify it matches contents of post that satisifes query
+        // Clean up: Delete all activity posts
+        await activityPost.deleteMany({});
+    });
+
+    // Test for GET with query for tags
+    test('GET /activityPosts/query on tags where tags list is different but share common tag', async () => {
+        // Clear all existing activity posts
+        await activityPost.deleteMany({});
+    
+        // Create example data for activity posts
+        const example1PostData = {
+            userId: 'example1UserId',
+            activityTitle: 'Example1 Activity',
+            activityDescription: 'Example1 description',
+            imageUrl: 'example1ImageUrl',
+            price: 'example1Price',
+            tags: ['example2Tag2', 'example1Tag1'] // Note the 2 but ONLY for Tag2
+        };
+    
+        const example2PostData = {
+            userId: 'example2UserId',
+            activityTitle: 'Example2 Activity',
+            activityDescription: 'Example2 description',
+            imageUrl: 'example2ImageUrl',
+            price: 'example2Price',
+            tags: ['example4Tag1', 'example2Tag2'] // Note the 4
+        };
+
+        const example3PostData = { // will be used for case where only price matches
+            userId: 'example3UserId', 
+            activityTitle: 'Example3 Activity',
+            activityDescription: 'Example3 description',
+            imageUrl: 'example3ImageUrl',
+            price: 'example2Price',
+            tags: ['example3Tag1', 'example3Tag2']
+        };
+        
+        // Make POST requests to create the posts
+        const postRes1 = await request(app).post('/activityPosts').send(example1PostData);
+        const postRes2 = await request(app).post('/activityPosts').send(example2PostData);
+        const postRes3 = await request(app).post('/activityPosts').send(example3PostData);
+
+        const res = await request(app).get('/activityPosts/query?tags=example2Tag2');
+    
+        // Assertions
+        expect(res.status).toBe(200);
+        expect(res.body).toHaveLength(2); // Ensure only one post is returned
+        // Remark: assumes (tolerably right now but perhaps not in time) that return order will be the same as creation order.
+        expect(res.body[0]).toMatchObject(example1PostData); // Verify it matches contents of post that satisifes query
+        expect(res.body[1]).toMatchObject(example2PostData); // Verify it matches contents of post that satisifes query
+        // Clean up: Delete all activity posts
+        await activityPost.deleteMany({});
+    });
+
+    // Test for GET with query containing multiple tags
+    // REMARK: searching mulitiple tags (say tags A and B) yields all records with tag A, tag B, or both tag A and B
+    test('GET /activityPosts/query on multiple tags', async () => {
+        // Clear all existing activity posts
+        await activityPost.deleteMany({});
+    
+        // Create example data for activity posts
+        const example1PostData = {
+            userId: 'example1UserId',
+            activityTitle: 'Example1 Activity',
+            activityDescription: 'Example1 description',
+            imageUrl: 'example1ImageUrl',
+            price: 'example1Price',
+            tags: ['example1Tag1', 'example1Tag2']
+        };
+    
+        const example2PostData = {
+            userId: 'example2UserId',
+            activityTitle: 'Example2 Activity',
+            activityDescription: 'Example2 description',
+            imageUrl: 'example2ImageUrl',
+            price: 'example2Price',
+            tags: ['example1Tag1', 'example1Tag2', 'example1Tag3'] // Note the introduction of example1Tag3 (different than before and query)
+        };
+
+        const example3PostData = { // will be used for case where only price matches
+            userId: 'example3UserId', 
+            activityTitle: 'Example3 Activity',
+            activityDescription: 'Example3 description',
+            imageUrl: 'example3ImageUrl',
+            price: 'example2Price',
+            tags: ['example1Tag1', 'example3Tag2'] // Note that only example1Tag1 is in common with prior examples
+        };
+        
+        // Make POST requests to create the posts
+        const postRes1 = await request(app).post('/activityPosts').send(example1PostData);
+        const postRes2 = await request(app).post('/activityPosts').send(example2PostData);
+        const postRes3 = await request(app).post('/activityPosts').send(example3PostData);
+
+        const res = await request(app).get('/activityPosts/query?tags=example1Tag1,example1Tag2');
+    
+        // Assertions
+        expect(res.status).toBe(200);
+        expect(res.body).toHaveLength(3); // Ensure only one post is returned
+        // Remark: assumes (tolerably right now but perhaps not in time) that return order will be the same as creation order.
+        expect(res.body[0]).toMatchObject(example1PostData); // Verify it matches contents of post that satisifes query
+        expect(res.body[1]).toMatchObject(example2PostData); // Verify it matches contents of post that satisifes query
+        expect(res.body[2]).toMatchObject(example3PostData); // Verify it matches contents of post that satisifes query
+        // Clean up: Delete all activity posts
+        await activityPost.deleteMany({});
+    });
+    
 });

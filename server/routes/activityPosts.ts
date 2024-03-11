@@ -7,7 +7,6 @@ const ActivityPostDao = new ActivityPostDaoClass();
 router.post("/", async (req: any, res: any) => {
   try {
     const {userId, activityTitle, activityDescription, imageUrl, price, tags}: {userId: string, activityTitle: string, activityDescription: string, imageUrl: string, price: string, tags: [String]} = req.body
-    console.log("IN ROUTES");
     const newPost = await ActivityPostDao.create(userId, activityTitle, {activityDescription, imageUrl, price, tags});
     res.status(201).json({ newPost });
   } catch (err) {
@@ -73,13 +72,8 @@ router.delete("/:id", async (req: any, res: any) => {
 });
 
 router.get("/query", async (req: any, res: any) => {
-  console.log("IN ACTIVITY POSTS GET")
   try {
     // Extract query parameters from the request
-    console.log("req.query")
-    console.log(req.query)
-    console.log("req.body")
-    console.log(req.body)
     const { userId, activityTitle, price, tags } = req.query;
 
     // Construct options object based on the provided query parameters
@@ -87,10 +81,12 @@ router.get("/query", async (req: any, res: any) => {
     if (userId) options.userId = userId;
     if (activityTitle) options.activityTitle = activityTitle;
     if (price) options.price = price;
-    if (tags) options.tags = tags;
-
-    console.log("HERE'S OPTIONS:")
-    console.log(options)
+    if (tags) {
+      // Split the tags parameter into an array if it contains multiple tags
+      const tagArray = tags.split(',');
+      // Construct a MongoDB query to check if any of the tags in the array is present in the 'tags' field
+      options.tags = { $in: tagArray };
+    }
 
     // Call the DAO method with the constructed options
     const posts = await ActivityPostDao.readSome(options);

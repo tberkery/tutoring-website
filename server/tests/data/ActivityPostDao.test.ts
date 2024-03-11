@@ -168,7 +168,7 @@ test('test delete() with a valid ID', async ()=> {
 
     const id = activityPost._id;
     const deleting = await activityPostDao.delete(id);
-    expect(deleting.activityTitle).toBe(activityTitle);
+    expect(deleting).toBe("Post deleted");
     const deleted = await activityPostDao.readOne(id);
     expect(deleted).toBe(null);
 
