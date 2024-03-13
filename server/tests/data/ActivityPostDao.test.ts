@@ -21,7 +21,7 @@ test('test create() with all fields', async ()=> {
     const activityTitle =  faker.lorem.word();
     const activityDescription =  faker.lorem.word();
     const imageUrl = faker.image.avatar();
-    const price = faker.random.int()
+    const price = faker.number.int()
     const tags = [];
     for (let i = 0; i < 5; i++) {
         tags.push(faker.lorem.word());
@@ -43,7 +43,7 @@ test('test readOne() for a valid id', async ()=> {
     const activityTitle = faker.lorem.word();
     const activityDescription = faker.lorem.word();
     const imageUrl = faker.image.avatar();
-    const price = faker.random.int()
+    const price = faker.number.int()
     const tags = [];
     for (let i = 0; i < 5; i++) {
         tags.push(faker.lorem.word());
@@ -85,7 +85,7 @@ test('test readAll() on non empty table', async ()=> {
         const activityTitle = faker.lorem.word();
         const activityDescription = faker.lorem.word();
         const imageUrl = faker.image.avatar();
-        const price = faker.random.int()
+        const price = faker.number.int()
 
         const activityPost =  await activityPostDao.create(userId, activityTitle, {activityDescription, imageUrl, price});
     }
@@ -96,19 +96,19 @@ test('test readAll() on non empty table', async ()=> {
 
 
 
-test('test update()', async ()=> {
+test('test update()', async () => {
     const activityPostDao = new ActivityPostDao();
     const userId = faker.lorem.word();
     const activityTitle = faker.lorem.word();
     const activityDescription = faker.lorem.word();
     const imageUrl = faker.image.avatar();
-    const price = faker.lorem.word();
-    const tags = []
+    const price = faker.number.int();
+    const tags = [];
     for (let i = 0; i < 3; i++) {
         tags.push(faker.lorem.word());
     }
     
-    const activityPost =  await activityPostDao.create(userId, activityTitle, {activityDescription, imageUrl, price, tags});
+    const activityPost = await activityPostDao.create(userId, activityTitle, { activityDescription, imageUrl, price, tags });
     expect(activityPost.userId).toBe(userId);
     expect(activityPost.activityTitle).toBe(activityTitle);
     expect(activityPost.activityDescription).toBe(activityDescription);
@@ -119,29 +119,31 @@ test('test update()', async ()=> {
     const id = activityPost._id;
     const newActivityDescription = faker.lorem.sentence();
     const updatingDescription = await activityPostDao.update(id, { activityDescription: newActivityDescription });
-    const updatedActivityPost = await activityPostDao.readOne(id)
+    expect(updatingDescription).not.toBe("Post not found");
+    
+    const updatedActivityPost = await activityPostDao.readOne(id);
     expect(updatedActivityPost.userId).toBe(userId);
     expect(updatedActivityPost.activityTitle).toBe(activityTitle);
     expect(updatedActivityPost.activityDescription).toBe(newActivityDescription);
     expect(updatedActivityPost.imageUrl).toBe(imageUrl);
     expect(updatedActivityPost.price).toBe(price);
     expect(updatedActivityPost.tags).toStrictEqual(tags);
-
 });
 
 test('test update() on an invalid ID', async ()=> {
     const activityPostDao = new ActivityPostDao();
+    const userId = faker.lorem.word();
     const activityTitle = faker.lorem.word();
     const activityDescription = faker.lorem.word();
     const imageUrl = faker.image.avatar();
-    const price = faker.lorem.word();
+    const price = faker.number.int();
     const tags = []
     for (let i = 0; i < 3; i++) {
         tags.push(faker.lorem.word());
     }
     
     const id = new ObjectId(1)
-    const updatingDescription = await activityPostDao.update(id, {activityTitle: activityTitle, description: activityDescription, imageUrl, price, tags});
+    const updatingDescription = await activityPostDao.update(id, userId, activityTitle, {activityDescription, imageUrl, price, tags});
     expect(updatingDescription).toBe("Post not found");
     
 });
@@ -152,7 +154,7 @@ test('test delete() with a valid ID', async ()=> {
     const activityTitle =  faker.lorem.word();
     const activityDescription =  faker.lorem.word();
     const imageUrl = faker.image.avatar();
-    const price =  faker.lorem.word();
+    const price = faker.number.int();
     const tags = [];
     for (let i = 0; i < 5; i++) {
         tags.push(faker.lorem.word());

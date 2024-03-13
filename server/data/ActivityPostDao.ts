@@ -2,7 +2,7 @@ const ActivityPost = require("../model/ActivityPost.ts");
 const mongoose = require("mongoose")
 
 export class ActivityPostDao {
-    async create(userId: string, activityTitle: string, options?: {activityDescription?: string, imageUrl?: string, price?: string, tags?: Array<string>}) {
+    async create(userId: string, activityTitle: string, options?: {activityDescription?: string, imageUrl?: string, price?: number, tags?: Array<string>}) {
         let newPost: any = {userId, activityTitle}
         if (options){
             if (options.activityDescription){
@@ -72,14 +72,17 @@ export class ActivityPostDao {
         return posts;
 
     }
-    async update( id: any, postInfo: any ) {
-        let post = await ActivityPost.findOne({ _id: id });
-        if (!post) {
-            return "Post not found";
+    async update(id: any, updateFields: any) {
+        try {
+            let post = await ActivityPost.findByIdAndUpdate(id, updateFields, { new: true });
+            if (!post) {
+                return "Post not found";
+            }
+            return post;
+        } catch (err) {
+            console.log(err);
+            throw new Error("Error updating post");
         }
-        post.set(postInfo);
-        await post.save();
-        return post;
     }
     async delete(id : any) {
         const deletedPost = await ActivityPost.findOneAndDelete({ _id: id });
