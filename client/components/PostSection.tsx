@@ -6,7 +6,7 @@ import { useUser } from '@clerk/clerk-react';
 import { useRouter } from 'next/router';
 import { profile } from "console";
 
-const posts = [
+const samples = [
     {
         id: 1,
         username: 'Nolan Fogarty',
@@ -42,7 +42,7 @@ const PostsSection: React.FC = () => {
   const [posts, setPosts] = useState([]); 
 
   const fetchProfile = async () => {
-    if (!user) return;
+     if (!user) return;
     try {
       console.log('\n\nstage 1...\n\n')
       const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/profiles/getByEmail/${user.primaryEmailAddress.toString()}`);
