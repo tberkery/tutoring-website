@@ -134,8 +134,10 @@ describe('Test activityPosts routes', () => {
         const postId = postRes.body.newPost._id;
     
         const updatedData = {
+            id: postId,
+            userId: 'exampleUserId',
             activityTitle: 'Updated Title',
-            activityDescription: 'Updated Description'
+            activityDescription: 'Updated Description',
         };
 
         const finalPostData = {
@@ -154,8 +156,11 @@ describe('Test activityPosts routes', () => {
         expect(res.status).toBe(200);
         expect(res.body).toHaveProperty('post');
         expect(res.body.post).toEqual(expect.objectContaining({
-            ...finalPostData,
-            tags: expect.any(Array) // Assert that 'tags' is an array... need to tell Jest this
+            activityTitle: finalPostData.activityTitle,
+            activityDescription: finalPostData.activityDescription,
+            imageUrl: finalPostData.imageUrl,
+            price: finalPostData.price,
+            tags: finalPostData.tags
         }));
 
         // Clean up: Delete the post created during the test

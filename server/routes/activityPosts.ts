@@ -6,7 +6,7 @@ const ActivityPostDao = new ActivityPostDaoClass();
 
 router.post("/", async (req: any, res: any) => {
   try {
-    const {userId, activityTitle, activityDescription, imageUrl, price, tags}: {userId: string, activityTitle: string, activityDescription: string, imageUrl: string, price: string, tags: [String]} = req.body
+    const {userId, activityTitle, activityDescription, imageUrl, price, tags}: {userId: string, activityTitle: string, activityDescription: string, imageUrl: string, price: string, tags: [String]} = req.body;
     const newPost = await ActivityPostDao.create(userId, activityTitle, {activityDescription, imageUrl, price, tags});
     res.status(201).json({ newPost });
   } catch (err) {
@@ -42,11 +42,22 @@ router.get("/findOne/:id", async (req: any, res: any) => {
 //   }
 // });
 
+router.get("/findAllByUserId/:userId", async (req: any, res: any ) => {
+  const {userId} = req.params;
+  try {
+    const posts = await ActivityPostDao.readAllByUser(userId);
+    res.status(200).json({ posts });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server Error");
+  }
+});
+
 router.put("/:id", async (req: any, res: any) => {
     const id : number = req.params.id;
-    const postInfo = req.body;
+    const updateFields = req.body;
     try {
-        const post = await ActivityPostDao.update( id, postInfo );
+        const post = await ActivityPostDao.update( id, updateFields );
         if (!post) {
         return res.status(404).json({ msg: "Post not found" });
         }
