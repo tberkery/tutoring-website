@@ -98,7 +98,6 @@ const Page : FC = () => {
 				formData.append("profilePicture", photoFile);
 				const photoUri = `${api}/profilePics/upload/${response.data._id}`;
 				const r2 = await axios.post(photoUri, formData);
-				console.log(r2);
 			}
 			router.replace('/profile');
 		}
@@ -167,6 +166,7 @@ const Page : FC = () => {
 						<Input
 							id="picture"
 							type="file"
+							accept="image/png, image/gif, image/jpeg"
 							className="mt-1 cursor-pointer"
 							onChange={ handleFileSelected }
 						/>
