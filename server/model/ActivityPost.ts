@@ -20,7 +20,7 @@ const ActivityPostSchema = new mongoose.Schema({
       default: null,
     },
     price: {
-      type: String,
+      type: Number,
       default: null,
     },
     tags: {

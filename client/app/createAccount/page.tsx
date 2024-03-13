@@ -174,6 +174,7 @@ const Page : FC = () => {
 				</div>
 				<Label htmlFor="about" className="inline-block mt-4">About Me</Label>
 				<Textarea
+					id="about"
 					className="resize-none"
 					value={ about }
 					onChange={ (event) => setAbout(event.target.value) }
@@ -213,6 +214,7 @@ const Page : FC = () => {
 								prompt="Select Department"
 								options={ departments }
 								setValueProp={ setDepartment }
+								id="department"
 							/>
 						</div>
 						{ affliiateType === "student" ?
@@ -233,7 +235,9 @@ const Page : FC = () => {
 						}
 					</div>
 				</div>
-				<Button className="mt-8" onClick={ checkAndSubmit }>Finish</Button>
+				<Button id="submit" className="mt-8" onClick={ checkAndSubmit }>
+					Finish
+				</Button>
 			</div>
 		</div>
 	</>;

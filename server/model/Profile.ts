@@ -1,3 +1,5 @@
+export {}
+
 import mongoose = require("mongoose");
 
 const ProfileSchema = new mongoose.Schema({
@@ -19,7 +21,7 @@ const ProfileSchema = new mongoose.Schema({
     },
     graduationYear: {
         type: String,
-        required: false,
+        default: null,
     },
     department: {
         type: String,
@@ -27,6 +29,7 @@ const ProfileSchema = new mongoose.Schema({
     },
     description: {
         type: String,
+        default: null,
     },
     posts: [{
         type: mongoose.Schema.Types.ObjectId,
