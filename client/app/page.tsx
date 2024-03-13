@@ -1,8 +1,7 @@
 import React, { FC } from "react";
 import HelloWorld from "../components/HelloWorld";
 import "../styles/global.css";
-import { SignIn, UserButton } from "@clerk/nextjs";
-import Profile from "./profile/page";
+import { UserButton } from "@clerk/nextjs";
 
 const Page : FC = () => {
   return <>

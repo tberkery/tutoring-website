@@ -17,10 +17,10 @@ interface PostCardProps {
 
 const PostCard: React.FC<PostCardProps> = ({ post }) => {
   const defaultImage = '/jhulogo.jpeg';
-  return (
+  return ( <> 
     <div className="max-w-sm rounded overflow-hidden shadow-lg bg-white">
       <img
-        className="w-full h-48 object-cover"
+        className="w-full h-24 object-cover"
         src={post.imageUrl || defaultImage}
         alt={post.title}
       />
@@ -34,6 +34,7 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
         <p className="text-gray-600 text-sm">Created by {post.username}</p>
       </div>
     </div>
+    </>
   );
 };
 

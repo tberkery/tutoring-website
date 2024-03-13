@@ -40,7 +40,7 @@ const Page : FC = () => {
 		}
 	}
 	
-	useEffect(() => { checkIfProfileExists() }, [user, router]);
+	useEffect(() => { checkIfProfileExists() }, [user, router, isLoaded, isSignedIn, checkedProfileExists]);
 
 	const [firstName, setFirstName] = useState("");
 	const [lastName, setLastName] = useState("");

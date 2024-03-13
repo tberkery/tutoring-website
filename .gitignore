@@ -5,7 +5,7 @@ node_modules
 /.pnp
 .pnp.js
 .next
-.netlify
+.
 
 # testing
 /coverage
@@ -25,3 +25,4 @@ yarn-debug.log*
 yarn-error.log*
 
 **/.env
+aws.env
