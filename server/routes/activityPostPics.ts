@@ -19,7 +19,7 @@ const router = require('express').Router();
 // AWS S3 Client Classes
 const { PutObjectCommand, DeleteObjectCommand, GetObjectCommand, S3Client } = require("@aws-sdk/client-s3");
 
-// Initialize Universally Unique Identifier to generate a unique key for profile photos
+// Initialize Universally Unique Identifier to generate a unique key for activity post photos
 const { v4: uuidv4 } = require('uuid');
 
 // Configure the AWS SDK with environment variables
@@ -33,7 +33,7 @@ const client = new S3Client({
 
 
 // Update 'image.jpeg' with parameter name passed in
-router.post('/upload/:objectID', upload.single('profilePicture'), async (req: Request, res: Response) => {
+router.post('/upload/:objectID', upload.single('activityPostPicture'), async (req: Request, res: Response) => {
   try {
     const objectID = req.params.objectID;
     const fileContent = (req.file as Express.Multer.File).buffer; // Cast req.file to the correct type
@@ -56,10 +56,10 @@ router.post('/upload/:objectID', upload.single('profilePicture'), async (req: Re
     const response = await uploadToS3(fileContent, bucketName, key);
     
     if (response) {
-      // Update the user document in MongoDB with the profile picture key
+      // Update the user document in MongoDB with the activity post picture key
       await ActivityPosts.findByIdAndUpdate(objectID, { activityPostPicKey: key });
 
-      res.status(200).json({ message: 'Profile picture uploaded successfully'});
+      res.status(200).json({ message: 'activity post picture uploaded successfully'});
     }
     
   } catch (err) {
@@ -68,8 +68,8 @@ router.post('/upload/:objectID', upload.single('profilePicture'), async (req: Re
   }
 });
 
-// PUT endpoint to update a profile picture
-router.put('/update/:objectID/:key', upload.single('profilePicture'), async (req: Request, res: Response) => {
+// PUT endpoint to update a activity post picture
+router.put('/update/:objectID/:key', upload.single('activityPostPicture'), async (req: Request, res: Response) => {
   try {
     const objectID = req.params.objectID;
     const key = req.params.key;
@@ -84,18 +84,18 @@ router.put('/update/:objectID/:key', upload.single('profilePicture'), async (req
     const response = await uploadToS3(fileContent, bucketName!, key);
 
     if (response) {
-      // Update the user document in MongoDB with the profile picture key
+      // Update the user document in MongoDB with the activity post picture key
       await ActivityPosts.findByIdAndUpdate(objectID, { activityPostPicKey: key });
 
-      res.status(200).json({ message: 'Profile picture updated successfully'});
+      res.status(200).json({ message: 'activity post picture updated successfully'});
     }
   } catch (err) {
-    console.error('Error updating profile picture:', err);
+    console.error('Error updating activity post picture:', err);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
 
-// GET endpoint to retrieve a profile picture
+// GET endpoint to retrieve a activity post picture
 router.get('/get/:key', async (req: Request, res: Response) => {
   try {
     const key = req.params.key;
@@ -115,7 +115,7 @@ router.get('/get/:key', async (req: Request, res: Response) => {
   * Retrieve the image from the S3 bucket based on the provided key.
   * If the image is found, you have two options for sending the response:
   * 1. Send back the S3 URL of the image:
-  *    res.status(200).json({ activityPostPicKey: `http://tutorhubprofilepics.s3.amazonaws.com/${key}` });
+  *    res.status(200).json({ activityPostPicKey: `http://tutorhubactivitypostpics.s3.amazonaws.com/${key}` });
   * 2. Send the image file itself:
   *    - Set the appropriate headers for the file:
   *      res.set('Content-Type', response.ContentType);
@@ -123,15 +123,15 @@ router.get('/get/:key', async (req: Request, res: Response) => {
   *    - Send the binary data of the image in the response body:
   *      res.status(200).send(response.Body);
   */
-    res.status(200).json({ activityPostPicKey: `https://tutorhubprofilepics.s3.amazonaws.com/${key}` });
+    res.status(200).json({ activityPostPicKey: `https://tutorhubactivitypostpics.s3.amazonaws.com/${key}` });
 
   } catch (err) {
-    console.error('Error retrieving profile picture:', err);
+    console.error('Error retrieving activity post picture:', err);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
 
-// DELETE endpoint to delete a profile picture
+// DELETE endpoint to delete a activity post picture
 router.delete('/delete/:objectID/:key', async (req: Request, res: Response) => {
   try {
 
@@ -150,13 +150,13 @@ router.delete('/delete/:objectID/:key', async (req: Request, res: Response) => {
     // Send the command to S3
     const response = await client.send(command);
 
-    // Assuming profilePictureID is the field storing the profile picture ID
+    // Assuming activityPostPictureID is the field storing the activity post picture ID
     await ActivityPosts.findByIdAndUpdate(objectID, { activityPostPicKey: null }); 
 
     // Send appropriate response based on the deletion result
-    res.status(200).json({ message: 'Profile picture deleted successfully' });
+    res.status(200).json({ message: 'activity post picture deleted successfully' });
   } catch (err) {
-    console.error('Error deleting profile picture:', err);
+    console.error('Error deleting activity post picture:', err);
     res.status(500).json({ error: 'Internal server error' });
   }
 });

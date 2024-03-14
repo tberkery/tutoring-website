@@ -38,8 +38,6 @@ router.post('/upload/:objectID', upload.single('profilePicture'), async (req: Re
     console.log("here")
     const objectID = req.params.objectID;
     const fileContent = (req.file as Express.Multer.File).buffer; // Cast req.file to the correct type
-    console.log(objectID)
-    console.log(fileContent)
     if (!fileContent) {
       return res.status(400).json({ error: 'File is required' });
     }
