@@ -47,16 +47,18 @@ export class CoursePostDao {
         return posts;
     }
 
-    async readAll({courseName, courseNumber, price}: {courseName: string, courseNumber: string, price: number}) {
+    async readAll({courseName, courseNumber, lowPrice, highPrice}: {courseName: string, courseNumber: string, lowPrice: number, highPrice: number}) {
         const filter : any = {};
         if (courseName) {
-            filter.courseName = courseName;
+            filter.courseName = {$regex: courseName, $options: 'i'};
         }
         if (courseNumber) {
-            filter.courseNumber = courseNumber;
+            filter.courseNumber = {$regex: courseNumber, $options: 'i'};
         }
-        if (price) {
-            filter.price = price;
+        if (lowPrice) {
+            const lowerBound = lowPrice;
+            const upperBound = highPrice ? highPrice : lowPrice;
+            filter.price = {$lte: upperBound, $gte: lowerBound};
         }
         try {
             const posts = await CoursePost.find(filter);
