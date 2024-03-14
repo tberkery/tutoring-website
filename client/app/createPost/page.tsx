@@ -21,6 +21,7 @@ const Page : FC = () => {
   const [schoolName, setSchoolName] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [description, setDescription] = useState("");
+  const [photoFile, setPhotoFile] = useState<File>(null);
 	const [refilling, setRefilling] = useState(false);
 
   const createCoursePost = async () => {
@@ -73,8 +74,21 @@ const Page : FC = () => {
     if (tags.length > 0) {
       body["tags"] = tags;
     }
-    // TODO implement pics
-    return await axios.post(`${api}/activityPosts`, body);
+    const newPost = await axios.post(`${api}/activityPosts`, body);
+    if (photoFile !== null) {
+      const formData = new FormData();
+      formData.append("activityPostPicture", photoFile);
+      console.log(newPost.data.newPost._id);
+      const photoUri = `${api}/activityPostPics/upload/${newPost.data.newPost._id}`;
+      console.log(photoUri);
+      await axios.post(photoUri, formData);
+    }
+    return newPost;
+  }
+
+  const handleFileSelected = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const files = Array.from(e.target.files)
+    setPhotoFile(files[0]);
   }
 
   const checkAndSubmit = async () => {
@@ -122,6 +136,7 @@ const Page : FC = () => {
         setTags={setTags}
         description={description}
         setDescription={setDescription}
+        setPhotoFile={handleFileSelected}
         refilling={refilling}
         setRefilling={setRefilling}
         submitText="Finish"

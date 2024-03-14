@@ -1,5 +1,5 @@
 import { useUser } from "@clerk/nextjs";
-import { Dispatch, FC, SetStateAction } from "react";
+import { ChangeEventHandler, Dispatch, FC, SetStateAction } from "react";
 import { Label } from "./ui/label";
 import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 import { Input } from "./ui/input";
@@ -35,6 +35,7 @@ type createPostProps = {
   setTags: Dispatch<SetStateAction<string[]>>,
   description: string,
   setDescription: Dispatch<SetStateAction<string>>,
+  setPhotoFile: ChangeEventHandler
   refilling: boolean,
   setRefilling: Dispatch<SetStateAction<boolean>>,
   submitText: string,
@@ -68,6 +69,7 @@ const CreatePost : FC<createPostProps> =
   setTags,
   description,
   setDescription,
+  setPhotoFile,
   refilling,
   submitText,
   submit,
@@ -232,6 +234,7 @@ const CreatePost : FC<createPostProps> =
               <Input
                 id="picture"
                 type="file"
+                onChange={ setPhotoFile }
                 accept="image/png, image/gif, image/jpeg"
                 className="cursor-pointer"
               />

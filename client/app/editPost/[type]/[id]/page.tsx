@@ -25,6 +25,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
   const [tags, setTags] = useState<string[]>([]);
   const [description, setDescription] = useState("");
 	const [refilling, setRefilling] = useState(false);
+  const [photoFile, setPhotoFile] = useState<File>(null);
   const [loadedPost, setLoadedPost] = useState(false);
 
   const loadOldPost = async () => {
@@ -35,7 +36,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
     console.log(post);
     setTitle(isCourse ? post.courseName : post.activityTitle);
     setNumber(isCourse ? post.courseNumber : "");
-    post.price && setPrice(post.price);
+    post.price && setPrice(`$${post.price}`);
     isCourse && setDepartment(post.courseDepartment[0]);
     isCourse && post.semesterTaken && setSemester(post.semesterTaken);
     isCourse && post.gradeReceived && setGrade(post.gradeReceived);
@@ -78,10 +79,10 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
     if (grade !== "") {
       body["gradeReceived"] = grade;
     }
-    if (atJHU && professor !== "") {
+    if (atJHU === "Yes" && professor !== "") {
       body["professorTakenWith"] = professor;
     }
-    if (!atJHU && schoolName !== "") {
+    if (atJHU === "No" && schoolName !== "") {
       body["schoolTakenAt"] = schoolName;
     }
     if (description !== "") {
@@ -107,8 +108,20 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
     if (tags.length > 0) {
       body["tags"] = tags;
     }
-    // TODO implement pics
-    return await axios.put(`${api}/activityPosts/${postId}`, body);
+    const newPost = await axios.put(`${api}/activityPosts/${postId}`, body);
+    if (photoFile !== null) {
+      const formData = new FormData();
+      formData.append("activityPostPicture", photoFile);
+      const photoUri = `${api}/activityPostPics/upload/${postId}`;
+      console.log(photoUri);
+      await axios.post(photoUri, formData);
+    }
+    return newPost;
+  }
+
+  const handleFileSelected = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const files = Array.from(e.target.files)
+    setPhotoFile(files[0]);
   }
 
   const checkAndSubmit = async () => {
@@ -157,6 +170,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
         setTags={setTags}
         description={description}
         setDescription={setDescription}
+        setPhotoFile={handleFileSelected}
         refilling={refilling}
         setRefilling={setRefilling}
         submitText="Update"
