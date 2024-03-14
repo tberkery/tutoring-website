@@ -40,6 +40,8 @@ describe('Test allPosts routes', () => {
     
         expect(res.status).toBe(404);
         expect(res.body.msg).toBe("No posts found");
+        await activityPost.deleteMany({});
+        await coursePost.deleteMany({});
     });
 
     test('GET /allPosts with multiple course posts', async () => {
@@ -89,7 +91,8 @@ describe('Test allPosts routes', () => {
         expect(res.status).toBe(200);
         const timestamps = res.body.map((post: any) => new ObjectId(post._id).getTimestamp().getTime());
         expect(timestamps).toEqual(timestamps.sort((a: number, b: number) => b - a));
-
+        await activityPost.deleteMany({});
+        await coursePost.deleteMany({});
     });
 
     test('GET /allPosts with multiple activity posts', async () => {
@@ -144,6 +147,8 @@ describe('Test allPosts routes', () => {
         expect(res.status).toBe(200);
         const timestamps = res.body.map((post: any) => new ObjectId(post._id).getTimestamp().getTime());
         expect(timestamps).toEqual(timestamps.sort((a: number, b: number) => b - a));
+        await activityPost.deleteMany({});
+        await coursePost.deleteMany({});
 
     });
 
@@ -198,6 +203,8 @@ describe('Test allPosts routes', () => {
             expect(res.status).toBe(200);
             const timestamps = res.body.map((post: any) => new ObjectId(post._id).getTimestamp().getTime());
             expect(timestamps).toEqual(timestamps.sort((a: number, b: number) => b - a));
+            await activityPost.deleteMany({});
+            await coursePost.deleteMany({});
     
     });
 
