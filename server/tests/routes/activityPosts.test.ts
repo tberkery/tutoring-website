@@ -349,7 +349,7 @@ describe('Test activityPosts routes', () => {
 
         const example3PostData = { // will be used for case where only activityTitles match
             userId: 'example3UserId', 
-            activityTitle: 'Example2 Activity', // NOTE the 2s here
+            activityTitle: 'Example3 Activity', // NOTE the 3s here
             activityDescription: 'Example3 description',
             imageUrl: 'example3ImageUrl',
             price: 1,

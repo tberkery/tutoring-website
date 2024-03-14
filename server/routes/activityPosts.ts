@@ -29,19 +29,6 @@ router.get("/findOne/:id", async (req: any, res: any) => {
     }
 });
 
-// router.get("/", async (req: any, res: any ) => {
-//   try {
-//     const posts = await ActivityPostDao.readAll();
-//     if (posts.length === 0) {
-//       return res.status(404).json({ msg: "No posts found" });
-//     }
-//     res.status(200).json({ posts });
-//   } catch (err) {
-//     console.log(err);
-//     res.status(500).send("Server Error");
-//   }
-// });
-
 router.put("/:id", async (req: any, res: any) => {
     const id : number = req.params.id;
     const {userId, activityTitle, activityDescription, imageUrl, price, tags}: {userId: string, activityTitle: string, activityDescription: string, imageUrl: string, price: number, tags: string[]} = req.body;
