@@ -160,6 +160,27 @@ test('test readAll() on non empty table with multiple matches for filter by cour
     expect(posts.length).toBe(5);
 });
 
+
+test('test readAll() on non empty table returns partial matches for filter by courseName', async ()=> {
+    const coursePostDao = new CoursePostDao();
+    await coursePostDao.deleteAll()
+    await mg.connect(URI);
+    for(let i = 0; i < 5; i++){
+        const userId = faker.lorem.word();
+        const courseName =  "Software Testing and Debugging TEST";
+        const price = faker.number.int(100);
+        const courseNumber = (faker.finance.accountNumber());
+        const courseDepartment = ["Computer Science"]
+        const professorTakenWith = faker.person.lastName();
+        const takenAtHopkins = true;
+        const post =  await coursePostDao.create(userId, courseName, { price, courseNumber, courseDepartment, professorTakenWith, takenAtHopkins});
+
+    }
+    const posts = await coursePostDao.readAll({courseName: "Software Testing"});
+    expect(posts.length).toBe(5);
+});
+
+
 test('test readAll() on non empty table with filter for courseName with one match', async ()=> {
     const coursePostDao = new CoursePostDao();
     await coursePostDao.deleteAll()

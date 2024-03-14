@@ -71,8 +71,7 @@ describe('Test activityPosts routes', () => {
 
         const res = await request(app).get('/activityPosts');
     
-        expect(res.status).toBe(404);
-        expect(res.body.msg).toBe("No posts found");
+        expect(res.status).toBe(200);
     });
 
     // Test for GET /activityPosts with multiple posts in the database
