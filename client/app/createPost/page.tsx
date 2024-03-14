@@ -53,7 +53,6 @@ const Page : FC = () => {
     if (description !== "") {
       body["description"] = description;
     }
-    console.log(body);
     return await axios.post(`${api}/coursePosts`, body);
   }
 
@@ -78,9 +77,7 @@ const Page : FC = () => {
     if (photoFile !== null) {
       const formData = new FormData();
       formData.append("activityPostPicture", photoFile);
-      console.log(newPost.data.newPost._id);
       const photoUri = `${api}/activityPostPics/upload/${newPost.data.newPost._id}`;
-      console.log(photoUri);
       await axios.post(photoUri, formData);
     }
     return newPost;
@@ -105,7 +102,6 @@ const Page : FC = () => {
       } else {
         response = await createActivityPost();
       }
-      console.log(response);
     }
   }
 

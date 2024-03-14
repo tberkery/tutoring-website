@@ -4,10 +4,12 @@ import { FC, useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import axios from "axios";
 import CreatePost from "@/components/CreatePost";
+import { useRouter } from "next/router";
 
 const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
 	const { user } = useUser();
 	const api : string = process.env.NEXT_PUBLIC_BACKEND_URL;
+  const router = useRouter();
   const postId = params.id;
   
   const [postType, setPostType] = useState(
@@ -33,7 +35,6 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
     const route = isCourse ? "coursePosts" : "activityPosts";
     const response = await axios.get(`${api}/${route}/findOne/${postId}`);
     const post = response.data.post;
-    console.log(post);
     setTitle(isCourse ? post.courseName : post.activityTitle);
     setNumber(isCourse ? post.courseNumber : "");
     post.price && setPrice(`$${post.price}`);
@@ -113,7 +114,6 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
       const formData = new FormData();
       formData.append("activityPostPicture", photoFile);
       const photoUri = `${api}/activityPostPics/upload/${postId}`;
-      console.log(photoUri);
       await axios.post(photoUri, formData);
     }
     return newPost;
@@ -138,7 +138,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
       } else {
         response = await editActivityPost();
       }
-      console.log(response);
+      router.replace('/profile');
     }
   }
 
