@@ -72,18 +72,26 @@ export class ActivityPostDao {
         return posts;
 
     }
-    async update(id: any, updateFields: any) {
-        try {
-            let post = await ActivityPost.findByIdAndUpdate(id, updateFields, { new: true });
-            if (!post) {
-                return "Post not found";
+    async update( id: any, userId: string, activityTitle: string, options?: {activityDescription?: string, imageUrl?: number, price?: number, tags?: string[]} ) {
+        let newPost: any = {userId, activityTitle}
+        if (options){
+            if(options.activityDescription){
+                newPost.activityDescription = options.activityDescription
             }
-            return post;
-        } catch (err) {
-            console.log(err);
-            throw new Error("Error updating post");
+            if (options.imageUrl){
+                newPost.imageUrl = options.imageUrl;
+            }
+            if (options.price){
+                newPost.price = options.price;
+            }
+            if (options.tags){
+                newPost.tags = options.tags;
+            }
         }
+        let post = await ActivityPost.findByIdAndUpdate(id, newPost);
+        return post;
     }
+    
     async delete(id : any) {
         const deletedPost = await ActivityPost.findOneAndDelete({ _id: id });
         if (!deletedPost) {

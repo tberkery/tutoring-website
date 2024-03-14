@@ -1,9 +1,12 @@
 export {}
 const request = require('supertest');
 const express = require('express');
-const app = require('../../../server/app.ts')
 const router = require('../../../server/routes/index.ts')
 const activityPost = require('../../../server/model/ActivityPost'); 
+const App = require('../../../server/app.ts')
+
+App.dbConnection(true)
+const app = App.app
 
 app.use(express.json());
 app.use('/activityPosts', router);
@@ -149,9 +152,11 @@ describe('Test activityPosts routes', () => {
             tags: ['exampleTag1', 'exampleTag2']
         };
     
-        const res = await request(app)
+        await request(app)
         .put(`/activityPosts/${postId}`)
         .send(updatedData);
+
+        const res = await request(app).get(`/activityPosts/findOne/${postId}`);
     
         expect(res.status).toBe(200);
         expect(res.body).toHaveProperty('post');
@@ -575,5 +580,4 @@ describe('Test activityPosts routes', () => {
         // Clean up: Delete all activity posts
         await activityPost.deleteMany({});
     });
-    
 });

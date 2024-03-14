@@ -1,12 +1,12 @@
 require("dotenv").config();
 const mg = require("mongoose");
 const URI = process.env.ATLAS_URI
-const TEST_URI = process.env.ATLAS_URI_TEST
+const testURI = process.env.ATLAS_URI_TEST
 
-async function connect(is_test: boolean) {
+async function connect(isTest: boolean) {
   try {
-    if (is_test) {
-      await mg.connect(TEST_URI);
+    if (isTest === true) {
+      await mg.connect(testURI);
     } else {
       await mg.connect(URI);
     }

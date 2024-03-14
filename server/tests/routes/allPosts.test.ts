@@ -1,11 +1,14 @@
 export {}
 const request = require('supertest');
 const express = require('express');
-const app = require('../../../server/app.ts')
+const App = require('../../../server/app.ts')
 const router = require('../../../server/routes/index.ts')
 const activityPost = require('../../../server/model/ActivityPost'); 
 const coursePost = require('../../../server/model/CoursePost');
 const { ObjectId } = require('mongodb');
+
+App.dbConnection(true)
+const app = App.app
 
 const objectIdString = "65ee95b7aef7f7e6b98ca4e8";
 const objectId = new ObjectId(objectIdString);
