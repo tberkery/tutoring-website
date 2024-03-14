@@ -2,9 +2,9 @@ export {}
 
 import { Request, Response } from 'express';
 
-const Profiles = require("../model/Profile.ts")
+const ActivityPosts = require("../model/ActivityPost.ts")
 
-require('dotenv').config({ path: 'aws.env' }); // Load environment variables from aws.env file
+require('dotenv').config({ path: '.env' }); // Load environment variables from aws.env file
 
 // Middleware for file uploads
 import { Multer } from 'multer';
@@ -43,7 +43,7 @@ router.post('/upload/:objectID', upload.single('profilePicture'), async (req: Re
     }
 
     // Load bucket name from aws.env
-    const bucketName = process.env.AWS_PROFILE_BUCKET_NAME;
+    const bucketName = process.env.AWS_ACTIVITY_POST_BUCKET_NAME;
 
     // Generate a unique key for the uploaded image
     const key = `${uuidv4()}`;
@@ -57,7 +57,7 @@ router.post('/upload/:objectID', upload.single('profilePicture'), async (req: Re
     
     if (response) {
       // Update the user document in MongoDB with the profile picture key
-      await Profiles.findByIdAndUpdate(objectID, { profilePicKey: key });
+      await ActivityPosts.findByIdAndUpdate(objectID, { activityPostPicKey: key });
 
       res.status(200).json({ message: 'Profile picture uploaded successfully'});
     }
@@ -79,13 +79,13 @@ router.put('/update/:objectID/:key', upload.single('profilePicture'), async (req
       return res.status(400).json({ error: 'Key and file content are required' });
     }
 
-    const bucketName = process.env.AWS_PROFILE_BUCKET_NAME;
+    const bucketName = process.env.AWS_ACTIVITY_POST_BUCKET_NAME;
 
     const response = await uploadToS3(fileContent, bucketName!, key);
 
     if (response) {
       // Update the user document in MongoDB with the profile picture key
-      await Profiles.findByIdAndUpdate(objectID, { profilePicKey: key });
+      await ActivityPosts.findByIdAndUpdate(objectID, { activityPostPicKey: key });
 
       res.status(200).json({ message: 'Profile picture updated successfully'});
     }
@@ -104,7 +104,7 @@ router.get('/get/:key', async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Key is required' });
     }
 
-    const bucketName = process.env.AWS_PROFILE_BUCKET_NAME;
+    const bucketName = process.env.AWS_ACTIVITY_POST_BUCKET_NAME;
 
     // Retrieve the file from S3 bucket based on the key
     const command = new GetObjectCommand({ Bucket: bucketName, Key: key });
@@ -115,7 +115,7 @@ router.get('/get/:key', async (req: Request, res: Response) => {
   * Retrieve the image from the S3 bucket based on the provided key.
   * If the image is found, you have two options for sending the response:
   * 1. Send back the S3 URL of the image:
-  *    res.status(200).json({ imageUrl: `http://tutorhubprofilepics.s3.amazonaws.com/${key}` });
+  *    res.status(200).json({ activityPostPicKey: `http://tutorhubprofilepics.s3.amazonaws.com/${key}` });
   * 2. Send the image file itself:
   *    - Set the appropriate headers for the file:
   *      res.set('Content-Type', response.ContentType);
@@ -123,7 +123,7 @@ router.get('/get/:key', async (req: Request, res: Response) => {
   *    - Send the binary data of the image in the response body:
   *      res.status(200).send(response.Body);
   */
-    res.status(200).json({ imageUrl: `https://tutorhubprofilepics.s3.amazonaws.com/${key}` });
+    res.status(200).json({ activityPostPicKey: `https://tutorhubprofilepics.s3.amazonaws.com/${key}` });
 
   } catch (err) {
     console.error('Error retrieving profile picture:', err);
@@ -142,7 +142,7 @@ router.delete('/delete/:objectID/:key', async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Key is required' });
     }
 
-    const bucketName = process.env.AWS_PROFILE_BUCKET_NAME;
+    const bucketName = process.env.AWS_ACTIVITY_POST_BUCKET_NAME;
 
     // Create a command to delete the object
     const command = new DeleteObjectCommand({ Bucket: bucketName, Key: key });
@@ -151,7 +151,7 @@ router.delete('/delete/:objectID/:key', async (req: Request, res: Response) => {
     const response = await client.send(command);
 
     // Assuming profilePictureID is the field storing the profile picture ID
-    await Profiles.findByIdAndUpdate(objectID, { profilePicKey: null }); 
+    await ActivityPosts.findByIdAndUpdate(objectID, { activityPostPicKey: null }); 
 
     // Send appropriate response based on the deletion result
     res.status(200).json({ message: 'Profile picture deleted successfully' });

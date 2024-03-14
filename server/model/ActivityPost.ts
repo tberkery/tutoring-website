@@ -15,7 +15,7 @@ const ActivityPostSchema = new mongoose.Schema({
       type: String,
       default: null,
     },
-    imageUrl: {
+    activityPostPicKey: {
       type: String,
       default: null,
     },

@@ -47,6 +47,10 @@ const CoursePostSchema = new mongoose.Schema({
         type: String,
         default: null
     },
+    coursePostPicKey: {
+        type: String,
+        default: null
+    }
 
     // courseId: { // this field will be null if it's non-academic
     //   type: Number,
