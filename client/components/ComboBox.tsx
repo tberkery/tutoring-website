@@ -19,7 +19,7 @@ import {
 type props = {
 	prompt: string,
 	options: string[],
-	setValueProp: (arg0: string) => void,
+	setValueProp?: (arg0: string) => void,
 } & HTMLAttributes<HTMLDivElement>;
 
 const ComboBox : FC<props> = (props : props) => {
@@ -28,7 +28,9 @@ const ComboBox : FC<props> = (props : props) => {
 	
 	const setValueWithProp = (arg : string) => {
 		setValue(arg);
-		props.setValueProp(arg);
+		if (props.setValueProp) {
+			props.setValueProp(arg);
+		}
 	}
 
 	let options : string[] = props.options;
@@ -41,7 +43,7 @@ const ComboBox : FC<props> = (props : props) => {
 					variant="outline"
 					role="combobox"
 					aria-expanded={open}
-					className={ `w-[200px] justify-between ${props.className}` }
+					className={ `w-[200px] justify-between shadow-sm ${props.className}` }
 					id={props.id}
 				>
 					{value

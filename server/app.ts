@@ -8,15 +8,15 @@ const cors = require('cors');
 const connect = require('./data/db');
 const router  = require('./routes/index');
 
-
 class App {
 
     public app: any;
+    
 
     constructor(){
         this.app = express()
         this.setupMiddlewares()
-        this.dbConnection()
+        // this.dbConnection()
         this.setRouting()
     }
 
@@ -30,8 +30,8 @@ class App {
         this.app.use(bodyParser.urlencoded({ extended: false }))
     }
 
-    async dbConnection(){
-        await connect()
+    async dbConnection(isTest: boolean = false){
+        await connect(isTest)
     }
 
     setRouting() {
@@ -39,4 +39,4 @@ class App {
     }
 }
 
-module.exports = new App().app
+module.exports = new App()
