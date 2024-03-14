@@ -8,7 +8,7 @@ import {
     AccordionItem,
     AccordionTrigger,
   } from "@/components/ui/accordion";
-import PostSection from "@/components/PostSection";
+import BrowseSection from "@/components/BrowseSection";
 
 const Page : FC = () => {
   return <>
@@ -80,7 +80,7 @@ const Page : FC = () => {
             </div>
         </div>
         <div className="w-3/4">
-            <PostSection/>
+            <BrowseSection/>
         </div>
     </div>
     </>;

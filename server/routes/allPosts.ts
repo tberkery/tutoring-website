@@ -15,6 +15,7 @@ router.get("/", async (req: any, res: any ) => {
         const activityPosts = await ActivityPostDao.readAll({});
         
         const allPosts = [...coursePosts, ...activityPosts];
+
         
         allPosts.sort((a, b) => {
             const timestampA = a._id.getTimestamp().getTime();
@@ -25,7 +26,7 @@ router.get("/", async (req: any, res: any ) => {
         if (allPosts.length === 0) {
             return res.status(404).json({ msg: "No posts found" });
         }
-                res.status(200).json(allPosts);
+        res.status(200).json(allPosts);
     } catch (err) {
         console.log(err);
         res.status(500).send("Server Error");
