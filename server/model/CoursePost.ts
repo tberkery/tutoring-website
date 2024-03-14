@@ -1,7 +1,7 @@
 export {}
 
 const mongoose = require('mongoose');
-
+const {Schema} = require('mongoose');
 const CoursePostSchema = new mongoose.Schema({
     userId: {
       type: String,
@@ -41,7 +41,7 @@ const CoursePostSchema = new mongoose.Schema({
     },
     takenAtHopkins: {
         type: Boolean,
-        default: true,
+        required: true,
     },
     schoolTakenAt: {
         type: String,

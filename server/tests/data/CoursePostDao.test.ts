@@ -23,7 +23,7 @@ test('test create() with all fields', async ()=> {
     const takenAtHopkins = true;
     const schoolTakenAt = "Johns Hopkins";
     
-    const post =  await coursePostDao.create(userId, courseName, {description, price, courseNumber, courseDepartment, gradeReceived, semesterTaken, professorTakenWith, takenAtHopkins, schoolTakenAt});
+    const post =  await coursePostDao.create(userId, courseName, takenAtHopkins, {description, price, courseNumber, courseDepartment, gradeReceived, semesterTaken, professorTakenWith, schoolTakenAt});
     expect(post.userId).toBe(userId);
     expect(post.courseName).toBe(courseName);
     expect(post.description).toBe(description);
@@ -43,10 +43,13 @@ test('test create() without optional fields', async ()=> {
     await mg.connect(URI);
     const userId = faker.lorem.word();
     const courseName =  faker.lorem.word();
+    const takenAtHopkins = false;
+
     
-    const post =  await coursePostDao.create(userId, courseName);
+    const post =  await coursePostDao.create(userId, courseName, takenAtHopkins);
     expect(post.userId).toBe(userId);
     expect(post.courseName).toBe(courseName);
+    expect(post.takenAtHopkins).toBe(false);
 });
 
 test('test create() with some optional fields', async ()=> {
@@ -60,7 +63,7 @@ test('test create() with some optional fields', async ()=> {
     const professorTakenWith = faker.person.lastName();
     const takenAtHopkins = true;
     
-    const post =  await coursePostDao.create(userId, courseName, { price, courseNumber, courseDepartment, professorTakenWith, takenAtHopkins});
+    const post =  await coursePostDao.create(userId, courseName, takenAtHopkins, { price, courseNumber, courseDepartment, professorTakenWith});
     expect(post.userId).toBe(userId);
     expect(post.courseName).toBe(courseName);
     expect(post.price).toBe(price);
@@ -86,7 +89,7 @@ test('test readOne() for a valid id', async ()=> {
     const takenAtHopkins = true;
     const schoolTakenAt = "Johns Hopkins";
     
-    const post =  await coursePostDao.create(userId, courseName, {description, price, courseNumber, courseDepartment, gradeReceived, semesterTaken, professorTakenWith, takenAtHopkins, schoolTakenAt});
+    const post =  await coursePostDao.create(userId, courseName, takenAtHopkins, {description, price, courseNumber, courseDepartment, gradeReceived, semesterTaken, professorTakenWith, schoolTakenAt});
     expect(post.userId).toBe(userId);
     expect(post.courseName).toBe(courseName);
     expect(post.description).toBe(description);
@@ -134,7 +137,7 @@ test('test readAll() on non empty table without filter', async ()=> {
         const courseDepartment = ["Computer Science"]
         const professorTakenWith = faker.person.lastName();
         const takenAtHopkins = true;
-        const post =  await coursePostDao.create(userId, courseName, { price, courseNumber, courseDepartment, professorTakenWith, takenAtHopkins});
+        const post =  await coursePostDao.create(userId, courseName, takenAtHopkins, { price, courseNumber, courseDepartment, professorTakenWith});
 
     }
     const posts = await coursePostDao.readAll({});
@@ -153,12 +156,33 @@ test('test readAll() on non empty table with multiple matches for filter by cour
         const courseDepartment = ["Computer Science"]
         const professorTakenWith = faker.person.lastName();
         const takenAtHopkins = true;
-        const post =  await coursePostDao.create(userId, courseName, { price, courseNumber, courseDepartment, professorTakenWith, takenAtHopkins});
+        const post =  await coursePostDao.create(userId, courseName, takenAtHopkins, { price, courseNumber, courseDepartment, professorTakenWith});
 
     }
     const posts = await coursePostDao.readAll({courseName: "Software Testing and Debugging TEST"});
     expect(posts.length).toBe(5);
 });
+
+
+test('test readAll() on non empty table returns partial matches for filter by courseName', async ()=> {
+    const coursePostDao = new CoursePostDao();
+    await coursePostDao.deleteAll()
+    await mg.connect(URI);
+    for(let i = 0; i < 5; i++){
+        const userId = faker.lorem.word();
+        const courseName =  "Software Testing and Debugging TEST";
+        const price = faker.number.int(100);
+        const courseNumber = (faker.finance.accountNumber());
+        const courseDepartment = ["Computer Science"]
+        const professorTakenWith = faker.person.lastName();
+        const takenAtHopkins = true;
+        const post =  await coursePostDao.create(userId, courseName, takenAtHopkins, { price, courseNumber, courseDepartment, professorTakenWith});
+
+    }
+    const posts = await coursePostDao.readAll({courseName: "Software Testing"});
+    expect(posts.length).toBe(5);
+});
+
 
 test('test readAll() on non empty table with filter for courseName with one match', async ()=> {
     const coursePostDao = new CoursePostDao();
@@ -175,7 +199,7 @@ test('test readAll() on non empty table with filter for courseName with one matc
         const semesterTaken = faker.date.month();
         const professorTakenWith = faker.person.lastName();
         const takenAtHopkins = true;
-        const post =  await coursePostDao.create(userId, courseName, {description, price, courseNumber, courseDepartment, gradeReceived, semesterTaken, professorTakenWith, takenAtHopkins});
+        const post =  await coursePostDao.create(userId, courseName, takenAtHopkins, {description, price, courseNumber, courseDepartment, professorTakenWith});
     }
     
     const userId = faker.lorem.word();
@@ -188,7 +212,7 @@ test('test readAll() on non empty table with filter for courseName with one matc
     const semesterTaken = faker.date.month();
     const professorTakenWith = faker.person.lastName();
     const takenAtHopkins = true;
-    const post =  await coursePostDao.create(userId, courseName, {description, price, courseNumber, courseDepartment, gradeReceived, semesterTaken, professorTakenWith, takenAtHopkins});
+    const post =  await coursePostDao.create(userId, courseName, takenAtHopkins, {description, price, courseNumber, courseDepartment, professorTakenWith, gradeReceived, semesterTaken});
 
     const postByCourseName = await coursePostDao.readAll({courseName: courseName})
     expect(postByCourseName).toBeDefined()
@@ -221,7 +245,7 @@ test('test readAll() on non empty table with multiple filters', async ()=> {
         const courseDepartment = ["Computer Science"]
         const professorTakenWith = faker.person.lastName();
         const takenAtHopkins = true;
-        post =  await coursePostDao.create(userId, courseName, { price, courseNumber, courseDepartment, professorTakenWith, takenAtHopkins});
+        const post =  await coursePostDao.create(userId, courseName, takenAtHopkins, { price, courseNumber, courseDepartment, professorTakenWith});
 
     }
     const posts = await coursePostDao.readAll({courseName, courseNumber});
@@ -245,8 +269,8 @@ test('test update()', async ()=> {
     const professorTakenWith = faker.person.lastName();
     const takenAtHopkins = true;
 
-    const post =  await coursePostDao.create(userId, courseName, {description, price, courseNumber, courseDepartment, gradeReceived, semesterTaken, professorTakenWith, takenAtHopkins});
-   
+    const post =  await coursePostDao.create(userId, courseName, takenAtHopkins, { price, courseNumber, courseDepartment, professorTakenWith});
+    // console.log("POST IS ", post);
     expect(post.userId).toBe(userId);
     expect(post.courseName).toBe(courseName);
     expect(post.price).toBe(price);
@@ -258,7 +282,7 @@ test('test update()', async ()=> {
     const id = post._id;
     const newCourseName = faker.lorem.word();
     const newPrice =faker.number.int(100);
-    const updatingPost = await coursePostDao.update(id, userId, newCourseName, {description, price: newPrice, courseNumber, courseDepartment, gradeReceived, semesterTaken, professorTakenWith, takenAtHopkins});
+    const updatingPost = await coursePostDao.update(id, userId, newCourseName, takenAtHopkins, {description, price: newPrice, courseNumber, courseDepartment, gradeReceived, semesterTaken, professorTakenWith});
     const updatedPost = await coursePostDao.readOne(id);
     expect(updatedPost.userId).toBe(userId);
     expect(updatedPost.courseName).toBe(newCourseName);
@@ -271,15 +295,16 @@ test('test update() to add an optional param when none originally given', async 
     await mg.connect(URI);
     const userId = faker.lorem.word();
     const courseName =  faker.lorem.word();
+    const takenAtHopkins = true;
     const description =  faker.lorem.sentence();
     const price = faker.number.int(100);
     const courseNumber = (faker.finance.accountNumber());
-    const post =  await coursePostDao.create(userId, courseName);
+    const post =  await coursePostDao.create(userId, courseName, takenAtHopkins);
     expect(post.userId).toBe(userId);
     expect(post.courseName).toBe(courseName);
 
     const id = post._id;
-    const updatingPost = await coursePostDao.update(id, userId, courseName, {description, price, courseNumber})
+    const updatingPost = await coursePostDao.update(id, userId, courseName, takenAtHopkins, {description, price, courseNumber})
     const updatedPost = await coursePostDao.readOne(id);
     expect(updatedPost.userId).toBe(userId);
     expect(updatedPost.courseName).toBe(courseName);
@@ -294,16 +319,17 @@ test('test update() to add an optional param originally not given', async ()=> {
     await mg.connect(URI);
     const userId = faker.lorem.word();
     const courseName =  faker.lorem.word();
+    const takenAtHopkins = true;
     const description =  faker.lorem.sentence();
     const price = faker.number.int(100);
     const courseNumber = (faker.finance.accountNumber());
-    const post =  await coursePostDao.create(userId, courseName, {description});
+    const post =  await coursePostDao.create(userId, courseName, takenAtHopkins, {description});
     expect(post.userId).toBe(userId);
     expect(post.courseName).toBe(courseName);
     expect(post.description).toBe(description);
 
     const id = post._id;
-    const updatingPost = await coursePostDao.update(id, userId, courseName, {description, price, courseNumber})
+    const updatingPost = await coursePostDao.update(id, userId, courseName, takenAtHopkins, {description, price, courseNumber})
     const updatedPost = await coursePostDao.readOne(id);
     expect(updatedPost.userId).toBe(userId);
     expect(updatedPost.courseName).toBe(courseName);
@@ -323,7 +349,7 @@ test('test delete() with a valid ID', async ()=> {
     const professorTakenWith = faker.person.lastName();
     const takenAtHopkins = true;
     
-    const post =  await coursePostDao.create(userId, courseName, { price, courseNumber, courseDepartment, professorTakenWith, takenAtHopkins});
+    const post =  await coursePostDao.create(userId, courseName, takenAtHopkins, { price, courseNumber, courseDepartment, professorTakenWith});
     expect(post.userId).toBe(userId);
     expect(post.courseName).toBe(courseName);
     expect(post.price).toBe(price);
