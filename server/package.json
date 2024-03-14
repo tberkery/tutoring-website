@@ -2,17 +2,16 @@
   "name": "server",
   "version": "1.0.0",
   "description": "",
-  "main": "index.ts",
+  "main": "server.ts",
   "scripts": {
     "test": "jest",
-    "start": "nodemon --exec ts-node ./index.ts"
+    "start": "nodemon --exec ts-node ./server.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@aws-sdk/client-s3": "^3.525.0",
-    "aws-sdk": "^2.1569.0",
     "@faker-js/faker": "^8.4.1",
     "aws-sdk": "^2.1574.0",
     "cors": "^2.8.5",

@@ -15,6 +15,10 @@ router.use('/profilePics', require('./profilePics.ts'))
 
 router.use('/activityPosts', require('./activityPosts.ts'))
 
+router.use('/activityPostPics', require('./activityPostPics'))
+
+router.use('/coursePostPics', require('./coursePostPics'))
+
 router.use('/allPosts', require('./allPosts.ts'))
 
 module.exports = router;

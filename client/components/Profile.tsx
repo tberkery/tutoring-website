@@ -27,7 +27,6 @@ const Profile = () => {
   if (!isSignedIn) {
     return (<p>Please sign in</p>);
   }
-
   if (!isLoaded) {
     return <div className="text-center mt-20">Loading your profile...</div>;
   }

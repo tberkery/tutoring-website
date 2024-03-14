@@ -2,14 +2,14 @@ const ActivityPost = require("../model/ActivityPost.ts");
 const mongoose = require("mongoose")
 
 export class ActivityPostDao {
-    async create(userId: string, activityTitle: string, options?: {activityDescription?: string, imageUrl?: string, price?: string, tags?: Array<string>}) {
+    async create(userId: string, activityTitle: string, options?: {activityDescription?: string, activityPostPicKey?: string, price?: number, tags?: Array<string>}) {
         let newPost: any = {userId, activityTitle}
         if (options){
             if (options.activityDescription){
                 newPost.activityDescription = options.activityDescription;
             }
-            if (options.imageUrl){
-                newPost.imageUrl = options.imageUrl;
+            if (options.activityPostPicKey){
+                newPost.activityPostPicKey = options.activityPostPicKey;
             }
             if (options.price){
                 newPost.price = options.price;
@@ -72,15 +72,26 @@ export class ActivityPostDao {
         return posts;
 
     }
-    async update( id: any, postInfo: any ) {
-        let post = await ActivityPost.findOne({ _id: id });
-        if (!post) {
-            return "Post not found";
+    async update( id: any, userId: string, activityTitle: string, options?: {activityDescription?: string, activityPostPicKey?: number, price?: number, tags?: string[]} ) {
+        let newPost: any = {userId, activityTitle}
+        if (options){
+            if(options.activityDescription){
+                newPost.activityDescription = options.activityDescription
+            }
+            if (options.activityPostPicKey){
+                newPost.activityPostPicKey = options.activityPostPicKey;
+            }
+            if (options.price){
+                newPost.price = options.price;
+            }
+            if (options.tags){
+                newPost.tags = options.tags;
+            }
         }
-        post.set(postInfo);
-        await post.save();
+        let post = await ActivityPost.findByIdAndUpdate(id, newPost);
         return post;
     }
+    
     async delete(id : any) {
         const deletedPost = await ActivityPost.findOneAndDelete({ _id: id });
         if (!deletedPost) {

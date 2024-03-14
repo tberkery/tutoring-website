@@ -1,7 +1,7 @@
 export {}
 
 const mongoose = require('mongoose');
-
+const {Schema} = require('mongoose');
 const CoursePostSchema = new mongoose.Schema({
     userId: {
       type: String,
@@ -16,7 +16,7 @@ const CoursePostSchema = new mongoose.Schema({
       default: null,
     },
     price: {
-      type: String,
+      type: Number,
       default: null,
     },
     courseNumber: {
@@ -41,12 +41,16 @@ const CoursePostSchema = new mongoose.Schema({
     },
     takenAtHopkins: {
         type: Boolean,
-        default: true,
+        required: true,
     },
     schoolTakenAt: {
         type: String,
         default: null
     },
+    coursePostPicKey: {
+        type: String,
+        default: null
+    }
 
     // courseId: { // this field will be null if it's non-academic
     //   type: Number,

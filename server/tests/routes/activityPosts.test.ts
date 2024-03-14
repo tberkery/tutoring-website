@@ -1,9 +1,12 @@
 export {}
 const request = require('supertest');
 const express = require('express');
-const app = require('../../../server/app.ts')
 const router = require('../../../server/routes/index.ts')
 const activityPost = require('../../../server/model/ActivityPost'); 
+const App = require('../../../server/app.ts')
+
+App.dbConnection(true)
+const app = App.app
 
 app.use(express.json());
 app.use('/activityPosts', router);
@@ -15,8 +18,8 @@ describe('Test activityPosts routes', () => {
             userId: 'exampleUserId',
             activityTitle: 'Example Activity',
             activityDescription: 'Example description',
-            imageUrl: 'exampleImageUrl',
-            price: 'examplePrice',
+            activityPostPicKey: 'exampleactivityPostPicKey',
+            price: 1,
             tags: ['exampleTag1', 'exampleTag2']
         };
 
@@ -41,8 +44,8 @@ describe('Test activityPosts routes', () => {
             userId: 'exampleUserId',
             activityTitle: 'Example Activity',
             activityDescription: 'Example description',
-            imageUrl: 'exampleImageUrl',
-            price: 'examplePrice',
+            activityPostPicKey: 'exampleactivityPostPicKey',
+            price: 1,
             tags: ['exampleTag1', 'exampleTag2']
         };
         
@@ -71,8 +74,7 @@ describe('Test activityPosts routes', () => {
 
         const res = await request(app).get('/activityPosts');
     
-        expect(res.status).toBe(404);
-        expect(res.body.msg).toBe("No posts found");
+        expect(res.status).toBe(200);
     });
 
     // Test for GET /activityPosts with multiple posts in the database
@@ -83,8 +85,8 @@ describe('Test activityPosts routes', () => {
             userId: 'example1UserId',
             activityTitle: 'Example1 Activity',
             activityDescription: 'Example1 description',
-            imageUrl: 'example1ImageUrl',
-            price: 'example1Price',
+            activityPostPicKey: 'example1activityPostPicKey',
+            price: 1,
             tags: ['example1Tag1', 'example1Tag2']
         };
 
@@ -92,8 +94,8 @@ describe('Test activityPosts routes', () => {
             userId: 'example2UserId',
             activityTitle: 'Example2 Activity',
             activityDescription: 'Example2 description',
-            imageUrl: 'example2ImageUrl',
-            price: 'example2Price',
+            activityPostPicKey: 'example2activityPostPicKey',
+            price: 1,
             tags: ['example2Tag1', 'example2Tag2']
         };
         
@@ -106,14 +108,14 @@ describe('Test activityPosts routes', () => {
         const res = await request(app).get('/activityPosts');
 
         expect(res.status).toBe(200);
-        expect(res.body).toHaveProperty('posts');
-        expect(res.body.posts).toHaveLength(2);
-
-        // Iterate over each post and delete it
-        for (const post of res.body.posts) {
-            const postId = post._id;
-            await request(app).delete(`/activityPosts/${postId}`);
-        }
+        expect(res.body).toHaveLength(2);
+        expect(res.body[0]).toMatchObject(example1PostData);
+        expect(res.body[1]).toMatchObject(example2PostData);
+        
+        const post1Id = postRes1.body.newPost._id
+        const post2Id = postRes2.body.newPost._id
+        await request(app).delete(`/activityPosts/${post1Id}`);
+        await request(app).delete(`/activityPosts/${post2Id}`);
     });
 
     // Test for PUT /activityPosts/:id
@@ -122,8 +124,8 @@ describe('Test activityPosts routes', () => {
             userId: 'exampleUserId',
             activityTitle: 'Example Activity',
             activityDescription: 'Example description',
-            imageUrl: 'exampleImageUrl',
-            price: 'examplePrice',
+            activityPostPicKey: 'exampleactivityPostPicKey',
+            price: 1,
             tags: ['exampleTag1', 'exampleTag2']
         };
         
@@ -134,28 +136,35 @@ describe('Test activityPosts routes', () => {
         const postId = postRes.body.newPost._id;
     
         const updatedData = {
+            id: postId,
+            userId: 'exampleUserId',
             activityTitle: 'Updated Title',
-            activityDescription: 'Updated Description'
+            activityDescription: 'Updated Description',
         };
 
         const finalPostData = {
             userId: 'exampleUserId',
             activityTitle: 'Updated Title',
             activityDescription: 'Updated Description',
-            imageUrl: 'exampleImageUrl',
-            price: 'examplePrice',
+            activityPostPicKey: 'exampleactivityPostPicKey',
+            price: 1,
             tags: ['exampleTag1', 'exampleTag2']
         };
     
-        const res = await request(app)
+        await request(app)
         .put(`/activityPosts/${postId}`)
         .send(updatedData);
+
+        const res = await request(app).get(`/activityPosts/findOne/${postId}`);
     
         expect(res.status).toBe(200);
         expect(res.body).toHaveProperty('post');
         expect(res.body.post).toEqual(expect.objectContaining({
-            ...finalPostData,
-            tags: expect.any(Array) // Assert that 'tags' is an array... need to tell Jest this
+            activityTitle: finalPostData.activityTitle,
+            activityDescription: finalPostData.activityDescription,
+            activityPostPicKey: finalPostData.activityPostPicKey,
+            price: finalPostData.price,
+            tags: finalPostData.tags
         }));
 
         // Clean up: Delete the post created during the test
@@ -168,8 +177,8 @@ describe('Test activityPosts routes', () => {
             userId: 'exampleUserId',
             activityTitle: 'Example Activity',
             activityDescription: 'Example description',
-            imageUrl: 'exampleImageUrl',
-            price: 'examplePrice',
+            activityPostPicKey: 'exampleactivityPostPicKey',
+            price: 1,
             tags: ['exampleTag1', 'exampleTag2']
         };
         
@@ -186,7 +195,7 @@ describe('Test activityPosts routes', () => {
     });
 
     // Test for GET with simple query by userId
-    test('GET /activityPosts/query for simple, one-field query', async () => {
+    test('GET /activityPosts/ for simple, one-field query', async () => {
         // Clear all existing activity posts
         await activityPost.deleteMany({});
     
@@ -195,8 +204,8 @@ describe('Test activityPosts routes', () => {
             userId: 'example1UserId',
             activityTitle: 'Example1 Activity',
             activityDescription: 'Example1 description',
-            imageUrl: 'example1ImageUrl',
-            price: 'example1Price',
+            activityPostPicKey: 'example1activityPostPicKey',
+            price: 1,
             tags: ['example1Tag1', 'example1Tag2']
         };
     
@@ -204,8 +213,8 @@ describe('Test activityPosts routes', () => {
             userId: 'example2UserId',
             activityTitle: 'Example2 Activity',
             activityDescription: 'Example2 description',
-            imageUrl: 'example2ImageUrl',
-            price: 'example2Price',
+            activityPostPicKey: 'example2activityPostPicKey',
+            price: 1,
             tags: ['example2Tag1', 'example2Tag2']
         };
         
@@ -214,7 +223,7 @@ describe('Test activityPosts routes', () => {
         const postRes2 = await request(app).post('/activityPosts').send(example2PostData);
     
         // Make a GET request to query activity posts by userId
-        const res = await request(app).get('/activityPosts/query?userId=example2UserId');
+        const res = await request(app).get('/activityPosts?userId=example2UserId');
     
         // Assertions
         expect(res.status).toBe(200);
@@ -227,7 +236,7 @@ describe('Test activityPosts routes', () => {
     });
     
     // Test for GET with query featuring multiple but not all fields for single-post right answer.
-    test('GET /activityPosts/query with query featuring multiple but not all fields for single-post right answer', async () => {
+    test('GET /activityPosts with query featuring multiple but not all fields for single-post right answer', async () => {
         // Clear all existing activity posts
         await activityPost.deleteMany({});
     
@@ -236,8 +245,8 @@ describe('Test activityPosts routes', () => {
             userId: 'example1UserId',
             activityTitle: 'Example1 Activity',
             activityDescription: 'Example1 description',
-            imageUrl: 'example1ImageUrl',
-            price: 'example1Price',
+            activityPostPicKey: 'example1activityPostPicKey',
+            price: 1,
             tags: ['example1Tag1', 'example1Tag2']
         };
     
@@ -245,8 +254,8 @@ describe('Test activityPosts routes', () => {
             userId: 'example2UserId',
             activityTitle: 'Example2 Activity',
             activityDescription: 'Example2 description',
-            imageUrl: 'example2ImageUrl',
-            price: 'example2Price',
+            activityPostPicKey: 'example2activityPostPicKey',
+            price: 1,
             tags: ['example2Tag1', 'example2Tag2']
         };
         
@@ -255,7 +264,7 @@ describe('Test activityPosts routes', () => {
         const postRes2 = await request(app).post('/activityPosts').send(example2PostData);
     
         // Make a GET request to query activity posts by userId
-        const res = await request(app).get('/activityPosts/query?userId=example2UserId&activityTitle=Example2 Activity');
+        const res = await request(app).get('/activityPosts?userId=example2UserId&activityTitle=Example2 Activity');
     
         // Assertions
         expect(res.status).toBe(200);
@@ -267,7 +276,7 @@ describe('Test activityPosts routes', () => {
     });
 
     // Test for GET with query for userId
-    test('GET /activityPosts/query with a focus on userId', async () => {
+    test('GET /activityPosts with a focus on userId', async () => {
         // Clear all existing activity posts
         await activityPost.deleteMany({});
     
@@ -276,8 +285,8 @@ describe('Test activityPosts routes', () => {
             userId: 'example1UserId',
             activityTitle: 'Example1 Activity',
             activityDescription: 'Example1 description',
-            imageUrl: 'example1ImageUrl',
-            price: 'example1Price',
+            activityPostPicKey: 'example1activityPostPicKey',
+            price: 1,
             tags: ['example1Tag1', 'example1Tag2']
         };
     
@@ -285,8 +294,8 @@ describe('Test activityPosts routes', () => {
             userId: 'example2UserId',
             activityTitle: 'Example2 Activity',
             activityDescription: 'Example2 description',
-            imageUrl: 'example2ImageUrl',
-            price: 'example2Price',
+            activityPostPicKey: 'example2activityPostPicKey',
+            price: 1,
             tags: ['example2Tag1', 'example2Tag2']
         };
 
@@ -294,8 +303,8 @@ describe('Test activityPosts routes', () => {
             userId: 'example2UserId', // NOTE the 2s here
             activityTitle: 'Example3 Activity',
             activityDescription: 'Example3 description',
-            imageUrl: 'example3ImageUrl',
-            price: 'example3Price',
+            activityPostPicKey: 'example3activityPostPicKey',
+            price: 1,
             tags: ['example3Tag1', 'example3Tag2']
         };
         
@@ -305,7 +314,7 @@ describe('Test activityPosts routes', () => {
         const postRes3 = await request(app).post('/activityPosts').send(example3PostData);
 
         // Make a GET request to query activity posts by userId
-        const res = await request(app).get('/activityPosts/query?userId=example2UserId');
+        const res = await request(app).get('/activityPosts?userId=example2UserId');
     
         // Assertions
         expect(res.status).toBe(200);
@@ -318,7 +327,7 @@ describe('Test activityPosts routes', () => {
     });
 
     // Test for GET with query for activityTitle
-    test('GET /activityPosts/query with a focus on activityTitle', async () => {
+    test('GET /activityPosts with a focus on activityTitle', async () => {
         // Clear all existing activity posts
         await activityPost.deleteMany({});
     
@@ -327,8 +336,8 @@ describe('Test activityPosts routes', () => {
             userId: 'example1UserId',
             activityTitle: 'Example1 Activity',
             activityDescription: 'Example1 description',
-            imageUrl: 'example1ImageUrl',
-            price: 'example1Price',
+            activityPostPicKey: 'example1activityPostPicKey',
+            price: 1,
             tags: ['example1Tag1', 'example1Tag2']
         };
     
@@ -336,8 +345,8 @@ describe('Test activityPosts routes', () => {
             userId: 'example2UserId',
             activityTitle: 'Example2 Activity',
             activityDescription: 'Example2 description',
-            imageUrl: 'example2ImageUrl',
-            price: 'example2Price',
+            activityPostPicKey: 'example2activityPostPicKey',
+            price: 1,
             tags: ['example2Tag1', 'example2Tag2']
         };
 
@@ -345,8 +354,8 @@ describe('Test activityPosts routes', () => {
             userId: 'example3UserId', 
             activityTitle: 'Example2 Activity', // NOTE the 2s here
             activityDescription: 'Example3 description',
-            imageUrl: 'example3ImageUrl',
-            price: 'example3Price',
+            activityPostPicKey: 'example3activityPostPicKey',
+            price: 1,
             tags: ['example3Tag1', 'example3Tag2']
         };
         
@@ -356,7 +365,7 @@ describe('Test activityPosts routes', () => {
         const postRes3 = await request(app).post('/activityPosts').send(example3PostData);
 
         // Make a GET request to query activity posts by userId
-        const res = await request(app).get('/activityPosts/query?activityTitle=Example2 Activity');
+        const res = await request(app).get('/activityPosts?activityTitle=Example2 Activity');
     
         // Assertions
         expect(res.status).toBe(200);
@@ -369,7 +378,7 @@ describe('Test activityPosts routes', () => {
     });
 
     // Test for GET with query for price
-    test('GET /activityPosts/query with a focus on price', async () => {
+    test('GET /activityPosts with a focus on price', async () => {
         // Clear all existing activity posts
         await activityPost.deleteMany({});
     
@@ -378,8 +387,8 @@ describe('Test activityPosts routes', () => {
             userId: 'example1UserId',
             activityTitle: 'Example1 Activity',
             activityDescription: 'Example1 description',
-            imageUrl: 'example1ImageUrl',
-            price: 'example1Price',
+            activityPostPicKey: 'example1activityPostPicKey',
+            price: 1,
             tags: ['example1Tag1', 'example1Tag2']
         };
     
@@ -387,8 +396,8 @@ describe('Test activityPosts routes', () => {
             userId: 'example2UserId',
             activityTitle: 'Example2 Activity',
             activityDescription: 'Example2 description',
-            imageUrl: 'example2ImageUrl',
-            price: 'example2Price',
+            activityPostPicKey: 'example2activityPostPicKey',
+            price: 2,
             tags: ['example2Tag1', 'example2Tag2']
         };
 
@@ -396,8 +405,8 @@ describe('Test activityPosts routes', () => {
             userId: 'example3UserId', 
             activityTitle: 'Example3 Activity',
             activityDescription: 'Example3 description',
-            imageUrl: 'example3ImageUrl',
-            price: 'example2Price', // NOTE the 2s here
+            activityPostPicKey: 'example3activityPostPicKey',
+            price: 2, // NOTE the 2s here
             tags: ['example3Tag1', 'example3Tag2']
         };
         
@@ -407,7 +416,7 @@ describe('Test activityPosts routes', () => {
         const postRes3 = await request(app).post('/activityPosts').send(example3PostData);
 
         // Make a GET request to query activity posts by userId
-        const res = await request(app).get('/activityPosts/query?price=example2Price');
+        const res = await request(app).get('/activityPosts?price=2');
     
         // Assertions
         expect(res.status).toBe(200);
@@ -420,7 +429,7 @@ describe('Test activityPosts routes', () => {
     });
 
     // Test for GET with query for tags where tags are not added in same order
-    test('GET /activityPosts/query on tags where tags are not added in same order', async () => {
+    test('GET /activityPosts on tags where tags are not added in same order', async () => {
         // Clear all existing activity posts
         await activityPost.deleteMany({});
     
@@ -429,8 +438,8 @@ describe('Test activityPosts routes', () => {
             userId: 'example1UserId',
             activityTitle: 'Example1 Activity',
             activityDescription: 'Example1 description',
-            imageUrl: 'example1ImageUrl',
-            price: 'example1Price',
+            activityPostPicKey: 'example1activityPostPicKey',
+            price: 1,
             tags: ['example2Tag2', 'example1Tag1'] // Note the 2 but ONLY for Tag2
         };
     
@@ -438,8 +447,8 @@ describe('Test activityPosts routes', () => {
             userId: 'example2UserId',
             activityTitle: 'Example2 Activity',
             activityDescription: 'Example2 description',
-            imageUrl: 'example2ImageUrl',
-            price: 'example2Price',
+            activityPostPicKey: 'example2activityPostPicKey',
+            price: 2,
             tags: ['example2Tag1', 'example2Tag2']
         };
 
@@ -447,8 +456,8 @@ describe('Test activityPosts routes', () => {
             userId: 'example3UserId', 
             activityTitle: 'Example3 Activity',
             activityDescription: 'Example3 description',
-            imageUrl: 'example3ImageUrl',
-            price: 'example2Price',
+            activityPostPicKey: 'example3activityPostPicKey',
+            price: 2,
             tags: ['example3Tag1', 'example3Tag2']
         };
         
@@ -457,7 +466,7 @@ describe('Test activityPosts routes', () => {
         const postRes2 = await request(app).post('/activityPosts').send(example2PostData);
         const postRes3 = await request(app).post('/activityPosts').send(example3PostData);
 
-        const res = await request(app).get('/activityPosts/query?tags=example2Tag2');
+        const res = await request(app).get('/activityPosts?tags=example2Tag2');
     
         // Assertions
         expect(res.status).toBe(200);
@@ -470,7 +479,7 @@ describe('Test activityPosts routes', () => {
     });
 
     // Test for GET with query for tags
-    test('GET /activityPosts/query on tags where tags list is different but share common tag', async () => {
+    test('GET /activityPosts on tags where tags list is different but share common tag', async () => {
         // Clear all existing activity posts
         await activityPost.deleteMany({});
     
@@ -479,8 +488,8 @@ describe('Test activityPosts routes', () => {
             userId: 'example1UserId',
             activityTitle: 'Example1 Activity',
             activityDescription: 'Example1 description',
-            imageUrl: 'example1ImageUrl',
-            price: 'example1Price',
+            activityPostPicKey: 'example1activityPostPicKey',
+            price: 1,
             tags: ['example2Tag2', 'example1Tag1'] // Note the 2 but ONLY for Tag2
         };
     
@@ -488,8 +497,8 @@ describe('Test activityPosts routes', () => {
             userId: 'example2UserId',
             activityTitle: 'Example2 Activity',
             activityDescription: 'Example2 description',
-            imageUrl: 'example2ImageUrl',
-            price: 'example2Price',
+            activityPostPicKey: 'example2activityPostPicKey',
+            price: 2,
             tags: ['example4Tag1', 'example2Tag2'] // Note the 4
         };
 
@@ -497,8 +506,8 @@ describe('Test activityPosts routes', () => {
             userId: 'example3UserId', 
             activityTitle: 'Example3 Activity',
             activityDescription: 'Example3 description',
-            imageUrl: 'example3ImageUrl',
-            price: 'example2Price',
+            activityPostPicKey: 'example3activityPostPicKey',
+            price: 2,
             tags: ['example3Tag1', 'example3Tag2']
         };
         
@@ -507,7 +516,7 @@ describe('Test activityPosts routes', () => {
         const postRes2 = await request(app).post('/activityPosts').send(example2PostData);
         const postRes3 = await request(app).post('/activityPosts').send(example3PostData);
 
-        const res = await request(app).get('/activityPosts/query?tags=example2Tag2');
+        const res = await request(app).get('/activityPosts?tags=example2Tag2');
     
         // Assertions
         expect(res.status).toBe(200);
@@ -521,7 +530,7 @@ describe('Test activityPosts routes', () => {
 
     // Test for GET with query containing multiple tags
     // REMARK: searching mulitiple tags (say tags A and B) yields all records with tag A, tag B, or both tag A and B
-    test('GET /activityPosts/query on multiple tags', async () => {
+    test('GET /activityPosts on multiple tags', async () => {
         // Clear all existing activity posts
         await activityPost.deleteMany({});
     
@@ -530,8 +539,8 @@ describe('Test activityPosts routes', () => {
             userId: 'example1UserId',
             activityTitle: 'Example1 Activity',
             activityDescription: 'Example1 description',
-            imageUrl: 'example1ImageUrl',
-            price: 'example1Price',
+            activityPostPicKey: 'example1activityPostPicKey',
+            price: 1,
             tags: ['example1Tag1', 'example1Tag2']
         };
     
@@ -539,8 +548,8 @@ describe('Test activityPosts routes', () => {
             userId: 'example2UserId',
             activityTitle: 'Example2 Activity',
             activityDescription: 'Example2 description',
-            imageUrl: 'example2ImageUrl',
-            price: 'example2Price',
+            activityPostPicKey: 'example2activityPostPicKey',
+            price: 2,
             tags: ['example1Tag1', 'example1Tag2', 'example1Tag3'] // Note the introduction of example1Tag3 (different than before and query)
         };
 
@@ -548,8 +557,8 @@ describe('Test activityPosts routes', () => {
             userId: 'example3UserId', 
             activityTitle: 'Example3 Activity',
             activityDescription: 'Example3 description',
-            imageUrl: 'example3ImageUrl',
-            price: 'example2Price',
+            activityPostPicKey: 'example3activityPostPicKey',
+            price: 2,
             tags: ['example1Tag1', 'example3Tag2'] // Note that only example1Tag1 is in common with prior examples
         };
         
@@ -558,7 +567,7 @@ describe('Test activityPosts routes', () => {
         const postRes2 = await request(app).post('/activityPosts').send(example2PostData);
         const postRes3 = await request(app).post('/activityPosts').send(example3PostData);
 
-        const res = await request(app).get('/activityPosts/query?tags=example1Tag1,example1Tag2');
+        const res = await request(app).get('/activityPosts?tags=example1Tag1,example1Tag2');
     
         // Assertions
         expect(res.status).toBe(200);
@@ -570,5 +579,4 @@ describe('Test activityPosts routes', () => {
         // Clean up: Delete all activity posts
         await activityPost.deleteMany({});
     });
-    
 });

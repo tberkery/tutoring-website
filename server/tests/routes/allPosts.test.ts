@@ -1,11 +1,14 @@
 export {}
 const request = require('supertest');
 const express = require('express');
-const app = require('../../../server/app.ts')
+const App = require('../../../server/app.ts')
 const router = require('../../../server/routes/index.ts')
 const activityPost = require('../../../server/model/ActivityPost'); 
 const coursePost = require('../../../server/model/CoursePost');
 const { ObjectId } = require('mongodb');
+
+App.dbConnection(true)
+const app = App.app
 
 const objectIdString = "65ee95b7aef7f7e6b98ca4e8";
 const objectId = new ObjectId(objectIdString);
@@ -20,12 +23,12 @@ app.use(express.json());
 app.use('/allPosts', router);
 
 async function addActivityWithDelay(postData: any) {
-    await new Promise(resolve => setTimeout(resolve, 1000)); // 1 second delay
+    await new Promise(resolve => setTimeout(resolve, 100)); // 1 second delay
     return request(app).post('/activityPosts').send(postData);
 }
 
 async function addCourseWithDelay(postData: any) {
-    await new Promise(resolve => setTimeout(resolve, 1000)); // 1 second delay
+    await new Promise(resolve => setTimeout(resolve, 100)); // 1 second delay
     return request(app).post('/coursePosts').send(postData);
 }
 
@@ -40,6 +43,8 @@ describe('Test allPosts routes', () => {
     
         expect(res.status).toBe(404);
         expect(res.body.msg).toBe("No posts found");
+        await activityPost.deleteMany({});
+        await coursePost.deleteMany({});
     });
 
     test('GET /allPosts with multiple course posts', async () => {
@@ -49,7 +54,7 @@ describe('Test allPosts routes', () => {
             courseName: 'Example Course 108',
             description: 'Example description',
             imageUrl: 'exampleImageUrl',
-            price: 'examplePrice',
+            price: 1,
         };
 
         const newCourseData2 = {
@@ -57,7 +62,7 @@ describe('Test allPosts routes', () => {
             courseName: 'Example Course 107',
             description: 'Example description',
             imageUrl: 'exampleImageUrl',
-            price: 'examplePrice',
+            price: 1, 
         };
 
         const newCourseData3 = {
@@ -65,7 +70,7 @@ describe('Test allPosts routes', () => {
             courseName: 'Example Course 106',
             description: 'Example description',
             imageUrl: 'exampleImageUrl',
-            price: 'examplePrice',
+            price: 1, 
         };
 
         const newCourseData4 = {
@@ -73,7 +78,7 @@ describe('Test allPosts routes', () => {
             courseName: 'Example Course 105',
             description: 'Example description',
             imageUrl: 'exampleImageUrl',
-            price: 'examplePrice',
+            price: 1, 
         };
 
         await activityPost.deleteMany({});
@@ -89,7 +94,8 @@ describe('Test allPosts routes', () => {
         expect(res.status).toBe(200);
         const timestamps = res.body.map((post: any) => new ObjectId(post._id).getTimestamp().getTime());
         expect(timestamps).toEqual(timestamps.sort((a: number, b: number) => b - a));
-
+        await activityPost.deleteMany({});
+        await coursePost.deleteMany({});
     });
 
     test('GET /allPosts with multiple activity posts', async () => {
@@ -99,7 +105,7 @@ describe('Test allPosts routes', () => {
             activityTitle: 'Example Activity 108',
             activityDescription: 'Example description',
             imageUrl: 'exampleImageUrl',
-            price: 'examplePrice',
+            price: 1, 
             tags: ['exampleTag1', 'exampleTag2']
         };
 
@@ -108,7 +114,7 @@ describe('Test allPosts routes', () => {
             activityTitle: 'Example Activity 107',
             activityDescription: 'Example description',
             imageUrl: 'exampleImageUrl',
-            price: 'examplePrice',
+            price: 1, 
             tags: ['exampleTag1', 'exampleTag2']
         };
 
@@ -117,7 +123,7 @@ describe('Test allPosts routes', () => {
             activityTitle: 'Example Activity 106',
             activityDescription: 'Example description',
             imageUrl: 'exampleImageUrl',
-            price: 'examplePrice',
+            price: 1, 
             tags: ['exampleTag1', 'exampleTag2']
         };
 
@@ -126,7 +132,7 @@ describe('Test allPosts routes', () => {
             activityTitle: 'Example Activity 105',
             activityDescription: 'Example description',
             imageUrl: 'exampleImageUrl',
-            price: 'examplePrice',
+            price: 1, 
             tags: ['exampleTag1', 'exampleTag2']
         };
 
@@ -144,6 +150,8 @@ describe('Test allPosts routes', () => {
         expect(res.status).toBe(200);
         const timestamps = res.body.map((post: any) => new ObjectId(post._id).getTimestamp().getTime());
         expect(timestamps).toEqual(timestamps.sort((a: number, b: number) => b - a));
+        await activityPost.deleteMany({});
+        await coursePost.deleteMany({});
 
     });
 
@@ -154,7 +162,7 @@ describe('Test allPosts routes', () => {
                 courseName: 'Example Course 108',
                 description: 'Example description',
                 imageUrl: 'exampleImageUrl',
-                price: 'examplePrice',
+                price: 2, 
             };
     
             const newPostData1 = {
@@ -162,7 +170,7 @@ describe('Test allPosts routes', () => {
                 activityTitle: 'Example Activity 108',
                 activityDescription: 'Example description',
                 imageUrl: 'exampleImageUrl',
-                price: 'examplePrice',
+                price: 2, 
                 tags: ['exampleTag1', 'exampleTag2']
             };
 
@@ -171,7 +179,7 @@ describe('Test allPosts routes', () => {
                 courseName: 'Example Course 107',
                 description: 'Example description',
                 imageUrl: 'exampleImageUrl',
-                price: 'examplePrice',
+                price: 2, 
             };
 
             const newPostData2 = {
@@ -179,7 +187,7 @@ describe('Test allPosts routes', () => {
                 activityTitle: 'Example Activity 107',
                 activityDescription: 'Example description',
                 imageUrl: 'exampleImageUrl',
-                price: 'examplePrice',
+                price: 2, 
                 tags: ['exampleTag1', 'exampleTag2']
             };
 
@@ -198,6 +206,8 @@ describe('Test allPosts routes', () => {
             expect(res.status).toBe(200);
             const timestamps = res.body.map((post: any) => new ObjectId(post._id).getTimestamp().getTime());
             expect(timestamps).toEqual(timestamps.sort((a: number, b: number) => b - a));
+            await activityPost.deleteMany({});
+            await coursePost.deleteMany({});
     
     });
 
