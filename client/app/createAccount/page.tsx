@@ -213,7 +213,7 @@ const Page : FC = () => {
 								}` }
 								prompt="Select Department"
 								options={ departments }
-								setValueProp={ setDepartment }
+								onValueChange={ setDepartment }
 								id="department"
 							/>
 						</div>
