@@ -28,13 +28,13 @@ export class ProfileDao {
   async readAll({firstName, lastName, email}:{firstName: string, lastName: string, email:string}) {
     const filter : any = {};
         if (firstName) {
-            filter.firstName = firstName;
+            filter.firstName = {$regex: firstName, $options: 'i'};
         }
         if (lastName) {
-            filter.lastName = lastName;
+            filter.lastName = {$regex: lastName, $options: 'i'};
         }
         if (email) {
-            filter.email = email;
+            filter.email = {$regex: email, $options: 'i'};
         }
         const data = await Profile.find(filter).lean().select("-__v");
         return data;

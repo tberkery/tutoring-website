@@ -18,7 +18,7 @@
   "scripts": {
     "start": "npm install && cd server && npm install && cd ../client && npm install && cd .. && npm run start:all",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start:api": "cd server && nodemon index.ts",
+    "start:api": "cd server && nodemon server.ts",
     "start:app": "cd client && npm run dev",
     "start:all": "concurrently \"npm run start:api\" \"npm run start:app\""
   },
