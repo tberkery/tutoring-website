@@ -2,8 +2,8 @@ const CoursePost = require("../model/CoursePost.ts");
 const mongoose = require("mongoose");
 
 export class CoursePostDao {
-    async create(userId: string, courseName: string, options?: {description?: string, price?: number, courseNumber?: string, courseDepartment?: string[], gradeReceived?: string, semesterTaken?: string, professorTakenWith?: string, takenAtHopkins?: boolean, schoolTakenAt?: string}) {
-        let newPost: any = {userId, courseName}
+    async create(userId: string, courseName: string, takenAtHopkins: boolean, options?: {description?: string, price?: number, courseNumber?: string, courseDepartment?: string[], gradeReceived?: string, semesterTaken?: string, professorTakenWith?: string, schoolTakenAt?: string}) {
+        let newPost: any = {userId, courseName, takenAtHopkins}
         if (options){
             if(options.description){
                 newPost.description = options.description
@@ -25,9 +25,6 @@ export class CoursePostDao {
             }
             if (options.professorTakenWith){
                 newPost.professorTakenWith = options.professorTakenWith;
-            }
-            if (options.takenAtHopkins){
-                newPost.takenAtHopkins = options.takenAtHopkins;
             }
             if (options.schoolTakenAt){
                 newPost.schoolTakenAt = options.schoolTakenAt;
@@ -67,8 +64,8 @@ export class CoursePostDao {
             console.error('Error fetching posts:', error);
         }
     }
-    async update( id: any, userId: string, courseName: string, options?: {description?: string, price?: number, courseNumber?: string, courseDepartment?: string[], gradeReceived?: string, semesterTaken?: string, professorTakenWith?: string, takenAtHopkins?: boolean, schoolTakenAt?: string} ) {
-        let newPost: any = {userId, courseName}
+    async update( id: any, userId: string, courseName: string, takenAtHopkins: boolean, options?: {description?: string, price?: number, courseNumber?: string, courseDepartment?: string[], gradeReceived?: string, semesterTaken?: string, professorTakenWith?: string, schoolTakenAt?: string} ) {
+        let newPost: any = {userId, courseName, takenAtHopkins}
         if (options){
             if(options.description){
                 newPost.description = options.description
@@ -90,9 +87,6 @@ export class CoursePostDao {
             }
             if (options.professorTakenWith){
                 newPost.professorTakenWith = options.professorTakenWith;
-            }
-            if (options.takenAtHopkins){
-                newPost.takenAtHopkins = options.takenAtHopkins;
             }
             if (options.schoolTakenAt){
                 newPost.schoolTakenAt = options.schoolTakenAt;

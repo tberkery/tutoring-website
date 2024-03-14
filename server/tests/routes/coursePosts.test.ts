@@ -16,7 +16,8 @@ describe('Test coursePosts routes', () => {
             courseName: 'Intro to Example',
             description: 'Example description',
             price: 20,
-            courseNumber: "AS.000.000"
+            courseNumber: "AS.000.000",
+            takenAtHopkins: true
         };
 
         const res = await request(app)
@@ -41,7 +42,8 @@ describe('Test coursePosts routes', () => {
             courseName: 'Intro to Example',
             description: 'Example description',
             price: 20,
-            courseNumber: "AS.000.000"
+            courseNumber: "AS.000.000",
+            takenAtHopkins: true
         };
 
         const res = await request(app)
@@ -82,7 +84,8 @@ describe('Test coursePosts routes', () => {
             courseName: 'Intro to Example1',
             description: 'Example description1',
             price: 20,
-            courseNumber: "AS.000.001"
+            courseNumber: "AS.000.001",
+            takenAtHopkins: true
         };
 
         const newPost2Data = {
@@ -90,7 +93,8 @@ describe('Test coursePosts routes', () => {
             courseName: 'Intro to Example2',
             description: 'Example description2',
             price: 22,
-            courseNumber: "AS.000.002"
+            courseNumber: "AS.000.002",
+            takenAtHopkins: true
         };
         
         // Make a POST request to create the post
@@ -119,7 +123,9 @@ describe('Test coursePosts routes', () => {
             courseName: 'Intro to Example',
             description: 'Example description',
             price: 20,
-            courseNumber: "AS.000.000"
+            courseNumber: "AS.000.000",
+            takenAtHopkins: true
+
         };
         
         // Make a POST request to create the post
@@ -138,7 +144,8 @@ describe('Test coursePosts routes', () => {
             courseName: 'Intro to Example',
             description: 'Updated Description',
             price: 25,
-            courseNumber: "AS.000.000"
+            courseNumber: "AS.000.000",
+            takenAtHopkins: true
         };
     
         const res = await request(app)
@@ -164,7 +171,8 @@ describe('Test coursePosts routes', () => {
             courseName: 'Intro to Example',
             description: 'Example description',
             price: 20,
-            courseNumber: "AS.000.000"
+            courseNumber: "AS.000.000",
+            takenAtHopkins: true
         };
         
         // Make a POST request to create the post
@@ -189,7 +197,8 @@ describe('Test coursePosts routes', () => {
             courseName: 'Intro to Example',
             description: 'Example description',
             price: 20,
-            courseNumber: "AS.000.000"
+            courseNumber: "AS.000.000",
+            takenAtHopkins: true
         };
     
         const example2PostData = {
@@ -197,7 +206,8 @@ describe('Test coursePosts routes', () => {
             courseName: 'Intro to Example2',
             description: 'Example description2',
             price: 30,
-            courseNumber: "AS.000.002"
+            courseNumber: "AS.000.002",
+            takenAtHopkins: true
         };
         
         // Make POST requests to create the posts
@@ -225,7 +235,8 @@ describe('Test coursePosts routes', () => {
             courseName: 'Intro to Example',
             description: 'Example description',
             price: 20,
-            courseNumber: "AS.000.000"
+            courseNumber: "AS.000.000",
+            takenAtHopkins: true
         };
     
         const example2PostData = {
@@ -233,7 +244,8 @@ describe('Test coursePosts routes', () => {
             courseName: 'Intro to Example2',
             description: 'Example description2',
             price: 30,
-            courseNumber: "AS.000.002"
+            courseNumber: "AS.000.002",
+            takenAtHopkins: true
         };
         
         // Make POST requests to create the posts
@@ -262,7 +274,8 @@ describe('Test coursePosts routes', () => {
             courseName: 'Intro to Example',
             description: 'Example description',
             price: 20,
-            courseNumber: "AS.000.000"
+            courseNumber: "AS.000.000",
+            takenAtHopkins: true
         };
     
         const example2PostData = {
@@ -270,7 +283,8 @@ describe('Test coursePosts routes', () => {
             courseName: 'Intro to Example',
             description: 'Example description',
             price: 30,
-            courseNumber: "AS.000.000"
+            courseNumber: "AS.000.000",
+            takenAtHopkins: true
         };
 
         const example3PostData = { 
@@ -278,7 +292,8 @@ describe('Test coursePosts routes', () => {
             courseName: 'Intro to Example2',
             description: 'Example description',
             price: 15,
-            courseNumber: "AS.000.002"
+            courseNumber: "AS.000.002",
+            takenAtHopkins: true
         };
         
         // Make POST requests to create the posts
@@ -287,10 +302,10 @@ describe('Test coursePosts routes', () => {
         const postRes3 = await request(app).post('/coursePosts').send(example3PostData);
 
         const res = await request(app).get('/coursePosts/?courseName=Intro to Example');
-    
+        
         // Assertions
         expect(res.status).toBe(200);
-        expect(res.body.posts).toHaveLength(2); // Ensure only one post is returned
+        expect(res.body.posts).toHaveLength(3); 
         // Remark: assumes (tolerably right now but perhaps not in time) that return order will be the same as creation order.
         expect(res.body.posts[0]).toMatchObject(example1PostData); // Verify it matches contents of post that satisifes query
         expect(res.body.posts[1]).toMatchObject(example2PostData); // Verify it matches contents of post that satisifes query
@@ -309,7 +324,8 @@ describe('Test coursePosts routes', () => {
             courseName: 'Intro to Example',
             description: 'Example description',
             price: 20,
-            courseNumber: "AS.000.000"
+            courseNumber: "AS.000.000",
+            takenAtHopkins: true
         };
     
         const example2PostData = {
@@ -317,7 +333,8 @@ describe('Test coursePosts routes', () => {
             courseName: 'Intro to Example2',
             description: 'Example description2',
             price: 20,
-            courseNumber: "AS.000.002"
+            courseNumber: "AS.000.002",
+            takenAtHopkins: true
         };
 
         const example3PostData = { 
@@ -325,7 +342,8 @@ describe('Test coursePosts routes', () => {
             courseName: 'Intro to Example3',
             description: 'Example description3',
             price: 30,
-            courseNumber: "AS.000.003"
+            courseNumber: "AS.000.003",
+            takenAtHopkins: true
         };
 
         const example4PostData = { 
@@ -333,7 +351,8 @@ describe('Test coursePosts routes', () => {
             courseName: 'Intro to Example4',
             description: 'Example description4',
             price: 10,
-            courseNumber: "AS.000.004"
+            courseNumber: "AS.000.004",
+            takenAtHopkins: true
         };
         
         // Make POST requests to create the posts
