@@ -50,6 +50,9 @@ export class ProfileDao {
               const data = await Profile.find({$or : f}).lean().select("-__v");
               return data;
             }
+        } else if (email) {
+          const data = await Profile.find({email: {$regex: email, $options: 'i'}}).lean().select("-__v");
+          return data;
         }
         
         console.log("HI HI HI F IS", f);
