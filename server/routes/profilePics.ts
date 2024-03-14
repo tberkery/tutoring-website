@@ -35,9 +35,11 @@ const client = new S3Client({
 // Update 'image.jpeg' with parameter name passed in
 router.post('/upload/:objectID', upload.single('profilePicture'), async (req: Request, res: Response) => {
   try {
+    console.log("here")
     const objectID = req.params.objectID;
     const fileContent = (req.file as Express.Multer.File).buffer; // Cast req.file to the correct type
-
+    console.log(objectID)
+    console.log(fileContent)
     if (!fileContent) {
       return res.status(400).json({ error: 'File is required' });
     }

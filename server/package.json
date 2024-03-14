@@ -2,10 +2,10 @@
   "name": "server",
   "version": "1.0.0",
   "description": "",
-  "main": "index.ts",
+  "main": "server.ts",
   "scripts": {
     "test": "jest",
-    "start": "nodemon --exec ts-node ./index.ts"
+    "start": "nodemon --exec ts-node ./server.ts"
   },
   "keywords": [],
   "author": "",
