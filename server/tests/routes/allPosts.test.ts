@@ -1,11 +1,14 @@
 export {}
 const request = require('supertest');
 const express = require('express');
-const app = require('../../../server/app.ts')
+const App = require('../../../server/app.ts')
 const router = require('../../../server/routes/index.ts')
 const activityPost = require('../../../server/model/ActivityPost'); 
 const coursePost = require('../../../server/model/CoursePost');
 const { ObjectId } = require('mongodb');
+
+App.dbConnection(true)
+const app = App.app
 
 const objectIdString = "65ee95b7aef7f7e6b98ca4e8";
 const objectId = new ObjectId(objectIdString);
@@ -40,6 +43,8 @@ describe('Test allPosts routes', () => {
     
         expect(res.status).toBe(404);
         expect(res.body.msg).toBe("No posts found");
+        await activityPost.deleteMany({});
+        await coursePost.deleteMany({});
     });
 
     test('GET /allPosts with multiple course posts', async () => {
@@ -89,7 +94,8 @@ describe('Test allPosts routes', () => {
         expect(res.status).toBe(200);
         const timestamps = res.body.map((post: any) => new ObjectId(post._id).getTimestamp().getTime());
         expect(timestamps).toEqual(timestamps.sort((a: number, b: number) => b - a));
-
+        await activityPost.deleteMany({});
+        await coursePost.deleteMany({});
     });
 
     test('GET /allPosts with multiple activity posts', async () => {
@@ -144,6 +150,8 @@ describe('Test allPosts routes', () => {
         expect(res.status).toBe(200);
         const timestamps = res.body.map((post: any) => new ObjectId(post._id).getTimestamp().getTime());
         expect(timestamps).toEqual(timestamps.sort((a: number, b: number) => b - a));
+        await activityPost.deleteMany({});
+        await coursePost.deleteMany({});
 
     });
 
@@ -198,6 +206,8 @@ describe('Test allPosts routes', () => {
             expect(res.status).toBe(200);
             const timestamps = res.body.map((post: any) => new ObjectId(post._id).getTimestamp().getTime());
             expect(timestamps).toEqual(timestamps.sort((a: number, b: number) => b - a));
+            await activityPost.deleteMany({});
+            await coursePost.deleteMany({});
     
     });
 

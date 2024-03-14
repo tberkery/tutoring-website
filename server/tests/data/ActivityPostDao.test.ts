@@ -100,7 +100,6 @@ test('test readAll() on non empty table', async ()=> {
 
 
 test('test update()', async ()=> {
-    
     const activityPostDao = new ActivityPostDao();
     const userId = faker.lorem.word();
     const activityTitle = faker.lorem.word();
@@ -112,7 +111,7 @@ test('test update()', async ()=> {
         tags.push(faker.lorem.word());
     }
     
-    const activityPost =  await activityPostDao.create(userId, activityTitle, {activityDescription, imageUrl, price, tags});
+    const activityPost = await activityPostDao.create(userId, activityTitle, { activityDescription, imageUrl, price, tags });
     expect(activityPost.userId).toBe(userId);
     expect(activityPost.activityTitle).toBe(activityTitle);
     expect(activityPost.activityDescription).toBe(activityDescription);

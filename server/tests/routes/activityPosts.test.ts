@@ -137,9 +137,10 @@ describe('Test activityPosts routes', () => {
         const postId = postRes.body.newPost._id;
     
         const updatedData = {
+            id: postId,
             userId: 'exampleUserId',
             activityTitle: 'Updated Title',
-            activityDescription: 'Updated Description'
+            activityDescription: 'Updated Description',
         };
 
         const finalPostData = {
@@ -160,8 +161,11 @@ describe('Test activityPosts routes', () => {
         expect(res.status).toBe(200);
         expect(res.body).toHaveProperty('post');
         expect(res.body.post).toEqual(expect.objectContaining({
-            ...finalPostData,
-            tags: expect.any(Array) // Assert that 'tags' is an array... need to tell Jest this
+            activityTitle: finalPostData.activityTitle,
+            activityDescription: finalPostData.activityDescription,
+            imageUrl: finalPostData.imageUrl,
+            price: finalPostData.price,
+            tags: finalPostData.tags
         }));
 
         // Clean up: Delete the post created during the test
@@ -349,7 +353,7 @@ describe('Test activityPosts routes', () => {
 
         const example3PostData = { // will be used for case where only activityTitles match
             userId: 'example3UserId', 
-            activityTitle: 'Example3 Activity', // NOTE the 3s here
+            activityTitle: 'Example2 Activity', // NOTE the 2s here
             activityDescription: 'Example3 description',
             imageUrl: 'example3ImageUrl',
             price: 1,
