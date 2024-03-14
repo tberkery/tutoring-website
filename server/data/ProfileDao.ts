@@ -55,7 +55,6 @@ export class ProfileDao {
           return data;
         }
         
-        console.log("HI HI HI F IS", f);
         const data = await Profile.find({$and : f}).lean().select("-__v");
         return data;
   }
