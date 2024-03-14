@@ -18,7 +18,7 @@ describe('Test activityPosts routes', () => {
             userId: 'exampleUserId',
             activityTitle: 'Example Activity',
             activityDescription: 'Example description',
-            imageUrl: 'exampleImageUrl',
+            activityPostPicKey: 'exampleactivityPostPicKey',
             price: 1,
             tags: ['exampleTag1', 'exampleTag2']
         };
@@ -44,7 +44,7 @@ describe('Test activityPosts routes', () => {
             userId: 'exampleUserId',
             activityTitle: 'Example Activity',
             activityDescription: 'Example description',
-            imageUrl: 'exampleImageUrl',
+            activityPostPicKey: 'exampleactivityPostPicKey',
             price: 1,
             tags: ['exampleTag1', 'exampleTag2']
         };
@@ -85,7 +85,7 @@ describe('Test activityPosts routes', () => {
             userId: 'example1UserId',
             activityTitle: 'Example1 Activity',
             activityDescription: 'Example1 description',
-            imageUrl: 'example1ImageUrl',
+            activityPostPicKey: 'example1activityPostPicKey',
             price: 1,
             tags: ['example1Tag1', 'example1Tag2']
         };
@@ -94,7 +94,7 @@ describe('Test activityPosts routes', () => {
             userId: 'example2UserId',
             activityTitle: 'Example2 Activity',
             activityDescription: 'Example2 description',
-            imageUrl: 'example2ImageUrl',
+            activityPostPicKey: 'example2activityPostPicKey',
             price: 1,
             tags: ['example2Tag1', 'example2Tag2']
         };
@@ -124,7 +124,7 @@ describe('Test activityPosts routes', () => {
             userId: 'exampleUserId',
             activityTitle: 'Example Activity',
             activityDescription: 'Example description',
-            imageUrl: 'exampleImageUrl',
+            activityPostPicKey: 'exampleactivityPostPicKey',
             price: 1,
             tags: ['exampleTag1', 'exampleTag2']
         };
@@ -146,7 +146,7 @@ describe('Test activityPosts routes', () => {
             userId: 'exampleUserId',
             activityTitle: 'Updated Title',
             activityDescription: 'Updated Description',
-            imageUrl: 'exampleImageUrl',
+            activityPostPicKey: 'exampleactivityPostPicKey',
             price: 1,
             tags: ['exampleTag1', 'exampleTag2']
         };
@@ -162,7 +162,7 @@ describe('Test activityPosts routes', () => {
         expect(res.body.post).toEqual(expect.objectContaining({
             activityTitle: finalPostData.activityTitle,
             activityDescription: finalPostData.activityDescription,
-            imageUrl: finalPostData.imageUrl,
+            activityPostPicKey: finalPostData.activityPostPicKey,
             price: finalPostData.price,
             tags: finalPostData.tags
         }));
@@ -177,7 +177,7 @@ describe('Test activityPosts routes', () => {
             userId: 'exampleUserId',
             activityTitle: 'Example Activity',
             activityDescription: 'Example description',
-            imageUrl: 'exampleImageUrl',
+            activityPostPicKey: 'exampleactivityPostPicKey',
             price: 1,
             tags: ['exampleTag1', 'exampleTag2']
         };
@@ -204,7 +204,7 @@ describe('Test activityPosts routes', () => {
             userId: 'example1UserId',
             activityTitle: 'Example1 Activity',
             activityDescription: 'Example1 description',
-            imageUrl: 'example1ImageUrl',
+            activityPostPicKey: 'example1activityPostPicKey',
             price: 1,
             tags: ['example1Tag1', 'example1Tag2']
         };
@@ -213,7 +213,7 @@ describe('Test activityPosts routes', () => {
             userId: 'example2UserId',
             activityTitle: 'Example2 Activity',
             activityDescription: 'Example2 description',
-            imageUrl: 'example2ImageUrl',
+            activityPostPicKey: 'example2activityPostPicKey',
             price: 1,
             tags: ['example2Tag1', 'example2Tag2']
         };
@@ -245,7 +245,7 @@ describe('Test activityPosts routes', () => {
             userId: 'example1UserId',
             activityTitle: 'Example1 Activity',
             activityDescription: 'Example1 description',
-            imageUrl: 'example1ImageUrl',
+            activityPostPicKey: 'example1activityPostPicKey',
             price: 1,
             tags: ['example1Tag1', 'example1Tag2']
         };
@@ -254,7 +254,7 @@ describe('Test activityPosts routes', () => {
             userId: 'example2UserId',
             activityTitle: 'Example2 Activity',
             activityDescription: 'Example2 description',
-            imageUrl: 'example2ImageUrl',
+            activityPostPicKey: 'example2activityPostPicKey',
             price: 1,
             tags: ['example2Tag1', 'example2Tag2']
         };
@@ -285,7 +285,7 @@ describe('Test activityPosts routes', () => {
             userId: 'example1UserId',
             activityTitle: 'Example1 Activity',
             activityDescription: 'Example1 description',
-            imageUrl: 'example1ImageUrl',
+            activityPostPicKey: 'example1activityPostPicKey',
             price: 1,
             tags: ['example1Tag1', 'example1Tag2']
         };
@@ -294,7 +294,7 @@ describe('Test activityPosts routes', () => {
             userId: 'example2UserId',
             activityTitle: 'Example2 Activity',
             activityDescription: 'Example2 description',
-            imageUrl: 'example2ImageUrl',
+            activityPostPicKey: 'example2activityPostPicKey',
             price: 1,
             tags: ['example2Tag1', 'example2Tag2']
         };
@@ -303,7 +303,7 @@ describe('Test activityPosts routes', () => {
             userId: 'example2UserId', // NOTE the 2s here
             activityTitle: 'Example3 Activity',
             activityDescription: 'Example3 description',
-            imageUrl: 'example3ImageUrl',
+            activityPostPicKey: 'example3activityPostPicKey',
             price: 1,
             tags: ['example3Tag1', 'example3Tag2']
         };
@@ -336,7 +336,7 @@ describe('Test activityPosts routes', () => {
             userId: 'example1UserId',
             activityTitle: 'Example1 Activity',
             activityDescription: 'Example1 description',
-            imageUrl: 'example1ImageUrl',
+            activityPostPicKey: 'example1activityPostPicKey',
             price: 1,
             tags: ['example1Tag1', 'example1Tag2']
         };
@@ -345,7 +345,7 @@ describe('Test activityPosts routes', () => {
             userId: 'example2UserId',
             activityTitle: 'Example2 Activity',
             activityDescription: 'Example2 description',
-            imageUrl: 'example2ImageUrl',
+            activityPostPicKey: 'example2activityPostPicKey',
             price: 1,
             tags: ['example2Tag1', 'example2Tag2']
         };
@@ -354,7 +354,7 @@ describe('Test activityPosts routes', () => {
             userId: 'example3UserId', 
             activityTitle: 'Example2 Activity', // NOTE the 2s here
             activityDescription: 'Example3 description',
-            imageUrl: 'example3ImageUrl',
+            activityPostPicKey: 'example3activityPostPicKey',
             price: 1,
             tags: ['example3Tag1', 'example3Tag2']
         };
@@ -387,7 +387,7 @@ describe('Test activityPosts routes', () => {
             userId: 'example1UserId',
             activityTitle: 'Example1 Activity',
             activityDescription: 'Example1 description',
-            imageUrl: 'example1ImageUrl',
+            activityPostPicKey: 'example1activityPostPicKey',
             price: 1,
             tags: ['example1Tag1', 'example1Tag2']
         };
@@ -396,7 +396,7 @@ describe('Test activityPosts routes', () => {
             userId: 'example2UserId',
             activityTitle: 'Example2 Activity',
             activityDescription: 'Example2 description',
-            imageUrl: 'example2ImageUrl',
+            activityPostPicKey: 'example2activityPostPicKey',
             price: 2,
             tags: ['example2Tag1', 'example2Tag2']
         };
@@ -405,7 +405,7 @@ describe('Test activityPosts routes', () => {
             userId: 'example3UserId', 
             activityTitle: 'Example3 Activity',
             activityDescription: 'Example3 description',
-            imageUrl: 'example3ImageUrl',
+            activityPostPicKey: 'example3activityPostPicKey',
             price: 2, // NOTE the 2s here
             tags: ['example3Tag1', 'example3Tag2']
         };
@@ -438,7 +438,7 @@ describe('Test activityPosts routes', () => {
             userId: 'example1UserId',
             activityTitle: 'Example1 Activity',
             activityDescription: 'Example1 description',
-            imageUrl: 'example1ImageUrl',
+            activityPostPicKey: 'example1activityPostPicKey',
             price: 1,
             tags: ['example2Tag2', 'example1Tag1'] // Note the 2 but ONLY for Tag2
         };
@@ -447,7 +447,7 @@ describe('Test activityPosts routes', () => {
             userId: 'example2UserId',
             activityTitle: 'Example2 Activity',
             activityDescription: 'Example2 description',
-            imageUrl: 'example2ImageUrl',
+            activityPostPicKey: 'example2activityPostPicKey',
             price: 2,
             tags: ['example2Tag1', 'example2Tag2']
         };
@@ -456,7 +456,7 @@ describe('Test activityPosts routes', () => {
             userId: 'example3UserId', 
             activityTitle: 'Example3 Activity',
             activityDescription: 'Example3 description',
-            imageUrl: 'example3ImageUrl',
+            activityPostPicKey: 'example3activityPostPicKey',
             price: 2,
             tags: ['example3Tag1', 'example3Tag2']
         };
@@ -488,7 +488,7 @@ describe('Test activityPosts routes', () => {
             userId: 'example1UserId',
             activityTitle: 'Example1 Activity',
             activityDescription: 'Example1 description',
-            imageUrl: 'example1ImageUrl',
+            activityPostPicKey: 'example1activityPostPicKey',
             price: 1,
             tags: ['example2Tag2', 'example1Tag1'] // Note the 2 but ONLY for Tag2
         };
@@ -497,7 +497,7 @@ describe('Test activityPosts routes', () => {
             userId: 'example2UserId',
             activityTitle: 'Example2 Activity',
             activityDescription: 'Example2 description',
-            imageUrl: 'example2ImageUrl',
+            activityPostPicKey: 'example2activityPostPicKey',
             price: 2,
             tags: ['example4Tag1', 'example2Tag2'] // Note the 4
         };
@@ -506,7 +506,7 @@ describe('Test activityPosts routes', () => {
             userId: 'example3UserId', 
             activityTitle: 'Example3 Activity',
             activityDescription: 'Example3 description',
-            imageUrl: 'example3ImageUrl',
+            activityPostPicKey: 'example3activityPostPicKey',
             price: 2,
             tags: ['example3Tag1', 'example3Tag2']
         };
@@ -539,7 +539,7 @@ describe('Test activityPosts routes', () => {
             userId: 'example1UserId',
             activityTitle: 'Example1 Activity',
             activityDescription: 'Example1 description',
-            imageUrl: 'example1ImageUrl',
+            activityPostPicKey: 'example1activityPostPicKey',
             price: 1,
             tags: ['example1Tag1', 'example1Tag2']
         };
@@ -548,7 +548,7 @@ describe('Test activityPosts routes', () => {
             userId: 'example2UserId',
             activityTitle: 'Example2 Activity',
             activityDescription: 'Example2 description',
-            imageUrl: 'example2ImageUrl',
+            activityPostPicKey: 'example2activityPostPicKey',
             price: 2,
             tags: ['example1Tag1', 'example1Tag2', 'example1Tag3'] // Note the introduction of example1Tag3 (different than before and query)
         };
@@ -557,7 +557,7 @@ describe('Test activityPosts routes', () => {
             userId: 'example3UserId', 
             activityTitle: 'Example3 Activity',
             activityDescription: 'Example3 description',
-            imageUrl: 'example3ImageUrl',
+            activityPostPicKey: 'example3activityPostPicKey',
             price: 2,
             tags: ['example1Tag1', 'example3Tag2'] // Note that only example1Tag1 is in common with prior examples
         };
