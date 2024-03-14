@@ -1,9 +1,12 @@
 export {}
 const request = require('supertest');
 const express = require('express');
-const app = require('../../../server/app.ts')
 const router = require('../../../server/routes/index.ts')
 const coursePost = require('../../../server/model/CoursePost'); 
+const App = require('../../../server/app.ts')
+
+App.dbConnection(true)
+const app = App.app
 
 app.use(express.json());
 app.use('/coursePosts', router);
