@@ -22,6 +22,7 @@ const Page : FC = () => {
 	const api = process.env.NEXT_PUBLIC_BACKEND_URL;
 	const [profiles, setProfiles] = useState<profileType[]>([]);
 	const [searchText, setSearchText] = useState("");
+	const [img, setImg] = useState("");
 
 	useEffect(() => {
 		const searchForProfiles = setTimeout(async () => {
@@ -33,9 +34,6 @@ const Page : FC = () => {
 			let index = 0;
 			let params = {};
 			let flag = false;
-			console.log("---");
-			console.log(searchText);
-			console.log(pieces);
 			while (index < pieces.length) {
 				if (pieces[index].includes('@')) {
 					params['email'] = pieces[index];
@@ -56,7 +54,6 @@ const Page : FC = () => {
 				params['name2'] = pieces[1];
 			}
 			const url = `${api}/profiles`;
-			console.log(params);
 			const response = await axios.get(url, { params: params });
 			setProfiles(response.data.data);
 		}, 200);
@@ -66,6 +63,10 @@ const Page : FC = () => {
 
 	return <>
 		<NavBar />
+		<img
+			className="w-full h-48 object-cover"
+			src={img}
+		/>
 		<div className="flex min-h-screen">
 			<div className="w-1/4 min-w-80 flex flex-col items-center py-3 bg-blue-300">
 			<Label 
