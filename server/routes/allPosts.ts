@@ -33,4 +33,25 @@ router.get("/", async (req: any, res: any ) => {
     }
 });
 
+router.get("/findAllByUserId/:userId", async (req: any, res: any ) => {
+    const {userId} = req.params;
+    try {
+        const coursePosts = await CoursePostDao.readAllByUser(userId);
+        const activityPosts = await ActivityPostDao.readAllByUser(userId);
+        const allPosts = [...coursePosts, ...activityPosts];
+        allPosts.sort((a, b) => {
+            const timestampA = a._id.getTimestamp().getTime();
+            const timestampB = b._id.getTimestamp().getTime();
+            return timestampB - timestampA;
+        });
+        if (allPosts.length === 0) {
+            return res.status(404).json({ msg: "No posts found" });
+        }
+        res.status(200).json(allPosts);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Server Error");
+    }
+});
+
 module.exports = router;
