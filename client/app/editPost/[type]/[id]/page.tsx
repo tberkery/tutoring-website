@@ -4,7 +4,7 @@ import { FC, useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import axios from "axios";
 import CreatePost from "@/components/CreatePost";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
 	const { user } = useUser();
