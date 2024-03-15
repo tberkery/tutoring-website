@@ -6,41 +6,13 @@ import { useUser } from '@clerk/clerk-react';
 import { useRouter } from 'next/router';
 import { profile } from "console";
 
-const samples = [
-    {
-        id: 1,
-        username: 'Nolan Fogarty',
-        title: 'OOSE',
-        courseId: 'EN.601.421',
-        description: 'I will teach you all about OOSE and how to make a great project!',
-        imageUrl: "alsbdf",
-        price: '150'
-      },
-      {
-        id: 2,
-        username: 'Nolan Fogarty',
-        title: '',
-        courseId: '',
-        description: '',
-        imageUrl: null,
-        price: ''
-      },
-      {
-        id: 3,
-        username: 'Nolan Fogarty',
-        title: 'OOSE',
-        courseId: 'EN.601.421',
-        description: 'I will teach you all about OOSE and how to make a great project!',
-        classId: null,
-        price: '150'
-      },
-  ];
-
   interface BrowseSectionProps {
     filterCourses: boolean;
     filterActivities: boolean;
     sortByPriceLowToHigh: boolean;
     sortByPriceHighToLow: boolean;
+    filterAthleticTag: boolean;
+    filterMusicTag: boolean;
   }
 
   interface ActivityPost {
@@ -67,7 +39,7 @@ const samples = [
     coursePostPicKey: string | null;
   }
 
-  const BrowseSection: React.FC<BrowseSectionProps> = ({ filterCourses, filterActivities, sortByPriceLowToHigh, sortByPriceHighToLow}) => {
+  const BrowseSection: React.FC<BrowseSectionProps> = ({ filterCourses, filterActivities, sortByPriceLowToHigh, sortByPriceHighToLow, filterAthleticTag, filterMusicTag }) => {
     const [posts, setPosts] = useState<any[]>([]); // Set the type to any[] since we're using mongoose models directly
 
     const fetchPosts = async () => {
@@ -86,12 +58,24 @@ const samples = [
           responseAll = await axios.get<any[]>(`${process.env.NEXT_PUBLIC_BACKEND_URL}/allPosts`); // Fetch all posts
           sortedPosts = responseAll.data;
         }
-
-        if (sortByPriceHighToLow) {
-          sortedPosts = sortedPosts.sort((a, b) => b.price - a.price);
-        } else if (sortByPriceLowToHigh) {
-          sortedPosts = sortedPosts.sort((a, b) => a.price - b.price);
+        
+        // Filter posts based on selected tag filters
+        if (filterAthleticTag) {
+          sortedPosts = sortedPosts.filter((post) => post.tags?.some(tag => tag.toLowerCase() === 'athletic'));
         }
+
+        if (filterMusicTag) {
+          sortedPosts = sortedPosts.filter((post) => post.tags?.some(tag => tag.toLowerCase() === 'music'));
+        }
+
+        if (sortByPriceHighToLow && !sortByPriceLowToHigh) {
+          sortedPosts = sortedPosts.sort((a, b) => b.price - a.price);
+        } else if (sortByPriceLowToHigh && !sortByPriceHighToLow) {
+          sortedPosts = sortedPosts.sort((a, b) => a.price - b.price);
+        } else if (sortByPriceHighToLow && sortByPriceLowToHigh) {
+          sortedPosts = sortedPosts;
+        }
+
         setPosts(sortedPosts);
 
       } catch (error) {
@@ -101,7 +85,7 @@ const samples = [
 
     useEffect(() => {
       fetchPosts();
-    }, [filterCourses, filterActivities, sortByPriceLowToHigh, sortByPriceHighToLow]); // Run this effect whenever filterCourses or filterActivities changes
+    }, [filterCourses, filterActivities, sortByPriceLowToHigh, sortByPriceHighToLow, filterAthleticTag, filterMusicTag]); // Run this effect whenever filterCourses or filterActivities changes
   
   
     return (
