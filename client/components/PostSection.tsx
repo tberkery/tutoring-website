@@ -9,30 +9,11 @@ import { profile } from "console";
 const samples = [
     {
         id: 1,
-        username: 'Nolan Fogarty',
+        username: 'TutorHub Team',
         title: 'OOSE',
         courseId: 'EN.601.421',
-        description: 'I will teach you all about OOSE and how to make a great project!',
-        imageUrl: "alsbdf",
-        price: '150'
-      },
-      {
-        id: 2,
-        username: 'Nolan Fogarty',
-        title: '',
-        courseId: '',
-        description: '',
-        imageUrl: null,
-        price: ''
-      },
-      {
-        id: 3,
-        username: 'Nolan Fogarty',
-        title: 'OOSE',
-        courseId: 'EN.601.421',
-        description: 'I will teach you all about OOSE and how to make a great project!',
-        classId: null,
-        price: '150'
+        description: 'You have not made a tutor post yet!',
+        price: '0'
       },
 ];
 
@@ -49,8 +30,11 @@ const PostsSection: React.FC = () => {
       console.log(response.data);
       setProfileData(response.data);
       const posts = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/allPosts/findAllByUserId/${response.data.data[0]._id}`);
-      console.log('setting posts to:', posts.data);
-      setPosts(posts.data);
+      console.log('posts.data type: ' + typeof posts.data);
+      console.log(posts.data);
+      if (posts.data.length !== 0) {
+        setPosts(posts.data);
+      }
     } catch (error) {
       console.error("Failed to fetch profile:", error);
     }
@@ -60,8 +44,6 @@ const PostsSection: React.FC = () => {
     fetchProfile();
   }, [user]);
   
-
-
   
     return (
       <div className="container mx-auto px-6 py-8">
