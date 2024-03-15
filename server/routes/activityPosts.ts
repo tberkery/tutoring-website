@@ -88,9 +88,6 @@ router.get("/", async (req: any, res: any) => {
 
       // Call the DAO method with the constructed options
       const posts = await ActivityPostDao.readSome(options);
-      if (posts.length === 0) {
-        return res.status(404).json({ msg: "No posts found" });
-      }
 
       // Return the fetched posts
       res.status(200).json(posts);

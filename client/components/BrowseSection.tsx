@@ -34,24 +34,63 @@ const samples = [
         classId: null,
         price: '150'
       },
-];
+  ];
 
-const PostsSection: React.FC = () => {
-  const [posts, setPosts] = useState(samples); 
+  interface BrowseSectionProps {
+    filterCourses: boolean;
+    filterActivities: boolean;
+  }
 
-  const fetchPosts = async () => {
-    try {
-      const posts = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/allPosts`);
-      console.log('setting posts to:', posts.data);
-      setPosts(posts.data);
-    } catch (error) {
-      console.error("Failed to fetch profile:", error);
-    }
-  };
+  interface ActivityPost {
+    userId: string;
+    activityTitle: string;
+    activityDescription: string | null;
+    activityPostPicKey: string | null;
+    price: number | null;
+    tags: string[] | null;
+  }
 
-  useEffect(() => {
-    fetchPosts();
-  });
+  interface CoursePost {
+    userId: string;
+    courseName: string;
+    description: string | null;
+    price: number | null;
+    courseNumber: string | null;
+    courseDepartment: string[] | null;
+    gradeReceived: string | null;
+    semesterTaken: string | null;
+    professorTakenWith: string | null;
+    takenAtHopkins: boolean;
+    schoolTakenAt: string | null;
+    coursePostPicKey: string | null;
+  }
+
+  const BrowseSection: React.FC<BrowseSectionProps> = ({ filterCourses, filterActivities }) => {
+    const [posts, setPosts] = useState<any[]>([]); // Set the type to any[] since we're using mongoose models directly
+
+    const fetchPosts = async () => {
+      try {
+        let responseCourses;
+        let responseActivities;
+        let responseAll;
+        if (filterCourses && !filterActivities) {
+          responseCourses = await axios.get<CoursePost[]>(`${process.env.NEXT_PUBLIC_BACKEND_URL}/coursePosts`);
+          setPosts(responseCourses.data.posts)
+        } else if (!filterCourses && filterActivities) {
+          responseActivities = await axios.get<ActivityPost[]>(`${process.env.NEXT_PUBLIC_BACKEND_URL}/activityPosts`);
+          setPosts(responseActivities.data)
+        } else {
+          responseAll = await axios.get<any[]>(`${process.env.NEXT_PUBLIC_BACKEND_URL}/allPosts`); // Fetch all posts
+          setPosts(responseAll.data)
+        }
+      } catch (error) {
+        console.error("Failed to fetch posts:", error);
+      }
+    };
+
+    useEffect(() => {
+      fetchPosts();
+    }, [filterCourses, filterActivities]); // Run this effect whenever filterCourses or filterActivities changes
   
   
     return (
@@ -65,4 +104,4 @@ const PostsSection: React.FC = () => {
     );
   };
   
-  export default PostsSection;
+  export default BrowseSection;

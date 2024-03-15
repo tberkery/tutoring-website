@@ -1,4 +1,6 @@
-import React, { FC } from "react";
+"use client";
+
+import React, { FC, useState } from "react";
 import "../../styles/global.css";
 import NavBar from "@/components/Navbar";
 import "../../styles/basic.css";
@@ -11,6 +13,17 @@ import {
 import BrowseSection from "@/components/BrowseSection";
 
 const Page : FC = () => {
+  const [filterCourses, setFilterCourses] = useState(false);
+  const [filterActivities, setFilterActivities] = useState(false);
+
+  const handleCourseFilterChange = () => {
+    setFilterCourses(!filterCourses);
+  };
+
+  const handleActivityFilterChange = () => {
+    setFilterActivities(!filterActivities);
+  };
+
   return <>
   <NavBar />
     <div className="flex min-h-screen">
@@ -28,16 +41,28 @@ const Page : FC = () => {
                         <AccordionTrigger>By Type</AccordionTrigger>
                         <AccordionContent>
                             <div className="checkbox-wrapper ml-2">
-                                <input type="checkbox" id="cbx-46" className="inp-cbx" />
+                                <input 
+                                type="checkbox" 
+                                id="cbx-46" 
+                                className="inp-cbx" 
+                                onChange={handleCourseFilterChange}
+                                checked={filterCourses}
+                                />
                                 <label htmlFor="cbx-46" className="cbx"
                                     ><span>
                                     <svg viewBox="0 0 12 10" height="10px" width="12px">
                                         <polyline points="1.5 6 4.5 9 10.5 1"></polyline></svg></span
-                                    ><span>Classes</span>
+                                    ><span>Courses</span>
                                 </label>
                             </div>
                             <div className="checkbox-wrapper ml-2">
-                                <input type="checkbox" id="cbx-47" className="inp-cbx" />
+                                <input 
+                                type="checkbox" 
+                                id="cbx-47" 
+                                className="inp-cbx" 
+                                onChange={handleActivityFilterChange}
+                                checked={filterActivities}
+                                />
                                 <label htmlFor="cbx-47" className="cbx"
                                     ><span>
                                     <svg viewBox="0 0 12 10" height="10px" width="12px">
@@ -80,7 +105,7 @@ const Page : FC = () => {
             </div>
         </div>
         <div className="w-3/4">
-            <BrowseSection/>
+            <BrowseSection filterCourses={filterCourses} filterActivities={filterActivities} />
         </div>
     </div>
     </>;
