@@ -15,8 +15,9 @@ router.post("/", async (req: any, res: any) => {
 });
 
 router.get("/", async (req: any, res: any) => {
+  const {name1, name2, email} = req.query;
   try {
-    const data = await profiles.readAll();
+    const data = await profiles.readAll({firstName:name1, lastName:name2, email});
     res.status(200).json({ data });
   } catch (err) {
     res.status(500).send("Server Error");

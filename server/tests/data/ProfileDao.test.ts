@@ -160,7 +160,7 @@ test('test readByEmail() for an invalid email', async ()=> {
 });
 
 
-test('test readAll() on non empty table', async ()=> {
+test('test readAll() on non empty table without filter', async ()=> {
     const profileDao = new ProfileDao();
     await profileDao.deleteAll()
     await mg.connect(URI);
@@ -174,8 +174,88 @@ test('test readAll() on non empty table', async ()=> {
         const description = faker.lorem.paragraph();
         const profile =  await profileDao.create(firstName, lastName, email, affiliation, department, {graduationYear, description});
     }
-    const profiles = await profileDao.readAll();
+    const profiles = await profileDao.readAll({});
     expect(profiles.length).toBe(5);
+});
+
+test('test readAll() on non empty table with filter for firstName one match', async ()=> {
+    const profileDao = new ProfileDao();
+    await profileDao.deleteAll()
+    await mg.connect(URI);
+    let firstName;
+    let lastName;
+    let email;
+    for(let i = 0; i < 5; i++){
+        firstName = faker.person.firstName();
+        lastName = faker.person.lastName();
+        email = faker.internet.email();
+        const affiliation = "student";
+        const graduationYear = "2024";
+        const department = faker.lorem.word();
+        const description = faker.lorem.paragraph();
+        const profile =  await profileDao.create(firstName, lastName, email, affiliation, department, {graduationYear, description});
+    }
+    const profiles = await profileDao.readAll({firstName});
+    expect(profiles.length).toBe(1);
+    expect(profiles[0].firstName).toBe(firstName);
+    expect(profiles[0].lastName).toBe(lastName);
+    expect(profiles[0].email).toBe(email);
+});
+
+test('test readAll() on non empty table with filter for firstName with more than one match', async ()=> {
+    const profileDao = new ProfileDao();
+    await profileDao.deleteAll()
+    await mg.connect(URI);
+    let firstName = faker.person.firstName();
+    let lastName, email, affiliation, graduationYear, department, description;
+    for(let i = 0; i < 5; i++){
+        firstName =  i <= 3 ? faker.person.firstName(): firstName;
+        lastName = faker.person.lastName();
+        email = faker.internet.email();
+        affiliation = "student";
+        graduationYear = "2024";
+        department = faker.lorem.word();
+        description = faker.lorem.paragraph();
+        await profileDao.create(firstName, lastName, email, affiliation, department, {graduationYear, description});
+    }
+    const profiles = await profileDao.readAll({firstName});
+    expect(profiles.length).toBe(2);
+    expect(profiles[0].firstName).toBe(firstName);
+    expect(profiles[1].firstName).toBe(firstName);
+
+    const profile = await profileDao.readAll({firstName, lastName});
+    expect(profile.length).toBe(1);
+    expect(profile[0].firstName).toBe(firstName);
+    expect(profile[0].lastName).toBe(lastName);
+    expect(profile[0].email).toBe(email);
+    expect(profile[0].affiliation).toBe(affiliation);
+    expect(profile[0].graduationYear).toBe(graduationYear);
+    expect(profile[0].department).toBe(department);
+    expect(profile[0].description).toBe(description);
+});
+
+test('test readAll() on non empty table with multiple filters', async ()=> {
+    const profileDao = new ProfileDao();
+    await profileDao.deleteAll()
+    await mg.connect(URI);
+    let firstName;
+    let lastName;
+    let email;
+    for(let i = 0; i < 5; i++){
+        firstName =  i <= 3 ? faker.person.firstName(): firstName;
+        lastName = faker.person.lastName();
+        email = faker.internet.email();
+        const affiliation = "student";
+        const graduationYear = "2024";
+        const department = faker.lorem.word();
+        const description = faker.lorem.paragraph();
+        const profile =  await profileDao.create(firstName, lastName, email, affiliation, department, {graduationYear, description});
+    }
+    const profiles = await profileDao.readAll({firstName});
+    expect(profiles.length).toBe(2);
+    expect(profiles[0].firstName).toBe(firstName);
+    expect(profiles[1].firstName).toBe(firstName);
+
 });
 
 

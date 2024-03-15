@@ -40,7 +40,7 @@ const Page : FC = () => {
     };
 
     fetchProfile();
-  }, [user]);
+  }, [user, BACKEND_URL]);
 
 
   useEffect(() => {

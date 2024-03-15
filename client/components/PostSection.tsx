@@ -6,7 +6,7 @@ import { useUser } from '@clerk/clerk-react';
 import { useRouter } from 'next/router';
 import { profile } from "console";
 
-const posts = [
+const samples = [
     {
         id: 1,
         username: 'Nolan Fogarty',
@@ -39,18 +39,18 @@ const posts = [
 const PostsSection: React.FC = () => {
   const { isLoaded, isSignedIn, user } = useUser();
   const [profileData, setProfileData] = React.useState(null);
-  const [posts, setPosts] = useState([]); 
+  const [posts, setPosts] = useState(samples); 
 
   const fetchProfile = async () => {
-    if (!user) return;
+     if (!user) return;
     try {
       console.log('\n\nstage 1...\n\n')
       const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/profiles/getByEmail/${user.primaryEmailAddress.toString()}`);
       console.log(response.data);
       setProfileData(response.data);
-      const posts = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/posts/findAllByUserId/${response.data.data[0]._id}`);
-      console.log('setting posts to:', posts.data.posts);
-      setPosts(posts.data.posts);
+      const posts = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/allPosts/findAllByUserId/${response.data.data[0]._id}`);
+      console.log('setting posts to:', posts.data);
+      setPosts(posts.data);
     } catch (error) {
       console.error("Failed to fetch profile:", error);
     }

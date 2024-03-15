@@ -1,6 +1,6 @@
 "use client";
-import React, { FC, useEffect, useState } from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
+import React, { FC, useEffect } from "react";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import "../../../styles/global.css";
@@ -37,7 +37,7 @@ const postFormSchema = z.object({
   
 
 const CreatePost : FC = () => {
-	const { isLoaded, isSignedIn, user } = useUser();
+	const { user } = useUser();
   const [profileData, setProfileData] = React.useState(null);
   const router = useRouter();
 

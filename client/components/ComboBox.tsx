@@ -1,5 +1,5 @@
 "use client";
-import React, { FC, HTMLAttributes, useState } from "react";
+import React, { Dispatch, FC, HTMLAttributes, SetStateAction, useState } from "react";
 import { Check, ChevronsUpDown } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -19,17 +19,12 @@ import {
 type props = {
 	prompt: string,
 	options: string[],
-	setValueProp: (arg0: string) => void,
+	value?: string,
+	onValueChange?: Dispatch<SetStateAction<string>>,
 } & HTMLAttributes<HTMLDivElement>;
 
 const ComboBox : FC<props> = (props : props) => {
-	const [open, setOpen] = useState(false)
-	const [value, setValue] = useState("")
-	
-	const setValueWithProp = (arg : string) => {
-		setValue(arg);
-		props.setValueProp(arg);
-	}
+	const [open, setOpen] = useState(false);
 
 	let options : string[] = props.options;
 	let prompt : string = props.prompt;
@@ -41,10 +36,11 @@ const ComboBox : FC<props> = (props : props) => {
 					variant="outline"
 					role="combobox"
 					aria-expanded={open}
-					className={ `w-[200px] justify-between ${props.className}` }
+					className={ `w-[200px] justify-between shadow-sm ${props.className}` }
+					id={props.id}
 				>
-					{value
-						? options.find((option) => option.toUpperCase() === value.toUpperCase())
+					{props.value
+						? options.find((option) => option.toUpperCase() === props.value.toUpperCase())
 						: prompt }
 					<ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
 				</Button>
@@ -59,14 +55,14 @@ const ComboBox : FC<props> = (props : props) => {
 								key={option}
 								value={option}
 								onSelect={(currentValue) => {
-									setValueWithProp(currentValue)
+									props.onValueChange(currentValue)
 									setOpen(false)
 								}}
 							>
 								<Check
 									className={cn(
 										"mr-2 h-4 w-4",
-										value === option ? "opacity-100" : "opacity-0"
+										props.value === option ? "opacity-100" : "opacity-0"
 									)}
 								/>
 								{option}

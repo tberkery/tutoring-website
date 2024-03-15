@@ -25,9 +25,38 @@ export class ProfileDao {
     return data;
   }
 
-  async readAll() {
-    const data = await Profile.find().lean().select("-__v");
-    return data;
+  async readAll({firstName, lastName, email}:{firstName?: string, lastName?: string, email?:string}) {
+    if (!firstName && !lastName && !email) {
+      const data = await Profile.find({}).lean().select("-__v");
+      return data;
+    }
+    let f : any = [];
+       
+        if (firstName) {
+          f.push({firstName: {$regex: firstName, $options: 'i'}})
+            if (lastName) {
+              f.push({lastName: {$regex: lastName, $options: 'i'}})
+              if (email) {
+                f.push({email: {$regex: email, $options: 'i'}})
+              }
+              const data = await Profile.find({$and : f}).lean().select("-__v");
+              return data;
+            } else {
+              f.push({lastName: {$regex: firstName, $options: 'i'}})
+              if (email) {
+                const data = await Profile.find({$and : [{ $or: f}, {email: {$regex: email, $options: 'i'}}]}).lean().select("-__v");
+                return data;
+              }
+              const data = await Profile.find({$or : f}).lean().select("-__v");
+              return data;
+            }
+        } else if (email) {
+          const data = await Profile.find({email: {$regex: email, $options: 'i'}}).lean().select("-__v");
+          return data;
+        }
+        
+        const data = await Profile.find({$and : f}).lean().select("-__v");
+        return data;
   }
 
   async update(_id: Number, firstName: string, lastName: string, email: string, affiliation: string, department: string, options?: {graduationYear?: string, description?: string, posts?: []}){

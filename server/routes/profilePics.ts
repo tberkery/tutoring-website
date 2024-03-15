@@ -1,3 +1,5 @@
+export {}
+
 import { Request, Response } from 'express';
 
 const Profiles = require("../model/Profile.ts")
@@ -12,8 +14,6 @@ const multer = require('multer');
 const upload: Multer = multer();
 
 // Initialize instance of express
-const express = require('express');
-
 const router = require('express').Router();
 
 // AWS S3 Client Classes
@@ -35,15 +35,15 @@ const client = new S3Client({
 // Update 'image.jpeg' with parameter name passed in
 router.post('/upload/:objectID', upload.single('profilePicture'), async (req: Request, res: Response) => {
   try {
+    console.log("here")
     const objectID = req.params.objectID;
     const fileContent = (req.file as Express.Multer.File).buffer; // Cast req.file to the correct type
-
     if (!fileContent) {
       return res.status(400).json({ error: 'File is required' });
     }
 
     // Load bucket name from aws.env
-    const bucketName = process.env.AWS_BUCKET_NAME;
+    const bucketName = process.env.AWS_PROFILE_BUCKET_NAME;
 
     // Generate a unique key for the uploaded image
     const key = `${uuidv4()}`;
@@ -79,7 +79,7 @@ router.put('/update/:objectID/:key', upload.single('profilePicture'), async (req
       return res.status(400).json({ error: 'Key and file content are required' });
     }
 
-    const bucketName = process.env.AWS_BUCKET_NAME;
+    const bucketName = process.env.AWS_PROFILE_BUCKET_NAME;
 
     const response = await uploadToS3(fileContent, bucketName!, key);
 
@@ -104,7 +104,7 @@ router.get('/get/:key', async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Key is required' });
     }
 
-    const bucketName = process.env.AWS_BUCKET_NAME;
+    const bucketName = process.env.AWS_PROFILE_BUCKET_NAME;
 
     // Retrieve the file from S3 bucket based on the key
     const command = new GetObjectCommand({ Bucket: bucketName, Key: key });
@@ -142,7 +142,7 @@ router.delete('/delete/:objectID/:key', async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Key is required' });
     }
 
-    const bucketName = process.env.AWS_BUCKET_NAME;
+    const bucketName = process.env.AWS_PROFILE_BUCKET_NAME;
 
     // Create a command to delete the object
     const command = new DeleteObjectCommand({ Bucket: bucketName, Key: key });
