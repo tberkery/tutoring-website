@@ -25,6 +25,12 @@ export class ActivityPostDao {
         const post = await ActivityPost.findOne({ _id: id });
         return post;
     }
+
+    async readAllByUser(userId: any){
+        const posts = await ActivityPost.find({userId: userId});
+        return posts;
+    }
+
     async readAll() {
         try {
             const posts = await ActivityPost.find();
