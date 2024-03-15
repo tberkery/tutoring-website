@@ -103,8 +103,8 @@ const Page : FC = () => {
         response = await createCoursePost();
       } else {
         response = await createActivityPost();
-        router.replace('/profile');
       }
+      router.replace('/profile');
     }
   }
 
