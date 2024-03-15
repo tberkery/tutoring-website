@@ -16,12 +16,23 @@ const Page : FC = () => {
   const [filterCourses, setFilterCourses] = useState(false);
   const [filterActivities, setFilterActivities] = useState(false);
 
+  const [sortByPriceHighToLow, setSortByPriceHighToLow] = useState(false);
+  const [sortByPriceLowToHigh, setSortByPriceLowToHigh] = useState(false);
+
   const handleCourseFilterChange = () => {
     setFilterCourses(!filterCourses);
   };
 
   const handleActivityFilterChange = () => {
     setFilterActivities(!filterActivities);
+  };
+
+  const handlePriceHighToLowChange = () => {
+    setSortByPriceHighToLow(!sortByPriceHighToLow);
+  };
+  
+  const handlePriceLowToHighChange = () => {
+    setSortByPriceLowToHigh(!sortByPriceLowToHigh);
   };
 
   return <>
@@ -76,7 +87,13 @@ const Page : FC = () => {
                         <AccordionTrigger>By Price</AccordionTrigger>
                         <AccordionContent>
                         <div className="checkbox-wrapper ml-2">
-                                <input type="checkbox" id="cbx-48" className="inp-cbx" />
+                                <input 
+                                    type="checkbox" 
+                                    id="cbx-48" 
+                                    className="inp-cbx" 
+                                    onChange={handlePriceLowToHighChange}
+                                    checked={sortByPriceLowToHigh}
+                                    />
                                 <label htmlFor="cbx-48" className="cbx"
                                     ><span>
                                     <svg viewBox="0 0 12 10" height="10px" width="12px">
@@ -85,7 +102,13 @@ const Page : FC = () => {
                                 </label>
                             </div>
                             <div className="checkbox-wrapper ml-2">
-                                <input type="checkbox" id="cbx-49" className="inp-cbx" />
+                                <input 
+                                    type="checkbox" 
+                                    id="cbx-49" 
+                                    className="inp-cbx" 
+                                    onChange={handlePriceHighToLowChange}
+                                    checked={sortByPriceHighToLow}
+                                    />
                                 <label htmlFor="cbx-49" className="cbx"
                                     ><span>
                                     <svg viewBox="0 0 12 10" height="10px" width="12px">
@@ -105,7 +128,8 @@ const Page : FC = () => {
             </div>
         </div>
         <div className="w-3/4">
-            <BrowseSection filterCourses={filterCourses} filterActivities={filterActivities} />
+            <BrowseSection filterCourses={filterCourses} filterActivities={filterActivities} 
+            sortByPriceLowToHigh={sortByPriceLowToHigh} sortByPriceHighToLow={sortByPriceHighToLow}/>
         </div>
     </div>
     </>;

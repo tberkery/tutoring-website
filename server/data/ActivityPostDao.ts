@@ -48,7 +48,7 @@ export class ActivityPostDao {
         // - Query only by tags
         // - Query any combination of these fields
         const query: any = {};
-
+        
         // Iterate over the options object
         for (const key in options) {
             if (Object.prototype.hasOwnProperty.call(options, key)) {
@@ -58,10 +58,13 @@ export class ActivityPostDao {
                             query.userId = options.userId;
                             break;
                         case 'activityTitle':
-                            query.activityTitle = options.activityTitle;
+                            const activityTitle = options.activityTitle;
+                            query.activityTitle = {$regex: activityTitle, $options: 'i'};
                             break;
-                        case 'price':
-                            query.price = options.price;
+                        case 'lowPrice':
+                            const lowerBound = options.lowPrice;
+                            const upperBound = options.highPrice ? options.highPrice : options.lowPrice;
+                            query.lowPrice = {$lte: upperBound, $gte: lowerBound};
                             break;
                         case 'tags':
                             query.tags = options.tags;

@@ -39,6 +39,8 @@ const samples = [
   interface BrowseSectionProps {
     filterCourses: boolean;
     filterActivities: boolean;
+    sortByPriceLowToHigh: boolean;
+    sortByPriceHighToLow: boolean;
   }
 
   interface ActivityPost {
@@ -65,7 +67,7 @@ const samples = [
     coursePostPicKey: string | null;
   }
 
-  const BrowseSection: React.FC<BrowseSectionProps> = ({ filterCourses, filterActivities }) => {
+  const BrowseSection: React.FC<BrowseSectionProps> = ({ filterCourses, filterActivities, sortByPriceLowToHigh, sortByPriceHighToLow}) => {
     const [posts, setPosts] = useState<any[]>([]); // Set the type to any[] since we're using mongoose models directly
 
     const fetchPosts = async () => {
@@ -73,16 +75,25 @@ const samples = [
         let responseCourses;
         let responseActivities;
         let responseAll;
+        let sortedPosts;
         if (filterCourses && !filterActivities) {
           responseCourses = await axios.get<CoursePost[]>(`${process.env.NEXT_PUBLIC_BACKEND_URL}/coursePosts`);
-          setPosts(responseCourses.data.posts)
+          sortedPosts = responseCourses.data.posts;
         } else if (!filterCourses && filterActivities) {
           responseActivities = await axios.get<ActivityPost[]>(`${process.env.NEXT_PUBLIC_BACKEND_URL}/activityPosts`);
-          setPosts(responseActivities.data)
+          sortedPosts = responseActivities.data;
         } else {
           responseAll = await axios.get<any[]>(`${process.env.NEXT_PUBLIC_BACKEND_URL}/allPosts`); // Fetch all posts
-          setPosts(responseAll.data)
+          sortedPosts = responseAll.data;
         }
+
+        if (sortByPriceHighToLow) {
+          sortedPosts = sortedPosts.sort((a, b) => b.price - a.price);
+        } else if (sortByPriceLowToHigh) {
+          sortedPosts = sortedPosts.sort((a, b) => a.price - b.price);
+        }
+        setPosts(sortedPosts);
+
       } catch (error) {
         console.error("Failed to fetch posts:", error);
       }
@@ -90,7 +101,7 @@ const samples = [
 
     useEffect(() => {
       fetchPosts();
-    }, [filterCourses, filterActivities]); // Run this effect whenever filterCourses or filterActivities changes
+    }, [filterCourses, filterActivities, sortByPriceLowToHigh, sortByPriceHighToLow]); // Run this effect whenever filterCourses or filterActivities changes
   
   
     return (
