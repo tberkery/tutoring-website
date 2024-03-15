@@ -1,4 +1,6 @@
-import React, { FC } from "react";
+"use client";
+
+import React, { FC, useState } from "react";
 import "../../styles/global.css";
 import NavBar from "@/components/Navbar";
 import "../../styles/basic.css";
@@ -11,6 +13,39 @@ import {
 import BrowseSection from "@/components/BrowseSection";
 
 const Page : FC = () => {
+  const [filterCourses, setFilterCourses] = useState(false);
+  const [filterActivities, setFilterActivities] = useState(false);
+
+  const [sortByPriceHighToLow, setSortByPriceHighToLow] = useState(false);
+  const [sortByPriceLowToHigh, setSortByPriceLowToHigh] = useState(false);
+
+  const [filterAthleticTag, setFilterAthleticTag] = useState(false);
+  const [filterMusicTag, setFilterMusicTag] = useState(false);
+
+  const handleCourseFilterChange = () => {
+    setFilterCourses(!filterCourses);
+  };
+
+  const handleActivityFilterChange = () => {
+    setFilterActivities(!filterActivities);
+  };
+
+  const handlePriceHighToLowChange = () => {
+    setSortByPriceHighToLow(!sortByPriceHighToLow);
+  };
+  
+  const handlePriceLowToHighChange = () => {
+    setSortByPriceLowToHigh(!sortByPriceLowToHigh);
+  };
+
+  const handleAthleticTagFilterChange = () => {
+    setFilterAthleticTag(!filterAthleticTag);
+  };
+
+  const handleMusicTagFilterChange = () => {
+    setFilterMusicTag(!filterMusicTag);
+  };
+
   return <>
   <NavBar />
     <div className="flex min-h-screen">
@@ -28,16 +63,28 @@ const Page : FC = () => {
                         <AccordionTrigger>By Type</AccordionTrigger>
                         <AccordionContent>
                             <div className="checkbox-wrapper ml-2">
-                                <input type="checkbox" id="cbx-46" className="inp-cbx" />
+                                <input 
+                                type="checkbox" 
+                                id="cbx-46" 
+                                className="inp-cbx" 
+                                onChange={handleCourseFilterChange}
+                                checked={filterCourses}
+                                />
                                 <label htmlFor="cbx-46" className="cbx"
                                     ><span>
                                     <svg viewBox="0 0 12 10" height="10px" width="12px">
                                         <polyline points="1.5 6 4.5 9 10.5 1"></polyline></svg></span
-                                    ><span>Classes</span>
+                                    ><span>Courses</span>
                                 </label>
                             </div>
                             <div className="checkbox-wrapper ml-2">
-                                <input type="checkbox" id="cbx-47" className="inp-cbx" />
+                                <input 
+                                type="checkbox" 
+                                id="cbx-47" 
+                                className="inp-cbx" 
+                                onChange={handleActivityFilterChange}
+                                checked={filterActivities}
+                                />
                                 <label htmlFor="cbx-47" className="cbx"
                                     ><span>
                                     <svg viewBox="0 0 12 10" height="10px" width="12px">
@@ -51,7 +98,13 @@ const Page : FC = () => {
                         <AccordionTrigger>By Price</AccordionTrigger>
                         <AccordionContent>
                         <div className="checkbox-wrapper ml-2">
-                                <input type="checkbox" id="cbx-48" className="inp-cbx" />
+                                <input 
+                                    type="checkbox" 
+                                    id="cbx-48" 
+                                    className="inp-cbx" 
+                                    onChange={handlePriceLowToHighChange}
+                                    checked={sortByPriceLowToHigh}
+                                    />
                                 <label htmlFor="cbx-48" className="cbx"
                                     ><span>
                                     <svg viewBox="0 0 12 10" height="10px" width="12px">
@@ -60,7 +113,13 @@ const Page : FC = () => {
                                 </label>
                             </div>
                             <div className="checkbox-wrapper ml-2">
-                                <input type="checkbox" id="cbx-49" className="inp-cbx" />
+                                <input 
+                                    type="checkbox" 
+                                    id="cbx-49" 
+                                    className="inp-cbx" 
+                                    onChange={handlePriceHighToLowChange}
+                                    checked={sortByPriceHighToLow}
+                                    />
                                 <label htmlFor="cbx-49" className="cbx"
                                     ><span>
                                     <svg viewBox="0 0 12 10" height="10px" width="12px">
@@ -73,14 +132,45 @@ const Page : FC = () => {
                     <AccordionItem value="item-3">
                         <AccordionTrigger>By Tag</AccordionTrigger>
                         <AccordionContent>
-                        Tags Here! 
+                        <div className="checkbox-wrapper ml-2">
+                                <input 
+                                    type="checkbox" 
+                                    id="cbx-50" 
+                                    className="inp-cbx" 
+                                    onChange={handleAthleticTagFilterChange}
+                                    checked={filterAthleticTag}
+                                    />
+                                <label htmlFor="cbx-50" className="cbx"
+                                    ><span>
+                                    <svg viewBox="0 0 12 10" height="10px" width="12px">
+                                        <polyline points="1.5 6 4.5 9 10.5 1"></polyline></svg></span
+                                    ><span>Athletic</span>
+                                </label>
+                            </div>
+                            <div className="checkbox-wrapper ml-2">
+                                <input 
+                                    type="checkbox" 
+                                    id="cbx-49" 
+                                    className="inp-cbx" 
+                                    onChange={handleMusicTagFilterChange}
+                                    checked={filterMusicTag}
+                                    />
+                                <label htmlFor="cbx-49" className="cbx"
+                                    ><span>
+                                    <svg viewBox="0 0 12 10" height="10px" width="12px">
+                                        <polyline points="1.5 6 4.5 9 10.5 1"></polyline></svg></span
+                                    ><span>Music</span>
+                                </label>
+                            </div>
                         </AccordionContent>
                     </AccordionItem>
                 </Accordion>
             </div>
         </div>
         <div className="w-3/4">
-            <BrowseSection/>
+            <BrowseSection filterCourses={filterCourses} filterActivities={filterActivities} 
+            sortByPriceLowToHigh={sortByPriceLowToHigh} sortByPriceHighToLow={sortByPriceHighToLow}
+            filterAthleticTag={filterAthleticTag} filterMusicTag={filterMusicTag}/>
         </div>
     </div>
     </>;

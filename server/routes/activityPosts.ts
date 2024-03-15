@@ -73,12 +73,13 @@ router.get("/", async (req: any, res: any) => {
   try {
     // Extract query parameters from the request
     try {
-      const { userId, activityTitle, price, tags } = req.query;
+      const { userId, activityTitle, lowPrice, highPrice, tags } = req.query;
       // Construct options object based on the provided query parameters
       const options: any = {};
       if (userId) options.userId = userId;
       if (activityTitle) options.activityTitle = activityTitle;
-      if (price) options.price = price;
+      if (lowPrice) options.lowPrice = lowPrice;
+      if (highPrice) options.highPrice = highPrice;
       if (tags) {
         // Split the tags parameter into an array if it contains multiple tags
         const tagArray = tags.split(',');
@@ -88,9 +89,6 @@ router.get("/", async (req: any, res: any) => {
 
       // Call the DAO method with the constructed options
       const posts = await ActivityPostDao.readSome(options);
-      if (posts.length === 0) {
-        return res.status(404).json({ msg: "No posts found" });
-      }
 
       // Return the fetched posts
       res.status(200).json(posts);
