@@ -4,10 +4,12 @@ import { FC, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import axios from "axios";
 import CreatePost from "@/components/CreatePost";
+import { useRouter } from "next/router";
 
 const Page : FC = () => {
 	const { user } = useUser();
 	const api : string = process.env.NEXT_PUBLIC_BACKEND_URL;
+  const router = useRouter();
   
   const [postType, setPostType] = useState("course");
   const [title, setTitle] = useState("");
@@ -101,6 +103,7 @@ const Page : FC = () => {
         response = await createCoursePost();
       } else {
         response = await createActivityPost();
+        router.replace('/profile');
       }
     }
   }

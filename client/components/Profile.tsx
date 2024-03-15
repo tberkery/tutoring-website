@@ -50,7 +50,7 @@ const Profile = () => {
                         Edit Profile
                       </button>
                     </Link>
-          <Link href="/profile/posts" passHref>
+          <Link href="/createPost" passHref>
             <button className="bg-custom-blue hover:bg-blue-900 text-white font-bold py-2 px-4 rounded-md">
               Create Post
             </button>
