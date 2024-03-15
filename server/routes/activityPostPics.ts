@@ -114,7 +114,7 @@ router.get('/get/:key', async (req: Request, res: Response) => {
     console.log(response.Body)
 
     res.set('Content-Type', response.ContentType);
-    res.set('Content-Disposition', `inline; filename="${key}"`);
+    res.set('Content-Disposition', `attachment; filename="${key}"`);
     response.Body.pipe(res)
 
   } catch (err) {
