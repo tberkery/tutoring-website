@@ -65,7 +65,8 @@ From the root directory (after appropriate installation), start both the fronten
 
 ### Viewing Deployed App (Server)
 
-View the deployed server at https://tutorhub-vqw9.onrender.com. Utilize Postman to test routes, or send a GET request to https://tutorhub-vqw9.onrender.com/courses/all in the browser. 
+The backend (server) is deployed at : https://tutorhub-server.onrender.com
+To confirm that it is working, you can visit the url and check if you see "Hello World!" message. 
 
 ### Navigating the App
 
