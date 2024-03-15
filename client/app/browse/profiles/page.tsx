@@ -22,7 +22,6 @@ const Page : FC = () => {
 	const api = process.env.NEXT_PUBLIC_BACKEND_URL;
 	const [profiles, setProfiles] = useState<profileType[]>([]);
 	const [searchText, setSearchText] = useState("");
-	const [img, setImg] = useState("");
 
 	useEffect(() => {
 		const searchForProfiles = setTimeout(async () => {
@@ -56,9 +55,6 @@ const Page : FC = () => {
 			const url = `${api}/profiles`;
 			const response = await axios.get(url, { params: params });
 			setProfiles(response.data.data);
-			const r2 = await axios.get(`${api}/activityPostPics/get/c69da1d6-8ea9-4526-aaaa-8914895bbb18`);
-			console.log(r2.data.activityPostPicKey);
-			setImg(r2.data.activityPostPicKey);
 		}, 200);
 
 		return () => clearTimeout(searchForProfiles);
@@ -66,10 +62,6 @@ const Page : FC = () => {
 
 	return <>
 		<NavBar />
-		<img
-			className="w-full h-48 object-cover"
-			src={img}
-		/>
 		<div className="flex min-h-screen">
 			<div className="w-1/4 min-w-80 flex flex-col items-center py-3 bg-blue-300">
 			<Label 

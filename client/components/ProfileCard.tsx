@@ -1,5 +1,6 @@
 "use client";
-import React, { FC } from 'react';
+import axios from 'axios';
+import React, { FC, useEffect, useState } from 'react';
 
 type profileType = {
 	_id : string,
@@ -9,12 +10,23 @@ type profileType = {
 	affiliation : string,
 	department : string,
 	graduationYear? : string,
-	description? : string
+	description? : string,
+  profilePicKey? : string
 }
 
 const PostCard: FC<{profile: profileType}> = ({ profile }) => {
-  const defaultImage = '/jhulogo.jpeg';
+  const [img, setImg] = useState("/defaultimg.jpeg");
   const fullName = `${profile.firstName} ${profile.lastName}`;
+
+  useEffect(() => { loadImage() }, [profile]);
+
+  const loadImage = async () => {
+    if (profile.profilePicKey) {
+      const api = process.env.NEXT_PUBLIC_BACKEND_URL;
+      const url = await axios.get(`${api}/profilePics/get/${profile.profilePicKey}`);
+      setImg(url.data.imageUrl);
+    }
+  }
 
   const capitalize = (s : string) => {
     const pieces = s.split(" ");
@@ -38,12 +50,14 @@ const PostCard: FC<{profile: profileType}> = ({ profile }) => {
     <div className="max-w-sm h-96 rounded overflow-hidden shadow-lg bg-white">
       <img
         className="w-full h-48 object-cover"
-        src={defaultImage}
+        src={img}
         alt={fullName}
       />
       <div className="px-6 py-4">
         <div className="mb-2">
-          <div className="font-bold text-xl">{fullName}</div>
+          <a href={`/profile/${profile._id}`}>
+            <div className="font-bold text-xl hover:underline">{fullName}</div>
+          </a>
           <p className="text-gray-600 text-sm">
             {profile.email} - {capitalize(profile.department)}
           </p>
