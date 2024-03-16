@@ -6,9 +6,21 @@ Team members: Tad Berkery, Ilana Chalom, Matthew Flynn, Katherine Forbes, Nolan 
 
 It's built using the MERN stack and other technologies detailed in our "Tech Stack" github issue
 
-# Name of the app 
+# TutorHub
+<br />
+<p align="center">
+    <img src="./assets/TutorHubLogo.png">
+    <h3 align="center">Comprehensive Tutoring/Learning Platform for BlueJays</h3>
 
-TutorHub
+  <p align="center">
+    <a href="mailto:dyang40@jh.edu?subject=Mail from Our Site">Report Bug</a>
+    ·
+    <a href="mailto:dyang40@jh.edu?subject=Mail from Our Site">Request Feature</a>
+    ·
+    <a href="https://project-team-02-git-frontenddepl-b0804a-nolan-fogartys-projects.vercel.app/">Vercel Demo 🚀</a>
+  </p>
+      <p align="center">   </p>
+</p>
 
 ## Installing / Getting started
 
