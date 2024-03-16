@@ -4,8 +4,6 @@ The goal is to create TutorHub.
 
 Team members: Tad Berkery, Ilana Chalom, Matthew Flynn, Katherine Forbes, Nolan Fogarty, Dokyung Yang
 
-An earlier version of our app is deployed at https://project-team-02-git-frontenddepl-b0804a-nolan-fogartys-projects.vercel.app/
-
 It's built using the MERN stack and other technologies detailed in our "Tech Stack" github issue
 
 # Name of the app 
@@ -65,6 +63,7 @@ From the root directory (after appropriate installation), start both the fronten
 
 ### Viewing Deployed App (Server)
 
+An earlier version of our app is deployed at https://project-team-02-git-frontenddepl-b0804a-nolan-fogartys-projects.vercel.app/
 The backend (server) is deployed at : https://tutorhub-server.onrender.com
 To confirm that it is working, you can visit the url and check if you see "Hello World!" message. 
 
