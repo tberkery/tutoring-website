@@ -9,7 +9,7 @@ It's built using the MERN stack and other technologies detailed in our "Tech Sta
 # TutorHub
 <br />
 <p align="center">
-    <img src="./assets/TutorHubLogo.png">
+    <img src="./assets/TuturHubLogo.png">
     <h3 align="center">Comprehensive Tutoring/Learning Platform for BlueJays</h3>
 
   <p align="center">
