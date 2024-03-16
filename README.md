@@ -19,7 +19,7 @@ It's built using the MERN stack and other technologies detailed in our "Tech Sta
     ·
     <a href="https://project-team-02-git-frontenddepl-b0804a-nolan-fogartys-projects.vercel.app/">Vercel Demo 🚀</a>
   </p>
-      <p align="center">   </p>
+      <p align="center"> *TutorHub is a comprehensive tutoring/learning platform for all JHU affiliates. </p>
 </p>
 
 ## Installing / Getting started
