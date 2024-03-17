@@ -15,6 +15,7 @@ import axios from "axios";
 import PostCard from "@/components/PostCard";
 import "../../styles/loader.css";
 import Loader from "@/components/Loader";
+import { Checkbox } from "@/components/ui/checkbox"
 
   interface ActivityPost {
     _id: string;
@@ -50,7 +51,29 @@ const Page : FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(false);
   const [filteredResults, setFilteredResults] = useState<Post[]>([]);
+
   const [searchInput, setSearchInput] = useState("");
+  const [typeFilters, setTypeFilters] = useState({
+    courses: false,
+    activities: false,
+  });
+  const handleTypeChange = (filterCategory) => {
+    setTypeFilters(prev => ({
+      ...prev,
+      [filterCategory]: !prev[filterCategory],
+    }));
+  };
+  
+  const [tagFilters, setTagFilters] = useState({
+    music: false,
+    athletic: false,
+  });
+  const handleTagChange = (filterCategory, value) => {
+    setTagFilters(prev => ({
+      ...prev,
+      [filterCategory]: value,
+    }));
+  };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -66,39 +89,6 @@ const Page : FC = () => {
         }
         fetchData();
     }, [api]);
-
-  const [filterCourses, setFilterCourses] = useState(false);
-  const [filterActivities, setFilterActivities] = useState(false);
-
-  const [sortByPriceHighToLow, setSortByPriceHighToLow] = useState(false);
-  const [sortByPriceLowToHigh, setSortByPriceLowToHigh] = useState(false);
-
-  const [filterAthleticTag, setFilterAthleticTag] = useState(false);
-  const [filterMusicTag, setFilterMusicTag] = useState(false);
-
-  const handleCourseFilterChange = () => {
-    setFilterCourses(!filterCourses);
-  };
-
-  const handleActivityFilterChange = () => {
-    setFilterActivities(!filterActivities);
-  };
-
-  const handlePriceHighToLowChange = () => {
-    setSortByPriceHighToLow(!sortByPriceHighToLow);
-  };
-  
-  const handlePriceLowToHighChange = () => {
-    setSortByPriceLowToHigh(!sortByPriceLowToHigh);
-  };
-
-  const handleAthleticTagFilterChange = () => {
-    setFilterAthleticTag(!filterAthleticTag);
-  };
-
-  const handleMusicTagFilterChange = () => {
-    setFilterMusicTag(!filterMusicTag);
-  };
 
     const searchItems = (searchValue) => {
         setSearchInput(searchValue);
@@ -144,105 +134,81 @@ const Page : FC = () => {
                     <AccordionItem value="item-1">
                         <AccordionTrigger>By Type</AccordionTrigger>
                         <AccordionContent>
-                            <div className="checkbox-wrapper ml-2">
-                                <input 
-                                type="checkbox" 
-                                id="cbx-46" 
-                                className="inp-cbx" 
-                                onChange={handleCourseFilterChange}
-                                checked={filterCourses}
-                                />
-                                <label htmlFor="cbx-46" className="cbx"
-                                    ><span>
-                                    <svg viewBox="0 0 12 10" height="10px" width="12px">
-                                        <polyline points="1.5 6 4.5 9 10.5 1"></polyline></svg></span
-                                    ><span>Courses</span>
-                                </label>
+                            <div className="ml-2 pb-1">
+                                <div className="flex items-center space-x-2">
+                                    <Checkbox id="courses" onCheckedChange={(e) => handleTypeChange('courses')}/>
+                                    <label
+                                        htmlFor="terms2"
+                                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                    >
+                                        Courses
+                                    </label>
+                                </div>
                             </div>
-                            <div className="checkbox-wrapper ml-2">
-                                <input 
-                                type="checkbox" 
-                                id="cbx-47" 
-                                className="inp-cbx" 
-                                onChange={handleActivityFilterChange}
-                                checked={filterActivities}
-                                />
-                                <label htmlFor="cbx-47" className="cbx"
-                                    ><span>
-                                    <svg viewBox="0 0 12 10" height="10px" width="12px">
-                                        <polyline points="1.5 6 4.5 9 10.5 1"></polyline></svg></span
-                                    ><span>Activities</span>
-                                </label>
+                            <div className="ml-2">
+                                <div className="flex items-center space-x-2">
+                                    <Checkbox id="activites" onCheckedChange={(e) => handleTypeChange('activities')}/>
+                                    <label
+                                        htmlFor="terms2"
+                                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                    >
+                                        Activities
+                                    </label>
+                                </div>
                             </div>
                         </AccordionContent>
                     </AccordionItem>
                     <AccordionItem value="item-2">
                         <AccordionTrigger>By Price</AccordionTrigger>
                         <AccordionContent>
-                        <div className="checkbox-wrapper ml-2">
-                                <input 
-                                    type="checkbox" 
-                                    id="cbx-48" 
-                                    className="inp-cbx" 
-                                    onChange={handlePriceLowToHighChange}
-                                    checked={sortByPriceLowToHigh}
-                                    />
-                                <label htmlFor="cbx-48" className="cbx"
-                                    ><span>
-                                    <svg viewBox="0 0 12 10" height="10px" width="12px">
-                                        <polyline points="1.5 6 4.5 9 10.5 1"></polyline></svg></span
-                                    ><span>Low-to-High</span>
-                                </label>
+                        <div className="ml-2 pb-1">
+                                <div className="flex items-center space-x-2">
+                                    <Checkbox id="hightolow" />
+                                    <label
+                                        htmlFor="terms2"
+                                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                    >
+                                        High to Low
+                                    </label>
+                                </div>
                             </div>
-                            <div className="checkbox-wrapper ml-2">
-                                <input 
-                                    type="checkbox" 
-                                    id="cbx-49" 
-                                    className="inp-cbx" 
-                                    onChange={handlePriceHighToLowChange}
-                                    checked={sortByPriceHighToLow}
-                                    />
-                                <label htmlFor="cbx-49" className="cbx"
-                                    ><span>
-                                    <svg viewBox="0 0 12 10" height="10px" width="12px">
-                                        <polyline points="1.5 6 4.5 9 10.5 1"></polyline></svg></span
-                                    ><span>High-to-Low</span>
-                                </label>
+                            <div className="ml-2 pb-1">
+                                <div className="flex items-center space-x-2">
+                                    <Checkbox id="lowtohigh" />
+                                    <label
+                                        htmlFor="terms2"
+                                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                    >
+                                        Low to High
+                                    </label>
+                                </div>
                             </div>
                         </AccordionContent>
                     </AccordionItem>
                     <AccordionItem value="item-3">
                         <AccordionTrigger>By Tag</AccordionTrigger>
                         <AccordionContent>
-                        <div className="checkbox-wrapper ml-2">
-                                <input 
-                                    type="checkbox" 
-                                    id="cbx-50" 
-                                    className="inp-cbx" 
-                                    onChange={handleAthleticTagFilterChange}
-                                    checked={filterAthleticTag}
-                                    />
-                                <label htmlFor="cbx-50" className="cbx"
-                                    ><span>
-                                    <svg viewBox="0 0 12 10" height="10px" width="12px">
-                                        <polyline points="1.5 6 4.5 9 10.5 1"></polyline></svg></span
-                                    ><span>Athletic</span>
-                                </label>
+                            <div className="ml-2 pb-1">
+                                <div className="flex items-center space-x-2">
+                                    <Checkbox id="athletic" />
+                                    <label
+                                        htmlFor="terms2"
+                                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                    >
+                                        Athletic
+                                    </label>
+                                </div>
                             </div>
-                            <div className="checkbox-wrapper ml-2">
-                                <input 
-                                    type="checkbox" 
-                                    id="cbx-49" 
-                                    className="inp-cbx" 
-                                    onChange={handleMusicTagFilterChange}
-                                    checked={filterMusicTag}
-                                    />
-                                <label htmlFor="cbx-49" className="cbx"
-                                    ><span>
-                                    <svg viewBox="0 0 12 10" height="10px" width="12px">
-                                        <polyline points="1.5 6 4.5 9 10.5 1"></polyline></svg></span
-                                    ><span>Music</span>
-                                </label>
+                            <div className="ml-2 pb-1">
+                                <div className="flex items-center space-x-2">
+                                    <Checkbox id="music" />
+                                    <label
+                                        htmlFor="terms2"
+                                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                    >
+                                        Music
+                                    </label>
+                                </div>
                             </div>
                         </AccordionContent>
                     </AccordionItem>
