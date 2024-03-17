@@ -110,7 +110,6 @@ const Page : FC = () => {
   if (loading) {
     return (
         <>
-            <NavBar />
             <Loader />
         </>
     );

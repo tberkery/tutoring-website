@@ -8,11 +8,11 @@ import { profile } from "console";
 
 const samples = [
     {
-        id: 1,
+        _id: 1,
         username: 'TutorHub Team',
-        title: 'OOSE',
-        courseId: 'EN.601.421',
-        description: 'You have not made a tutor post yet!',
+        activityTitle: 'OOSE',
+        courseNumber: 'EN.601.421',
+        activityDescription: 'You have not made a tutor post yet!',
         price: '0'
       },
 ];

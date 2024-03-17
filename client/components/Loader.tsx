@@ -16,7 +16,7 @@ const Loader: React.FC = () => {
                 <div className="circle"></div>
         </div>
         </div>
-            <h1 className="mt-8 text-center">Loading...</h1>
+            <h1 className="mt-8 text-center font-sans uppercase">Loading...</h1>
         </div>
         </>
     );
