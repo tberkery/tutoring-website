@@ -31,12 +31,15 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
     const response = await axios.get(`${api}/activityPosts/findOne/${postId}`);
     setPost(response.data.post);
     const imgKey = response.data.post.activityPostPicKey;
+    for (const key in response.data.post) {
+      console.log(key + ': ' + response.data.post[key]);
+    }
     const profile = await axios.get(`${api}/profiles/${response.data.post.userId}`)
     setUser(profile.data.data);
-    if (imgKey) {
-      const url = await axios.get(`${api}/activityPostPics/get/${imgKey}`);
-      setImgUrl(url.data.activityPostPicKey);
-    }
+    // if (imgKey) {
+    //   const url = await axios.get(`${api}/activityPostPics/get/${imgKey}`);
+    //   setImgUrl(url.data.activityPostPicKey);
+    // }
     setLoadedPost(true);
   }
 
