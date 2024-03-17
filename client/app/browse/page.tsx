@@ -14,6 +14,7 @@ import BrowseSection from "@/components/BrowseSection";
 import axios from "axios";
 import PostCard from "@/components/PostCard";
 import "../../styles/loader.css";
+import Loader from "@/components/Loader";
 
   interface ActivityPost {
     _id: string;
@@ -49,6 +50,7 @@ const Page : FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(false);
   const [filteredResults, setFilteredResults] = useState<Post[]>([]);
+  const [searchInput, setSearchInput] = useState("");
 
     useEffect(() => {
         const fetchData = async () => {
@@ -59,7 +61,7 @@ const Page : FC = () => {
         } catch (error) {
             console.error('Error fetching posts', error);
         } finally {
-            setLoading(false); // Stop loading regardless of the outcome
+            setLoading(false);
         };
         }
         fetchData();
@@ -73,8 +75,6 @@ const Page : FC = () => {
 
   const [filterAthleticTag, setFilterAthleticTag] = useState(false);
   const [filterMusicTag, setFilterMusicTag] = useState(false);
-
-  const [searchInput, setSearchInput] = useState('');
 
   const handleCourseFilterChange = () => {
     setFilterCourses(!filterCourses);
@@ -102,7 +102,7 @@ const Page : FC = () => {
 
     const searchItems = (searchValue) => {
         setSearchInput(searchValue);
-        if(searchInput !== '') {
+        if (searchInput !== '') {
             const filteredPosts = posts.filter((post) => {
                 if ('courseName' in post) {
                     return post.courseName.toLowerCase().includes(searchValue.toLowerCase());
@@ -118,21 +118,10 @@ const Page : FC = () => {
     }
 
   if (loading) {
-    // If still loading, render loading indicator
     return (
         <>
-        <NavBar />
-        <div className="flex flex-col items-center justify-center min-h-96">
-            <div className="flex justify-center items-center">
-                <div className="loader">
-                <div className="circle"></div>
-                <div className="circle"></div>
-                <div className="circle"></div>
-                <div className="circle"></div>
-        </div>
-        </div>
-            <h1 className="mt-8 text-center">Loading...</h1>
-        </div>
+            <NavBar />
+            <Loader />
         </>
     );
   }
