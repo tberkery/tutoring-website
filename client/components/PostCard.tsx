@@ -2,16 +2,24 @@
 import React from 'react';
 
 interface Post {
-  userId: number;
-  username: string;
-  courseName: string;
-  activityTitle: string;
-  courseNumber: string;
-  title: string;
-  description: string;
+  _id: string;
+  userId: string;
+  username?: string;
+  activityTitle?: string;
+  activityDescription?: string;
+  courseName?: string;
+  description?: string;
   imageUrl?: string;
   price: number;
-  activityDescription: string;
+  courseNumber?: string;
+  courseDepartment?: string[];
+  gradeReceived?: string;
+  semesterTaken?: string;
+  professorTakenWith?: string;
+  takenAtHopkins?: boolean;
+  schoolTakenAt?: string;
+  tags?: string[];
+  __v: number;
 }
 
 interface PostCardProps {
@@ -25,7 +33,7 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
       <img
         className="w-full aspect-ratio: 4 / 3 object-cover rounded"
         src={post.imageUrl || defaultImage}
-        alt={post.title}
+        alt="Post Image"
       />
       <div className="px-2 py-2">
         <div className="py-0.5">

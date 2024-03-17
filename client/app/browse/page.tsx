@@ -12,6 +12,8 @@ import {
   } from "@/components/ui/accordion";
 import BrowseSection from "@/components/BrowseSection";
 import axios from "axios";
+import PostCard from "@/components/PostCard";
+import "../../styles/loader.css";
 
   interface ActivityPost {
     _id: string;
@@ -45,15 +47,22 @@ import axios from "axios";
 const Page : FC = () => {
   const api = process.env.NEXT_PUBLIC_BACKEND_URL;
   const [posts, setPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [filteredResults, setFilteredResults] = useState<Post[]>([]);
 
     useEffect(() => {
-        axios.get(api + '/allPosts')
-            .then(response => {
-                setPosts(response.data); // Set the fetched posts into state
-            })
-            .catch(error => {
-                console.log(error);
-            });
+        const fetchData = async () => {
+        setLoading(true);
+        try {
+            const response = await axios.get(`${api}/allPosts`);
+            setPosts(response.data);
+        } catch (error) {
+            console.error('Error fetching posts', error);
+        } finally {
+            setLoading(false); // Stop loading regardless of the outcome
+        };
+        }
+        fetchData();
     }, [api]);
 
   const [filterCourses, setFilterCourses] = useState(false);
@@ -93,8 +102,40 @@ const Page : FC = () => {
 
     const searchItems = (searchValue) => {
         setSearchInput(searchValue);
-        
+        if(searchInput !== '') {
+            const filteredPosts = posts.filter((post) => {
+                if ('courseName' in post) {
+                    return post.courseName.toLowerCase().includes(searchValue.toLowerCase());
+                } else if ('activityTitle' in post) {
+                    return post.activityTitle.toLowerCase().includes(searchValue.toLowerCase());
+                }
+                return false;
+            })
+            setFilteredResults(filteredPosts);
+        } else {
+            setFilteredResults(posts);
+        }
     }
+
+  if (loading) {
+    // If still loading, render loading indicator
+    return (
+        <>
+        <NavBar />
+        <div className="flex flex-col items-center justify-center min-h-96">
+            <div className="flex justify-center items-center">
+                <div className="loader">
+                <div className="circle"></div>
+                <div className="circle"></div>
+                <div className="circle"></div>
+                <div className="circle"></div>
+        </div>
+        </div>
+            <h1 className="mt-8 text-center">Loading...</h1>
+        </div>
+        </>
+    );
+  }
   return <>
   <NavBar />
     <div className="flex min-h-screen">
@@ -220,9 +261,23 @@ const Page : FC = () => {
             </div>
         </div>
         <div className="w-3/4">
-            <BrowseSection filterCourses={filterCourses} filterActivities={filterActivities} 
-            sortByPriceLowToHigh={sortByPriceLowToHigh} sortByPriceHighToLow={sortByPriceHighToLow}
-            filterAthleticTag={filterAthleticTag} filterMusicTag={filterMusicTag}/>
+        {searchInput.length > 1 ? (
+            <div className="container mx-auto px-6 py-8">
+                <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {filteredResults.map((posts) => (
+                    <PostCard key={posts._id} post={posts} />
+                ))}
+                </div>
+            </div>
+        ) : (
+            <div className="container mx-auto px-6 py-8">
+                <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {posts.map((posts) => (
+                    <PostCard key={posts._id} post={posts} />
+                ))}
+                </div>
+            </div>
+        )}
         </div>
     </div>
     </>;
