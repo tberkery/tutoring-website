@@ -1,5 +1,6 @@
 "use client";
 import React from 'react';
+import { useRouter } from "next/navigation";
 
 interface Post {
   _id: string;
@@ -28,6 +29,14 @@ interface PostCardProps {
 
 const PostCard: React.FC<PostCardProps> = ({ post }) => {
   const defaultImage = '/jhulogo.jpeg';
+  const router = useRouter();
+
+  const postUrl = post.courseName ? `/post/course/${post._id}` : `/post/activity/${post._id}`;
+
+  const handleClick = () => {
+    router.push(postUrl);
+  }
+
   return ( <> 
     <div className="max-w-sm overflow-hidden py-2">
       <img
