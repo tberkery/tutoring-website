@@ -4,7 +4,7 @@ The goal is to create TutorHub.
 
 Team members: Tad Berkery, Ilana Chalom, Matthew Flynn, Katherine Forbes, Nolan Fogarty, Dokyung Yang
 
-Our hello world app is deployed at https://oose-team02-helloworld.netlify.app/
+An earlier version of our app is deployed at https://project-team-02-git-frontenddepl-b0804a-nolan-fogartys-projects.vercel.app/
 
 It's built using the MERN stack and other technologies detailed in our "Tech Stack" github issue
 

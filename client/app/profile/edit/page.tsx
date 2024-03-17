@@ -195,7 +195,7 @@ const Page : FC = () => {
 								}` }
 								prompt="Select Department"
 								options={ departments }
-								setValueProp={ setDepartment }
+								onValueChange={ setDepartment }
 							/>
 						</div>
 						{ affliiateType === "student" ?
