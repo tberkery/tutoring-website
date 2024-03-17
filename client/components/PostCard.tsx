@@ -21,22 +21,22 @@ interface PostCardProps {
 const PostCard: React.FC<PostCardProps> = ({ post }) => {
   const defaultImage = '/jhulogo.jpeg';
   return ( <> 
-    <div className="max-w-sm rounded overflow-hidden shadow-lg bg-white">
+    <div className="max-w-sm overflow-hidden py-2">
       <img
-        className="w-full h-24 object-cover"
+        className="w-full aspect-ratio: 4 / 3 object-cover rounded"
         src={post.imageUrl || defaultImage}
         alt={post.title}
       />
-      <div className="px-6 py-4">
-        <div className="mb-2">
-            <div className="font-bold text-xl">{post.courseName ? post.courseName : post.activityTitle}</div>
-            <p className="text-gray-600 text-sm">{post.courseNumber}</p>
+      <div className="px-2 py-2">
+        <div className="py-0.5">
+            <div className="text-2xl font-bold font-sans text-slate-700 uppercase">{post.courseName ? post.courseName : post.activityTitle}</div>
+            <p className="text-slate-500 text-sm font-sans">{post.courseNumber}</p>
         </div>
-        <p className="text-gray-700 text-base">{post.description ? post.description : post.activityDescription}</p>
-        <div className="relative py-2"> 
-          <p className="text-gray-600 text-sm absolute left-0">From ${post.price}</p>
-          <p className="text-gray-600 text-sm absolute right-0">Created by {post.username}</p>
+        <div className="py-1 flex justify-between"> 
+          <p className="text-slate-600 text-sm font-sans">From ${post.price}</p>
+          <p className="text-slate-600 text-sm font-sans">Created by <a href="/profile" className="font-semibold">User</a>{post.username}</p>
         </div>
+        <p className="text-slate-800 text-base font-sans">{post.description ? post.description : post.activityDescription}</p>
       </div>
     </div>
     </>

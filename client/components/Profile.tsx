@@ -54,7 +54,7 @@ const Profile = (props : { profileId? : string}) => {
   return (
     <div className="flex justify-between items-center bg-blue-300 pt-16 pb-16 pl-32 pr-32">
       <div className="flex-1 mr-5">
-        <h1 className="text-2xl font-bold">{profileData.firstName} {profileData.lastName} - {profileData.department}
+        <h1 className="text-2xl font-extrabold font-sans uppercase text-black">{profileData.firstName} {profileData.lastName} - {profileData.department}
                                            {profileData.graduationYear ? `, ${profileData.graduationYear}` : ''}</h1>
         <p className="text-s underline font-light mb-2">{profileData.email}</p>
         <p className="text-gray-700 text-base">{profileData.description}</p>

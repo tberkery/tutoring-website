@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import "../../styles/global.css";
 import NavBar from "@/components/Navbar";
 import "../../styles/basic.css";
@@ -11,8 +11,51 @@ import {
     AccordionTrigger,
   } from "@/components/ui/accordion";
 import BrowseSection from "@/components/BrowseSection";
+import axios from "axios";
+
+  interface ActivityPost {
+    _id: string;
+    userId: string;
+    activityTitle: string;
+    activityDescription: string;
+    imageUrl: string;
+    price: number;
+    tags: string[];
+    __v: number;
+  }
+  
+  interface CoursePost {
+    _id: string;
+    userId: string;
+    courseName: string;
+    description: string;
+    price: number;
+    courseNumber: string;
+    courseDepartment: string[];
+    gradeReceived: string;
+    semesterTaken: string;
+    professorTakenWith: string;
+    takenAtHopkins: boolean;
+    schoolTakenAt: string;
+    __v: number;
+  }
+
+  type Post = ActivityPost | CoursePost;
 
 const Page : FC = () => {
+  const api = process.env.NEXT_PUBLIC_BACKEND_URL;
+  const [posts, setPosts] = useState<Post[]>([]);
+
+    useEffect(() => {
+        axios.get(api + '/allPosts')
+            .then(response => {
+                setPosts(response.data); // Set the fetched posts into state
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    }, [api]);
+
   const [filterCourses, setFilterCourses] = useState(false);
   const [filterActivities, setFilterActivities] = useState(false);
 
@@ -21,6 +64,8 @@ const Page : FC = () => {
 
   const [filterAthleticTag, setFilterAthleticTag] = useState(false);
   const [filterMusicTag, setFilterMusicTag] = useState(false);
+
+  const [searchInput, setSearchInput] = useState('');
 
   const handleCourseFilterChange = () => {
     setFilterCourses(!filterCourses);
@@ -46,12 +91,19 @@ const Page : FC = () => {
     setFilterMusicTag(!filterMusicTag);
   };
 
+    const searchItems = (searchValue) => {
+        setSearchInput(searchValue);
+        
+    }
   return <>
   <NavBar />
     <div className="flex min-h-screen">
         <div className="w-1/4 flex flex-col items-center py-3 bg-blue-300">
             <div className="input-container my-6">
-                <input type="text" name="text" className="input"></input>
+                <input type="text" name="text" 
+                        className="input" 
+                        placeholder="Search"
+                        onChange={ (e) => searchItems(e.target.value) }></input>
                 <label className="label">Search</label>
                 <div className="top-line"></div>
                 <div className="under-line"></div>
