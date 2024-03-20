@@ -47,19 +47,6 @@ interface CoursePost {
 
 type Post = ActivityPost | CoursePost;
 
-interface ProfilePost {
-	_id : string,
-	firstName : string,
-	lastName : string,
-	email : string,
-	affiliation : string,
-	department : string,
-	graduationYear? : string,
-	description? : string
-}
-
-type profile = ProfilePost;
-
 const Page : FC = () => {
     const api = process.env.NEXT_PUBLIC_BACKEND_URL;
     // Data from Backend
