@@ -16,8 +16,9 @@ import PostCard from "@/components/PostCard";
 import "../../styles/loader.css";
 import Loader from "@/components/Loader";
 import { Checkbox } from "@/components/ui/checkbox"
+import ProfileSearch from "@/components/ProfileSearch";
 
-  interface ActivityPost {
+interface ActivityPost {
     _id: string;
     userId: string;
     activityTitle: string;
@@ -26,9 +27,9 @@ import { Checkbox } from "@/components/ui/checkbox"
     price: number;
     tags: string[];
     __v: number;
-  }
-  
-  interface CoursePost {
+}
+
+interface CoursePost {
     _id: string;
     userId: string;
     courseName: string;
@@ -42,53 +43,71 @@ import { Checkbox } from "@/components/ui/checkbox"
     takenAtHopkins: boolean;
     schoolTakenAt: string;
     __v: number;
-  }
+}
 
-  type Post = ActivityPost | CoursePost;
+type Post = ActivityPost | CoursePost;
+
+interface ProfilePost {
+	_id : string,
+	firstName : string,
+	lastName : string,
+	email : string,
+	affiliation : string,
+	department : string,
+	graduationYear? : string,
+	description? : string
+}
+
+type profile = ProfilePost;
 
 const Page : FC = () => {
-  const api = process.env.NEXT_PUBLIC_BACKEND_URL;
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [filteredResults, setFilteredResults] = useState<Post[]>([]);
+    const api = process.env.NEXT_PUBLIC_BACKEND_URL;
+    // Data from Backend
+    const [posts, setPosts] = useState<Post[]>([]);
+    const [filteredPosts, setFilteredPosts] = useState<Post[]>([]);
+    
+    // Loading State
+    const [loading, setLoading] = useState(true);
 
-  const [searchInput, setSearchInput] = useState("");
-  const [typeFilters, setTypeFilters] = useState({
-    courses: false,
-    activities: false,
-  });
-  const handleTypeChange = (filterCategory) => {
-    setTypeFilters(prev => ({
-      ...prev,
-      [filterCategory]: !prev[filterCategory],
-    }));
-  };
-  
-  const [tagFilters, setTagFilters] = useState({
-    music: false,
-    athletic: false,
-  });
-  const handleTagChange = (filterCategory, value) => {
-    setTagFilters(prev => ({
-      ...prev,
-      [filterCategory]: value,
-    }));
-  };
+    // Filters from Frontend
+    const [searchInput, setSearchInput] = useState("");
+    const [activeTab, setActiveTab] = useState('posts');
+    const [typeFilters, setTypeFilters] = useState({
+        courses: false,
+        activities: false,
+    });
+    const handleTypeChange = (filterCategory) => {
+        setTypeFilters(prev => ({
+        ...prev,
+        [filterCategory]: !prev[filterCategory],
+        }));
+    };
+    
+    const [tagFilters, setTagFilters] = useState({
+        music: false,
+        athletic: false,
+    });
+    const handleTagChange = (filterCategory, value) => {
+        setTagFilters(prev => ({
+        ...prev,
+        [filterCategory]: value,
+        }));
+    };
 
     useEffect(() => {
         const fetchData = async () => {
-        setLoading(true);
-        try {
-            const response = await axios.get(`${api}/allPosts`);
-            setPosts(response.data);
-        } catch (error) {
-            console.error('Error fetching posts', error);
-        } finally {
-            setLoading(false);
-        };
-        }
-        fetchData();
-    }, [api]);
+            setLoading(true);
+            try {
+                const postResponse = await axios.get(`${api}/allPosts`);
+                setPosts(postResponse.data);
+            } catch (error) {
+                console.error('Error fetching posts', error);
+            } finally {
+                setLoading(false);
+            };
+            }
+            fetchData();
+        }, [api]);
 
     const searchItems = (searchValue) => {
         setSearchInput(searchValue);
@@ -101,18 +120,14 @@ const Page : FC = () => {
                 }
                 return false;
             })
-            setFilteredResults(filteredPosts);
+            setFilteredPosts(filteredPosts);
         } else {
-            setFilteredResults(posts);
+            setFilteredPosts(posts);
         }
     }
 
   if (loading) {
-    return (
-        <>
-            <Loader />
-        </>
-    );
+    return ( <> <Loader /> </>);
   }
   return <>
   <NavBar />
@@ -127,7 +142,7 @@ const Page : FC = () => {
                 <div className="top-line"></div>
                 <div className="under-line"></div>
             </div>
-            <div className="FilterRecipes">
+            <div>
                 <h1>filter listings</h1>
                 <Accordion type="single" collapsible className="w-full">
                     <AccordionItem value="item-1">
@@ -215,23 +230,23 @@ const Page : FC = () => {
             </div>
         </div>
         <div className="w-3/4">
-        {searchInput.length > 1 ? (
-            <div className="container mx-auto px-6 py-8">
-                <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {filteredResults.map((posts) => (
-                    <PostCard key={posts._id} post={posts} />
-                ))}
+            {searchInput.length > 1 ? (
+                <div className="container mx-auto px-6 py-8">
+                    <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {filteredPosts.map((posts) => (
+                        <PostCard key={posts._id} post={posts} />
+                    ))}
+                    </div>
                 </div>
-            </div>
-        ) : (
-            <div className="container mx-auto px-6 py-8">
-                <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {posts.map((posts) => (
-                    <PostCard key={posts._id} post={posts} />
-                ))}
+            ) : (
+                <div className="container mx-auto px-6 py-8">
+                    <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {posts.map((posts) => (
+                        <PostCard key={posts._id} post={posts} />
+                    ))}
+                    </div>
                 </div>
-            </div>
-        )}
+            )}       
         </div>
     </div>
     </>;

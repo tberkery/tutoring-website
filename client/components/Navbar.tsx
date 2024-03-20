@@ -3,6 +3,25 @@ import React, { FC } from 'react';
 import Link from 'next/link'; 
 import { SignOutButton } from '@clerk/nextjs';
 import { useUser } from '@clerk/clerk-react';
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const NavBar: FC = () => {
   const { isLoaded, isSignedIn } = useUser();
@@ -13,32 +32,47 @@ const NavBar: FC = () => {
         <Link 
           href="/browse" 
           className="inline-block px-2 py-1 ease-linear duration-75
-          hover:bg-blue-900 hover:text-white rounded-md"
+          hover:bg-blue-300 rounded-md font-extrabold font-sans text-lg"
         >
-          Browse
+          Posts
         </Link>
         <Link 
-          href="/profile" 
+          href="/profiles" 
           className="inline-block px-2 py-1 ease-linear duration-75
-          hover:bg-blue-900 hover:text-white rounded-md"
+          hover:bg-blue-300 rounded-md font-extrabold font-sans text-lg"
         >
-          Profile
+          Profiles
         </Link>
       </div>
       <div>
-        { isLoaded ? 
-          <div className='bg-blue-900 px-2 py-1 text-white rounded-sm *:text-md'>
+          <div>
           { isSignedIn ?
-            <SignOutButton/>
+          <>
+            <DropdownMenu>
+              <DropdownMenuTrigger>
+                <Avatar>
+                  <AvatarImage src="/defaultimg.jpeg" alt="@shadcn" />
+                  <AvatarFallback>TH</AvatarFallback>
+                </Avatar>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>
+                  <Link href="/profile">Profile</Link>
+                  </DropdownMenuItem>
+                <DropdownMenuItem>Messages</DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>Log Out</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            </>
           :
             <Link href="/signIn">
               Sign In
             </Link>
           }
           </div>
-        :
-          <></>
-        }
       </div>
     </nav>
   );
