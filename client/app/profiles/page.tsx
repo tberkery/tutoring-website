@@ -1,10 +1,12 @@
 "use client";
+
 import React, { FC, useEffect, useState } from "react";
 import NavBar from "@/components/Navbar";
 import axios from "axios";
 import ProfileCard from "@/components/ProfileCard";
 import Loader from "@/components/Loader";
-import "../../styles/global.css";
+import "@/styles/global.css";
+import "@/styles/basic.css";
 
 interface ProfilePost {
 	_id : string,
@@ -30,6 +32,7 @@ const Page : FC = () => {
     const fetchProfiles = async () => {
       try {
         const response = await axios.get(`${api}/profiles`);
+        console.log(response.data.data);
         setProfiles(response.data.data);
       } catch (error) {
           console.error('Error fetching posts', error);
@@ -41,17 +44,27 @@ const Page : FC = () => {
   }, [api]);
 
   const searchItems = (searchValue) => {
-
+    setSearchInput(searchValue);
+    if (searchInput !== '') {
+      const filteredProfiles = profiles.filter((profile) => {
+        return profile.firstName.toLowerCase().includes(searchInput.toLowerCase()) ||
+                profile.lastName.toLowerCase().includes(searchInput.toLowerCase()) ||
+                profile.email.toLowerCase().includes(searchInput.toLowerCase());
+      });
+      setFilteredProfiles(filteredProfiles);
+    } else {
+      setFilteredProfiles(profiles);
+    }
   };
-  if (loading) {
-    return ( <> <Loader /> </>);
-  }
+
+  if (loading) return ( <> <Loader /> </>);
+
   return (
     <>
       <NavBar />
       <div className="flex min-h-screen">
         <div className="w-1/4 flex flex-col items-center py-3 bg-blue-300">
-          <div className="input-container my-6">
+          <div className="input-container my-3">
               <input type="text" name="text" 
                       className="input" 
                       placeholder="Name, Email"
@@ -63,13 +76,23 @@ const Page : FC = () => {
           <h1 className="text-xl font-extrabold font-sans">Search Profiles</h1>
         </div>
         <div className="w-3/4">
+        {searchInput.length > 1 ? (
           <div className="container mx-auto px-6 py-8">
             <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {profiles.map((profiles) => (
+                {filteredProfiles.map((profiles) => (
                     <ProfileCard key={profiles._id} profile={profiles} />
                 ))}
-                </div>
+              </div>
+          </div>
+        ) : (
+          <div className="container mx-auto px-6 py-8">
+          <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {profiles.map((profiles) => (
+                  <ProfileCard key={profiles._id} profile={profiles} />
+              ))}
             </div>
+        </div>
+        )}
         </div>
       </div>
     </>

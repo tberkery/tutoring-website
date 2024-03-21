@@ -1,22 +1,20 @@
 "use client";
 
 import React, { FC, useEffect, useState } from "react";
-import "../../styles/global.css";
 import NavBar from "@/components/Navbar";
-import "../../styles/basic.css";
+import "@/styles/global.css";
+import "@/styles/basic.css";
 import {
     Accordion,
     AccordionContent,
     AccordionItem,
     AccordionTrigger,
   } from "@/components/ui/accordion";
-import BrowseSection from "@/components/BrowseSection";
 import axios from "axios";
 import PostCard from "@/components/PostCard";
 import "../../styles/loader.css";
 import Loader from "@/components/Loader";
 import { Checkbox } from "@/components/ui/checkbox"
-import ProfileSearch from "@/components/ProfileSearch";
 
 interface ActivityPost {
     _id: string;
