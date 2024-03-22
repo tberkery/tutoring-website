@@ -100,9 +100,9 @@ const Page : FC = () => {
         }
 
         if (priceFilters.highToLow) {
-            filtered = [...filtered.sort((a, b) => b.price - a.price)]; // Create a new sorted array
+            filtered = [...filtered.sort((a, b) => b.price - a.price)]; 
         } else if (priceFilters.lowToHigh) {
-            filtered = [...filtered.sort((a, b) => a.price - b.price)]; // Create a new sorted array
+            filtered = [...filtered.sort((a, b) => a.price - b.price)];
         }
 
         if (tagFilters.music || tagFilters.athletic) {
@@ -142,7 +142,6 @@ const Page : FC = () => {
                 ...prev,
                 [filterCategory]: !prev[filterCategory],
             };
-            console.log(updatedFilters)
             return updatedFilters;
         });
     }
@@ -184,8 +183,8 @@ const Page : FC = () => {
                         <AccordionTrigger>By Type</AccordionTrigger>
                         <AccordionContent>
                             <div className="ml-2 pb-1">
-                                <div className="flex items-center space-x-2">
-                                    <Checkbox id="courses" onCheckedChange={(e) => handleTypeChange('courses')}/>
+                                <div className="flex items-center space-x-2">                                    
+                                    <Checkbox id="courses" checked={typeFilters.courses} onCheckedChange={(e) => handleTypeChange('courses')}/>
                                     <label
                                         htmlFor="terms2"
                                         className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -196,7 +195,7 @@ const Page : FC = () => {
                             </div>
                             <div className="ml-2">
                                 <div className="flex items-center space-x-2">
-                                    <Checkbox id="activites" onCheckedChange={(e) => handleTypeChange('activities')}/>
+                                    <Checkbox id="activites" checked={typeFilters.activities} onCheckedChange={(e) => handleTypeChange('activities')}/>
                                     <label
                                         htmlFor="terms2"
                                         className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -212,7 +211,7 @@ const Page : FC = () => {
                         <AccordionContent>
                         <div className="ml-2 pb-1">
                                 <div className="flex items-center space-x-2">
-                                    <Checkbox id="highToLow" onCheckedChange={(e) => handlePriceChange('highToLow')} />
+                                    <Checkbox id="highToLow" checked={priceFilters.highToLow} onCheckedChange={(e) => handlePriceChange('highToLow')} />
                                     <label
                                         htmlFor="terms2"
                                         className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -223,7 +222,7 @@ const Page : FC = () => {
                             </div>
                             <div className="ml-2 pb-1">
                                 <div className="flex items-center space-x-2">
-                                    <Checkbox id="lowToHigh" onCheckedChange={(e) => handlePriceChange('lowToHigh')}/>
+                                    <Checkbox id="lowToHigh" checked={priceFilters.lowToHigh} onCheckedChange={(e) => handlePriceChange('lowToHigh')}/>
                                     <label
                                         htmlFor="terms2"
                                         className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -239,7 +238,7 @@ const Page : FC = () => {
                         <AccordionContent>
                             <div className="ml-2 pb-1">
                                 <div className="flex items-center space-x-2">
-                                    <Checkbox id="athletic" onCheckedChange={(e) => handleTagChange('athletic')} />
+                                    <Checkbox id="athletic" checked={tagFilters.athletic} onCheckedChange={(e) => handleTagChange('athletic')} />
                                     <label
                                         htmlFor="terms2"
                                         className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -250,7 +249,7 @@ const Page : FC = () => {
                             </div>
                             <div className="ml-2 pb-1">
                                 <div className="flex items-center space-x-2">
-                                    <Checkbox id="music" onCheckedChange={(e) => handleTagChange('music')}/>
+                                    <Checkbox id="music" checked={tagFilters.music} onCheckedChange={(e) => handleTagChange('music')}/>
                                     <label
                                         htmlFor="terms2"
                                         className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -265,7 +264,6 @@ const Page : FC = () => {
             </div>
         </div>
         <div className="w-3/4">
-            {/* {searchInput.length > 1 ? ( */}
                 <div className="container mx-auto px-6 py-8">
                     <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {filteredPosts.map((posts) => (
@@ -273,15 +271,6 @@ const Page : FC = () => {
                     ))}
                     </div>
                 </div>
-            {/* // ) : (
-            //     <div className="container mx-auto px-6 py-8">
-            //         <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            //         {posts.map((posts) => (
-            //             <PostCard key={posts._id} post={posts} />
-            //         ))}
-            //         </div>
-            //     </div>
-            // )}        */}
         </div>
     </div>
     </>;
