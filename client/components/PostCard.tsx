@@ -51,7 +51,7 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
         </div>
         <div className="py-1 flex justify-between"> 
           <p className="text-slate-600 text-sm font-sans">From ${post.price}</p>
-          <p className="text-slate-600 text-sm font-sans">Created by <a href="/profile" className="font-semibold">User</a>{post.username}</p>
+          <p className="text-slate-600 text-sm font-sans">Created by <a href={`/profile/` + post.userId} className="font-semibold">User</a>{post.username}</p>
         </div>
         <p className="text-slate-800 text-base font-sans">{post.description ? post.description : post.activityDescription}</p>
       </div>

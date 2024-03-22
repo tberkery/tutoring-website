@@ -77,6 +77,7 @@ const Page : FC = () => {
             try {
                 const postResponse = await axios.get(`${api}/allPosts`);
                 setPosts(postResponse.data);
+                console.log(postResponse.data);
             } catch (error) {
                 console.error('Error fetching posts', error);
             } finally {
@@ -99,9 +100,9 @@ const Page : FC = () => {
             });
         }
 
-        if (priceFilters.highToLow) {
+        if (priceFilters.highToLow && !priceFilters.lowToHigh) {
             filtered = [...filtered.sort((a, b) => b.price - a.price)]; 
-        } else if (priceFilters.lowToHigh) {
+        } else if (priceFilters.lowToHigh && !priceFilters.highToLow) {
             filtered = [...filtered.sort((a, b) => a.price - b.price)];
         }
 
