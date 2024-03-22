@@ -46,38 +46,24 @@ interface CoursePost {
 type Post = ActivityPost | CoursePost;
 
 const Page : FC = () => {
-    const api = process.env.NEXT_PUBLIC_BACKEND_URL;
     // Data from Backend
+    const api = process.env.NEXT_PUBLIC_BACKEND_URL;
     const [posts, setPosts] = useState<Post[]>([]);
     const [filteredPosts, setFilteredPosts] = useState<Post[]>([]);
     
     // Loading State
     const [loading, setLoading] = useState(true);
 
-    // Filters from Frontend
+    // Search and Filters
     const [searchInput, setSearchInput] = useState("");
-    const [activeTab, setActiveTab] = useState('posts');
     const [typeFilters, setTypeFilters] = useState({
         courses: false,
         activities: false,
     });
-    const handleTypeChange = (filterCategory) => {
-        setTypeFilters(prev => ({
-        ...prev,
-        [filterCategory]: !prev[filterCategory],
-        }));
-    };
-    
     const [tagFilters, setTagFilters] = useState({
         music: false,
         athletic: false,
     });
-    const handleTagChange = (filterCategory, value) => {
-        setTagFilters(prev => ({
-        ...prev,
-        [filterCategory]: value,
-        }));
-    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -94,21 +80,55 @@ const Page : FC = () => {
             fetchData();
         }, [api]);
 
-    const searchItems = (searchValue) => {
-        setSearchInput(searchValue);
-        if (searchInput !== '') {
-            const filteredPosts = posts.filter((post) => {
+    useEffect(() => {
+        // Run filterPosts whenever posts or typeFilters state changes
+        filterPosts();
+    }, [posts, searchInput, typeFilters, tagFilters]);
+
+    const filterPosts = () => {
+        // If no filters are selected, show all posts
+        let filtered = posts;
+        if (typeFilters.courses || typeFilters.activities) {
+            filtered = filtered.filter(post => {
+                // Assume each post has a type property that is either 'course' or 'activity'
+                return (typeFilters.courses && 'courseName' in post) || 
+                       (typeFilters.activities && 'activityTitle' in post);
+            });
+        }
+
+        if (searchInput) {
+            filtered = filtered.filter(post => {
                 if ('courseName' in post) {
-                    return post.courseName.toLowerCase().includes(searchValue.toLowerCase());
+                    return post.courseName.toLowerCase().includes(searchInput.toLowerCase());
                 } else if ('activityTitle' in post) {
-                    return post.activityTitle.toLowerCase().includes(searchValue.toLowerCase());
+                    return post.activityTitle.toLowerCase().includes(searchInput.toLowerCase());
                 }
                 return false;
-            })
-            setFilteredPosts(filteredPosts);
-        } else {
-            setFilteredPosts(posts);
+            });
         }
+        
+        setFilteredPosts(filtered);
+    };
+
+    const handleTypeChange = (filterCategory) => {
+        setTypeFilters(prev => {
+            const updatedFilters = {
+                ...prev,
+                [filterCategory]: !prev[filterCategory],
+            };
+            return updatedFilters;
+        });
+    };
+
+    const handleTagChange = (filterCategory, value) => {
+        setTagFilters(prev => ({
+        ...prev,
+        [filterCategory]: value,
+        }));
+    };
+
+    const searchItems = (searchValue) => {
+        setSearchInput(searchValue);
     }
 
   if (loading) {
@@ -215,7 +235,7 @@ const Page : FC = () => {
             </div>
         </div>
         <div className="w-3/4">
-            {searchInput.length > 1 ? (
+            {/* {searchInput.length > 1 ? ( */}
                 <div className="container mx-auto px-6 py-8">
                     <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {filteredPosts.map((posts) => (
@@ -223,15 +243,15 @@ const Page : FC = () => {
                     ))}
                     </div>
                 </div>
-            ) : (
-                <div className="container mx-auto px-6 py-8">
-                    <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {posts.map((posts) => (
-                        <PostCard key={posts._id} post={posts} />
-                    ))}
-                    </div>
-                </div>
-            )}       
+            {/* // ) : (
+            //     <div className="container mx-auto px-6 py-8">
+            //         <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            //         {posts.map((posts) => (
+            //             <PostCard key={posts._id} post={posts} />
+            //         ))}
+            //         </div>
+            //     </div>
+            // )}        */}
         </div>
     </div>
     </>;
