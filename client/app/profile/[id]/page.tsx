@@ -5,7 +5,6 @@ import axios from "axios";
 import Navbar from "@/components/Navbar"
 import Link from 'next/link';
 import Loader from "@/components/Loader";
-import { set } from "cypress/types/lodash";
 
 interface Profile {
   affiliation: string;

@@ -38,7 +38,7 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
   }
 
   return ( <> 
-    <div className="max-w-sm overflow-hidden py-2">
+    <div className="max-w-sm overflow-hidden py-2" onClick={handleClick}>
       <img
         className="w-full aspect-ratio: 4 / 3 object-cover rounded"
         src={post.imageUrl || defaultImage}
