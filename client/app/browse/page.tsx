@@ -96,6 +96,14 @@ const Page : FC = () => {
             });
         }
 
+        if (tagFilters.music || tagFilters.athletic) {
+            filtered = filtered.filter(post => {
+                // Assume each post has a tags property that is an array of strings
+                return (tagFilters.music && 'activityTitle' in post && post.tags.includes('music')) || 
+                       (tagFilters.athletic && 'activityTitle' in post && post.tags.includes('athletic'));
+            });
+        }
+
         if (searchInput) {
             filtered = filtered.filter(post => {
                 if ('courseName' in post) {
@@ -120,11 +128,14 @@ const Page : FC = () => {
         });
     };
 
-    const handleTagChange = (filterCategory, value) => {
-        setTagFilters(prev => ({
-        ...prev,
-        [filterCategory]: value,
-        }));
+    const handleTagChange = (filterCategory) => {
+        setTagFilters(prev => {
+            const updatedFilters = {
+                ...prev,
+                [filterCategory]: !prev[filterCategory],
+            };
+            return updatedFilters;
+        });
     };
 
     const searchItems = (searchValue) => {
@@ -209,7 +220,7 @@ const Page : FC = () => {
                         <AccordionContent>
                             <div className="ml-2 pb-1">
                                 <div className="flex items-center space-x-2">
-                                    <Checkbox id="athletic" />
+                                    <Checkbox id="athletic" onCheckedChange={(e) => handleTagChange('athletic')} />
                                     <label
                                         htmlFor="terms2"
                                         className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -220,7 +231,7 @@ const Page : FC = () => {
                             </div>
                             <div className="ml-2 pb-1">
                                 <div className="flex items-center space-x-2">
-                                    <Checkbox id="music" />
+                                    <Checkbox id="music" onCheckedChange={(e) => handleTagChange('music')}/>
                                     <label
                                         htmlFor="terms2"
                                         className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
