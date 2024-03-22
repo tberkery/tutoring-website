@@ -54,11 +54,17 @@ const Page : FC = () => {
     // Loading State
     const [loading, setLoading] = useState(true);
 
-    // Search and Filters
+    // Search
     const [searchInput, setSearchInput] = useState("");
+
+    // Checkbox Filters
     const [typeFilters, setTypeFilters] = useState({
         courses: false,
         activities: false,
+    });
+    const [priceFilters, setPriceFilters] = useState({
+        highToLow: false,
+        lowToHigh: false,
     });
     const [tagFilters, setTagFilters] = useState({
         music: false,
@@ -81,24 +87,26 @@ const Page : FC = () => {
         }, [api]);
 
     useEffect(() => {
-        // Run filterPosts whenever posts or typeFilters state changes
         filterPosts();
-    }, [posts, searchInput, typeFilters, tagFilters]);
+    }, [posts, searchInput, typeFilters, tagFilters, priceFilters]);
 
     const filterPosts = () => {
-        // If no filters are selected, show all posts
         let filtered = posts;
         if (typeFilters.courses || typeFilters.activities) {
             filtered = filtered.filter(post => {
-                // Assume each post has a type property that is either 'course' or 'activity'
                 return (typeFilters.courses && 'courseName' in post) || 
                        (typeFilters.activities && 'activityTitle' in post);
             });
         }
 
+        if (priceFilters.highToLow) {
+            filtered = [...filtered.sort((a, b) => b.price - a.price)]; // Create a new sorted array
+        } else if (priceFilters.lowToHigh) {
+            filtered = [...filtered.sort((a, b) => a.price - b.price)]; // Create a new sorted array
+        }
+
         if (tagFilters.music || tagFilters.athletic) {
             filtered = filtered.filter(post => {
-                // Assume each post has a tags property that is an array of strings
                 return (tagFilters.music && 'activityTitle' in post && post.tags.includes('music')) || 
                        (tagFilters.athletic && 'activityTitle' in post && post.tags.includes('athletic'));
             });
@@ -127,6 +135,17 @@ const Page : FC = () => {
             return updatedFilters;
         });
     };
+
+    const handlePriceChange = (filterCategory) => {
+        setPriceFilters(prev => {
+            const updatedFilters = {
+                ...prev,
+                [filterCategory]: !prev[filterCategory],
+            };
+            console.log(updatedFilters)
+            return updatedFilters;
+        });
+    }
 
     const handleTagChange = (filterCategory) => {
         setTagFilters(prev => {
@@ -193,7 +212,7 @@ const Page : FC = () => {
                         <AccordionContent>
                         <div className="ml-2 pb-1">
                                 <div className="flex items-center space-x-2">
-                                    <Checkbox id="hightolow" />
+                                    <Checkbox id="highToLow" onCheckedChange={(e) => handlePriceChange('highToLow')} />
                                     <label
                                         htmlFor="terms2"
                                         className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -204,7 +223,7 @@ const Page : FC = () => {
                             </div>
                             <div className="ml-2 pb-1">
                                 <div className="flex items-center space-x-2">
-                                    <Checkbox id="lowtohigh" />
+                                    <Checkbox id="lowToHigh" onCheckedChange={(e) => handlePriceChange('lowToHigh')}/>
                                     <label
                                         htmlFor="terms2"
                                         className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
