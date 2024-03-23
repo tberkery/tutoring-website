@@ -178,7 +178,7 @@ const Page : FC = () => {
                 <div className="under-line"></div>
             </div>
             <div>
-                <h1>filter listings</h1>
+                <h1 className="font-sans font-bold text-2xl uppercase">filter listings</h1>
                 <Accordion type="single" collapsible className="w-full">
                     <AccordionItem value="item-1">
                         <AccordionTrigger>By Type</AccordionTrigger>

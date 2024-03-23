@@ -49,8 +49,8 @@ const Page : FC = () => {
   const fetchData = async () => {
     try {
       const userInfo = await axios.get(`${api}/profiles/getByEmail/${user.primaryEmailAddress.toString()}`);
-      console.log(user);
       setProfileData(userInfo.data.data[0]);
+      console.log(userInfo.data.data[0]);
       const posts = await axios.get(`${api}/allPosts/findAllByUserId/${userInfo.data.data[0]._id}`);
       if (posts.data.length !== 0) {
         setPosts(posts.data);
