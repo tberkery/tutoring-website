@@ -51,14 +51,9 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
     <div className="flex-none pl-32 flex flex-col items-center">
       <img className="w-268 h-268 md:w-48 md:h-48 snap-center rounded-md" src="../defaultimg.jpeg" alt={`${profileData.firstName}`} />
       <div className="flex mt-4 space-x-4">
-        <Link href="/profile/edit" passHref>
-                    <button className="bg-custom-blue hover:bg-blue-900 text-white font-bold py-2 px-4 rounded-md">
-                      Edit Profile
-                    </button>
-                  </Link>
-        <Link href="/createPost" passHref>
+        <Link href="/profile/" passHref>
           <button className="bg-custom-blue hover:bg-blue-900 text-white font-bold py-2 px-4 rounded-md">
-            Create Post
+            Message
           </button>
         </Link>
       </div>
