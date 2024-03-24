@@ -1,6 +1,5 @@
 "use client";
-import React from 'react';
-import { useState, useEffect } from 'react';
+import React, { FC, useEffect, useState } from "react";
 import axios from 'axios';
 import Link from 'next/link'; 
 import "../../styles/global.css";
@@ -39,20 +38,19 @@ interface CoursePost {
 
 type Post = ActivityPost | CoursePost;
 
-const Page: React.FC = () => {
+const Page : FC = () => {
   const { isLoaded, isSignedIn, user } = useUser();
   const api = process.env.NEXT_PUBLIC_BACKEND_URL;
   const [posts, setPosts] = useState<Post[]>([]);
   const [profileData, setProfileData] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [imgUrl, setImgUrl] = useState("../defaultimg.jpeg");
   
   const fetchData = async () => {
-    setLoading(true);
     try {
       const userInfo = await axios.get(`${api}/profiles/getByEmail/${user.primaryEmailAddress.toString()}`);
-      console.log(user);
       setProfileData(userInfo.data.data[0]);
+      console.log(userInfo.data.data[0]);
       const posts = await axios.get(`${api}/allPosts/findAllByUserId/${userInfo.data.data[0]._id}`);
       if (posts.data.length !== 0) {
         setPosts(posts.data);

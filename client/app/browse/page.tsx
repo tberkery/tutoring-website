@@ -1,23 +1,22 @@
 "use client";
 
 import React, { FC, useEffect, useState } from "react";
-import "../../styles/global.css";
 import NavBar from "@/components/Navbar";
-import "../../styles/basic.css";
+import "@/styles/global.css";
+import "@/styles/basic.css";
 import {
     Accordion,
     AccordionContent,
     AccordionItem,
     AccordionTrigger,
   } from "@/components/ui/accordion";
-import BrowseSection from "@/components/BrowseSection";
 import axios from "axios";
 import PostCard from "@/components/PostCard";
 import "../../styles/loader.css";
 import Loader from "@/components/Loader";
 import { Checkbox } from "@/components/ui/checkbox"
 
-  interface ActivityPost {
+interface ActivityPost {
     _id: string;
     userId: string;
     activityTitle: string;
@@ -26,9 +25,9 @@ import { Checkbox } from "@/components/ui/checkbox"
     price: number;
     tags: string[];
     __v: number;
-  }
-  
-  interface CoursePost {
+}
+
+interface CoursePost {
     _id: string;
     userId: string;
     courseName: string;
@@ -42,77 +41,128 @@ import { Checkbox } from "@/components/ui/checkbox"
     takenAtHopkins: boolean;
     schoolTakenAt: string;
     __v: number;
-  }
+}
 
-  type Post = ActivityPost | CoursePost;
+type Post = ActivityPost | CoursePost;
 
 const Page : FC = () => {
-  const api = process.env.NEXT_PUBLIC_BACKEND_URL;
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [filteredResults, setFilteredResults] = useState<Post[]>([]);
+    // Data from Backend
+    const api = process.env.NEXT_PUBLIC_BACKEND_URL;
+    const [posts, setPosts] = useState<Post[]>([]);
+    const [filteredPosts, setFilteredPosts] = useState<Post[]>([]);
+    
+    // Loading State
+    const [loading, setLoading] = useState(true);
 
-  const [searchInput, setSearchInput] = useState("");
-  const [typeFilters, setTypeFilters] = useState({
-    courses: false,
-    activities: false,
-  });
-  const handleTypeChange = (filterCategory) => {
-    setTypeFilters(prev => ({
-      ...prev,
-      [filterCategory]: !prev[filterCategory],
-    }));
-  };
-  
-  const [tagFilters, setTagFilters] = useState({
-    music: false,
-    athletic: false,
-  });
-  const handleTagChange = (filterCategory, value) => {
-    setTagFilters(prev => ({
-      ...prev,
-      [filterCategory]: value,
-    }));
-  };
+    // Search
+    const [searchInput, setSearchInput] = useState("");
+
+    // Checkbox Filters
+    const [typeFilters, setTypeFilters] = useState({
+        courses: false,
+        activities: false,
+    });
+    const [priceFilters, setPriceFilters] = useState({
+        highToLow: false,
+        lowToHigh: false,
+    });
+    const [tagFilters, setTagFilters] = useState({
+        music: false,
+        athletic: false,
+    });
 
     useEffect(() => {
         const fetchData = async () => {
-        setLoading(true);
-        try {
-            const response = await axios.get(`${api}/allPosts`);
-            setPosts(response.data);
-        } catch (error) {
-            console.error('Error fetching posts', error);
-        } finally {
-            setLoading(false);
-        };
+            setLoading(true);
+            try {
+                const postResponse = await axios.get(`${api}/allPosts`);
+                setPosts(postResponse.data);
+                console.log(postResponse.data);
+            } catch (error) {
+                console.error('Error fetching posts', error);
+            } finally {
+                setLoading(false);
+            };
+            }
+            fetchData();
+        }, [api]);
+
+    useEffect(() => {
+        filterPosts();
+    }, [posts, searchInput, typeFilters, tagFilters, priceFilters]);
+
+    const filterPosts = () => {
+        let filtered = posts;
+        if (typeFilters.courses || typeFilters.activities) {
+            filtered = filtered.filter(post => {
+                return (typeFilters.courses && 'courseName' in post) || 
+                       (typeFilters.activities && 'activityTitle' in post);
+            });
         }
-        fetchData();
-    }, [api]);
+
+        if (priceFilters.highToLow && !priceFilters.lowToHigh) {
+            filtered = [...filtered.sort((a, b) => b.price - a.price)]; 
+        } else if (priceFilters.lowToHigh && !priceFilters.highToLow) {
+            filtered = [...filtered.sort((a, b) => a.price - b.price)];
+        }
+
+        if (tagFilters.music || tagFilters.athletic) {
+            filtered = filtered.filter(post => {
+                return (tagFilters.music && 'activityTitle' in post && post.tags.includes('music')) || 
+                       (tagFilters.athletic && 'activityTitle' in post && post.tags.includes('athletic'));
+            });
+        }
+
+        if (searchInput) {
+            filtered = filtered.filter(post => {
+                if ('courseName' in post) {
+                    return post.courseName.toLowerCase().includes(searchInput.toLowerCase());
+                } else if ('activityTitle' in post) {
+                    return post.activityTitle.toLowerCase().includes(searchInput.toLowerCase());
+                }
+                return false;
+            });
+        }
+        
+        setFilteredPosts(filtered);
+    };
+
+    const handleTypeChange = (filterCategory) => {
+        setTypeFilters(prev => {
+            const updatedFilters = {
+                ...prev,
+                [filterCategory]: !prev[filterCategory],
+            };
+            return updatedFilters;
+        });
+    };
+
+    const handlePriceChange = (filterCategory) => {
+        setPriceFilters(prev => {
+            const updatedFilters = {
+                ...prev,
+                [filterCategory]: !prev[filterCategory],
+            };
+            return updatedFilters;
+        });
+    }
+
+    const handleTagChange = (filterCategory) => {
+        setTagFilters(prev => {
+            const updatedFilters = {
+                ...prev,
+                [filterCategory]: !prev[filterCategory],
+            };
+            return updatedFilters;
+        });
+    };
 
     const searchItems = (searchValue) => {
         setSearchInput(searchValue);
-        if (searchInput !== '') {
-            const filteredPosts = posts.filter((post) => {
-                if ('courseName' in post) {
-                    return post.courseName.toLowerCase().includes(searchValue.toLowerCase());
-                } else if ('activityTitle' in post) {
-                    return post.activityTitle.toLowerCase().includes(searchValue.toLowerCase());
-                }
-                return false;
-            })
-            setFilteredResults(filteredPosts);
-        } else {
-            setFilteredResults(posts);
-        }
     }
 
   if (loading) {
-    return (
-        <>
-            <Loader />
-        </>
-    );
+    return ( <> <Loader /> </>);
   }
   return <>
   <NavBar />
@@ -127,15 +177,15 @@ const Page : FC = () => {
                 <div className="top-line"></div>
                 <div className="under-line"></div>
             </div>
-            <div className="FilterRecipes">
-                <h1>filter listings</h1>
+            <div>
+                <h1 className="font-sans font-bold text-2xl uppercase">filter listings</h1>
                 <Accordion type="single" collapsible className="w-full">
                     <AccordionItem value="item-1">
                         <AccordionTrigger>By Type</AccordionTrigger>
                         <AccordionContent>
                             <div className="ml-2 pb-1">
-                                <div className="flex items-center space-x-2">
-                                    <Checkbox id="courses" onCheckedChange={(e) => handleTypeChange('courses')}/>
+                                <div className="flex items-center space-x-2">                                    
+                                    <Checkbox id="courses" checked={typeFilters.courses} onCheckedChange={(e) => handleTypeChange('courses')}/>
                                     <label
                                         htmlFor="terms2"
                                         className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -146,7 +196,7 @@ const Page : FC = () => {
                             </div>
                             <div className="ml-2">
                                 <div className="flex items-center space-x-2">
-                                    <Checkbox id="activites" onCheckedChange={(e) => handleTypeChange('activities')}/>
+                                    <Checkbox id="activites" checked={typeFilters.activities} onCheckedChange={(e) => handleTypeChange('activities')}/>
                                     <label
                                         htmlFor="terms2"
                                         className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -162,7 +212,7 @@ const Page : FC = () => {
                         <AccordionContent>
                         <div className="ml-2 pb-1">
                                 <div className="flex items-center space-x-2">
-                                    <Checkbox id="hightolow" />
+                                    <Checkbox id="highToLow" checked={priceFilters.highToLow} onCheckedChange={(e) => handlePriceChange('highToLow')} />
                                     <label
                                         htmlFor="terms2"
                                         className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -173,7 +223,7 @@ const Page : FC = () => {
                             </div>
                             <div className="ml-2 pb-1">
                                 <div className="flex items-center space-x-2">
-                                    <Checkbox id="lowtohigh" />
+                                    <Checkbox id="lowToHigh" checked={priceFilters.lowToHigh} onCheckedChange={(e) => handlePriceChange('lowToHigh')}/>
                                     <label
                                         htmlFor="terms2"
                                         className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -189,7 +239,7 @@ const Page : FC = () => {
                         <AccordionContent>
                             <div className="ml-2 pb-1">
                                 <div className="flex items-center space-x-2">
-                                    <Checkbox id="athletic" />
+                                    <Checkbox id="athletic" checked={tagFilters.athletic} onCheckedChange={(e) => handleTagChange('athletic')} />
                                     <label
                                         htmlFor="terms2"
                                         className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -200,7 +250,7 @@ const Page : FC = () => {
                             </div>
                             <div className="ml-2 pb-1">
                                 <div className="flex items-center space-x-2">
-                                    <Checkbox id="music" />
+                                    <Checkbox id="music" checked={tagFilters.music} onCheckedChange={(e) => handleTagChange('music')}/>
                                     <label
                                         htmlFor="terms2"
                                         className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -215,23 +265,13 @@ const Page : FC = () => {
             </div>
         </div>
         <div className="w-3/4">
-        {searchInput.length > 1 ? (
-            <div className="container mx-auto px-6 py-8">
-                <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {filteredResults.map((posts) => (
-                    <PostCard key={posts._id} post={posts} />
-                ))}
+                <div className="container mx-auto px-6 py-8">
+                    <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {filteredPosts.map((posts) => (
+                        <PostCard key={posts._id} post={posts} />
+                    ))}
+                    </div>
                 </div>
-            </div>
-        ) : (
-            <div className="container mx-auto px-6 py-8">
-                <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {posts.map((posts) => (
-                    <PostCard key={posts._id} post={posts} />
-                ))}
-                </div>
-            </div>
-        )}
         </div>
     </div>
     </>;
