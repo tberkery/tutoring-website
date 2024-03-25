@@ -38,7 +38,7 @@ const ProfileSchema = new mongoose.Schema({
     }],
     profilePicKey: {
         type: String,
-        deafult: null,
+        default: null,
     }
     
 
