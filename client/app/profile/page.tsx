@@ -57,6 +57,8 @@ const Page : FC = () => {
       if (posts.data.length !== 0) {
         setPosts(posts.data);
       }
+      const picUrl = await axios.get(`${api}/profilePics/get/${userInfo.data.data[0].profilePicKey}`);
+      setImgUrl(picUrl.data.imageUrl);
     } catch (error) {
       console.error('Error fetching posts', error);
     } finally {
