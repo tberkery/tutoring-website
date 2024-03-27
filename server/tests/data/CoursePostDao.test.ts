@@ -3,10 +3,20 @@ import { ObjectId } from "mongodb";
 
 require('dotenv').config()
 const CoursePostDao = require('../../data/CoursePostDao');
+const CoursePostModel = require('../../model/CoursePost');
 const {faker} = require('@faker-js/faker');
 const mg = require("mongoose");
 const URI = process.env.ATLAS_URI_TEST
 
+beforeAll(async () => {
+    await mg.connect(URI);
+    await CoursePostModel.deleteMany({});
+});
+
+afterAll(async () => {
+    await CoursePostModel.deleteMany({});
+    await mg.connection.close();
+});
 
 test('test create() with all fields', async ()=> {
     const coursePostDao = new CoursePostDao();
