@@ -1,5 +1,5 @@
 "use client";
-import React from 'react';
+import React, { useState } from 'react';
 import { useRouter } from "next/navigation";
 import RatingStars from './RatingStars';
 
@@ -30,12 +30,15 @@ interface PostCardProps {
 
 const PostCard: React.FC<PostCardProps> = ({ post }) => {
   const defaultImage = '/jhulogo.jpeg';
+  const [titleUnderline, setTitleUnderline] = useState(false);
   const router = useRouter();
 
   const postUrl = post.courseName ? `/post/course/${post._id}` : `/post/activity/${post._id}`;
 
   const handleClick = () => {
-    router.push(postUrl);
+    if (titleUnderline) {
+      router.push(postUrl);
+    }
   }
 
   const formatPrice = (price : number) => {
@@ -48,8 +51,11 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
 
   return (<> 
     <div 
-      className="max-w-sm overflow-hidden py-2 bg-white rounded shadow-lg" 
+      className="max-w-sm overflow-hidden py-2 bg-white rounded shadow-lg
+        cursor-pointer hover:-translate-y-2 transition duration-75" 
       onClick={handleClick}
+      onMouseEnter={() => setTitleUnderline(true)}
+      onMouseLeave={() => setTitleUnderline(false)}
     >
       <img
         className="w-full h-32 object-cover"
@@ -57,7 +63,12 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
         alt="Post Image"
       />
       <div className="px-4 py-2 border-t">
-        <div className="text-2xl font-bold font-sans text-slate-700 uppercase">{post.courseName ? post.courseName : post.activityTitle}</div>
+        <div 
+          className={`text-2xl font-bold font-sans text-slate-700 uppercase
+          ${titleUnderline ? 'underline' : ''}`}
+        >
+          {post.courseName ? post.courseName : post.activityTitle}
+        </div>
         { post.courseNumber ? 
           <div className="flex justify-between items-center">
             <p className="text-slate-600 text-sm font-sans">
@@ -74,7 +85,12 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
           <p className="text-slate-600 text-sm font-sans">{formatPrice(post.price)}</p>
           <p className="text-slate-600 text-sm font-sans">
             {"Created by "}
-            <a href={`/profile/` + post.userId} className="font-semibold">
+            <a 
+              href={`/profile/` + post.userId} 
+              className="font-semibold hover:underline"
+              onMouseEnter={() => setTitleUnderline(false)}
+              onMouseLeave={() => setTitleUnderline(true)}
+            >
               User
             </a>
           </p>

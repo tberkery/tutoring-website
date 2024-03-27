@@ -1,5 +1,6 @@
 "use client";
 import axios from 'axios';
+import { useRouter } from 'next/navigation';
 import React, { FC, useEffect, useState } from 'react';
 
 type profileType = {
@@ -16,7 +17,9 @@ type profileType = {
 
 const PostCard: FC<{profile: profileType}> = ({ profile }) => {
   const [img, setImg] = useState("/defaultimg.jpeg");
+  const [titleUnderline, setTitleUnderline] = useState(false);
   const fullName = `${profile.firstName} ${profile.lastName}`;
+  const router = useRouter();
 
   useEffect(() => { loadImage() }, [profile]);
 
@@ -47,7 +50,13 @@ const PostCard: FC<{profile: profileType}> = ({ profile }) => {
   }
 
   return ( <> 
-    <div className="max-w-sm h-96 rounded overflow-hidden shadow-lg bg-white">
+    <div 
+      className="max-w-sm h-96 rounded overflow-hidden shadow-lg bg-white
+      hover:-translate-y-2 transition duration-75 cursor-pointer"
+      onMouseEnter={() => setTitleUnderline(true)}
+      onMouseLeave={() => setTitleUnderline(false)}
+      onClick={() => router.push(`/profile/${profile._id}`)}
+    >
       <img
         className="w-full h-48 object-cover"
         src={img}
@@ -55,9 +64,12 @@ const PostCard: FC<{profile: profileType}> = ({ profile }) => {
       />
       <div className="px-6 py-4">
         <div className="mb-2">
-          <a href={`/profile/${profile._id}`}>
-            <div className="font-bold text-xl hover:underline">{fullName}</div>
-          </a>
+          <div 
+            className={`font-bold text-xl 
+            ${titleUnderline ? 'underline' : ''}`}
+          >
+            {fullName}
+          </div>
           <p className="text-gray-600 text-sm">
             {profile.email} - {capitalize(profile.department)}
           </p>
