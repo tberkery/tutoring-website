@@ -1,6 +1,7 @@
 "use client";
 import React from 'react';
 import { useRouter } from "next/navigation";
+import RatingStars from './RatingStars';
 
 interface Post {
   _id: string;
@@ -37,27 +38,53 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
     router.push(postUrl);
   }
 
-  return ( <> 
-    <div className="max-w-sm overflow-hidden py-2" onClick={handleClick}>
+  const formatPrice = (price : number) => {
+    if (!price || price == 0) {
+      return "Free!"
+    } else {
+      return `From $${price}`;
+    }
+  }
+
+  return (<> 
+    <div 
+      className="max-w-sm overflow-hidden py-2 bg-white rounded shadow-lg" 
+      onClick={handleClick}
+    >
       <img
-        className="w-full aspect-ratio: 4 / 3 object-cover rounded"
+        className="w-full h-32 object-cover"
         src={post.imageUrl || defaultImage}
         alt="Post Image"
       />
-      <div className="px-2 py-2">
-        <div className="py-0.5">
-            <div className="text-2xl font-bold font-sans text-slate-700 uppercase">{post.courseName ? post.courseName : post.activityTitle}</div>
-            <p className="text-slate-500 text-sm font-sans">{post.courseNumber}</p>
+      <div className="px-4 py-2 border-t">
+        <div className="text-2xl font-bold font-sans text-slate-700 uppercase">{post.courseName ? post.courseName : post.activityTitle}</div>
+        { post.courseNumber ? 
+          <div className="flex justify-between items-center">
+            <p className="text-slate-600 text-sm font-sans">
+              {post.courseNumber}
+            </p>
+            <RatingStars rating={3.8}/>
+          </div>
+        :
+          <div className="flex justify-center">
+            <RatingStars rating={3.8}/>
+          </div>
+        }
+        <div className="my-1 flex justify-between">
+          <p className="text-slate-600 text-sm font-sans">{formatPrice(post.price)}</p>
+          <p className="text-slate-600 text-sm font-sans">
+            {"Created by "}
+            <a href={`/profile/` + post.userId} className="font-semibold">
+              User
+            </a>
+          </p>
         </div>
-        <div className="py-1 flex justify-between"> 
-          <p className="text-slate-600 text-sm font-sans">From ${post.price}</p>
-          <p className="text-slate-600 text-sm font-sans">Created by <a href={`/profile/` + post.userId} className="font-semibold">User</a>{post.username}</p>
-        </div>
-        <p className="text-slate-800 text-base font-sans">{post.description ? post.description : post.activityDescription}</p>
+        <p className="text-slate-800 text-base font-sans line-clamp-2">
+          { post.description ? post.description : post.activityDescription }
+        </p>
       </div>
     </div>
-    </>
-  );
+  </>);
 };
 
 export default PostCard;
