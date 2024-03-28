@@ -91,7 +91,7 @@ const Page : FC = () => {
         </div>
         <div className="flex-none flex flex-col items-center">
           <img className="w-48 h-48 snap-center rounded-md" src={imgUrl} alt={`${profileData.firstName}`} />
-          <RatingStars rating={3.7} starSize={26} className="mt-2"/>
+          <RatingStars rating={3.7} starSize={26} numReviews={42} className="mt-2"/>
           <div className="flex mt-2 space-x-4">
             <Link href="/profile/edit" passHref>
               <button className="bg-custom-blue hover:bg-blue-900 text-white font-bold py-2 px-4 rounded-md">

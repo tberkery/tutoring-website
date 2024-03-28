@@ -3,11 +3,12 @@ import { FC, HTMLAttributes } from "react";
 
 type props = {
   rating: number,
-  starSize?: number
+  starSize?: number,
+  numReviews: number,
 } & HTMLAttributes<HTMLDivElement>
 
-const RatingStars : FC<props> = ({rating, starSize, className}) => {
-  const size = starSize ? starSize : 20;
+const RatingStars : FC<props> = (props) => {
+  const size = props.starSize ? props.starSize : 20;
   // const roundRating =
   // TODO round rating
   
@@ -54,13 +55,13 @@ const RatingStars : FC<props> = ({rating, starSize, className}) => {
   }
 
   return (
-    <div className={`flex items-center ${className}`}>
+    <div className={`flex items-center ${props.className}`}>
       {
         [0, 1, 2, 3, 4].map((value) => {
-          return <div key={value}>{getStar(rating - value)}</div>
+          return <div key={value}>{getStar(props.rating - value)}</div>
         })
       }
-      <p className='ml-1'>({rating})</p>
+      <p className='ml-1'>({props.numReviews})</p>
     </div>
   );
 }

@@ -90,7 +90,7 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
         </div>
         <div className="flex-none flex flex-col items-center mx-8">
           <img className="w-268 h-268 md:w-48 md:h-48 snap-center rounded-md" src={imgUrl} alt={`${profileData.firstName}`} />
-          <RatingStars rating={4.5} starSize={26} className="mt-2"/>
+          <RatingStars rating={4.5} starSize={26} numReviews={42} className="mt-2"/>
           <div className="flex mt-2 space-x-4">
             <Link href="/profile/" passHref>
               <button className="bg-custom-blue hover:bg-blue-900 text-white font-bold py-2 px-4 rounded-md">
