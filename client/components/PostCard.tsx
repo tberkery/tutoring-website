@@ -61,7 +61,7 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
       <div className="ratings flex mx-2">
         <StarIcon className="text-black-300 text-sm" />
         <h1 className="font-bold pt-0.25 pr-1">5.0</h1>
-        <Link href="/reviews" className="text-slate-500">(72)</Link>
+        <Link href="/reviews" className="text-slate-500 hover:underline">(72)</Link>
       </div>
     </div>
     </>
