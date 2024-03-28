@@ -7,7 +7,6 @@ const bodyParser = require('body-parser')
 const cors = require('cors');
 const connect = require('./data/db');
 const router  = require('./routes/index');
-const setUpTwilio = require('./twilio/chatService');
 
 class App {
 
@@ -18,7 +17,6 @@ class App {
         this.setupMiddlewares()
         // this.dbConnection()
         this.setRouting()
-        setUpTwilio()
     }
 
     setupMiddlewares() {
