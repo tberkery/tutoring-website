@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { useRouter } from "next/navigation";
 import RatingStars from './RatingStars';
+import { Star } from 'lucide-react';
 
 interface Post {
   _id: string;
@@ -51,39 +52,40 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
 
   return (<> 
     <div 
-      className="max-w-sm overflow-hidden py-2 bg-white rounded shadow-lg
+      className="max-w-sm overflow-hidden bg-white rounded shadow-lg
         cursor-pointer hover:-translate-y-2 transition duration-75" 
       onClick={handleClick}
       onMouseEnter={() => setTitleUnderline(true)}
       onMouseLeave={() => setTitleUnderline(false)}
     >
       <img
-        className="w-full h-32 object-cover"
+        className="w-full h-48 object-cover"
         src={post.imageUrl || defaultImage}
         alt="Post Image"
       />
-      <div className="px-4 py-2 border-t">
-        <div 
-          className={`text-2xl font-bold font-sans text-slate-700 uppercase
-          ${titleUnderline ? 'underline' : ''}`}
-        >
-          {post.courseName ? post.courseName : post.activityTitle}
+      <div className="border-t px-3 pb-3 pt-1">
+        <div className="py-0.5">
+          <div 
+            className={`text-2xl font-bold font-sans text-slate-700 uppercase
+            truncate ${titleUnderline ? 'underline' : ''}`}
+          >
+            {post.courseName ? post.courseName : post.activityTitle}
+          </div>
         </div>
-        { post.courseNumber ? 
-          <div className="flex justify-between items-center">
-            <p className="text-slate-600 text-sm font-sans">
-              {post.courseNumber}
-            </p>
-            <RatingStars rating={3.8}/>
+        <div className={`flex items-center justify-between ${post.courseNumber !== '' ? 'justify-between' : ''}`}>
+          <p className="text-slate-500 text-sm font-sans">{post.courseNumber}</p>
+          <div className="ratings flex items-center">
+            <Star size={20} className="fill-black text-black inline-block mr-1"/>
+            <h1 className="font-bold pt-0.25 pr-1">5.0</h1>
+            <a href="/reviews" className="text-slate-500">(72)</a>
           </div>
-        :
-          <div className="flex justify-center">
-            <RatingStars rating={3.8}/>
-          </div>
-        }
-        <div className="my-1 flex justify-between">
-          <p className="text-slate-600 text-sm font-sans">{formatPrice(post.price)}</p>
-          <p className="text-slate-600 text-sm font-sans">
+        </div>
+        <p className="text-slate-800 text-base font-sans line-clamp-2 cursor-pointe">
+          {post.description ? post.description : post.activityDescription}
+        </p>
+        <div className="pt-1 flex justify-between"> 
+          <p className="text-black text-sm font-sans font-bold">{formatPrice(post.price)}</p>
+          <p className="text-black text-sm font-sans">
             {"Created by "}
             <a 
               href={`/profile/` + post.userId} 
@@ -95,9 +97,6 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
             </a>
           </p>
         </div>
-        <p className="text-slate-800 text-base font-sans line-clamp-2">
-          { post.description ? post.description : post.activityDescription }
-        </p>
       </div>
     </div>
   </>);
