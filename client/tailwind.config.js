@@ -22,6 +22,8 @@ module.exports = {
         sans: ["Montserrat", "sans-serif"],
       },
       colors: {
+        'bluejay-blue' : '#C8E8FE',
+        'blue-footer' : '#0C3A76',
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
