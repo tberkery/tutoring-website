@@ -3,8 +3,8 @@ const mongoose = require("mongoose");
 
 export class PostReviewDao {
 
-    async create(postId: string, userId: string, review: string) {
-        let newPostReview: any = {postId, userId, review}
+    async create(postId: string, userId: string, review: string, rating: number) {
+        let newPostReview: any = {postId, userId, review, rating}
         const data = await PostReview.create(newPostReview);
         return data;
     }
@@ -32,8 +32,8 @@ export class PostReviewDao {
         }
     }
 
-    async update( id: any, postId: string, userId: string, review: string) {
-        let newPostReview: any = {postId, userId, review};
+    async update( id: any, postId: string, userId: string, review: string, rating: number) {
+        let newPostReview: any = {postId, userId, review, rating};
         const data = await PostReview.findByIdAndUpdate(id, newPostReview)
         return data;
     }

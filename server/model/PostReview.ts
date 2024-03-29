@@ -16,6 +16,11 @@ const PostReviewSchema = new mongoose.Schema({
       required: true,
       default: null,
     },
+    rating:
+    {
+      type: Number,
+      required: true,
+    }
 });
 
 const PostReview = mongoose.model("Post", PostReviewSchema);
