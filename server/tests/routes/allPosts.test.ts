@@ -55,6 +55,7 @@ describe('Test allPosts routes', () => {
             description: 'Example description',
             imageUrl: 'exampleImageUrl',
             price: 1,
+            takenAtHopkins: true
         };
 
         const newCourseData2 = {
@@ -63,6 +64,7 @@ describe('Test allPosts routes', () => {
             description: 'Example description',
             imageUrl: 'exampleImageUrl',
             price: 1, 
+            takenAtHopkins: true
         };
 
         const newCourseData3 = {
@@ -71,6 +73,7 @@ describe('Test allPosts routes', () => {
             description: 'Example description',
             imageUrl: 'exampleImageUrl',
             price: 1, 
+            takenAtHopkins: true
         };
 
         const newCourseData4 = {
@@ -79,6 +82,7 @@ describe('Test allPosts routes', () => {
             description: 'Example description',
             imageUrl: 'exampleImageUrl',
             price: 1, 
+            takenAtHopkins: true
         };
 
         await activityPost.deleteMany({});
@@ -106,7 +110,8 @@ describe('Test allPosts routes', () => {
             activityDescription: 'Example description',
             imageUrl: 'exampleImageUrl',
             price: 1, 
-            tags: ['exampleTag1', 'exampleTag2']
+            tags: ['exampleTag1', 'exampleTag2'],
+            takenAtHopkins: true
         };
 
         const newPostData2 = {
@@ -115,7 +120,8 @@ describe('Test allPosts routes', () => {
             activityDescription: 'Example description',
             imageUrl: 'exampleImageUrl',
             price: 1, 
-            tags: ['exampleTag1', 'exampleTag2']
+            tags: ['exampleTag1', 'exampleTag2'],
+            takenAtHopkins: true
         };
 
         const newPostData3 = {
@@ -124,7 +130,8 @@ describe('Test allPosts routes', () => {
             activityDescription: 'Example description',
             imageUrl: 'exampleImageUrl',
             price: 1, 
-            tags: ['exampleTag1', 'exampleTag2']
+            tags: ['exampleTag1', 'exampleTag2'],
+            takenAtHopkins: true
         };
 
         const newPostData4 = {
@@ -133,7 +140,8 @@ describe('Test allPosts routes', () => {
             activityDescription: 'Example description',
             imageUrl: 'exampleImageUrl',
             price: 1, 
-            tags: ['exampleTag1', 'exampleTag2']
+            tags: ['exampleTag1', 'exampleTag2'],
+            takenAtHopkins: true
         };
 
         await activityPost.deleteMany({});
@@ -163,6 +171,7 @@ describe('Test allPosts routes', () => {
                 description: 'Example description',
                 imageUrl: 'exampleImageUrl',
                 price: 2, 
+                takenAtHopkins: true
             };
     
             const newPostData1 = {
@@ -171,7 +180,8 @@ describe('Test allPosts routes', () => {
                 activityDescription: 'Example description',
                 imageUrl: 'exampleImageUrl',
                 price: 2, 
-                tags: ['exampleTag1', 'exampleTag2']
+                tags: ['exampleTag1', 'exampleTag2'],
+                takenAtHopkins: true
             };
 
             const newCourseData2 = {
@@ -180,6 +190,7 @@ describe('Test allPosts routes', () => {
                 description: 'Example description',
                 imageUrl: 'exampleImageUrl',
                 price: 2, 
+                takenAtHopkins: true
             };
 
             const newPostData2 = {
@@ -188,7 +199,8 @@ describe('Test allPosts routes', () => {
                 activityDescription: 'Example description',
                 imageUrl: 'exampleImageUrl',
                 price: 2, 
-                tags: ['exampleTag1', 'exampleTag2']
+                tags: ['exampleTag1', 'exampleTag2'],
+                takenAtHopkins: true
             };
 
     
