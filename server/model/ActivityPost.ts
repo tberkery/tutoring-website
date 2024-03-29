@@ -1,6 +1,7 @@
 export {}
 
 const mongoose = require('mongoose');
+const PostReview = require("../model/PostReview.ts");
 
 const ActivityPostSchema = new mongoose.Schema({
     userId: {
@@ -26,7 +27,14 @@ const ActivityPostSchema = new mongoose.Schema({
     tags: {
       type: [String],
       default: null
-    }
+    },
+    reviews: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'PostReview',
+        default: null,
+      }
+    ]
 });
 
 const ActivityPost = mongoose.model("ActivityPost", ActivityPostSchema);
