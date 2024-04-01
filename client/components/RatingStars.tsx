@@ -4,7 +4,7 @@ import { FC, HTMLAttributes } from "react";
 type props = {
   rating: number,
   starSize?: number,
-  numReviews: number,
+  numReviews?: number,
 } & HTMLAttributes<HTMLDivElement>
 
 const RatingStars : FC<props> = (props) => {
@@ -61,7 +61,7 @@ const RatingStars : FC<props> = (props) => {
           return <div key={value}>{getStar(props.rating - value)}</div>
         })
       }
-      <p className='ml-1'>({props.numReviews})</p>
+      { props.numReviews ? <p className='ml-1'>({props.numReviews})</p> : '' }
     </div>
   );
 }
