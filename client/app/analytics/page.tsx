@@ -22,7 +22,7 @@ const Page : FC = () => {
           border-slate-300"
         >
           <p className="font-bold text-slate-800">{label}</p>
-          <p className="text-gray-600">{`views : ${payload[0].value}`}</p>
+          <p className="text-gray-600">{`views: ${payload[0].value}`}</p>
         </div>
       );
     }
