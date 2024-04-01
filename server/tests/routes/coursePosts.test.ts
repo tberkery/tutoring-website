@@ -16,6 +16,8 @@ describe('Test coursePosts routes', () => {
         // Create a post to get a valid post ID
         const newPostData = {
             userId: 'exampleUserId',
+            userFirstName: 'Ilana',
+            userLastName: 'Chalom',
             courseName: 'Intro to Example',
             description: 'Example description',
             price: 20,
@@ -42,6 +44,8 @@ describe('Test coursePosts routes', () => {
     test('GET /coursePosts/findOne/:id', async () => {
         const newPostData = {
             userId: 'exampleUserId',
+            userFirstName: 'Ilana',
+            userLastName: 'Chalom',
             courseName: 'Intro to Example',
             description: 'Example description',
             price: 20,
@@ -84,6 +88,8 @@ describe('Test coursePosts routes', () => {
 
         const newPost1Data = {
             userId: 'example1UserId',
+            userFirstName: 'Ilana',
+            userLastName: 'Chalom',
             courseName: 'Intro to Example1',
             description: 'Example description1',
             price: 20,
@@ -93,6 +99,8 @@ describe('Test coursePosts routes', () => {
 
         const newPost2Data = {
             userId: 'example2UserId',
+            userFirstName: 'Ilana2',
+            userLastName: 'Chalom2',
             courseName: 'Intro to Example2',
             description: 'Example description2',
             price: 22,
@@ -123,6 +131,8 @@ describe('Test coursePosts routes', () => {
     test('PUT /coursePosts/:id', async () => {
         const newPostData = {
             userId: 'exampleUserId',
+            userFirstName: 'Ilana',
+            userLastName: 'Chalom',
             courseName: 'Intro to Example',
             description: 'Example description',
             price: 20,
@@ -144,6 +154,8 @@ describe('Test coursePosts routes', () => {
 
         const finalPostData = {
             userId: 'exampleUserId',
+            userFirstName: 'Ilana',
+            userLastName: 'Chalom',
             courseName: 'Intro to Example',
             description: 'Updated Description',
             price: 25,
@@ -171,6 +183,8 @@ describe('Test coursePosts routes', () => {
     test('DELETE /coursePosts/:id', async () => {
         const newPostData = {
             userId: 'exampleUserId',
+            userFirstName: 'Ilana',
+            userLastName: 'Chalom',
             courseName: 'Intro to Example',
             description: 'Example description',
             price: 20,
@@ -197,6 +211,8 @@ describe('Test coursePosts routes', () => {
         // Create example data for course posts
         const example1PostData = {
             userId: 'exampleUserId',
+            userFirstName: 'Ilana',
+            userLastName: 'Chalom',
             courseName: 'Intro to Example',
             description: 'Example description',
             price: 20,
@@ -206,6 +222,8 @@ describe('Test coursePosts routes', () => {
     
         const example2PostData = {
             userId: 'exampleUserId2',
+            userFirstName: 'Ilana',
+            userLastName: 'Chalom',
             courseName: 'Intro to Example2',
             description: 'Example description2',
             price: 30,
@@ -235,6 +253,8 @@ describe('Test coursePosts routes', () => {
     
         const example1PostData = {
             userId: 'exampleUserId',
+            userFirstName: 'Ilana',
+            userLastName: 'Chalom',
             courseName: 'Intro to Example',
             description: 'Example description',
             price: 20,
@@ -244,6 +264,8 @@ describe('Test coursePosts routes', () => {
     
         const example2PostData = {
             userId: 'exampleUserId2',
+            userFirstName: 'Ilana2',
+            userLastName: 'Chalom2',
             courseName: 'Intro to Example2',
             description: 'Example description2',
             price: 30,
@@ -274,6 +296,8 @@ describe('Test coursePosts routes', () => {
         // Create example data for course posts
         const example1PostData = {
             userId: 'exampleUserId',
+            userFirstName: 'Ilana',
+            userLastName: 'Chalom',
             courseName: 'Intro to Example',
             description: 'Example description',
             price: 20,
@@ -283,6 +307,8 @@ describe('Test coursePosts routes', () => {
     
         const example2PostData = {
             userId: 'exampleUserId2',
+            userFirstName: 'Ilana2',
+            userLastName: 'Chalom2',
             courseName: 'Intro to Example',
             description: 'Example description',
             price: 30,
@@ -292,6 +318,8 @@ describe('Test coursePosts routes', () => {
 
         const example3PostData = { 
             userId: 'exampleUserId3',
+            userFirstName: 'Ilana3',
+            userLastName: 'Chalom3',
             courseName: 'Intro to Example2',
             description: 'Example description',
             price: 15,
@@ -324,6 +352,8 @@ describe('Test coursePosts routes', () => {
         // Create example data for course posts
         const example1PostData = {
             userId: 'exampleUserId',
+            userFirstName: 'Ilana',
+            userLastName: 'Chalom',
             courseName: 'Intro to Example',
             description: 'Example description',
             price: 20,
@@ -333,6 +363,8 @@ describe('Test coursePosts routes', () => {
     
         const example2PostData = {
             userId: 'exampleUserId2',
+            userFirstName: 'Ilana',
+            userLastName: 'Chalom',
             courseName: 'Intro to Example2',
             description: 'Example description2',
             price: 20,
@@ -342,6 +374,8 @@ describe('Test coursePosts routes', () => {
 
         const example3PostData = { 
             userId: 'exampleUserId3',
+            userFirstName: 'Ilana',
+            userLastName: 'Chalom',
             courseName: 'Intro to Example3',
             description: 'Example description3',
             price: 30,
@@ -351,6 +385,8 @@ describe('Test coursePosts routes', () => {
 
         const example4PostData = { 
             userId: 'exampleUserId4',
+            userFirstName: 'Ilana',
+            userLastName: 'Chalom',
             courseName: 'Intro to Example4',
             description: 'Example description4',
             price: 10,
