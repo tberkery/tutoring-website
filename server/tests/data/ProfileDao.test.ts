@@ -2,9 +2,20 @@ import { ObjectId } from "mongodb";
 
 require('dotenv').config()
 const ProfileDao = require('../../data/ProfileDao');
+const ProfileDaoModel = require('../../model/Profile');
 const {faker} = require('@faker-js/faker');
 const mg = require("mongoose");
 const URI = process.env.ATLAS_URI_TEST
+
+beforeAll(async () => {
+    await mg.connect(URI);
+    await ProfileDaoModel.deleteMany({});
+});
+
+afterAll(async () => {
+    await ProfileDaoModel.deleteMany({});
+    await mg.connection.close();
+});
 
 test('test create() with all fields', async ()=> {
     const profileDao = new ProfileDao();

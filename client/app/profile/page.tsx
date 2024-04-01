@@ -7,7 +7,7 @@ import { useUser } from '@clerk/clerk-react';
 import PostCard from '../../components/PostCard';
 import Navbar from "../../components/Navbar"
 import Loader from '../../components/Loader';
-import { use } from 'chai';
+import RatingStars from "@/components/RatingStars";
 
 interface ActivityPost {
   _id: string;
@@ -47,14 +47,18 @@ const Page : FC = () => {
   const [imgUrl, setImgUrl] = useState("../defaultimg.jpeg");
   
   const fetchData = async () => {
+    if (!isLoaded || !isSignedIn) {
+      return false;
+    }
     try {
       const userInfo = await axios.get(`${api}/profiles/getByEmail/${user.primaryEmailAddress.toString()}`);
       setProfileData(userInfo.data.data[0]);
-      console.log(userInfo.data.data[0]);
       const posts = await axios.get(`${api}/allPosts/findAllByUserId/${userInfo.data.data[0]._id}`);
       if (posts.data.length !== 0) {
         setPosts(posts.data);
       }
+      const picUrl = await axios.get(`${api}/profilePics/get/${userInfo.data.data[0].profilePicKey}`);
+      setImgUrl(picUrl.data.imageUrl);
     } catch (error) {
       console.error('Error fetching posts', error);
     } finally {
@@ -64,7 +68,7 @@ const Page : FC = () => {
 
   useEffect(() => {
     fetchData();
-  }, [api, user]);
+  }, [api, user, isLoaded, isSignedIn]);
 
   if (loading || !profileData) {
     return (
@@ -76,33 +80,36 @@ const Page : FC = () => {
   return (
     <>
       <Navbar />
-      <div className="flex justify-between items-center bg-blue-300 pt-16 pb-16 pl-32 pr-32">
-      <div className="flex-1 mr-5">
-        <h1 className="text-2xl font-extrabold font-sans uppercase text-black">{profileData.firstName} {profileData.lastName} - {profileData.department}
-                                           {profileData.graduationYear ? `, ${profileData.graduationYear}` : ''}</h1>
-        <p className="text-s underline font-light mb-2">{profileData.email}</p>
-        <p className="text-gray-700 text-base">{profileData.description}</p>
-      </div>
-      <div className="flex-none pl-32 flex flex-col items-center">
-        <img className="w-268 h-268 md:w-48 md:h-48 snap-center rounded-md" src={imgUrl} alt={`${profileData.firstName}`} />
-        <div className="flex mt-4 space-x-4">
-          <Link href="/profile/edit" passHref>
-                      <button className="bg-custom-blue hover:bg-blue-900 text-white font-bold py-2 px-4 rounded-md">
-                        Edit Profile
-                      </button>
-                    </Link>
-          <Link href="/createPost" passHref>
-            <button className="bg-custom-blue hover:bg-blue-900 text-white font-bold py-2 px-4 rounded-md">
-              Create Post
-            </button>
-          </Link>
+      <div className="flex justify-evenly items-center bg-blue-300 py-16 px-16">
+        <div className="flex-1 max-w-xl">
+          <h1 className="text-2xl font-extrabold font-sans uppercase text-black">
+            {profileData.firstName} {profileData.lastName} - {profileData.department}
+            {profileData.graduationYear ? `, ${profileData.graduationYear}` : ''}
+          </h1>
+          <p className="text-s underline font-light mb-2">{profileData.email}</p>
+          <p className="text-gray-700 text-base">{profileData.description}</p>
+        </div>
+        <div className="flex-none flex flex-col items-center">
+          <img className="w-48 h-48 snap-center rounded-md" src={imgUrl} alt={`${profileData.firstName}`} />
+          <RatingStars rating={3.7} starSize={26} numReviews={42} className="mt-2"/>
+          <div className="flex mt-2 space-x-4">
+            <Link href="/profile/edit" passHref>
+              <button className="bg-custom-blue hover:bg-blue-900 text-white font-bold py-2 px-4 rounded-md">
+                Edit Profile
+              </button>
+            </Link>
+            <Link href="/createPost" passHref>
+              <button className="bg-custom-blue hover:bg-blue-900 text-white font-bold py-2 px-4 rounded-md">
+                Create Post
+              </button>
+            </Link>
+          </div>
         </div>
       </div>
-    </div>
       <div className="container mx-auto px-6 py-8">
         <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {posts.map((posts) => (
-              <PostCard key={posts._id} post={posts} />
+            <PostCard key={posts._id} post={posts} />
           ))}
         </div>
       </div>
