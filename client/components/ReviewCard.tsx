@@ -19,6 +19,7 @@ const ReviewCard : FC<props> = (props) => {
   const textRef = useRef<HTMLParagraphElement>(null);
   const [showFull, setShowFull] = useState(false);
   const [isClamped, setIsClamped] = useState(false);
+  const anonymous = review.leftBy === 'Anonymous';
 
   const isTextClamped = (element : Element) => {
     return element.scrollHeight > element.clientHeight;
@@ -31,8 +32,12 @@ const ReviewCard : FC<props> = (props) => {
       <div className='flex justify-between'>
         <h3 className='text-2xl font-bold'>{review.title}</h3>
         <p className='text-sm mt-0.5 text-gray-800'>
-          Left by <span className='font-bold cursor-pointer hover:underline'>
-            {review.leftBy}
+          Left by
+          <span 
+            className={`font-bold 
+            ${anonymous ? '' : 'cursor-pointer hover:underline'}`}
+          >
+            {' ' + review.leftBy}
           </span>
         </p>
       </div>
