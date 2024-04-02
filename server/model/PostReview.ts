@@ -7,7 +7,7 @@ const PostReviewSchema = new mongoose.Schema({
       type: String,
       required: true,
     },
-    posterId: {
+    posterId: {             // id of the user that posted the post the review is for
       type: String,
       required: true
     },
@@ -15,13 +15,12 @@ const PostReviewSchema = new mongoose.Schema({
       type: String,
       required: true,
     },
-    review: {
+    reviewDescription: {
       type: String,
       required: true,
       default: null,
     },
-    rating:
-    {
+    rating: {
       type: Number,
       required: true,
     }

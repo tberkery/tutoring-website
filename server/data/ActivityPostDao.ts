@@ -1,8 +1,16 @@
 const ActivityPost = require("../model/ActivityPost.ts");
 const mongoose = require("mongoose")
 
+interface PostReview {
+    postId: string;
+    posterId: string;
+    reviewerId: string;
+    reviewDescription: string;
+    rating: number;
+}
+
 export class ActivityPostDao {
-    async create(userId: string, activityTitle: string, options?: {activityDescription?: string, activityPostPicKey?: string, price?: number, tags?: Array<string>}) {
+    async create(userId: string, activityTitle: string, options?: {activityDescription?: string, activityPostPicKey?: string, price?: number, tags?: Array<string>, reviews?: Array<PostReview>}) {
         let newPost: any = {userId, activityTitle}
         if (options){
             if (options.activityDescription){
@@ -16,6 +24,9 @@ export class ActivityPostDao {
             }
             if (options.tags){
                 newPost.tags = options.tags;
+            }
+            if (options.reviews){
+                newPost.reviews = options.reviews;
             }
         }
         const data = await ActivityPost.create(newPost);
@@ -69,6 +80,9 @@ export class ActivityPostDao {
                         case 'tags':
                             query.tags = options.tags;
                             break;
+                        case 'reviews':
+                            query.reviews = options.reviews;
+                            break;
                     }
                 }
             }
@@ -81,7 +95,7 @@ export class ActivityPostDao {
         return posts;
 
     }
-    async update( id: any, userId: string, activityTitle: string, options?: {activityDescription?: string, activityPostPicKey?: number, price?: number, tags?: string[]} ) {
+    async update( id: any, userId: string, activityTitle: string, options?: {activityDescription?: string, activityPostPicKey?: number, price?: number, tags?: string[], reviews?: PostReview[]} ) {
         let newPost: any = {userId, activityTitle}
         if (options){
             if(options.activityDescription){
@@ -95,6 +109,9 @@ export class ActivityPostDao {
             }
             if (options.tags){
                 newPost.tags = options.tags;
+            }
+            if (options.reviews){
+                newPost.reviews = options.reviews;
             }
         }
         let post = await ActivityPost.findByIdAndUpdate(id, newPost);

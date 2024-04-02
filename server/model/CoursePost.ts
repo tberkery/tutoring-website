@@ -50,7 +50,14 @@ const CoursePostSchema = new mongoose.Schema({
     coursePostPicKey: {
         type: String,
         default: null
-    }
+    },
+    reviews: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'PostReview',
+          default: null,
+        }
+      ]
 
     // courseId: { // this field will be null if it's non-academic
     //   type: Number,
