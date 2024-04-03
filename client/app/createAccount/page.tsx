@@ -14,6 +14,8 @@ import { useRouter } from "next/navigation";
 
 import FormData from "form-data";
 
+const APP_ID = process.env.NEXT_PUBLIC_SEND_BIRD_APP_ID;
+
 const Page : FC = () => {
 	const { isLoaded, isSignedIn, user } = useUser();
 	const router = useRouter();
@@ -93,12 +95,46 @@ const Page : FC = () => {
 			}
 			const uri = `${api}/profiles`;
 			const response = (await axios.post(uri, body)).data;
-			if (photoFile !== null) {
-				const formData = new FormData();
-				formData.append("profilePicture", photoFile);
-				const photoUri = `${api}/profilePics/upload/${response.data._id}`;
-				const r2 = await axios.post(photoUri, formData);
+			// if (photoFile !== null) {
+			// 	const formData = new FormData();
+			// 	formData.append("profilePicture", photoFile);
+			// 	const photoUri = `${api}/profilePics/upload/${response.data._id}`;
+			// 	const r2 = await axios.post(photoUri, formData);
+			// }
+			// reigster the new user to the SendBird app for the chat
+			const sendBirdUri = `https://api-${APP_ID}.sendbird.com/v3/users`
+			console.log('uri: ', sendBirdUri);
+			let email = user.primaryEmailAddress.toString();
+			const atIndex = email.indexOf('@');
+			let jhed_id = '';
+			if (atIndex !== -1 && email.endsWith('@jhu.edu')) {
+				jhed_id = email.substring(0, atIndex);
+				console.log(jhed_id);
+			} else {
+				console.log('Invalid email format');
 			}
+
+			const sendBirdBody = {
+				"user_id" : jhed_id,
+				"nickname" : `${firstName} ${lastName}`,
+				"profile_url": "",
+				"profile_file": ""
+			}
+			console.log('sending to sendbird!\n\n\n\n')
+			console.log(sendBirdBody);
+			try {
+				const sendBirdResponse = (await axios.post(sendBirdUri, sendBirdBody, {
+					headers: {
+						"Api-Token": process.env.NEXT_PUBLIC_SEND_BIRD_API_TOKEN,
+						"Content-Type": "application/json",
+					}
+				})).data;
+				console.log('response: ' + sendBirdResponse);
+			} catch (e) {
+				console.log(e);
+			}
+			
+
 			router.replace('/profile');
 		}
 	}
