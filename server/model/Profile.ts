@@ -41,7 +41,10 @@ const ProfileSchema = new mongoose.Schema({
         type: String,
         default: null,
     },
-    views: [ViewSchema], // Integrate views as a sub-schema
+    views: {
+        type: [ViewSchema],
+        default: []
+    },
     viewsCounter: {
         type: Number,
         default: null
