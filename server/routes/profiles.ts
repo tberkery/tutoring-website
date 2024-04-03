@@ -92,9 +92,10 @@ router.get("/demographics/:_id", async (req: any, res: any) => {
   const { _id }: { _id: string } = req.params;
   try {
     const viewers = await profiles.readViewsById(_id);
-    // TODO: access views directly here from ViewSchema (likely requires a DAO?)
-    console.log("Viewers")
     console.log(viewers)
+    const viewerIds = viewers.views.map((view: { viewerId: any; }) => view.viewerId)
+    console.log("ViewerIds")
+    console.log(viewerIds)
     const departments = viewers.aggregate( [
       {
         $group: {
