@@ -104,4 +104,23 @@ router.post('/:postId', async (req: any, res:any) => {
     }
 });
 
+router.delete('/:reviewId', async (req: any, res: any) => {
+    try {
+        const reviewId = req.params.reviewId;
+
+        // Check if the review exists
+        const review = await PostReviewDao.readOne(reviewId);
+        if (!review) {
+            return res.status(404).json({ error: 'Review not found' });
+        }
+
+        // Delete the review
+        const deletedReview = await PostReviewDao.delete(reviewId);
+        res.json({ message: 'Review deleted successfully', deletedReview });
+    } catch (error) {
+        console.error('Error deleting review:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
 module.exports = router;
