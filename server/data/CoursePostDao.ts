@@ -11,8 +11,8 @@ interface PostReview {
 
 
 export class CoursePostDao {
-    async create(userId: string, courseName: string, takenAtHopkins: boolean, options?: {description?: string, price?: number, courseNumber?: string, courseDepartment?: string[], gradeReceived?: string, semesterTaken?: string, professorTakenWith?: string, schoolTakenAt?: string, reviews?: Array<PostReview>}) {
-        let newPost: any = {userId, courseName, takenAtHopkins}
+    async create(userId: string, userFirstName: string, userLastName: string, courseName: string, takenAtHopkins: boolean, options?: {description?: string, price?: number, courseNumber?: string, courseDepartment?: string[], gradeReceived?: string, semesterTaken?: string, professorTakenWith?: string, schoolTakenAt?: string, reviews?: Array<PostReview>}) {
+        let newPost: any = {userId, userFirstName, userLastName, courseName, takenAtHopkins}
         if (options){
             if(options.description){
                 newPost.description = options.description
@@ -76,8 +76,9 @@ export class CoursePostDao {
             console.error('Error fetching posts:', error);
         }
     }
-    async update( id: any, userId: string, courseName: string, takenAtHopkins: boolean, options?: {description?: string, price?: number, courseNumber?: string, courseDepartment?: string[], gradeReceived?: string, semesterTaken?: string, professorTakenWith?: string, schoolTakenAt?: string, reviews?: PostReview[]} ) {
-        let newPost: any = {userId, courseName, takenAtHopkins}
+
+    async update( id: any, userId: string, userFirstName: string, userLastName: string, courseName: string, takenAtHopkins: boolean, options?: {description?: string, price?: number, courseNumber?: string, courseDepartment?: string[], gradeReceived?: string, semesterTaken?: string, professorTakenWith?: string, schoolTakenAt?: string, reviews?: PostReview[]} ) {
+        let newPost: any = {userId, userFirstName, userLastName, courseName, takenAtHopkins}
         if (options){
             if(options.description){
                 newPost.description = options.description

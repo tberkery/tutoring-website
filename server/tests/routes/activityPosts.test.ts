@@ -420,10 +420,11 @@ describe('Test activityPosts routes', () => {
     
         // Assertions
         expect(res.status).toBe(200);
-        expect(res.body).toHaveLength(2); // Ensure only one post is returned
+        expect(res.body).toHaveLength(3); // Ensure only one post is returned
         // Remark: assumes (tolerably right now but perhaps not in time) that return order will be the same as creation order.
-        expect(res.body[0]).toMatchObject(example2PostData); // Verify it matches contents of post that satisifes query
-        expect(res.body[1]).toMatchObject(example3PostData); // Verify it matches contents of post that satisifes query
+        expect(res.body[0]).toMatchObject(example1PostData); // Verify it matches contents of post that satisifes query
+        expect(res.body[1]).toMatchObject(example2PostData); // Verify it matches contents of post that satisifes query
+        expect(res.body[2]).toMatchObject(example3PostData); // Verify it matches contents of post that satisifes query
         // Clean up: Delete all activity posts
         await activityPost.deleteMany({});
     });

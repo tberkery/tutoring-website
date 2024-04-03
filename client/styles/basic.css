@@ -73,3 +73,7 @@
   transform: scale(1);
   transition: all 0.5s;
 }
+
+.svg-flip-x {
+  transform: scaleX(-1);
+}

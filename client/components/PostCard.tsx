@@ -1,6 +1,8 @@
 "use client";
-import React from 'react';
+import React, { useState } from 'react';
 import { useRouter } from "next/navigation";
+import RatingStars from './RatingStars';
+import { Star } from 'lucide-react';
 
 interface Post {
   _id: string;
@@ -29,35 +31,75 @@ interface PostCardProps {
 
 const PostCard: React.FC<PostCardProps> = ({ post }) => {
   const defaultImage = '/jhulogo.jpeg';
+  const [titleUnderline, setTitleUnderline] = useState(false);
   const router = useRouter();
 
   const postUrl = post.courseName ? `/post/course/${post._id}` : `/post/activity/${post._id}`;
 
   const handleClick = () => {
-    router.push(postUrl);
+    if (titleUnderline) {
+      router.push(postUrl);
+    }
   }
 
-  return ( <> 
-    <div className="max-w-sm overflow-hidden py-2" onClick={handleClick}>
+  const formatPrice = (price : number) => {
+    if (!price || price == 0) {
+      return "Free!"
+    } else {
+      return `From $${price}`;
+    }
+  }
+
+  return (<> 
+    <div 
+      className="max-w-sm overflow-hidden bg-white rounded shadow-lg
+        cursor-pointer hover:-translate-y-2 transition duration-75" 
+      onClick={handleClick}
+      onMouseEnter={() => setTitleUnderline(true)}
+      onMouseLeave={() => setTitleUnderline(false)}
+    >
       <img
-        className="w-full aspect-ratio: 4 / 3 object-cover rounded"
+        className="w-full h-48 object-cover"
         src={post.imageUrl || defaultImage}
         alt="Post Image"
       />
-      <div className="px-2 py-2">
+      <div className="border-t px-3 pb-3 pt-1">
         <div className="py-0.5">
-            <div className="text-2xl font-bold font-sans text-slate-700 uppercase">{post.courseName ? post.courseName : post.activityTitle}</div>
-            <p className="text-slate-500 text-sm font-sans">{post.courseNumber}</p>
+          <div 
+            className={`text-2xl font-bold font-sans text-slate-700 uppercase
+            truncate ${titleUnderline ? 'underline' : ''}`}
+          >
+            {post.courseName ? post.courseName : post.activityTitle}
+          </div>
         </div>
-        <div className="py-1 flex justify-between"> 
-          <p className="text-slate-600 text-sm font-sans">From ${post.price}</p>
-          <p className="text-slate-600 text-sm font-sans">Created by <a href={`/profile/` + post.userId} className="font-semibold">User</a>{post.username}</p>
+        <div className={`flex items-center justify-between ${post.courseNumber !== '' ? 'justify-between' : ''}`}>
+          <p className="text-slate-500 text-sm font-sans">{post.courseNumber}</p>
+          <div className="ratings flex items-center">
+            <Star size={20} className="fill-black text-black inline-block mr-1"/>
+            <h1 className="font-bold pt-0.25 pr-1">5.0</h1>
+            <a href="/reviews" className="text-slate-500">(72)</a>
+          </div>
         </div>
-        <p className="text-slate-800 text-base font-sans">{post.description ? post.description : post.activityDescription}</p>
+        <p className="text-slate-800 text-base font-sans line-clamp-2 cursor-pointe">
+          {post.description ? post.description : post.activityDescription}
+        </p>
+        <div className="pt-1 flex justify-between"> 
+          <p className="text-black text-sm font-sans font-bold">{formatPrice(post.price)}</p>
+          <p className="text-black text-sm font-sans">
+            {"Created by "}
+            <a 
+              href={`/profile/` + post.userId} 
+              className="font-semibold hover:underline"
+              onMouseEnter={() => setTitleUnderline(false)}
+              onMouseLeave={() => setTitleUnderline(true)}
+            >
+              User
+            </a>
+          </p>
+        </div>
       </div>
     </div>
-    </>
-  );
+  </>);
 };
 
 export default PostCard;
