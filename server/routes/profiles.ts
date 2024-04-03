@@ -1,4 +1,3 @@
-import { db } from "model/Profile";
 
 const router = require('express').Router()
 // import { Request, Response } from "express";
@@ -93,7 +92,9 @@ router.get("/demographics/:_id", async (req: any, res: any) => {
   const { _id }: { _id: string } = req.params;
   try {
     const viewers = await profiles.readViewsById(_id);
-    
+    // TODO: access views directly here from ViewSchema (likely requires a DAO?)
+    console.log("Viewers")
+    console.log(viewers)
     const departments = viewers.aggregate( [
       {
         $group: {
@@ -102,6 +103,8 @@ router.get("/demographics/:_id", async (req: any, res: any) => {
         }
       }
     ])
+    console.log("Departments")
+    console.log(departments)
     const affiliations = viewers.aggregate( [
       {
         $group: {
