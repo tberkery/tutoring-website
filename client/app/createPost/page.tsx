@@ -1,6 +1,6 @@
 "use client";
 import "../../styles/global.css";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import axios from "axios";
 import CreatePost from "@/components/CreatePost";
@@ -25,6 +25,19 @@ const Page : FC = () => {
   const [description, setDescription] = useState("");
   const [photoFile, setPhotoFile] = useState<File>(null);
 	const [refilling, setRefilling] = useState(false);
+
+  useEffect(() => { getProfile() }, [user]);
+
+  const getProfile = async () => {
+    if (!user) {
+      return;
+    }
+    const email = user.primaryEmailAddress.toString();
+    const response = await axios.get(`${api}/profiles/getByEmail/${email}`);
+    if (response.data.data.length === 0) {
+      router.replace('createAccount');
+    }
+  }
 
   const createCoursePost = async () => {
     const email = user.primaryEmailAddress.toString();
