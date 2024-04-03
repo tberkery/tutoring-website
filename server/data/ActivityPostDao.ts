@@ -1,4 +1,6 @@
 const ActivityPost = require("../model/ActivityPost.ts");
+const PostReview = require("../model/PostReview.ts");
+const PostReviewSchema = PostReview.schema;
 const mongoose = require("mongoose")
 
 interface PostReview {

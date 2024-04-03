@@ -1,8 +1,17 @@
 const CoursePost = require("../model/CoursePost.ts");
 const mongoose = require("mongoose");
 
+interface PostReview {
+    postId: string;
+    posterId: string;
+    reviewerId: string;
+    reviewDescription: string;
+    rating: number;
+}
+
+
 export class CoursePostDao {
-    async create(userId: string, courseName: string, takenAtHopkins: boolean, options?: {description?: string, price?: number, courseNumber?: string, courseDepartment?: string[], gradeReceived?: string, semesterTaken?: string, professorTakenWith?: string, schoolTakenAt?: string}) {
+    async create(userId: string, courseName: string, takenAtHopkins: boolean, options?: {description?: string, price?: number, courseNumber?: string, courseDepartment?: string[], gradeReceived?: string, semesterTaken?: string, professorTakenWith?: string, schoolTakenAt?: string, reviews?: Array<PostReview>}) {
         let newPost: any = {userId, courseName, takenAtHopkins}
         if (options){
             if(options.description){
@@ -28,6 +37,9 @@ export class CoursePostDao {
             }
             if (options.schoolTakenAt){
                 newPost.schoolTakenAt = options.schoolTakenAt;
+            }
+            if (options.reviews){
+                newPost.reviews = options.reviews;
             }
 
         }
@@ -64,7 +76,7 @@ export class CoursePostDao {
             console.error('Error fetching posts:', error);
         }
     }
-    async update( id: any, userId: string, courseName: string, takenAtHopkins: boolean, options?: {description?: string, price?: number, courseNumber?: string, courseDepartment?: string[], gradeReceived?: string, semesterTaken?: string, professorTakenWith?: string, schoolTakenAt?: string} ) {
+    async update( id: any, userId: string, courseName: string, takenAtHopkins: boolean, options?: {description?: string, price?: number, courseNumber?: string, courseDepartment?: string[], gradeReceived?: string, semesterTaken?: string, professorTakenWith?: string, schoolTakenAt?: string, reviews?: PostReview[]} ) {
         let newPost: any = {userId, courseName, takenAtHopkins}
         if (options){
             if(options.description){
@@ -90,6 +102,9 @@ export class CoursePostDao {
             }
             if (options.schoolTakenAt){
                 newPost.schoolTakenAt = options.schoolTakenAt;
+            }
+            if (options.reviews){
+                newPost.reviews = options.reviews;
             }
         }
         let post = await CoursePost.findByIdAndUpdate(id, newPost );

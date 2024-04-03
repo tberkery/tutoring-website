@@ -2,6 +2,10 @@ export {}
 
 const mongoose = require('mongoose');
 const {Schema} = require('mongoose');
+
+const PostReview = require("../model/PostReview.ts");
+const PostReviewSchema = PostReview.schema;
+
 const CoursePostSchema = new mongoose.Schema({
     userId: {
       type: String,
@@ -51,13 +55,10 @@ const CoursePostSchema = new mongoose.Schema({
         type: String,
         default: null
     },
-    reviews: [
-        {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: 'PostReview',
-          default: null,
-        }
-      ]
+    reviews: {
+        type: [PostReviewSchema],
+        default: []
+    }
 
     // courseId: { // this field will be null if it's non-academic
     //   type: Number,

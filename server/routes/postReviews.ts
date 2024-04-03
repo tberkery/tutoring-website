@@ -13,6 +13,9 @@ const CoursePostDao = new CoursePostDaoClass();
 const PostReviewDaoClass = require('../data/PostReviewDao');
 const PostReviewDao = new PostReviewDaoClass();
 
+const PostReview = require("../model/PostReview.ts");
+const PostReviewSchema = PostReview.schema;
+
 router.get('/getByProfileId/:profileId', async (req: any, res: any) => {
     try {
         // Fetch the profile by ID
@@ -69,6 +72,34 @@ router.get('/getByPostId/:postId', async (req: any, res: any) => {
 
     } catch (error) {
         console.error('Error fetching reviews:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+router.post('/:postId', async (req: any, res:any) => {
+    try {
+        const { postId, posterId, reviewerId, reviewDescription, rating }: {postId: string, posterId: string, reviewerId: string, reviewDescription: string, rating: number} = req.body;
+
+        const newPostReview = await PostReviewDao.create(postId, posterId, reviewerId, reviewDescription, rating);
+
+        // Fetch the post by ID
+        let post = await ActivityPostDao.readOne(req.params.postId);
+        if (!post) {
+            // If the activity post is not found, try fetching the course post
+            post = await CoursePostDao.readOne(req.params.postId);
+            if (!post) {
+                // If neither activity nor course post is found, return a 404 error
+                return res.status(404).json({ error: 'Post not found' });
+            } else {
+                post = await CoursePostDao.update(post._id, post.userId, post.courseName, post.takenAtHopkins, { reviews: [...post.reviews, newPostReview] });
+            }
+        } else {
+            post = await ActivityPostDao.update(post._id, post.userId, post.activityTitle, { reviews: [...post.reviews, newPostReview] });
+        }
+
+        res.status(201).json({ review: newPostReview });
+    } catch (error) {
+        console.error('Error creating review:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
