@@ -395,3 +395,60 @@ test('test delete() for an invalid id', async ()=> {
     const foundProfile = await profileDao.delete(id);
     expect(foundProfile).toBe(null);
 });
+
+test('test add profile view for valid id', async() => {
+    await mg.connect(URI)
+    const firstName = faker.person.firstName();
+    const lastName = faker.person.lastName();
+    const email = faker.internet.email();
+    const affiliation = "student";
+    const graduationYear = "2024";
+    const department = faker.lorem.word();
+    const profileDao = new ProfileDao();
+    
+    const profile =  await profileDao.create(firstName, lastName, email, affiliation, department, {graduationYear});
+
+    const id = new ObjectId(1);
+    const timestamp = "2022-02-17T13:36:45.954Z";
+    const duration = 120;
+    const updatedProfile = await profileDao.updateViews(profile._id, id, timestamp, duration)
+
+    expect(updatedProfile._id).toMatchObject(profile._id);
+    expect(updatedProfile.views).toHaveLength(1);
+
+    const firstView = updatedProfile.views[0];
+    expect(firstView.timestamp.toISOString()).toBe(timestamp); // Convert toISOString to match MongoDB Date format
+    expect(firstView.durationInSeconds).toBe(duration);
+    expect(firstView.viewerId).toMatchObject(id);
+})
+
+test('test observe profile view for valid id', async() => {
+    await mg.connect(URI)
+    const firstName = faker.person.firstName();
+    const lastName = faker.person.lastName();
+    const email = faker.internet.email();
+    const affiliation = "student";
+    const graduationYear = "2024";
+    const department = faker.lorem.word();
+    const profileDao = new ProfileDao();
+    
+    const profile =  await profileDao.create(firstName, lastName, email, affiliation, department, {graduationYear});
+
+    const id = new ObjectId(1);
+    const timestamp = "2022-02-17T13:36:45.954Z";
+    const duration = 120;
+    const updatedProfile = await profileDao.updateViews(profile._id, id, timestamp, duration)
+    
+    const retrievedProfile = await profileDao.readViewsById(profile._id);
+
+    expect(retrievedProfile._id).toMatchObject(profile._id);
+    expect(retrievedProfile.views).toHaveLength(1);
+
+    const firstView = retrievedProfile.views[0];
+    console.log("firstView")
+    console.log(firstView)
+    expect(firstView.timestamp.toISOString()).toBe(timestamp); // Convert toISOString to match MongoDB Date format
+    expect(firstView.durationInSeconds).toBe(duration);
+    expect(firstView.viewerId).toMatchObject(id);
+})
+

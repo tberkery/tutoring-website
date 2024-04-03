@@ -7,6 +7,7 @@ import Link from 'next/link';
 import Loader from "@/components/Loader";
 import PostCard from "@/components/PostCard";
 import RatingStars from "@/components/RatingStars";
+import ReviewCard from "@/components/ReviewCard";
 
 interface Profile {
   affiliation: string;
@@ -54,6 +55,31 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
   const [profileData, setProfile] = useState<Profile>();
   const [posts, setPosts] = useState<Post[]>([]);
   const [imgUrl, setImgUrl] = useState("../defaultimg.jpeg");
+  const [activeSection, setActiveSection] = useState("Posts");
+
+  const reviews = [
+    {
+      'title' : 'Very Good!!',
+      'rating' : 5,
+      'leftBy' : 'Kat Forbes',
+      'post' : 'Piano Lessons',
+      'text' : "Review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text",
+    },
+    {
+      'title' : 'Bad Experience...',
+      'rating' : 2,
+      'leftBy' : 'Ilana Chalom',
+      'post' : 'Linear Algebra',
+      'text' : "Short review text review text review text review text review text review text review text review text",
+    },
+    {
+      'title' : 'Learned a Lot!',
+      'rating' : 4,
+      'leftBy' : 'Anonymous',
+      'post' : 'Piano Lessons',
+      'text' : "Review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text",
+    },
+  ]
 
   const fetchData = async () => {
     try {
@@ -89,7 +115,7 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
           <p className="text-gray-700 text-base">{profileData.description}</p>
         </div>
         <div className="flex-none flex flex-col items-center mx-8">
-          <img className="w-268 h-268 md:w-48 md:h-48 snap-center rounded-md" src={imgUrl} alt={`${profileData.firstName}`} />
+          <img className="w-48 h-48 snap-center rounded-md" src={imgUrl} alt={`${profileData.firstName}`} />
           <RatingStars rating={4.5} starSize={26} numReviews={42} className="mt-2"/>
           <div className="flex mt-2 space-x-4">
             <Link href="/profile/" passHref>
@@ -100,11 +126,50 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
           </div>
         </div>
       </div>
-      <div className="container mx-auto px-6 py-8">
-        <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {posts.map((posts) => (
-            <PostCard key={posts._id} post={posts} />
-          ))}
+      <div className="w-full bg-blue-300 relative">
+        <div className="ml-8 flex items-end">
+          { ["Posts", "Reviews"].map((value, index) => {
+            return (
+              <button 
+                key={index}
+                className={`text-md w-32 mx-1 py-2 rounded-t-lg font-bold 
+                transition border-black relative -bottom-2 pb-4
+                ${activeSection === value ? 
+                  "bg-pageBg border-t border-l border-r z-20" :
+                  "hover:-translate-y-2 bg-sky-100"}
+                `}
+                disabled={activeSection === value}
+                onClick={ () => setActiveSection(value) }
+              >
+                { value }
+              </button>
+            )
+          }) }
+        </div>
+        <div className="w-full bg-pageBg absolute h-4 top-[50px] z-30"/>
+        <div
+          className="relative z-10 border-t border-black bg-pageBg px-6 py-8
+          flex justify-center"
+        >
+          { activeSection === "Posts" ?
+            <div 
+              className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2
+              lg:grid-cols-3 gap-4"
+            >
+              { posts.map((post) => (
+                <PostCard key={post._id} post={post} />
+              )) }
+            </div>
+          :
+            <div className="flex flex-col justify-center max-w-3xl">
+              { reviews.map((review) => (
+                <ReviewCard 
+                  review={review}
+                  className="mb-4 bg-white rounded-lg shadow-md"
+                />
+              )) }
+            </div>
+          }
         </div>
       </div>
     </>
