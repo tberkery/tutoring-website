@@ -5,6 +5,8 @@ const ProfileDao = require('../data/ProfileDao');
 
 const profiles = new ProfileDao();
 
+const db = require('../model/Profile');
+
 router.post("/", async (req: any, res: any) => {
   try {    
     const {firstName, lastName, email, affiliation, graduationYear, department, description} : {firstName: string, lastName: string, email: string, affiliation: string, graduationYear: string, department: string, description: string} = req.body;
@@ -77,7 +79,7 @@ router.put("/:_id", async (req: any, res: any) => {
     const { _id }: { _id: string } = req.params;
     const {firstName, lastName, email, affiliation, graduationYear, department, description, posts} : {firstName: string, lastName: string, email: string, affiliation: string, graduationYear: string, department: string, description: string, posts: []} = req.body;
     try {
-      const data = await profiles.update(_id, firstName, lastName, email, affiliation, department, {graduationYear, description, posts});
+      const data = await db.profiles.update(_id, firstName, lastName, email, affiliation, department, {graduationYear, description, posts});
       if (!data) {
         res.status(404).json({ msg: "User not found" });
         return;
@@ -92,11 +94,10 @@ router.get("/demographics/:_id", async (req: any, res: any) => {
   const { _id }: { _id: string } = req.params;
   try {
     const viewers = await profiles.readViewsById(_id);
-    console.log(viewers)
     const viewerIds = viewers.views.map((view: { viewerId: any; }) => view.viewerId)
-    console.log("ViewerIds")
-    console.log(viewerIds)
-    const departments = viewers.aggregate( [
+    const filteredViewerIds = viewerIds.filter((id: { id: any; }) => id !== undefined)
+    console.log(filteredViewerIds);
+    const departments = profiles.aggregate( [
       {
         $group: {
             _id: "$department",
