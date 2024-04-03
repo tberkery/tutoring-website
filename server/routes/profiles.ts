@@ -99,6 +99,9 @@ router.get("/demographics/:_id", async (req: any, res: any) => {
     console.log(filteredViewerIds);
     const departments = await db.aggregate( [
       {
+        $match: { _id: { $in: viewerIds } }
+      },
+      {
         $group: {
             _id: "$department",
             departmentCount: { $count:{} } 
@@ -109,6 +112,9 @@ router.get("/demographics/:_id", async (req: any, res: any) => {
     console.log(departments)
     const affiliations = await db.aggregate( [
       {
+        $match: { _id: { $in: viewerIds } }
+      },
+      {
         $group: {
             _id: "$affiliation",
             affiliationCount: { $count:{} }
@@ -116,6 +122,9 @@ router.get("/demographics/:_id", async (req: any, res: any) => {
       }
     ]).exec()
     const graduationYears = await db.aggregate( [
+      {
+        $match: { _id: { $in: viewerIds } }
+      },
       {
         $group: {
             _id: "$graduationYear",
