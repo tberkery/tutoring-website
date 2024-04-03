@@ -80,6 +80,8 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
     let body = {
       courseName: title,
       userId: profile._id,
+      userFirstName: profile.firstName,
+      userLastName: profile.lastName,
       courseNumber: number,
       courseDepartment: [ department ],
       takenAtHopkins: atJHU === "Yes"
@@ -111,7 +113,9 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
     const profile = response.data.data[0];
     let body = { 
       activityTitle: title,
-      userId: profile._id
+      userId: profile._id,
+      userFirstName: profile.firstName,
+      userLastName: profile.lastName,
     }
     if (price !== "") {
       body["price"] = price.replace(/\D/g, '');

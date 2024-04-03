@@ -46,6 +46,8 @@ const Page : FC = () => {
     let body = {
       courseName: title,
       userId: profile._id,
+      userFirstName: profile.firstName,
+      userLastName: profile.lastName,
       courseNumber: number,
       courseDepartment: [ department ],
       takenAtHopkins: atJHU === "Yes"
@@ -77,7 +79,9 @@ const Page : FC = () => {
     const profile = response.data.data[0];
     let body = { 
       activityTitle: title,
-      userId: profile._id
+      userId: profile._id,
+      userFirstName: profile.firstName,
+      userLastName: profile.lastName,
     }
     if (price !== "") {
       body["price"] = price.replace(/\D/g, '');
