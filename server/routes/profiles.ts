@@ -93,18 +93,30 @@ router.put("/:_id", async (req: any, res: any) => {
 router.get("/demographics/:_id", async (req: any, res: any) => {
   const { _id }: { _id: string } = req.params;
   try {
-    const viewers = await profiles.readViewsById(_id);
-    const viewerIds = viewers.views.map((view: { viewerId: any; }) => view.viewerId)
+    const startProfile = await profiles.readViewsById(_id);
+    if (!startProfile) {
+      res.status(500).send("Profile not found. Invalid ID");
+    }
+    let viewerIds: any[] = [];
+    try {
+      viewerIds = startProfile.views.map((view: { viewerId: any; }) => view.viewerId)
+    }
+    catch(error) { // If no views, return empty dictionaries, not an error
+      const departments = {};
+      const affiliations = {};
+      const graduationYears = {};
+      res.status(200).json({ departments, affiliations, graduationYears });
+      return;
+    }
     const filteredViewerIds = viewerIds.filter((id: { id: any; }) => id !== undefined)
-    console.log(filteredViewerIds);
     const departments = await db.aggregate( [
       {
-        $match: { _id: { $in: viewerIds } }
+        $match: { _id: { $in: filteredViewerIds } }
       },
       {
         $group: {
             _id: "$department",
-            departmentCount: { $count:{} } 
+            count: { $count:{} } 
         }
       }
     ]).exec()
@@ -112,23 +124,23 @@ router.get("/demographics/:_id", async (req: any, res: any) => {
     console.log(departments)
     const affiliations = await db.aggregate( [
       {
-        $match: { _id: { $in: viewerIds } }
+        $match: { _id: { $in: filteredViewerIds } }
       },
       {
         $group: {
             _id: "$affiliation",
-            affiliationCount: { $count:{} }
+            count: { $count:{} }
         }
       }
     ]).exec()
     const graduationYears = await db.aggregate( [
       {
-        $match: { _id: { $in: viewerIds } }
+        $match: { _id: { $in: filteredViewerIds } }
       },
       {
         $group: {
             _id: "$graduationYear",
-            graduationYearCount: { $count:{} }
+            count: { $count:{} }
         }
       }
     ]).exec()
