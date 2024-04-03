@@ -10,6 +10,7 @@ import Loader from '../../components/Loader';
 import RatingStars from "@/components/RatingStars";
 import ReviewCard from "@/components/ReviewCard";
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Star } from "lucide-react";
 
 interface ActivityPost {
   _id: string;
@@ -86,6 +87,12 @@ const Page : FC = () => {
     { title: 'Calculus III', views: 54},
     { title: 'Piano Lessons', views: 48},
   ]
+
+  const ratedPosts = [
+    { title: 'Calculus III', rating: 4.8 },
+    { title: 'Synchronized Swimming', rating: 4.7 },
+    { title: 'Piano Lessons', rating: 4.2 },
+  ]
   
   const fetchData = async () => {
     if (!isLoaded || !isSignedIn) {
@@ -134,6 +141,112 @@ const Page : FC = () => {
     return <></>;
   }
 
+  const getAnalyticsSection = () => {
+    return (
+      <div className="flex-col flex-grow">
+        <div className="flex justify-center flex-wrap gap-x-8">
+          <div 
+            className="flex flex-col flex-grow basis-[440px] 
+            min-w-[440px] max-w-[640px]"
+          >
+            <div className="bg-white px-8 py-8 mb-8 rounded-xl shadow-md">
+              <h3 className="text-2xl font-bold mb-4 text-center">
+                Number of Profile Views
+              </h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={chartData}>
+                  <CartesianGrid stroke="#ccc"/>
+                  <Line type="monotone" dataKey="value" stroke="#8884d8"/>
+                  <Tooltip content={getCustomTooltip}/>
+                  <XAxis dataKey="label"/>
+                  <YAxis/>
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="bg-white px-8 py-8 mb-8 rounded-xl shadow-md">
+              <h3 className="text-2xl font-bold mb-4 text-center">
+                Average Time Spent on Profile
+              </h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={chartData}>
+                  <CartesianGrid stroke="#ccc"/>
+                  <Line type="monotone" dataKey="value" stroke="#8884d8"/>
+                  <Tooltip content={getCustomTooltip}/>
+                  <XAxis dataKey="label"/>
+                  <YAxis/>
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+          <div 
+            className="flex flex-col flex-grow basis-[320px] 
+            min-w-[320px] max-w-[560px]"
+          >
+            <div className="bg-white px-8 py-8 mb-8 rounded-xl shadow-md">
+              <h3 className="text-2xl font-bold mb-4 text-center">
+                Most Viewed Posts
+              </h3>
+              { viewedPosts.map((post, index) => {
+                return <>
+                  <div className="flex items-center mb-2">
+                    <div
+                      className="w-9 h-9 mr-5 flex flex-shrink-0 justify-center
+                      items-center bg-sky-800 rounded-3xl"
+                    >
+                      <p className="text-white font-bold text-2xl">
+                        {index + 1}
+                      </p>
+                    </div>
+                    <a
+                      className="text-lg mr-2 line-clamp-1
+                      hover:cursor-pointer hover:underline"
+                    >
+                      {post.title}
+                    </a>
+                    <p className="text-slate-500 text-nowrap">
+                      ({post.views} views)
+                    </p>
+                  </div>
+                </>
+              })}
+            </div>
+            <div className="bg-white px-8 py-8 mb-8 rounded-xl shadow-md">
+              <h3 className="text-2xl font-bold mb-4 text-center">
+                Highest Rated Posts
+              </h3>
+              { ratedPosts.map((post, index) => {
+                return <>
+                  <div className="flex justify-between items-center mb-2">
+                    <div className="flex items-center">
+                      <div
+                        className="w-9 h-9 mr-5 flex flex-shrink-0
+                        justify-center items-center bg-sky-800 rounded-3xl"
+                      >
+                        <p className="text-white font-bold text-2xl">
+                          {index + 1}
+                        </p>
+                      </div>
+                      <a
+                        className="text-lg mr-2 line-clamp-1
+                        hover:cursor-pointer hover:underline"
+                      >
+                        {post.title}
+                      </a>
+                    </div>
+                    <div className="flex items-center gap-x-1">
+                      <Star size={20} strokeWidth={1} className="fill-yellow-300"/>
+                      <p>{post.rating}</p>
+                    </div>
+                  </div>
+                </>
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const getTabSection = () => {
     if (activeSection === "Posts") {
       return (
@@ -158,79 +271,7 @@ const Page : FC = () => {
         </div>
       )
     } else if (activeSection === "Analytics") {
-      return (
-        <div className="flex-col flex-grow">
-          <div className="flex justify-center flex-wrap gap-x-8">
-            <div 
-              className="flex flex-col flex-grow basis-[440px] 
-              min-w-[440px] max-w-[640px]"
-            >
-              <div className="bg-white px-8 py-8 mb-8 rounded-xl shadow-md">
-                <h3 className="text-2xl font-bold mb-4 text-center">
-                  Number of Profile Views
-                </h3>
-                <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={chartData}>
-                    <CartesianGrid stroke="#ccc"/>
-                    <Line type="monotone" dataKey="value" stroke="#8884d8"/>
-                    <Tooltip content={getCustomTooltip}/>
-                    <XAxis dataKey="label"/>
-                    <YAxis/>
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-              <div className="bg-white px-8 py-8 mb-8 rounded-xl shadow-md">
-                <h3 className="text-2xl font-bold mb-4 text-center">
-                  Average Time Spent on Profile
-                </h3>
-                <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={chartData}>
-                    <CartesianGrid stroke="#ccc"/>
-                    <Line type="monotone" dataKey="value" stroke="#8884d8"/>
-                    <Tooltip content={getCustomTooltip}/>
-                    <XAxis dataKey="label"/>
-                    <YAxis/>
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-            <div 
-              className="flex flex-col flex-grow basis-[320px] 
-              min-w-[320px] max-w-[480px]"
-            >
-              <div className="bg-white px-8 py-8 mb-8 rounded-xl shadow-md">
-                <h3 className="text-2xl font-bold mb-4 text-center">
-                  Most Viewed Posts
-                </h3>
-                { viewedPosts.map((post, index) => {
-                  return <>
-                    <div className="flex items-center mb-2">
-                      <div
-                        className="w-9 h-9 mr-5 flex flex-shrink-0 justify-center
-                        items-center bg-sky-800 rounded-3xl"
-                      >
-                        <p className="text-white font-bold text-2xl">
-                          {index + 1}
-                        </p>
-                      </div>
-                      <a
-                        className="text-lg mr-2 line-clamp-1
-                        hover:cursor-pointer hover:underline"
-                      >
-                        {post.title}
-                      </a>
-                      <p className="text-slate-500 text-nowrap">
-                        ({post.views} views)
-                      </p>
-                    </div>
-                  </>
-                })}
-                
-              </div>
-            </div>
-          </div>
-        </div>
-      )
+      return getAnalyticsSection();
     } else {
       return <></>
     }
