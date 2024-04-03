@@ -26,7 +26,6 @@ const Page : FC = () => {
         </div>
       );
     }
-  
     return <></>;
   }
 

@@ -9,6 +9,7 @@ import Navbar from "../../components/Navbar"
 import Loader from '../../components/Loader';
 import RatingStars from "@/components/RatingStars";
 import ReviewCard from "@/components/ReviewCard";
+import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 interface ActivityPost {
   _id: string;
@@ -71,6 +72,20 @@ const Page : FC = () => {
       'text' : "Review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text",
     },
   ]
+
+  const chartData = [
+    { label: 'March 4th', value: 20 },
+    { label: 'March 11th', value: 12 },
+    { label: 'March 18th', value: 15 },
+    { label: 'March 25th', value: 39 },
+    { label: 'April 1st', value: 25 },
+  ];
+
+  const viewedPosts = [
+    { title: 'Linear Algebra', views: 79},
+    { title: 'Calculus III', views: 54},
+    { title: 'Piano Lessons', views: 48},
+  ]
   
   const fetchData = async () => {
     if (!isLoaded || !isSignedIn) {
@@ -103,6 +118,124 @@ const Page : FC = () => {
       </>
     )
   }
+
+  const getCustomTooltip = ({ payload, label, active }) => {
+    if (active) {
+      return (
+        <div 
+          className="bg-white px-2 py-1 border
+          border-slate-300"
+        >
+          <p className="font-bold text-slate-800">{label}</p>
+          <p className="text-gray-600">{`views: ${payload[0].value}`}</p>
+        </div>
+      );
+    }
+    return <></>;
+  }
+
+  const getTabSection = () => {
+    if (activeSection === "Posts") {
+      return (
+        <div 
+          className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2
+          lg:grid-cols-3 gap-4"
+        >
+          { posts.map((post) => (
+            <PostCard key={post._id} post={post} />
+          )) }
+        </div>
+      )
+    } else if (activeSection === "Reviews") {
+      return (
+        <div className="flex flex-col justify-center max-w-3xl">
+          { reviews.map((review) => (
+            <ReviewCard 
+              review={review}
+              className="mb-4 bg-white rounded-lg shadow-md"
+            />
+          )) }
+        </div>
+      )
+    } else if (activeSection === "Analytics") {
+      return (
+        <div className="flex-col flex-grow">
+          <div className="flex justify-center flex-wrap gap-x-8">
+            <div 
+              className="flex flex-col flex-grow basis-[440px] 
+              min-w-[440px] max-w-[640px]"
+            >
+              <div className="bg-white px-8 py-8 mb-8 rounded-xl shadow-md">
+                <h3 className="text-2xl font-bold mb-4 text-center">
+                  Number of Profile Views
+                </h3>
+                <ResponsiveContainer width="100%" height={300}>
+                  <LineChart data={chartData}>
+                    <CartesianGrid stroke="#ccc"/>
+                    <Line type="monotone" dataKey="value" stroke="#8884d8"/>
+                    <Tooltip content={getCustomTooltip}/>
+                    <XAxis dataKey="label"/>
+                    <YAxis/>
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="bg-white px-8 py-8 mb-8 rounded-xl shadow-md">
+                <h3 className="text-2xl font-bold mb-4 text-center">
+                  Average Time Spent on Profile
+                </h3>
+                <ResponsiveContainer width="100%" height={300}>
+                  <LineChart data={chartData}>
+                    <CartesianGrid stroke="#ccc"/>
+                    <Line type="monotone" dataKey="value" stroke="#8884d8"/>
+                    <Tooltip content={getCustomTooltip}/>
+                    <XAxis dataKey="label"/>
+                    <YAxis/>
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+            <div 
+              className="flex flex-col flex-grow basis-[320px] 
+              min-w-[320px] max-w-[480px]"
+            >
+              <div className="bg-white px-8 py-8 mb-8 rounded-xl shadow-md">
+                <h3 className="text-2xl font-bold mb-4 text-center">
+                  Most Viewed Posts
+                </h3>
+                { viewedPosts.map((post, index) => {
+                  return <>
+                    <div className="flex items-center mb-2">
+                      <div
+                        className="w-9 h-9 mr-5 flex flex-shrink-0 justify-center
+                        items-center bg-sky-800 rounded-3xl"
+                      >
+                        <p className="text-white font-bold text-2xl">
+                          {index + 1}
+                        </p>
+                      </div>
+                      <a
+                        className="text-lg mr-2 line-clamp-1
+                        hover:cursor-pointer hover:underline"
+                      >
+                        {post.title}
+                      </a>
+                      <p className="text-slate-500 text-nowrap">
+                        ({post.views} views)
+                      </p>
+                    </div>
+                  </>
+                })}
+                
+              </div>
+            </div>
+          </div>
+        </div>
+      )
+    } else {
+      return <></>
+    }
+  }
+
   return (
     <>
       <Navbar />
@@ -134,7 +267,7 @@ const Page : FC = () => {
       </div>
       <div className="w-full bg-blue-300 relative">
         <div className="ml-8 flex items-end">
-          { ["Posts", "Reviews"].map((value, index) => {
+          { ["Posts", "Reviews", "Analytics"].map((value, index) => {
             return (
               <button 
                 key={index}
@@ -157,25 +290,7 @@ const Page : FC = () => {
           className="relative z-10 border-t border-black bg-pageBg px-6 py-8
           flex justify-center"
         >
-          { activeSection === "Posts" ?
-            <div 
-              className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2
-              lg:grid-cols-3 gap-4"
-            >
-              { posts.map((post) => (
-                <PostCard key={post._id} post={post} />
-              )) }
-            </div>
-          :
-            <div className="flex flex-col justify-center max-w-3xl">
-              { reviews.map((review) => (
-                <ReviewCard 
-                  review={review}
-                  className="mb-4 bg-white rounded-lg shadow-md"
-                />
-              )) }
-            </div>
-          }
+          { getTabSection() }
         </div>
       </div>
     </>
