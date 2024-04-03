@@ -82,9 +82,9 @@ export class ProfileDao {
     return data;
   }
 
-  async updateViews(_id: Number, viewerId: String, timestamp: String, duration: Number) {
+  async updateViews(_id: String, viewerId: String, timestamp: String, duration: Number) {
     const data = await Profile.findByIdAndUpdate(_id,
-      { $push: { views: { _id: viewerId, timestamp: timestamp, durationInSeconds: duration } } },
+      { $push: { views: { viewerId: viewerId, timestamp: timestamp, durationInSeconds: duration } } },
       { new: true })
     return data
   }
