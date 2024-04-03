@@ -2,6 +2,7 @@
 import React, { FC, useEffect, useState } from "react";
 import axios from 'axios';
 import Link from 'next/link'; 
+import { useRouter } from "next/navigation";
 import "../../styles/global.css";
 import { useUser } from '@clerk/clerk-react';
 import PostCard from '../../components/PostCard';
@@ -52,6 +53,7 @@ const Page : FC = () => {
   const [imgUrl, setImgUrl] = useState("../defaultimg.jpeg");
   const [activeSection, setActiveSection] = useState("Posts");
   const [activeAnalytics, setActiveAnalytics] = useState(analyticsSections[0]);
+  const router = useRouter();
 
   const reviews = [
     {
@@ -124,6 +126,9 @@ const Page : FC = () => {
     }
     try {
       const userInfo = await axios.get(`${api}/profiles/getByEmail/${user.primaryEmailAddress.toString()}`);
+      if (userInfo.data.data.length === 0) {
+        router.replace('/createAccount');
+      }
       setProfileData(userInfo.data.data[0]);
       const posts = await axios.get(`${api}/allPosts/findAllByUserId/${userInfo.data.data[0]._id}`);
       if (posts.data.length !== 0) {

@@ -20,6 +20,12 @@ export class ProfileDao {
     const data = await Profile.findById(_id).lean().select("-__v");
     return data;
   }
+
+  async readViewsById(_id: string) {
+    const data = await Profile.findById(_id).lean().select("views");
+    return data;
+}
+
   async readByEmail(email:string) {
     const data = await Profile.find({email:email});
     return data;
@@ -74,6 +80,13 @@ export class ProfileDao {
     }
     const data = await Profile.findByIdAndUpdate(_id, newProfile)
     return data;
+  }
+
+  async updateViews(_id: String, viewerId: String, timestamp: String, duration: Number) {
+    const data = await Profile.findByIdAndUpdate(_id,
+      { $push: { views: { viewerId: viewerId, timestamp: timestamp, durationInSeconds: duration } } },
+      { new: true })
+    return data
   }
 
   async delete(_id: Number) {
