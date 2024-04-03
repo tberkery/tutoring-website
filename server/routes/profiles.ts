@@ -97,7 +97,7 @@ router.get("/demographics/:_id", async (req: any, res: any) => {
     const viewerIds = viewers.views.map((view: { viewerId: any; }) => view.viewerId)
     const filteredViewerIds = viewerIds.filter((id: { id: any; }) => id !== undefined)
     console.log(filteredViewerIds);
-    const departments = profiles.aggregate( [
+    const departments = db.aggregate( [
       {
         $group: {
             _id: "$department",
@@ -107,7 +107,7 @@ router.get("/demographics/:_id", async (req: any, res: any) => {
     ])
     console.log("Departments")
     console.log(departments)
-    const affiliations = viewers.aggregate( [
+    const affiliations = db.profile.aggregate( [
       {
         $group: {
             _id: "$affiliation",
@@ -115,7 +115,7 @@ router.get("/demographics/:_id", async (req: any, res: any) => {
         }
       }
     ])
-    const graduationYears = viewers.aggregate( [
+    const graduationYears = db.profile.aggregate( [
       {
         $group: {
             _id: "$graduationYear",
