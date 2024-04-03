@@ -1,3 +1,5 @@
+import { db } from "model/Profile";
+
 const router = require('express').Router()
 // import { Request, Response } from "express";
 const ProfileDao = require('../data/ProfileDao');
@@ -87,6 +89,40 @@ router.put("/:_id", async (req: any, res: any) => {
     }
 });
 
+router.get("/demographics/:_id", async (req: any, res: any) => {
+  const { _id }: { _id: string } = req.params;
+  try {
+    const viewers = await profiles.readViewsById(_id);
+    
+    const departments = viewers.aggregate( [
+      {
+        $group: {
+            _id: "$department",
+            departmentCount: { $count: "$_id" } 
+        }
+      }
+    ])
+    const affiliations = viewers.aggregate( [
+      {
+        $group: {
+            _id: "$affiliation",
+            affiliationCount: { $count: "$_id" }
+        }
+      }
+    ])
+    const graduationYears = viewers.aggregate( [
+      {
+        $group: {
+            _id: "$graduationYear",
+            graduationYearCount: { $count: "$_id" }
+        }
+      }
+    ])
+    res.status(200).json({ departments, affiliations, graduationYears });
+  } catch (err) {
+    res.status(500).send("Server Error");
+  }
+})
 
 router.delete("/:_id", async (req: any, res: any) => {
     const {_id}: {_id: string } = req.params;
