@@ -97,32 +97,32 @@ router.get("/demographics/:_id", async (req: any, res: any) => {
     const viewerIds = viewers.views.map((view: { viewerId: any; }) => view.viewerId)
     const filteredViewerIds = viewerIds.filter((id: { id: any; }) => id !== undefined)
     console.log(filteredViewerIds);
-    const departments = db.aggregate( [
+    const departments = await db.aggregate( [
       {
         $group: {
             _id: "$department",
-            departmentCount: { $count: "$_id" } 
+            departmentCount: { $count:{} } 
         }
       }
-    ])
+    ]).exec()
     console.log("Departments")
     console.log(departments)
-    const affiliations = db.profile.aggregate( [
+    const affiliations = await db.aggregate( [
       {
         $group: {
             _id: "$affiliation",
-            affiliationCount: { $count: "$_id" }
+            affiliationCount: { $count:{} }
         }
       }
-    ])
-    const graduationYears = db.profile.aggregate( [
+    ]).exec()
+    const graduationYears = await db.aggregate( [
       {
         $group: {
             _id: "$graduationYear",
-            graduationYearCount: { $count: "$_id" }
+            graduationYearCount: { $count:{} }
         }
       }
-    ])
+    ]).exec()
     res.status(200).json({ departments, affiliations, graduationYears });
   } catch (err) {
     res.status(500).send("Server Error");
