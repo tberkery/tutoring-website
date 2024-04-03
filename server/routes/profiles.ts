@@ -120,8 +120,6 @@ router.get("/demographics/:_id", async (req: any, res: any) => {
         }
       }
     ]).exec()
-    console.log("Departments")
-    console.log(departments)
     const affiliations = await db.aggregate( [
       {
         $match: { _id: { $in: filteredViewerIds } }
