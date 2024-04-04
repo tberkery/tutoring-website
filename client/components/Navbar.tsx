@@ -61,7 +61,9 @@ const NavBar: FC = () => {
                 <DropdownMenuItem>
                   <Link href="/profile">Profile</Link>
                   </DropdownMenuItem>
-                <DropdownMenuItem>Messages</DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Link href="/chat">Messages</Link>
+                </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>Log Out</DropdownMenuItem>
               </DropdownMenuContent>

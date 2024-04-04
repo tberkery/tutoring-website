@@ -1,8 +1,11 @@
+
 const router = require('express').Router()
 // import { Request, Response } from "express";
 const ProfileDao = require('../data/ProfileDao');
 
 const profiles = new ProfileDao();
+
+const db = require('../model/Profile');
 
 router.post("/", async (req: any, res: any) => {
   try {    
@@ -45,11 +48,38 @@ router.get("/getByEmail/:email", async (req: any, res: any) => {
     }
   });
 
+router.get("/views/:_id", async (req: any, res: any) => {
+  const { _id }: { _id: string } = req.params;
+  try {
+    const data = await profiles.readViewsById(_id);
+    res.status(200).json({ data });
+  } catch (err) {
+    res.status(500).send("Server Error");
+  }
+});
+
+router.put("/views/:_id", async (req: any, res: any) => {
+  const { _id }: { _id: string } = req.params;
+  const { viewerId, startTime, duration }: { viewerId: string, startTime: string, duration: number } = req.body; // start_time should be a date/time. duration should be a number of seconds.
+  try {
+    const data = await profiles.updateViews(_id, viewerId, startTime, duration) 
+    if (!data) {
+      res.status(404).json({ msg: "Profile view update not made" });
+      return;
+    }
+    res.status(200).json({ data });
+  } catch (err) {
+    res.status(500).send("Server Error");
+  }
+});
+
+
+
 router.put("/:_id", async (req: any, res: any) => {
     const { _id }: { _id: string } = req.params;
     const {firstName, lastName, email, affiliation, graduationYear, department, description, posts} : {firstName: string, lastName: string, email: string, affiliation: string, graduationYear: string, department: string, description: string, posts: []} = req.body;
     try {
-      const data = await profiles.update(_id, firstName, lastName, email, affiliation, department, {graduationYear, description, posts});
+      const data = await db.profiles.update(_id, firstName, lastName, email, affiliation, department, {graduationYear, description, posts});
       if (!data) {
         res.status(404).json({ msg: "User not found" });
         return;
@@ -60,6 +90,63 @@ router.put("/:_id", async (req: any, res: any) => {
     }
 });
 
+router.get("/demographics/:_id", async (req: any, res: any) => {
+  const { _id }: { _id: string } = req.params;
+  try {
+    const startProfile = await profiles.readViewsById(_id);
+    if (!startProfile) {
+      res.status(500).send("Profile not found. Invalid ID");
+    }
+    let viewerIds: any[] = [];
+    try {
+      viewerIds = startProfile.views.map((view: { viewerId: any; }) => view.viewerId)
+    }
+    catch(error) { // If no views, return empty dictionaries, not an error
+      const departments = {};
+      const affiliations = {};
+      const graduationYears = {};
+      res.status(200).json({ departments, affiliations, graduationYears });
+      return;
+    }
+    const filteredViewerIds = viewerIds.filter((id: { id: any; }) => id !== undefined)
+    const departments = await db.aggregate( [
+      {
+        $match: { _id: { $in: filteredViewerIds } }
+      },
+      {
+        $group: {
+            _id: "$department",
+            count: { $count:{} } 
+        }
+      }
+    ]).exec()
+    const affiliations = await db.aggregate( [
+      {
+        $match: { _id: { $in: filteredViewerIds } }
+      },
+      {
+        $group: {
+            _id: "$affiliation",
+            count: { $count:{} }
+        }
+      }
+    ]).exec()
+    const graduationYears = await db.aggregate( [
+      {
+        $match: { _id: { $in: filteredViewerIds } }
+      },
+      {
+        $group: {
+            _id: "$graduationYear",
+            count: { $count:{} }
+        }
+      }
+    ]).exec()
+    res.status(200).json({ departments, affiliations, graduationYears });
+  } catch (err) {
+    res.status(500).send("Server Error");
+  }
+})
 
 router.delete("/:_id", async (req: any, res: any) => {
     const {_id}: {_id: string } = req.params;

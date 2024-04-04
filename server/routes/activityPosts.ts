@@ -4,6 +4,15 @@ const router = require('express').Router();
 const ActivityPostDaoClass = require('../data/ActivityPostDao');
 const ActivityPostDao = new ActivityPostDaoClass();
 
+
+interface PostReview {
+  postId: string;
+  posterId: string;
+  reviewerId: string;
+  reviewDescription: string;
+  rating: number;
+}
+
 router.post("/", async (req: any, res: any) => {
   try {
     const {userId, activityTitle, activityDescription, activityPostPicKey, price, tags}: {userId: string, activityTitle: string, activityDescription: string, activityPostPicKey: string, price: string, tags: [String]} = req.body;

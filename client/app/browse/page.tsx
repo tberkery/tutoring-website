@@ -15,6 +15,8 @@ import PostCard from "@/components/PostCard";
 import "../../styles/loader.css";
 import Loader from "@/components/Loader";
 import { Checkbox } from "@/components/ui/checkbox"
+import { useUser } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 
 interface ActivityPost {
     _id: string;
@@ -71,10 +73,25 @@ const Page : FC = () => {
         athletic: false,
     });
 
+	const { user } = useUser();
+    const router = useRouter();
+
+    const checkProfile = async () => {
+        if (!user) {
+            return;
+        }
+        const email = user.primaryEmailAddress.toString();
+        const response = await axios.get(`${api}/profiles/getByEmail/${email}`);
+        if (response.data.data.length === 0) {
+            router.replace('createAccount');
+        }
+    }
+
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
             try {
+                await checkProfile();
                 const postResponse = await axios.get(`${api}/allPosts`);
                 setPosts(postResponse.data);
                 console.log(postResponse.data);
@@ -85,7 +102,7 @@ const Page : FC = () => {
             };
             }
             fetchData();
-        }, [api]);
+        }, [api, user]);
 
     useEffect(() => {
         filterPosts();
