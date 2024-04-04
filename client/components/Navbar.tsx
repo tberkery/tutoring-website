@@ -26,7 +26,7 @@ import {
 const NavBar: FC = () => {
   const { isLoaded, isSignedIn } = useUser();
   return (
-    <nav className="flex justify-between items-center p-4 bg-white">
+    <nav className="flex justify-between items-center p-4 bg-white h-18">
       <div className="flex items-center space-x-4">
         <span className="text-xl font-bold mr-2">TUTORHUB</span>
         <Link 
