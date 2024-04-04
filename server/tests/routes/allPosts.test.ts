@@ -118,6 +118,8 @@ describe('Test allPosts routes', () => {
 
         const newPostData1 = {
             userId: 'exampleUserId',
+            userFirstName: 'Dokyung',
+            userLastName: 'Yang',
             activityTitle: 'Example Activity 108',
             activityDescription: 'Example description',
             imageUrl: 'exampleImageUrl',
@@ -128,6 +130,8 @@ describe('Test allPosts routes', () => {
 
         const newPostData2 = {
             userId: 'exampleUserId',
+            userFirstName: 'Dokyung',
+            userLastName: 'Yang',
             activityTitle: 'Example Activity 107',
             activityDescription: 'Example description',
             imageUrl: 'exampleImageUrl',
@@ -138,6 +142,8 @@ describe('Test allPosts routes', () => {
 
         const newPostData3 = {
             userId: 'exampleUserId',
+            userFirstName: 'Dokyung',
+            userLastName: 'Yang',
             activityTitle: 'Example Activity 106',
             activityDescription: 'Example description',
             imageUrl: 'exampleImageUrl',
@@ -148,6 +154,8 @@ describe('Test allPosts routes', () => {
 
         const newPostData4 = {
             userId: 'exampleUserId',
+            userFirstName: 'Dokyung',
+            userLastName: 'Yang',
             activityTitle: 'Example Activity 105',
             activityDescription: 'Example description',
             imageUrl: 'exampleImageUrl',
@@ -190,6 +198,8 @@ describe('Test allPosts routes', () => {
     
             const newPostData1 = {
                 userId: 'exampleUserId',
+                userFirstName: 'Dokyung',
+                userLastName: 'Yang',
                 activityTitle: 'Example Activity 108',
                 activityDescription: 'Example description',
                 imageUrl: 'exampleImageUrl',
@@ -211,6 +221,8 @@ describe('Test allPosts routes', () => {
 
             const newPostData2 = {
                 userId: 'exampleUserId',
+                userFirstName: 'Dokyung',
+                userLastName: 'Yang',
                 activityTitle: 'Example Activity 107',
                 activityDescription: 'Example description',
                 imageUrl: 'exampleImageUrl',
