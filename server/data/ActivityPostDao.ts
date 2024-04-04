@@ -12,8 +12,8 @@ interface PostReview {
 }
 
 export class ActivityPostDao {
-    async create(userId: string, activityTitle: string, options?: {activityDescription?: string, activityPostPicKey?: string, price?: number, tags?: Array<string>, reviews?: Array<PostReview>}) {
-        let newPost: any = {userId, activityTitle}
+    async create(userId: string, userFirstName: string, userLastName: string, activityTitle: string, options?: {activityDescription?: string, activityPostPicKey?: string, price?: number, tags?: Array<string>, reviews?: Array<PostReview>}) {
+        let newPost: any = {userId, userFirstName, userLastName, activityTitle}
         if (options){
             if (options.activityDescription){
                 newPost.activityDescription = options.activityDescription;
@@ -97,8 +97,8 @@ export class ActivityPostDao {
         return posts;
 
     }
-    async update( id: any, userId: string, activityTitle: string, options?: {activityDescription?: string, activityPostPicKey?: number, price?: number, tags?: string[], reviews?: PostReview[]} ) {
-        let newPost: any = {userId, activityTitle}
+    async update( id: any, userId: string, userFirstName: string, userLastName: string, activityTitle: string, options?: {activityDescription?: string, activityPostPicKey?: number, price?: number, tags?: string[], reviews?: PostReview[]} ) {
+        let newPost: any = {userId, userFirstName, userLastName, activityTitle}
         if (options){
             if(options.activityDescription){
                 newPost.activityDescription = options.activityDescription
