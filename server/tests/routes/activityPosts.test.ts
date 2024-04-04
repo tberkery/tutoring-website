@@ -16,6 +16,8 @@ describe('Test activityPosts routes', () => {
         // Create a post to get a valid post ID
         const newPostData = {
             userId: 'exampleUserId',
+            userFirstName: 'Ilana',
+            userLastName: 'Chalom',
             activityTitle: 'Example Activity',
             activityDescription: 'Example description',
             activityPostPicKey: 'exampleactivityPostPicKey',
@@ -42,6 +44,8 @@ describe('Test activityPosts routes', () => {
     test('GET /activityPosts/findOne/:id', async () => {
         const newPostData = {
             userId: 'exampleUserId',
+            userFirstName: 'Katherine',
+            userLastName: 'Forbes',
             activityTitle: 'Example Activity',
             activityDescription: 'Example description',
             activityPostPicKey: 'exampleactivityPostPicKey',
@@ -83,6 +87,8 @@ describe('Test activityPosts routes', () => {
 
         const example1PostData = {
             userId: 'example1UserId',
+            userFirstName: 'Matthew',
+            userLastName: 'Flynn',
             activityTitle: 'Example1 Activity',
             activityDescription: 'Example1 description',
             activityPostPicKey: 'example1activityPostPicKey',
@@ -92,6 +98,8 @@ describe('Test activityPosts routes', () => {
 
         const example2PostData = {
             userId: 'example2UserId',
+            userFirstName: 'Tad',
+            userLastName: 'Berkery',
             activityTitle: 'Example2 Activity',
             activityDescription: 'Example2 description',
             activityPostPicKey: 'example2activityPostPicKey',
@@ -122,6 +130,8 @@ describe('Test activityPosts routes', () => {
     test('PUT /activityPosts/:id', async () => {
         const newPostData = {
             userId: 'exampleUserId',
+            userFirstName: 'Nolan',
+            userLastName: 'Fogarty',
             activityTitle: 'Example Activity',
             activityDescription: 'Example description',
             activityPostPicKey: 'exampleactivityPostPicKey',
@@ -138,12 +148,16 @@ describe('Test activityPosts routes', () => {
         const updatedData = {
             id: postId,
             userId: 'exampleUserId',
+            userFirstName: 'Ilana',
+            userLastName: 'Chalom',
             activityTitle: 'Updated Title',
             activityDescription: 'Updated Description',
         };
 
         const finalPostData = {
             userId: 'exampleUserId',
+            userFirstName: 'Ilana',
+            userLastName: 'Chalom',
             activityTitle: 'Updated Title',
             activityDescription: 'Updated Description',
             activityPostPicKey: 'exampleactivityPostPicKey',
@@ -175,6 +189,8 @@ describe('Test activityPosts routes', () => {
     test('DELETE /activityPosts/:id', async () => {
         const newPostData = {
             userId: 'exampleUserId',
+            userFirstName: 'Dokyung',
+            userLastName: 'Yang',
             activityTitle: 'Example Activity',
             activityDescription: 'Example description',
             activityPostPicKey: 'exampleactivityPostPicKey',
@@ -202,6 +218,8 @@ describe('Test activityPosts routes', () => {
         // Create example data for activity posts
         const example1PostData = {
             userId: 'example1UserId',
+            userFirstName: 'Kat',
+            userLastName: 'Forbes',
             activityTitle: 'Example1 Activity',
             activityDescription: 'Example1 description',
             activityPostPicKey: 'example1activityPostPicKey',
@@ -211,6 +229,8 @@ describe('Test activityPosts routes', () => {
     
         const example2PostData = {
             userId: 'example2UserId',
+            userFirstName: 'Kat',
+            userLastName: 'Forbes',
             activityTitle: 'Example2 Activity',
             activityDescription: 'Example2 description',
             activityPostPicKey: 'example2activityPostPicKey',
@@ -243,6 +263,8 @@ describe('Test activityPosts routes', () => {
         // Create example data for activity posts
         const example1PostData = {
             userId: 'example1UserId',
+            userFirstName: 'exampleName',
+            userLastName: 'exampleName',
             activityTitle: 'Example1 Activity',
             activityDescription: 'Example1 description',
             activityPostPicKey: 'example1activityPostPicKey',
@@ -252,6 +274,8 @@ describe('Test activityPosts routes', () => {
     
         const example2PostData = {
             userId: 'example2UserId',
+            userFirstName: 'exampleName',
+            userLastName: 'exampleName',
             activityTitle: 'Example2 Activity',
             activityDescription: 'Example2 description',
             activityPostPicKey: 'example2activityPostPicKey',
@@ -283,6 +307,8 @@ describe('Test activityPosts routes', () => {
         // Create example data for activity posts
         const example1PostData = {
             userId: 'example1UserId',
+            userFirstName: 'exampleName',
+            userLastName: 'exampleName',
             activityTitle: 'Example1 Activity',
             activityDescription: 'Example1 description',
             activityPostPicKey: 'example1activityPostPicKey',
@@ -292,6 +318,8 @@ describe('Test activityPosts routes', () => {
     
         const example2PostData = {
             userId: 'example2UserId',
+            userFirstName: 'exampleName',
+            userLastName: 'exampleName',
             activityTitle: 'Example2 Activity',
             activityDescription: 'Example2 description',
             activityPostPicKey: 'example2activityPostPicKey',
@@ -301,6 +329,8 @@ describe('Test activityPosts routes', () => {
 
         const example3PostData = { // will be used for case where only UserIds match
             userId: 'example2UserId', // NOTE the 2s here
+            userFirstName: 'exampleName',
+            userLastName: 'exampleName',
             activityTitle: 'Example3 Activity',
             activityDescription: 'Example3 description',
             activityPostPicKey: 'example3activityPostPicKey',
@@ -334,6 +364,8 @@ describe('Test activityPosts routes', () => {
         // Create example data for activity posts
         const example1PostData = {
             userId: 'example1UserId',
+            userFirstName: 'exampleName',
+            userLastName: 'exampleName',
             activityTitle: 'Example1 Activity',
             activityDescription: 'Example1 description',
             activityPostPicKey: 'example1activityPostPicKey',
@@ -343,6 +375,8 @@ describe('Test activityPosts routes', () => {
     
         const example2PostData = {
             userId: 'example2UserId',
+            userFirstName: 'exampleName',
+            userLastName: 'exampleName',
             activityTitle: 'Example2 Activity',
             activityDescription: 'Example2 description',
             activityPostPicKey: 'example2activityPostPicKey',
@@ -352,6 +386,8 @@ describe('Test activityPosts routes', () => {
 
         const example3PostData = { // will be used for case where only activityTitles match
             userId: 'example3UserId', 
+            userFirstName: 'exampleName',
+            userLastName: 'exampleName',
             activityTitle: 'Example2 Activity', // NOTE the 2s here
             activityDescription: 'Example3 description',
             activityPostPicKey: 'example3activityPostPicKey',
@@ -385,6 +421,8 @@ describe('Test activityPosts routes', () => {
         // Create example data for activity posts
         const example1PostData = {
             userId: 'example1UserId',
+            userFirstName: 'exampleName',
+            userLastName: 'exampleName',
             activityTitle: 'Example1 Activity',
             activityDescription: 'Example1 description',
             activityPostPicKey: 'example1activityPostPicKey',
@@ -394,6 +432,8 @@ describe('Test activityPosts routes', () => {
     
         const example2PostData = {
             userId: 'example2UserId',
+            userFirstName: 'exampleName',
+            userLastName: 'exampleName',
             activityTitle: 'Example2 Activity',
             activityDescription: 'Example2 description',
             activityPostPicKey: 'example2activityPostPicKey',
@@ -403,6 +443,8 @@ describe('Test activityPosts routes', () => {
 
         const example3PostData = { // will be used for case where only price matches
             userId: 'example3UserId', 
+            userFirstName: 'exampleName',
+            userLastName: 'exampleName',
             activityTitle: 'Example3 Activity',
             activityDescription: 'Example3 description',
             activityPostPicKey: 'example3activityPostPicKey',
@@ -437,6 +479,8 @@ describe('Test activityPosts routes', () => {
         // Create example data for activity posts
         const example1PostData = {
             userId: 'example1UserId',
+            userFirstName: 'exampleName',
+            userLastName: 'exampleName',
             activityTitle: 'Example1 Activity',
             activityDescription: 'Example1 description',
             activityPostPicKey: 'example1activityPostPicKey',
@@ -446,6 +490,8 @@ describe('Test activityPosts routes', () => {
     
         const example2PostData = {
             userId: 'example2UserId',
+            userFirstName: 'exampleName',
+            userLastName: 'exampleName',
             activityTitle: 'Example2 Activity',
             activityDescription: 'Example2 description',
             activityPostPicKey: 'example2activityPostPicKey',
@@ -455,6 +501,8 @@ describe('Test activityPosts routes', () => {
 
         const example3PostData = { // will be used for case where only price matches
             userId: 'example3UserId', 
+            userFirstName: 'exampleName',
+            userLastName: 'exampleName',
             activityTitle: 'Example3 Activity',
             activityDescription: 'Example3 description',
             activityPostPicKey: 'example3activityPostPicKey',
@@ -487,6 +535,8 @@ describe('Test activityPosts routes', () => {
         // Create example data for activity posts
         const example1PostData = {
             userId: 'example1UserId',
+            userFirstName: 'exampleName',
+            userLastName: 'exampleName',
             activityTitle: 'Example1 Activity',
             activityDescription: 'Example1 description',
             activityPostPicKey: 'example1activityPostPicKey',
@@ -496,6 +546,8 @@ describe('Test activityPosts routes', () => {
     
         const example2PostData = {
             userId: 'example2UserId',
+            userFirstName: 'exampleName',
+            userLastName: 'exampleName',
             activityTitle: 'Example2 Activity',
             activityDescription: 'Example2 description',
             activityPostPicKey: 'example2activityPostPicKey',
@@ -505,6 +557,8 @@ describe('Test activityPosts routes', () => {
 
         const example3PostData = { // will be used for case where only price matches
             userId: 'example3UserId', 
+            userFirstName: 'exampleName',
+            userLastName: 'exampleName',
             activityTitle: 'Example3 Activity',
             activityDescription: 'Example3 description',
             activityPostPicKey: 'example3activityPostPicKey',
@@ -538,6 +592,8 @@ describe('Test activityPosts routes', () => {
         // Create example data for activity posts
         const example1PostData = {
             userId: 'example1UserId',
+            userFirstName: 'exampleName',
+            userLastName: 'exampleName',
             activityTitle: 'Example1 Activity',
             activityDescription: 'Example1 description',
             activityPostPicKey: 'example1activityPostPicKey',
@@ -547,6 +603,8 @@ describe('Test activityPosts routes', () => {
     
         const example2PostData = {
             userId: 'example2UserId',
+            userFirstName: 'exampleName',
+            userLastName: 'exampleName',
             activityTitle: 'Example2 Activity',
             activityDescription: 'Example2 description',
             activityPostPicKey: 'example2activityPostPicKey',
@@ -556,6 +614,8 @@ describe('Test activityPosts routes', () => {
 
         const example3PostData = { // will be used for case where only price matches
             userId: 'example3UserId', 
+            userFirstName: 'exampleName',
+            userLastName: 'exampleName',
             activityTitle: 'Example3 Activity',
             activityDescription: 'Example3 description',
             activityPostPicKey: 'example3activityPostPicKey',

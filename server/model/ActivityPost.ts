@@ -9,6 +9,14 @@ const ActivityPostSchema = new mongoose.Schema({
       type: String,
       required: true,
     },
+    userFirstName: {
+      type: String,
+      required: true,
+  },
+  userLastName: {
+      type: String,
+      required: true,
+  },
     activityTitle: {
       type: String,
       required: true,

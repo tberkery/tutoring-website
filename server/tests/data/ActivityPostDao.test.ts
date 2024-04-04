@@ -21,6 +21,8 @@ afterAll(async () => {
 test('test create() with all fields', async ()=> {
     const activityPostDao = new ActivityPostDao();
     const userId = faker.lorem.word();
+    const userFirstName = faker.person.firstName();
+    const userLastName = faker.person.lastName();
     const activityTitle =  faker.lorem.word();
     const activityDescription =  faker.lorem.word();
     const activityPostPicKey = faker.image.avatar();
@@ -30,8 +32,10 @@ test('test create() with all fields', async ()=> {
         tags.push(faker.lorem.word());
     }
     
-    const activityPost =  await activityPostDao.create(userId, activityTitle, {activityDescription, activityPostPicKey, price, tags});
+    const activityPost =  await activityPostDao.create(userId, userFirstName, userLastName, activityTitle, {activityDescription, activityPostPicKey, price, tags});
     expect(activityPost.userId).toBe(userId);
+    expect(activityPost.userFirstName).toBe(userFirstName);
+    expect(activityPost.userLastName).toBe(userLastName);
     expect(activityPost.activityTitle).toBe(activityTitle);
     expect(activityPost.activityDescription).toBe(activityDescription);
     expect(activityPost.activityPostPicKey).toBe(activityPostPicKey);
@@ -43,6 +47,8 @@ test('test create() with all fields', async ()=> {
 test('test readOne() for a valid id', async ()=> {
     const activityPostDao = new ActivityPostDao();
     const userId = faker.lorem.word();
+    const userFirstName = faker.person.firstName();
+    const userLastName = faker.person.lastName();
     const activityTitle = faker.lorem.word();
     const activityDescription = faker.lorem.word();
     const activityPostPicKey = faker.image.avatar();
@@ -52,8 +58,10 @@ test('test readOne() for a valid id', async ()=> {
         tags.push(faker.lorem.word());
     }
     
-    const activityPost =  await activityPostDao.create(userId, activityTitle, {activityDescription, activityPostPicKey, price, tags});
+    const activityPost =  await activityPostDao.create(userId, userFirstName, userLastName, activityTitle, {activityDescription, activityPostPicKey, price, tags});
     expect(activityPost.userId).toBe(userId);
+    expect(activityPost.userFirstName).toBe(userFirstName);
+    expect(activityPost.userLastName).toBe(userLastName);
     expect(activityPost.activityTitle).toBe(activityTitle);
     expect(activityPost.activityDescription).toBe(activityDescription);
     expect(activityPost.activityPostPicKey).toBe(activityPostPicKey);
@@ -63,6 +71,8 @@ test('test readOne() for a valid id', async ()=> {
     const id = activityPost._id;
     const foundPost = await activityPostDao.readOne(id);
     expect(foundPost.userId).toBe(userId);
+    expect(foundPost.userFirstName).toBe(userFirstName);
+    expect(foundPost.userLastName).toBe(userLastName);
     expect(foundPost.activityTitle).toBe(activityTitle);
     expect(foundPost.activityDescription).toBe(activityDescription);
     expect(foundPost.activityPostPicKey).toBe(activityPostPicKey);
@@ -85,12 +95,14 @@ test('test readAll() on non empty table', async ()=> {
     await ActivityPostModel.deleteMany({});
     for(let i = 0; i < 5; i++){
         const userId = faker.lorem.word();
+        const userFirstName = faker.person.firstName();
+        const userLastName = faker.person.lastName();
         const activityTitle = faker.lorem.word();
         const activityDescription = faker.lorem.word();
         const activityPostPicKey = faker.image.avatar();
         const price = faker.number.int();
 
-        const activityPost =  await activityPostDao.create(userId, activityTitle, {activityDescription, activityPostPicKey, price});
+        const activityPost =  await activityPostDao.create(userId, userFirstName, userLastName, activityTitle, {activityDescription, activityPostPicKey, price});
     }
     const activityPosts = await activityPostDao.readAll();
     expect(activityPosts.length).toBe(5);
@@ -98,10 +110,11 @@ test('test readAll() on non empty table', async ()=> {
 });
 
 
-
 test('test update()', async ()=> {
     const activityPostDao = new ActivityPostDao();
     const userId = faker.lorem.word();
+    const userFirstName = faker.person.firstName();
+    const userLastName = faker.person.lastName();
     const activityTitle = faker.lorem.word();
     const activityDescription = faker.lorem.word();
     const activityPostPicKey = faker.image.avatar();
@@ -111,8 +124,10 @@ test('test update()', async ()=> {
         tags.push(faker.lorem.word());
     }
     
-    const activityPost = await activityPostDao.create(userId, activityTitle, { activityDescription, activityPostPicKey, price, tags });
+    const activityPost = await activityPostDao.create(userId, userFirstName, userLastName, activityTitle, { activityDescription, activityPostPicKey, price, tags });
     expect(activityPost.userId).toBe(userId);
+    expect(activityPost.userFirstName).toBe(userFirstName);
+    expect(activityPost.userLastName).toBe(userLastName);
     expect(activityPost.activityTitle).toBe(activityTitle);
     expect(activityPost.activityDescription).toBe(activityDescription);
     expect(activityPost.activityPostPicKey).toBe(activityPostPicKey);
@@ -121,9 +136,11 @@ test('test update()', async ()=> {
 
     const id = activityPost._id;
     const newActivityDescription = faker.lorem.sentence();
-    const updatingDescription = await activityPostDao.update(id, userId, activityTitle, { activityDescription: newActivityDescription, activityPostPicKey, price, tags });
+    const updatingDescription = await activityPostDao.update(id, userId, userFirstName, userLastName, activityTitle, { activityDescription: newActivityDescription, activityPostPicKey, price, tags });
     const updatedActivityPost = await activityPostDao.readOne(id)
     expect(updatedActivityPost.userId).toBe(userId);
+    expect(updatedActivityPost.userFirstName).toBe(userFirstName);
+    expect(updatedActivityPost.userLastName).toBe(userLastName);
     expect(updatedActivityPost.activityTitle).toBe(activityTitle);
     expect(updatedActivityPost.activityDescription).toBe(newActivityDescription);
     expect(updatedActivityPost.activityPostPicKey).toBe(activityPostPicKey);
@@ -135,6 +152,8 @@ test('test update()', async ()=> {
 test('test update() on an invalid ID', async ()=> {
     const activityPostDao = new ActivityPostDao();
     const userId = faker.lorem.word();
+    const userFirstName = faker.person.firstName();
+    const userLastName = faker.person.lastName();
     const activityTitle = faker.lorem.word();
     const activityDescription = faker.lorem.word();
     const activityPostPicKey = faker.image.avatar();
@@ -146,7 +165,7 @@ test('test update() on an invalid ID', async ()=> {
     
     const id = new ObjectId(1)
     const newActivityDescription = faker.lorem.sentence();
-    const updatingDescription = await activityPostDao.update(id, userId, activityTitle, { activityDescription: newActivityDescription, activityPostPicKey, price, tags});
+    const updatingDescription = await activityPostDao.update(id, userId, userFirstName, userLastName, activityTitle, { activityDescription: newActivityDescription, activityPostPicKey, price, tags});
     expect(updatingDescription).toBe(null);
     await ActivityPostModel.deleteMany({});
 });
@@ -154,6 +173,8 @@ test('test update() on an invalid ID', async ()=> {
 test('test delete() with a valid ID', async ()=> {
     const activityPostDao = new ActivityPostDao();
     const userId = faker.lorem.word();
+    const userFirstName = faker.person.firstName();
+    const userLastName = faker.person.lastName();
     const activityTitle =  faker.lorem.word();
     const activityDescription =  faker.lorem.word();
     const activityPostPicKey = faker.image.avatar();
@@ -163,8 +184,10 @@ test('test delete() with a valid ID', async ()=> {
         tags.push(faker.lorem.word());
     }
 
-    const activityPost =  await activityPostDao.create(userId, activityTitle, {activityDescription, activityPostPicKey, price, tags});
+    const activityPost =  await activityPostDao.create(userId, userFirstName, userLastName, activityTitle, {activityDescription, activityPostPicKey, price, tags});
     expect(activityPost.userId).toBe(userId);
+    expect(activityPost.userFirstName).toBe(userFirstName);
+    expect(activityPost.userLastName).toBe(userLastName);
     expect(activityPost.activityTitle).toBe(activityTitle);
     expect(activityPost.activityDescription).toBe(activityDescription);
     expect(activityPost.activityPostPicKey).toBe(activityPostPicKey);

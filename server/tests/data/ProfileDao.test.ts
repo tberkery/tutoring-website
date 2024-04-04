@@ -445,8 +445,6 @@ test('test observe profile view for valid id', async() => {
     expect(retrievedProfile.views).toHaveLength(1);
 
     const firstView = retrievedProfile.views[0];
-    console.log("firstView")
-    console.log(firstView)
     expect(firstView.timestamp.toISOString()).toBe(timestamp); // Convert toISOString to match MongoDB Date format
     expect(firstView.durationInSeconds).toBe(duration);
     expect(firstView.viewerId).toMatchObject(id);

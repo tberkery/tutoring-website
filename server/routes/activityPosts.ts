@@ -15,8 +15,8 @@ interface PostReview {
 
 router.post("/", async (req: any, res: any) => {
   try {
-    const {userId, activityTitle, activityDescription, activityPostPicKey, price, tags}: {userId: string, activityTitle: string, activityDescription: string, activityPostPicKey: string, price: string, tags: [String]} = req.body;
-    const newPost = await ActivityPostDao.create(userId, activityTitle, {activityDescription, activityPostPicKey, price, tags});
+    const {userId, userFirstName, userLastName, activityTitle, activityDescription, activityPostPicKey, price, tags}: {userId: string, userFirstName: string, userLastName: string, activityTitle: string, activityDescription: string, activityPostPicKey: string, price: string, tags: [String]} = req.body;
+    const newPost = await ActivityPostDao.create(userId, userFirstName, userLastName, activityTitle, {activityDescription, activityPostPicKey, price, tags});
     res.status(201).json({ newPost });
   } catch (err) {
     console.log(err);
@@ -51,9 +51,9 @@ router.get("/findAllByUserId/:userId", async (req: any, res: any ) => {
 
 router.put("/:id", async (req: any, res: any) => {
     const id : number = req.params.id;
-    const {userId, activityTitle, activityDescription, activityPostPicKey, price, tags}: {userId: string, activityTitle: string, activityDescription: string, activityPostPicKey: string, price: number, tags: string[]} = req.body;
+    const {userId, userFirstName, userLastName, activityTitle, activityDescription, activityPostPicKey, price, tags}: {userId: string, userFirstName: string, userLastName: string, activityTitle: string, activityDescription: string, activityPostPicKey: string, price: number, tags: string[]} = req.body;
     try {
-        const post = await ActivityPostDao.update( id, userId, activityTitle, {activityDescription, activityPostPicKey, price, tags} );
+        const post = await ActivityPostDao.update( id, userId, userFirstName, userLastName, activityTitle, {activityDescription, activityPostPicKey, price, tags} );
         if (!post) {
         return res.status(404).json({ msg: "Post not found" });
         }
