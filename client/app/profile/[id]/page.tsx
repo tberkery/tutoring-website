@@ -163,7 +163,7 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
   useEffect(() => {
     const intervalId = setInterval(() => {
       if (onPage) {
-        setTimeSpent(prev => prev + 1000);
+        setTimeSpent(prev => prev + 1);
       }
     }, 1000);
     return () => clearInterval(intervalId);
