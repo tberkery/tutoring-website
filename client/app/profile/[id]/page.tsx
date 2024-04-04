@@ -1,5 +1,5 @@
 "use client";
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useEffect, useRef, useState } from "react";
 import "@/styles/global.css";
 import axios from "axios";
 import Navbar from "@/components/Navbar"
@@ -8,6 +8,8 @@ import Loader from "@/components/Loader";
 import PostCard from "@/components/PostCard";
 import RatingStars from "@/components/RatingStars";
 import ReviewCard from "@/components/ReviewCard";
+import { useUser } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 
 interface Profile {
   affiliation: string;
@@ -56,6 +58,22 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [imgUrl, setImgUrl] = useState("../defaultimg.jpeg");
   const [activeSection, setActiveSection] = useState("Posts");
+  const [timeSpent, setTimeSpent] = useState(0);
+  const [onPage, setOnPage] = useState(true);
+  const [visitorId, setVisitorId] = useState('');
+
+  const timeSpentRef = useRef<Number>();
+  useEffect(() => {
+    timeSpentRef.current = timeSpent;
+  }, [onPage]);
+
+  const visitorIdRef = useRef<string>();
+  useEffect(() => {
+    visitorIdRef.current = visitorId;
+  }, [visitorId])
+
+  const { isLoaded, isSignedIn, user } = useUser();
+  const router = useRouter();
 
   const reviews = [
     {
@@ -89,8 +107,10 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
       if (posts.data.length !== 0) {
         setPosts(posts.data);
       }
-      const picUrl = await axios.get(`${api}/profilePics/get/${userInfo.data.data.profilePicKey}`);
-      setImgUrl(picUrl.data.imageUrl);
+      if (userInfo.data.data.profilePicKey) {
+        const picUrl = await axios.get(`${api}/profilePics/get/${userInfo.data.data.profilePicKey}`);
+        setImgUrl(picUrl.data.imageUrl);
+      }
     } catch (error) {
       console.error('Error fetching posts', error);
     } finally {
@@ -98,9 +118,61 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
     };
   };
 
+  const getVisitor = async () => {
+    if (!isLoaded || !isSignedIn || !user) {
+      return;
+    }
+    try {
+      const response = await axios.get(`${api}/profiles/getByEmail/${user.primaryEmailAddress.toString()}`);
+      const id = response.data.data[0]._id;
+      setVisitorId(id);
+      // TODO uncomment this once analytics manual testing is done
+      // if (id === params.id) {
+      //   router.replace('profile');
+      // }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  const updateProfileViews = () => {
+    if (visitorIdRef.current === '') {
+      return;
+    }
+    const endpoint = `${api}/profiles/views/${params.id}`;
+    const body = { 
+      viewerId: visitorIdRef.current,
+      startTime: new Date(),
+      duration: timeSpentRef.current
+    }
+    axios.put(endpoint, body);
+  }
+
+  useEffect(() => { getVisitor() }, [isLoaded, isSignedIn, user]);
+
   useEffect(() => {
     fetchData();
-  }, [api]);
+    window.addEventListener("blur", () => setOnPage(false));
+    window.addEventListener("focus", () => setOnPage(true));
+    return () => {
+      window.removeEventListener("blur", () => setOnPage(false));
+      window.removeEventListener("focus", () => setOnPage(true));
+    }
+  }, []);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      if (onPage) {
+        setTimeSpent(prev => prev + 1000);
+      }
+    }, 1000);
+    return () => clearInterval(intervalId);
+  }, [onPage]);
+
+  useEffect(() => {
+    // will execute when the user exits the page
+    return updateProfileViews
+  }, [])
 
   if (loading) return ( <> <Loader /> </>);
 
