@@ -240,7 +240,8 @@ const ProfileAnalytics : FC<{profileId : string}> = (params) => {
           className="flex flex-col flex-grow basis-[320px] 
           min-w-[320px] max-w-[560px]"
         >
-          <div className="bg-white px-8 py-8 mb-8 rounded-xl shadow-md">
+          {/* For use in iteration 4 */}
+          {/* <div className="bg-white px-8 py-8 mb-8 rounded-xl shadow-md">
             <h3 className="text-2xl font-bold mb-4 text-center">
               Most Viewed Posts
             </h3>
@@ -270,7 +271,7 @@ const ProfileAnalytics : FC<{profileId : string}> = (params) => {
                 </div>
               </>
             })}
-          </div>
+          </div> */}
           <div className="bg-white px-8 py-8 mb-8 rounded-xl shadow-md">
             <h3 className="text-2xl font-bold mb-4 text-center">
               Highest Rated Posts
