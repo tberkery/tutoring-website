@@ -6,11 +6,13 @@ const CourseDao = new CourseDaoClass();
 
 router.post("/", async (req: any, res: any) => {
   try {
-    const {courseTitle, courseCode, courseDepartment, isUpperLevel, courseDescription}: {courseTitle:string, courseCode:string, courseDepartment:string, isUpperLevel:boolean, courseDescription:string} = req.body;
-    const newCourse = await CourseDao.create(courseTitle, courseCode, courseDepartment, isUpperLevel, courseDescription);
+    const {courseTitle, courseNumber, courseDepartment}: {courseTitle:string, courseNumber:string, courseDepartment:string} = req.body;
+    // console.log("in routes info is ", courseTitle, courseNumber, courseDepartment);
+    const newCourse = await CourseDao.create(courseTitle, courseNumber, courseDepartment);
     res.status(200).json({ newCourse });
   } catch (err) {
-    console.log(err);
+    console.error(err);
+    // console.log("HELLLOOOOOOOOOO HEHE")
     res.status(500).send("Server Error");
   }
 });
@@ -18,7 +20,7 @@ router.post("/", async (req: any, res: any) => {
 router.get("/findOne/:id", async (req: any, res: any) => {
     const { id }: { id: number } = req.params;
     try {
-        console.log('id: ' + id)
+        // console.log('id: ' + id)
       const course = await CourseDao.readOne(id);
       if (!course) {
         return res.status(404).json({ msg: "Course not found" });
@@ -30,9 +32,32 @@ router.get("/findOne/:id", async (req: any, res: any) => {
     }
   });
 
+router.get("getByCourseTitle/:courseTitle", async (req: any, res: any) => {
+  const {courseTitle} : {courseTitle: string} = req.params;
+  try {
+    const courses = await CourseDao.readAll({courseTitle});
+    res.status(200).json({courses});
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Server Error");
+  }
+});
+
+router.get("getByCourseNumber/:courseNumber", async (req: any, res: any) => {
+  const {courseNumber} : {courseNumber: string} = req.params;
+  try {
+    const courses = await CourseDao.readAll({courseNumber});
+    res.status(200).json({courses});
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Server Error");
+  }
+});
+
 router.get("/all", async (req: any, res: any ) => {
   try {
-    const courses = await CourseDao.readAll();
+    const {courseTitle, courseNumber, courseDepartment} = req.query;
+    const courses = await CourseDao.readAll({courseTitle, courseNumber, courseDepartment});
     res.status(200).json({ courses });
   } catch (err) {
     console.log(err);
