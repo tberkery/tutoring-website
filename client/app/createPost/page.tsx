@@ -77,7 +77,9 @@ const Page : FC = () => {
     const profile = response.data.data[0];
     let body = { 
       activityTitle: title,
-      userId: profile._id
+      userId: profile._id,
+      userFirstName: profile.firstName,
+      userLastName: profile.lastName,
     }
     if (price !== "") {
       body["price"] = price.replace(/\D/g, '');
@@ -88,6 +90,7 @@ const Page : FC = () => {
     if (tags.length > 0) {
       body["tags"] = tags;
     }
+    console.log('body: ', body)
     const newPost = await axios.post(`${api}/activityPosts`, body);
     if (photoFile !== null) {
       const formData = new FormData();

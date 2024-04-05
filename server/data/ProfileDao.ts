@@ -65,7 +65,7 @@ export class ProfileDao {
         return data;
   }
 
-  async update(_id: Number, firstName: string, lastName: string, email: string, affiliation: string, department: string, options?: {graduationYear?: string, description?: string, posts?: []}){
+  async update(_id: Number, firstName: string, lastName: string, email: string, affiliation: string, department: string, options?: {graduationYear?: string, description?: string, posts?: [], availability?: []}){
     let newProfile: any = {firstName, lastName, email, affiliation, department};
     if (options){
       if (options.graduationYear){
@@ -76,6 +76,9 @@ export class ProfileDao {
       }
       if (options.posts){
         newProfile.posts = options.posts;
+      }
+      if (options.availability) {
+        newProfile.availability = options.availability;
       }
     }
     const data = await Profile.findByIdAndUpdate(_id, newProfile)
