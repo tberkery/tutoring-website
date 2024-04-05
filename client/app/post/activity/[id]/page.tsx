@@ -58,7 +58,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
     const userInfo = await axios.get(`${api}/profiles/getByEmail/${user.primaryEmailAddress.toString()}`);
     setReviewerId(userInfo.data.data[0]._id);
 
-    const response = await axios.get(`${api}/coursePosts/findOne/${postId}`);
+    const response = await axios.get(`${api}/activityPosts/findOne/${postId}`);
     setPost(response.data.post);
 
     const imgKey = response.data.post.coursePostPicKey;
@@ -67,7 +67,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
     setPosterId(response.data.post.userId);
     if (imgKey) {
       try {
-        const url = await axios.get(`${api}/coursePostPics/get/${imgKey}`);
+        const url = await axios.get(`${api}/activityPostPics/get/${imgKey}`);
         setImgUrl(url.data.coursePostPicKey);
       } catch (e) {
         console.error(e);
