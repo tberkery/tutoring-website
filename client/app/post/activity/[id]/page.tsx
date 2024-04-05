@@ -128,7 +128,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
             <p>Required fields are marked *</p>
             <h2 className="font-sans font-extrabold uppercase text-l leading-none mt-2 mb-0 text-slate-700 pt-2 self-start">tutor rating *</h2>
             <div className="flex py-1 ">
-              <StarReview />
+            <StarReview rating={rating} setRating={setRating} />
             </div>
             <h2 className="font-sans font-extrabold uppercase text-l leading-none mt-2 mb-0 text-slate-700 pt-2 self-start">Comment *</h2>
             <Textarea className="resize-none my-2 rounded"/>

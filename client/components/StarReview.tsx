@@ -1,13 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { StarIcon as FilledStar } from '@heroicons/react/24/solid';
 import { StarIcon as OutlineStar } from '@heroicons/react/24/outline';
 
-const StarRating = () => {
-  const [rating, setRating] = useState(0);
+const StarRating = ({ rating, setRating }) => {
 
   const handleRating = (rate) => {
     if (rate === rating) {
-      setRating(0);
+      setRating(0); 
     } else {
       setRating(rate);
     }
@@ -19,8 +18,6 @@ const StarRating = () => {
         <button
           key={star}
           onClick={() => handleRating(star)}
-          onMouseEnter={() => {}}
-          onMouseLeave={() => {}}
           className="cursor-pointer"
         >
           {rating >= star ? (
