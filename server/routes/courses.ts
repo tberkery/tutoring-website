@@ -6,7 +6,7 @@ const CourseDao = new CourseDaoClass();
 
 router.post("/", async (req: any, res: any) => {
   try {
-    const {courseTitle, courseNumber, courseDepartment}: {courseTitle:string, courseNumber:string, courseDepartment:string} = req.body;
+    const {courseTitle, courseNumber, courseDepartment}: {courseTitle:string, courseNumber:string, courseDepartment:string[]} = req.body;
     const newCourse = await CourseDao.create(courseTitle, courseNumber, courseDepartment);
     res.status(200).json({ newCourse });
   } catch (err) {
@@ -62,20 +62,20 @@ router.get("/all", async (req: any, res: any ) => {
   }
 });
 
-router.put("/:id", async (req: any, res: any) => {
-    const id : number = req.params.id;
-    const {courseTitle, courseCode, courseDepartment, isUpperLevel, courseDescription}: {courseTitle:string, courseCode:string, courseDepartment:string, isUpperLevel:boolean, courseDescription:string} = req.body;
-    try {
-        const course = await CourseDao.update( id, courseTitle, courseCode, courseDepartment, isUpperLevel, courseDescription );
-        if (!course) {
-        return res.status(404).json({ msg: "Course not found" });
-        }
-        res.status(200).json({ course });
-    } catch (err) {
-        console.log(err);
-        res.status(500).send("Server Error");
-    }
-});
+// router.put("/:id", async (req: any, res: any) => {
+//     const id : number = req.params.id;
+//     const {courseTitle, courseCode, courseDepartment, isUpperLevel, courseDescription}: {courseTitle:string, courseCode:string, courseDepartment:string, isUpperLevel:boolean, courseDescription:string} = req.body;
+//     try {
+//         const course = await CourseDao.update( id, courseTitle, courseCode, courseDepartment, isUpperLevel, courseDescription );
+//         if (!course) {
+//         return res.status(404).json({ msg: "Course not found" });
+//         }
+//         res.status(200).json({ course });
+//     } catch (err) {
+//         console.log(err);
+//         res.status(500).send("Server Error");
+//     }
+// });
 
 router.delete("/:id", async (req: any, res: any) => {
     const id : number = req.params.id;

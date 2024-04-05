@@ -2,28 +2,7 @@ const axios = require("axios");
 
 async function getWhitingCourses(school) {
     let coursesToAdd = new Set();
-    for (let j = 0; j < 4; j++) {
-        let year = 2020+j
-        const data = await axios.get(`https://sis.jhu.edu/api/classes/${school}/Spring ${year}?key=KFc5nPpzg735eByE0sb6iWumaOtORpSt`);
-        for (let i = 0; i < data.data.length; i++) {
-            if ((i != 0 && data.data[i].OfferingName === data.data[i-1].OfferingName) || !data.data[i].AllDepartments || !data.data[i].OfferingName){
-                continue;
-            }
-            const departments = data.data[i].AllDepartments.split("^")
-            const curCourse = {"courseTitle": data.data[i].Title, "courseNumber": data.data[i].OfferingName, "courseDepartment": departments, };
-            coursesToAdd.add(curCourse);
-        }
-        data = await axios.get(`https://sis.jhu.edu/api/classes/${school}/Fall ${year}?key=KFc5nPpzg735eByE0sb6iWumaOtORpSt`)
-        for (let i = 0; i < data.data.length; i++) {
-            if ((i != 0 && data.data[i].OfferingName === data.data[i-1].OfferingName) || !data.data[i].AllDepartments || !data.data[i].OfferingName){
-                continue;
-            }
-            const departments = data.data[i].AllDepartments.split("^")
-            const curCourse = {"courseTitle": data.data[i].Title, "courseNumber": data.data[i].OfferingName, "courseDepartment": departments, };
-            coursesToAdd.add(curCourse);
-        }
-    }
-    const data = axios.get(`https://sis.jhu.edu/api/classes/${school}/Spring 2024?key=KFc5nPpzg735eByE0sb6iWumaOtORpSt`)
+    const data = await axios.get(`https://sis.jhu.edu/api/classes/${school}/Spring 2024?key=KFc5nPpzg735eByE0sb6iWumaOtORpSt`)
     for (let i = 0; i < data.data.length; i++) {
         if ((i != 0 && data.data[i].OfferingName === data.data[i-1].OfferingName) || !data.data[i].AllDepartments || !data.data[i].OfferingName){
             continue;
