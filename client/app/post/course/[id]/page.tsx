@@ -66,6 +66,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
     setReviewerId(userInfo.data.data[0]._id);
 
     const response = await axios.get(`${api}/coursePosts/findOne/${postId}`);
+    
     setPost(response.data.post);
 
     const imgKey = response.data.post.coursePostPicKey;
