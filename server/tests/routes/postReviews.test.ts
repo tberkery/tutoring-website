@@ -23,6 +23,19 @@ describe('Test postReviews routes', () => {
         await PostReviewSchema.deleteMany({});
     });
 
+    // Test for GET /postReviews/getByPostId/:postId with empty database
+    test('GET /postReviews/getByPostId/:postId with empty database', async () => {
+        await PostReviewSchema.deleteMany({});
+
+        const postId = '65f37b3c888c108c2bddff9f';
+
+        const res = await request(app).get(`/postReviews/getByPostId/${postId}`);
+
+        expect(res.status).toBe(404);
+        expect(res.body.error).toBe('Post not found');
+        await PostReviewSchema.deleteMany({});
+    });
+
     // Test for POST /postReviews/:postId with malformed post ID
     test('POST /postReviews/:postId with malformed post ID', async () => {
         const malformedtPostId = 1234;
