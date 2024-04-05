@@ -60,9 +60,9 @@ router.get("/views/:_id", async (req: any, res: any) => {
 
 router.put("/views/:_id", async (req: any, res: any) => {
   const { _id }: { _id: string } = req.params;
-  const { viewerId, startTime, duration }: { viewerId: string, startTime: string, duration: number } = req.body; // start_time should be a date/time. duration should be a number of seconds.
+  const { viewerId, timestamp, duration }: { viewerId: string, timestamp: string, duration: number } = req.body; // start_time should be a date/time. duration should be a number of seconds.
   try {
-    const data = await profiles.updateViews(_id, viewerId, startTime, duration) 
+    const data = await profiles.updateViews(_id, viewerId, timestamp, duration) 
     if (!data) {
       res.status(404).json({ msg: "Profile view update not made" });
       return;
@@ -79,7 +79,7 @@ router.put("/:_id", async (req: any, res: any) => {
     const { _id }: { _id: string } = req.params;
     const {firstName, lastName, email, affiliation, graduationYear, department, description, posts} : {firstName: string, lastName: string, email: string, affiliation: string, graduationYear: string, department: string, description: string, posts: []} = req.body;
     try {
-      const data = await db.profiles.update(_id, firstName, lastName, email, affiliation, department, {graduationYear, description, posts});
+      const data = await profiles.update(_id, firstName, lastName, email, affiliation, department, {graduationYear, description, posts});
       if (!data) {
         res.status(404).json({ msg: "User not found" });
         return;

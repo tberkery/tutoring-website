@@ -91,10 +91,10 @@ router.post('/:postId', async (req: any, res:any) => {
                 // If neither activity nor course post is found, return a 404 error
                 return res.status(404).json({ error: 'Post not found' });
             } else {
-                post = await CoursePostDao.update(post._id, post.userId, post.courseName, post.takenAtHopkins, { reviews: [...post.reviews, newPostReview] });
+                post = await CoursePostDao.update(post._id, post.userId, post.userFirstName, post.userLastName, post.courseName, post.takenAtHopkins, { reviews: [...post.reviews, newPostReview] });
             }
         } else {
-            post = await ActivityPostDao.update(post._id, post.userId, post.activityTitle, { reviews: [...post.reviews, newPostReview] });
+            post = await ActivityPostDao.update(post._id, post.userId, post.userFirstName, post.userLastName, post.activityTitle, { reviews: [...post.reviews, newPostReview] });
         }
 
         res.status(201).json({ review: newPostReview });
