@@ -24,7 +24,7 @@ export class ProfileDao {
   async readViewsById(_id: string) {
     const data = await Profile.findById(_id).lean().select("views");
     return data;
-}
+  }
 
   async readByEmail(email:string) {
     const data = await Profile.find({email:email});
@@ -83,6 +83,7 @@ export class ProfileDao {
   }
 
   async updateViews(_id: String, viewerId: String, timestamp: String, duration: Number) {
+    console.log(timestamp)
     const data = await Profile.findByIdAndUpdate(_id,
       { $push: { views: { viewerId: viewerId, timestamp: timestamp, durationInSeconds: duration } } },
       { new: true })
