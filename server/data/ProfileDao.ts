@@ -85,6 +85,13 @@ export class ProfileDao {
     return data;
   }
 
+  async updateAvailability(_id: String, availability: Number[]) {
+    const data = await Profile.findByIdAndUpdate(_id,
+      { $set: { availability: availability } },
+      { new: true })
+    return data
+  }
+
   async updateViews(_id: String, viewerId: String, timestamp: String, duration: Number) {
     const data = await Profile.findByIdAndUpdate(_id,
       { $push: { views: { viewerId: viewerId, timestamp: timestamp, durationInSeconds: duration } } },
