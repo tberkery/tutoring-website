@@ -3,6 +3,9 @@ import axios from 'axios';
 import { Square, Star } from 'lucide-react';
 import React, { FC, useEffect, useState } from 'react';
 import { CartesianGrid, Cell, Line, LineChart, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuItem } from './ui/dropdown-menu';
+import { DropdownMenuContent } from '@radix-ui/react-dropdown-menu';
+import { Button } from './ui/button';
 
 type view = {
   viewerId: string,
@@ -21,6 +24,8 @@ const ProfileAnalytics : FC<{profileId : string}> = (params) => {
   const animDuration = 1000;
 
   const [activeAnalytics, setActiveAnalytics] = useState(analyticsSections[0]);
+  const [timeScale, setTimeScale] = useState("Last 30 Days");
+  const [rawViewsData, setRawViewsData] = useState<view[]>([]);
   const [viewsGraphData, setViewsGraphData] = useState<lineGraphPoint[]>([]);
   const [timeGraphData, setTimeGraphData] = useState<lineGraphPoint[]>([]);
   const [majorData, setMajorData] = useState<pieGraphPoint[]>([]);
@@ -35,9 +40,21 @@ const ProfileAnalytics : FC<{profileId : string}> = (params) => {
     return newPieces.join(' ');
   }
 
-  const getWeeksAgo = (weeks : number) => {
+  const timeScaleToDays = () => {
+    if (timeScale === "Last Week") {
+      return 8;
+    } else if (timeScale === "Last 30 Days") {
+      return 30;
+    } else if (timeScale === "Last 90 Days") {
+      return 90;
+    } else if (timeScale === "Last 6 Months") {
+      return 180;
+    }
+  }
+
+  const getDaysAgo = (days : number) => {
     const result = new Date();
-    result.setDate(result.getDate() - (weeks * 7));
+    result.setDate(result.getDate() - days);
     return result;
   }
 
@@ -47,18 +64,19 @@ const ProfileAnalytics : FC<{profileId : string}> = (params) => {
     return date.toLocaleDateString(undefined, options);
   }
 
-  const getBucketByMonth = (input : Date) => {
-    const oneWeekAgo = getWeeksAgo(1);
-    const twoWeeksAgo = getWeeksAgo(2);
-    const threeWeeksAgo = getWeeksAgo(3);
-    const fourWeeksAgo = getWeeksAgo(4);
-    if (input > oneWeekAgo) {
+  const getBuckets = (input : Date, days : number) => {
+    const interval = Math.floor(days / 4);
+    const boundary1 = getDaysAgo(interval);
+    const boundary2 = getDaysAgo(interval * 2);
+    const boundary3 = getDaysAgo(interval * 3);
+    const boundary4 = getDaysAgo(interval * 4);
+    if (input > boundary1) {
       return 3;
-    } else if (input > twoWeeksAgo) {
+    } else if (input > boundary2) {
       return 2;
-    } else if (input > threeWeeksAgo) {
+    } else if (input > boundary3) {
       return 1;
-    } else if (input > fourWeeksAgo) {
+    } else if (input > boundary4) {
       return 0;
     } else {
       return -1;
@@ -69,11 +87,16 @@ const ProfileAnalytics : FC<{profileId : string}> = (params) => {
     const endpoint = `${api}/profiles/views/${id}`;
     const response = await axios.get(endpoint);
     const rawData : view[] = response.data.data.views;
-    // calculate profile views and view time by date
+    setRawViewsData(rawData);
+  }
+
+  const displayViewsData = async () => {
+    const days = timeScaleToDays();
+    const interval = Math.floor(days / 4);
     let frequency = [0, 0, 0, 0];
     let viewTime = [0, 0, 0, 0];
-    rawData.forEach((data : view) => {
-      const bucket = getBucketByMonth(new Date(data.timestamp));
+    rawViewsData.forEach((data : view) => {
+      const bucket = getBuckets(new Date(data.timestamp), days);
       if (bucket != -1) {
         frequency[bucket]++;
         viewTime[bucket] += data.durationInSeconds;
@@ -83,17 +106,16 @@ const ProfileAnalytics : FC<{profileId : string}> = (params) => {
     let timeData = [];
     frequency.forEach((number, index) => {
       viewsData[index] = {
-        label: getDateLabel(getWeeksAgo(4 - index)),
+        label: getDateLabel(getDaysAgo((4 - index) * interval)),
         value: number
       }
       timeData[index] = {
-        label: getDateLabel(getWeeksAgo(4 - index)),
+        label: getDateLabel(getDaysAgo((4 - index) * interval)),
         value: number === 0 ? 0 : viewTime[index] / number
       }
     })
     setViewsGraphData(viewsData);
     setTimeGraphData(timeData);
-    console.log(timeData);
   }
 
   const getDemographicsData = async () => {
@@ -116,6 +138,8 @@ const ProfileAnalytics : FC<{profileId : string}> = (params) => {
   }
 
   useEffect(() => { getViewsData() }, [])
+
+  useEffect(() => { displayViewsData() }, [timeScale])
 
   useEffect(() => { getDemographicsData() }, [])
 
@@ -425,7 +449,7 @@ const ProfileAnalytics : FC<{profileId : string}> = (params) => {
 
   return (
     <div className="flex flex-col flex-grow">
-      <div className="flex justify-center mb-6">
+      <div className="flex justify-center mb-4">
         <div 
           className="flex flex-row flex-grow-0 px-1 py-1 bg-sky-50 gap-x-1
           rounded-lg"
@@ -445,6 +469,58 @@ const ProfileAnalytics : FC<{profileId : string}> = (params) => {
             )
           })}
         </div>
+      </div>
+      <div className='flex justify-center mb-6 z-10'>
+        <DropdownMenu>
+          <DropdownMenuTrigger>
+            <Button 
+              className='text-lg font-bold bg-custom-blue hover:bg-blue-900
+              rounded-lg'
+            >
+              {timeScale}
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent 
+            className='bg-blue-300 rounded-xl px-2 py-1.5 border mt-1'
+          >
+            <DropdownMenuItem 
+              className='p-0 mb-1 hover:cursor-pointer text-lg font-bold
+              rounded-xl overflow-hidden'
+              onClick={ () => setTimeScale("Last Week") }
+            >
+              <div className='hover:bg-sky-100 px-3 py-1 w-full'>
+                Last Week
+              </div>
+            </DropdownMenuItem>
+            <DropdownMenuItem 
+              className='p-0 mb-1 hover:cursor-pointer text-lg font-bold
+              rounded-xl overflow-hidden'
+              onClick={ () => setTimeScale("Last 30 Days") }
+            >
+              <div className='hover:bg-sky-100 px-3 py-1 w-full'>
+                Last 30 Days
+              </div>
+            </DropdownMenuItem>
+            <DropdownMenuItem 
+              className='p-0 mb-1 hover:cursor-pointer text-lg font-bold
+              rounded-xl overflow-hidden'
+              onClick={ () => setTimeScale("Last 90 Days") }
+            >
+              <div className='hover:bg-sky-100 px-3 py-1 w-full'>
+                Last 90 Days
+              </div>
+            </DropdownMenuItem>
+            <DropdownMenuItem 
+              className='p-0 hover:cursor-pointer text-lg font-bold
+              rounded-xl overflow-hidden'
+              onClick={ () => setTimeScale("Last 6 Months") }
+            >
+              <div className='hover:bg-sky-100 px-3 py-1 w-full'>
+                Last 6 Months
+              </div>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
       <div className="flex justify-center flex-wrap flex-grow gap-x-8">
         { activeAnalytics === "Overview" ? 

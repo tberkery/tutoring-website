@@ -51,11 +51,21 @@ interface CoursePost {
 
 type Post = ActivityPost | CoursePost;
 
+type Review = {
+  postId: string,
+  posterId: string,
+  reviewerId: string,
+  title?: string,
+  reviewDescription: string,
+  rating: number,
+}
+
 const Page : FC = ({ params }: { params : { id: string }}) => {
   const api = process.env.NEXT_PUBLIC_BACKEND_URL;
   const [loading, setLoading] = useState(true);
   const [profileData, setProfile] = useState<Profile>();
   const [posts, setPosts] = useState<Post[]>([]);
+  const [reviews, setReviews] = useState<Review[]>([]);
   const [imgUrl, setImgUrl] = useState("../defaultimg.jpeg");
   const [activeSection, setActiveSection] = useState("Posts");
   const [timeSpent, setTimeSpent] = useState(0);
@@ -75,30 +85,6 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
   const { isLoaded, isSignedIn, user } = useUser();
   const router = useRouter();
 
-  const reviews = [
-    {
-      'title' : 'Very Good!!',
-      'rating' : 5,
-      'leftBy' : 'Kat Forbes',
-      'post' : 'Piano Lessons',
-      'text' : "Review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text",
-    },
-    {
-      'title' : 'Bad Experience...',
-      'rating' : 2,
-      'leftBy' : 'Ilana Chalom',
-      'post' : 'Linear Algebra',
-      'text' : "Short review text review text review text review text review text review text review text review text",
-    },
-    {
-      'title' : 'Learned a Lot!',
-      'rating' : 4,
-      'leftBy' : 'Anonymous',
-      'post' : 'Piano Lessons',
-      'text' : "Review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text",
-    },
-  ]
-
   const fetchData = async () => {
     try {
       const userInfo = await axios.get(`${api}/profiles/${params.id}`);
@@ -111,6 +97,10 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
         const picUrl = await axios.get(`${api}/profilePics/get/${userInfo.data.data.profilePicKey}`);
         setImgUrl(picUrl.data.imageUrl);
       }
+      const profileId = userInfo.data.data._id;
+      const reviewEndpoint = `${api}/postReviews/getByProfileId/${profileId}`;
+      const reviewResponse = await axios.get(reviewEndpoint);
+      console.log(reviewResponse);
     } catch (error) {
       console.error('Error fetching posts', error);
     } finally {

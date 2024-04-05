@@ -10,8 +10,6 @@ import Navbar from "../../components/Navbar"
 import Loader from '../../components/Loader';
 import RatingStars from "@/components/RatingStars";
 import ReviewCard from "@/components/ReviewCard";
-import { CartesianGrid, Cell, Line, LineChart, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { Square, Star } from "lucide-react";
 import ProfileAnalytics from "@/components/ProfileAnalytics";
 
 interface ActivityPost {
@@ -43,40 +41,26 @@ interface CoursePost {
 
 type Post = ActivityPost | CoursePost;
 
+type Review = {
+  postId: string,
+  posterId: string,
+  reviewerId: string,
+  title?: string,
+  reviewDescription: string,
+  rating: number,
+}
+
 const Page : FC = () => {
   const { isLoaded, isSignedIn, user } = useUser();
   const api = process.env.NEXT_PUBLIC_BACKEND_URL;
   const [posts, setPosts] = useState<Post[]>([]);
   const [profileData, setProfileData] = useState(null);
+  const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [imgUrl, setImgUrl] = useState("../defaultimg.jpeg");
   const [activeSection, setActiveSection] = useState("Posts");
 
   const router = useRouter();
-
-  const reviews = [
-    {
-      'title' : 'Very Good!!',
-      'rating' : 5,
-      'leftBy' : 'Kat Forbes',
-      'post' : 'Piano Lessons',
-      'text' : "Review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text",
-    },
-    {
-      'title' : 'Bad Experience...',
-      'rating' : 2,
-      'leftBy' : 'Ilana Chalom',
-      'post' : 'Linear Algebra',
-      'text' : "Short review text review text review text review text review text review text review text review text",
-    },
-    {
-      'title' : 'Learned a Lot!',
-      'rating' : 4,
-      'leftBy' : 'Anonymous',
-      'post' : 'Piano Lessons',
-      'text' : "Review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text",
-    },
-  ]
 
   const fetchData = async () => {
     if (!isLoaded || !isSignedIn) {
@@ -92,8 +76,14 @@ const Page : FC = () => {
       if (posts.data.length !== 0) {
         setPosts(posts.data);
       }
-      const picUrl = await axios.get(`${api}/profilePics/get/${userInfo.data.data[0].profilePicKey}`);
-      setImgUrl(picUrl.data.imageUrl);
+      if (userInfo.data.data[0].profilePicKey) {
+        const picUrl = await axios.get(`${api}/profilePics/get/${userInfo.data.data[0].profilePicKey}`);
+        setImgUrl(picUrl.data.imageUrl);
+      }
+      const profileId = userInfo.data.data[0]._id;
+      const reviewEndpoint = `${api}/postReviews/getByProfileId/${profileId}`;
+      const reviewResponse = await axios.get(reviewEndpoint);
+      console.log(reviewResponse);
     } catch (error) {
       console.error('Error fetching posts', error);
     } finally {
