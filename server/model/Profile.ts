@@ -48,8 +48,11 @@ const ProfileSchema = new mongoose.Schema({
     viewsCounter: {
         type: Number,
         default: null
+    },
+    availability: {
+        type: [Number],
+        default: []
     }
-
   });
 const Profile = mongoose.model("Profile", ProfileSchema);
 
