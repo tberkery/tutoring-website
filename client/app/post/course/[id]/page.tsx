@@ -104,6 +104,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
         reviewDescription: comment,
         rating
       });
+      alert(`Your review has been created!`);
       console.log('Review submitted:', response.data);
       // Handle success (e.g., clear form, show success message)
     } catch (error) {
