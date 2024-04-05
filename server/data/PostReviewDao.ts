@@ -32,12 +32,6 @@ export class PostReviewDao {
         }
     }
 
-    async update( id: any, postId: string, userId: string, review: string, rating: number) {
-        let newPostReview: any = {postId, userId, review,};
-        const data = await PostReview.findByIdAndUpdate(id, newPostReview)
-        return data;
-    }
-
     async delete(id : any) {
         const data = await PostReview.findOneAndDelete({ _id: id});
         return data;
