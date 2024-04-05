@@ -96,20 +96,18 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      console.log('HELLOOO ')
+      console.log(postId, posterId, reviewerId, rating, comment, isAnonymous)
       const response = await axios.post(`${api}/postReviews/${postId}`, {
         postId,
         posterId,
         reviewerId: reviewerId,
         reviewDescription: comment,
-        rating,
-        isAnonymous,
+        rating
       });
       console.log('Review submitted:', response.data);
       // Handle success (e.g., clear form, show success message)
     } catch (error) {
       console.error('Error submitting review:', error);
-      // Handle error (e.g., show error message)
     }
   };
 
