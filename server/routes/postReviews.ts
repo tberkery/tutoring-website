@@ -82,9 +82,9 @@ router.get('/getByPostId/:postId', async (req: any, res: any) => {
 
 router.post('/:postId', async (req: any, res:any) => {
     try {
-        const { postId, posterId, reviewerId, reviewDescription, rating }: {postId: string, posterId: string, reviewerId: string, reviewDescription: string, rating: number} = req.body;
+        const { postId, posterId, reviewerId, reviewDescription, rating, isAnonymous }: {postId: string, posterId: string, reviewerId: string, reviewDescription: string, rating: number, isAnonymous: boolean} = req.body;
 
-        const newPostReview = await PostReviewDao.create(postId, posterId, reviewerId, reviewDescription, rating);
+        const newPostReview = await PostReviewDao.create(postId, posterId, reviewerId, reviewDescription, rating, {isAnonymous});
 
         // Fetch the post by ID
         let post = await ActivityPostDao.readOne(req.params.postId);

@@ -3,8 +3,11 @@ const mongoose = require("mongoose");
 
 export class PostReviewDao {
 
-    async create(postId: string, posterId: string, reviewerId: string, reviewDescription: string, rating: number) {
+    async create(postId: string, posterId: string, reviewerId: string, reviewDescription: string, rating: number, isAnonymous?: boolean) {
         let newPostReview: any = {postId, posterId, reviewerId, reviewDescription, rating}
+        if ( isAnonymous === true ) {
+            newPostReview.isAnonymous = isAnonymous;
+        }
         const data = await PostReview.create(newPostReview);
         return data;
     }

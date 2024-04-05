@@ -24,19 +24,20 @@ test('test create() with all fields', async ()=> {
     const posterId = String(faker.number.int());
     const reviewerId = String(faker.number.int());
     const reviewDescription =  faker.lorem.word();
-    const rating =  faker.number.int()
+    const rating =  faker.number.int();
+    const isAnonymous = faker.datatype.boolean();
     
-    const postReview =  await postReviewDao.create(postId, posterId, reviewerId, reviewDescription, rating);
+    const postReview =  await postReviewDao.create(postId, posterId, reviewerId, reviewDescription, rating, isAnonymous);
     expect(postReview.postId).toBe(postId);
     expect(postReview.posterId).toBe(posterId);
     expect(postReview.reviewerId).toBe(reviewerId);
     expect(postReview.reviewDescription).toBe(reviewDescription);
     expect(postReview.rating).toBe(rating);
+    expect(postReview.isAnonymous).toBe(isAnonymous);
 });
 
 test('test create() with missing fields', async ()=> {
     const postReviewDao = new PostReviewDao();
-    await mg.connect(URI);
 
     // Missing postId
     let postId: string | undefined = undefined;
@@ -77,8 +78,9 @@ test('test readAllByPostId()', async ()=> {
     const reviewerId = String(faker.number.int());
     const reviewDescription =  faker.lorem.word();
     const rating =  faker.number.int();
+    const isAnonymous = faker.datatype.boolean();
 
-    await postReviewDao.create(postId, posterId, reviewerId, reviewDescription, rating);
+    await postReviewDao.create(postId, posterId, reviewerId, reviewDescription, rating, isAnonymous);
 
     // Fetch reviews by postId
     const postReviews = await postReviewDao.readAllByPostId(postId);
@@ -90,6 +92,7 @@ test('test readAllByPostId()', async ()=> {
     expect(postReviews[0].reviewerId).toBe(reviewerId);
     expect(postReviews[0].reviewDescription).toBe(reviewDescription);
     expect(postReviews[0].rating).toBe(rating);
+    expect(postReviews[0].isAnonymous).toBe(isAnonymous);
 });
 
 test('test readOne()', async ()=> {
@@ -102,7 +105,9 @@ test('test readOne()', async ()=> {
     const reviewerId = String(faker.number.int());
     const reviewDescription =  faker.lorem.word();
     const rating =  faker.number.int();
-    const createdReview = await postReviewDao.create(postId, posterId, reviewerId, reviewDescription, rating);
+    const isAnonymous = faker.datatype.boolean();
+
+    const createdReview = await postReviewDao.create(postId, posterId, reviewerId, reviewDescription, rating, isAnonymous);
 
     // Fetch the review by ID
     const retrievedReview = await postReviewDao.readOne(createdReview._id);
@@ -124,6 +129,7 @@ test('test delete()', async ()=> {
     const reviewerId = String(faker.number.int());
     const reviewDescription =  faker.lorem.word();
     const rating =  faker.number.int();
+
     const createdReview = await postReviewDao.create(postId, posterId, reviewerId, reviewDescription, rating);
 
     // Delete the review
