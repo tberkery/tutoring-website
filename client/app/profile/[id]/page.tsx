@@ -125,17 +125,36 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
     }
   }
 
-  const updateProfileViews = () => {
+  const updateProfileViewsAsync = async () => {
+    console.log('a');
     if (visitorIdRef.current === '') {
       return;
     }
+    console.log('b');
     const endpoint = `${api}/profiles/views/${params.id}`;
     const body = { 
       viewerId: visitorIdRef.current,
-      startTime: new Date(),
+      timestamp: new Date(),
       duration: timeSpentRef.current
+    };
+    await axios.put(endpoint, body);
+    return;
+  }
+
+  const updateProfileViews = () => {
+    console.log('a');
+    if (visitorIdRef.current === '') {
+      return;
     }
+    console.log('b');
+    const endpoint = `${api}/profiles/views/${params.id}`;
+    const body = { 
+      viewerId: visitorIdRef.current,
+      timestamp: new Date(),
+      duration: timeSpentRef.current
+    };
     axios.put(endpoint, body);
+    return;
   }
 
   useEffect(() => { getVisitor() }, [isLoaded, isSignedIn, user]);
@@ -144,9 +163,11 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
     fetchData();
     window.addEventListener("blur", () => setOnPage(false));
     window.addEventListener("focus", () => setOnPage(true));
+    window.addEventListener("beforeunload", updateProfileViewsAsync);
     return () => {
       window.removeEventListener("blur", () => setOnPage(false));
       window.removeEventListener("focus", () => setOnPage(true));
+      window.removeEventListener("beforeunload", updateProfileViewsAsync);
     }
   }, []);
 
@@ -159,10 +180,7 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
     return () => clearInterval(intervalId);
   }, [onPage]);
 
-  useEffect(() => {
-    // will execute when the user exits the page
-    return updateProfileViews
-  }, [])
+  useEffect(() => updateProfileViews, [])
 
   if (loading) return ( <> <Loader /> </>);
 

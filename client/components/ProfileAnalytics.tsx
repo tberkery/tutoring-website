@@ -139,7 +139,7 @@ const ProfileAnalytics : FC<{profileId : string}> = (params) => {
 
   useEffect(() => { getViewsData() }, [])
 
-  useEffect(() => { displayViewsData() }, [timeScale])
+  useEffect(() => { displayViewsData() }, [timeScale, rawViewsData])
 
   useEffect(() => { getDemographicsData() }, [])
 
@@ -311,6 +311,13 @@ const ProfileAnalytics : FC<{profileId : string}> = (params) => {
   }
 
   const getViewersSection = () => {
+    if (majorData.length < 1) {
+      return <div className='h-96'>
+        <h3 className='text-2xl'>
+          Your profile does not have enough views!
+        </h3>
+      </div>;
+    }
     return <>
       <div
         className="bg-white px-8 py-8 mb-8 rounded-xl shadow-md flex-grow
