@@ -6,24 +6,17 @@ const CourseSchema = new mongoose.Schema({
     courseTitle: {
       type: String,
       required: true,
+      unique: true,
     },
-    courseCode: {
+    courseNumber: {
         type: String,
         required: true,
         unique: true,
     },
-    courseDepartment: {
+    courseDepartment: [{
         type: String,
         required: true,
-    },
-    isUpperLevel: {
-        type: Boolean,
-        required: true,
-    },
-    courseDescription: {
-        type: String, 
-        required: true,
-    }
+    }]
   });
 
 const Course = mongoose.model("Course", CourseSchema);

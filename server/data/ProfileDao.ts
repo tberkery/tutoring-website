@@ -24,7 +24,7 @@ export class ProfileDao {
   async readViewsById(_id: string) {
     const data = await Profile.findById(_id).lean().select("views");
     return data;
-}
+  }
 
   async readByEmail(email:string) {
     const data = await Profile.find({email:email});
@@ -65,7 +65,7 @@ export class ProfileDao {
         return data;
   }
 
-  async update(_id: Number, firstName: string, lastName: string, email: string, affiliation: string, department: string, options?: {graduationYear?: string, description?: string, posts?: []}){
+  async update(_id: Number, firstName: string, lastName: string, email: string, affiliation: string, department: string, options?: {graduationYear?: string, description?: string, posts?: [], availability?: []}){
     let newProfile: any = {firstName, lastName, email, affiliation, department};
     if (options){
       if (options.graduationYear){
@@ -77,12 +77,23 @@ export class ProfileDao {
       if (options.posts){
         newProfile.posts = options.posts;
       }
+      if (options.availability) {
+        newProfile.availability = options.availability;
+      }
     }
     const data = await Profile.findByIdAndUpdate(_id, newProfile)
     return data;
   }
 
+  async updateAvailability(_id: String, availability: Number[]) {
+    const data = await Profile.findByIdAndUpdate(_id,
+      { $set: { availability: availability } },
+      { new: true })
+    return data
+  }
+
   async updateViews(_id: String, viewerId: String, timestamp: String, duration: Number) {
+    console.log(timestamp)
     const data = await Profile.findByIdAndUpdate(_id,
       { $push: { views: { viewerId: viewerId, timestamp: timestamp, durationInSeconds: duration } } },
       { new: true })

@@ -102,6 +102,8 @@ describe('Test analytics reporting capabilities', () => {
             .put(`/profiles/views/${profile1Id}`)
             .send(viewInfo)
 
+        console.log(resView.body.data.views);
+
         const resAnalytics = await request(app)
             .get(`/profiles/demographics/${profile1Id}`)
 
