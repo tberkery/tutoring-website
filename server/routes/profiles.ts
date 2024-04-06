@@ -107,7 +107,8 @@ router.put("/:_id", async (req: any, res: any) => {
 });
 
 router.get("/demographics/:_id", async (req: any, res: any) => {
-  const { _id }: { _id: string } = req.params;
+  const { _id }: { _id: string} = req.params;
+  const { start }: { start: string} = req.query;
   try {
     const startProfile = await profiles.readViewsById(_id);
     if (!startProfile) {
@@ -115,7 +116,9 @@ router.get("/demographics/:_id", async (req: any, res: any) => {
     }
     let viewerIds: any[] = [];
     try {
-      viewerIds = startProfile.views.map((view: { viewerId: any; }) => view.viewerId)
+      viewerIds = startProfile.views
+        .filter((view: { timestamp: string }) => new Date(view.timestamp) >= new Date(start))
+        .map((view: { viewerId: any; }) => view.viewerId)
     }
     catch(error) { // If no views, return empty dictionaries, not an error
       const departments = {};
