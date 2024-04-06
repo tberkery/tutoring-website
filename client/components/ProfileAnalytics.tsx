@@ -6,6 +6,7 @@ import { CartesianGrid, Cell, Line, LineChart, Pie, PieChart, ResponsiveContaine
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuItem } from './ui/dropdown-menu';
 import { DropdownMenuContent } from '@radix-ui/react-dropdown-menu';
 import { Button } from './ui/button';
+import { SignOutButton } from '@clerk/nextjs';
 
 type view = {
   viewerId: string,
@@ -120,8 +121,10 @@ const ProfileAnalytics : FC<{profileId : string}> = (params) => {
 
   const getDemographicsData = async () => {
     const endpoint = `${api}/profiles/demographics/${id}`;
-    const response = await axios.get(endpoint);
+    const params = { params: { start: getDaysAgo(timeScaleToDays()) }};
+    const response = await axios.get(endpoint, params);
     const data = response.data;
+    console.log(data);
     let majors : pieGraphPoint[] = data.departments;
     majors = majors.map((point) => {
       point._id = capitalize(point._id);
@@ -143,11 +146,11 @@ const ProfileAnalytics : FC<{profileId : string}> = (params) => {
 
   useEffect(() => { getDemographicsData() }, [])
 
-  const viewedPosts = [
-    { title: 'Linear Algebra', views: 79},
-    { title: 'Calculus III', views: 54},
-    { title: 'Piano Lessons', views: 48},
-  ]
+  // const viewedPosts = [
+  //   { title: 'Linear Algebra', views: 79},
+  //   { title: 'Calculus III', views: 54},
+  //   { title: 'Piano Lessons', views: 48},
+  // ]
 
   const ratedPosts = [
     { title: 'Calculus III', rating: 4.8 },
@@ -312,13 +315,14 @@ const ProfileAnalytics : FC<{profileId : string}> = (params) => {
   }
 
   const getViewersSection = () => {
-    if (majorData.length < 1) {
-      return <div className='h-96'>
-        <h3 className='text-2xl'>
-          Your profile does not have enough views!
-        </h3>
-      </div>;
-    }
+    // if (majorData.length < 1) {
+    //   return <div className='h-96'>
+    //     <h3 className='text-2xl'>
+    //       Your profile does not have enough views!
+    //     </h3>
+    //   </div>;
+    // }
+    console.log(majorData);
     return <>
       <div
         className="bg-white px-8 py-8 mb-8 rounded-xl shadow-md flex-grow
