@@ -1,7 +1,6 @@
 export {}
 
 import mongoose from "mongoose";
-import { boolean } from "zod";
 
 const PostReviewSchema = new mongoose.Schema({
     postId: {               // id of the post that the review was written for
