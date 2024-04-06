@@ -6,6 +6,12 @@ import axios from "axios";
 import CreatePost from "@/components/CreatePost";
 import { useRouter } from "next/navigation";
 
+type sisCourse = {
+  courseTitle: string,
+  courseNumber: string,
+  courseDepartment: string[],
+}
+
 const Page : FC = () => {
 	const { user } = useUser();
 	const api : string = process.env.NEXT_PUBLIC_BACKEND_URL;
@@ -26,7 +32,16 @@ const Page : FC = () => {
   const [photoFile, setPhotoFile] = useState<File>(null);
 	const [refilling, setRefilling] = useState(false);
 
+  const [sisCourses, setSisCourses] = useState<sisCourse[]>([]);
+
   useEffect(() => { getProfile() }, [user]);
+
+  const getSisCourses = async () => {
+    const response = await axios.get(`${api}/courses/all`);
+    setSisCourses(response.data.courses);
+  }
+
+  useEffect(() => { getSisCourses() }, []);
 
   const getProfile = async () => {
     if (!user) {
@@ -128,6 +143,7 @@ const Page : FC = () => {
   return <>
     <div className="flex flex-col justify-center items-center my-24 mx-24">
       <CreatePost
+        sisCourses={sisCourses}
         postType={postType}
         setPostType={setPostType}
         title={title}
