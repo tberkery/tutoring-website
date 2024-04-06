@@ -6,7 +6,6 @@ import { CartesianGrid, Cell, Line, LineChart, Pie, PieChart, ResponsiveContaine
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuItem } from './ui/dropdown-menu';
 import { DropdownMenuContent } from '@radix-ui/react-dropdown-menu';
 import { Button } from './ui/button';
-import { SignOutButton } from '@clerk/nextjs';
 
 type view = {
   viewerId: string,
@@ -55,7 +54,10 @@ const ProfileAnalytics : FC<{profileId : string}> = (params) => {
 
   const getDaysAgo = (days : number) => {
     const result = new Date();
-    result.setDate(result.getDate() - days);
+    result.setHours(0);
+    result.setMinutes(0);
+    result.setSeconds(0);
+    result.setDate(result.getDate() - (days - 1));
     return result;
   }
 
@@ -124,7 +126,6 @@ const ProfileAnalytics : FC<{profileId : string}> = (params) => {
     const params = { params: { start: getDaysAgo(timeScaleToDays()) }};
     const response = await axios.get(endpoint, params);
     const data = response.data;
-    console.log(data);
     let majors : pieGraphPoint[] = data.departments;
     majors = majors.map((point) => {
       point._id = capitalize(point._id);
