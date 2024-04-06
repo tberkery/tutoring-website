@@ -122,9 +122,9 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
     setComment(event.target.value);
   };
 
-  const handleAnonymousChange = (event) => {
-    setIsAnonymous(event.target.checked);
-  };
+  const handleCheckedChange = () => {
+    setIsAnonymous(!isAnonymous);
+  }
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -135,7 +135,8 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
         posterId,
         reviewerId: reviewerId,
         reviewDescription: comment,
-        rating
+        rating,
+        isAnonymous: isAnonymous
       });
       alert(`Your review has been created!`);
       console.log('Review submitted:', response.data);
@@ -230,7 +231,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
             <h2 className="font-sans font-extrabold uppercase text-l leading-none mt-2 mb-0 text-slate-700 pt-2 self-start">Comment *</h2>
             <Textarea className="resize-none my-2 rounded" onChange={handleCommentChange}/>
             <div className="flex items-center space-x-2">
-              <Checkbox id="terms" checked={isAnonymous} onChange={handleAnonymousChange}/>
+              <Checkbox id="terms" checked={isAnonymous} onChange={handleCheckedChange}/>
               <label
                 htmlFor="terms"
                 className="text-sm font-medium leading-none capitalize peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
