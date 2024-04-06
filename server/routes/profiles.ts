@@ -73,12 +73,28 @@ router.put("/views/:_id", async (req: any, res: any) => {
   }
 });
 
+router.put("/availability/:_id", async (req: any, res: any) => {
+  const { _id }: { _id: string } = req.params;
+  const { availability }: { availability: number[] } = req.body;
+  try {
+    const data = await profiles.updateAvailability(_id, availability) 
+    if (!data) {
+      res.status(404).json({ msg: "Profile availability update not made" });
+      return;
+    }
+    res.status(200).json({ data });
+  } catch (err) {
+    res.status(500).send("Server Error");
+  }
+});
 
 
 router.put("/:_id", async (req: any, res: any) => {
+  console.log('endpoint hit')
     const { _id }: { _id: string } = req.params;
     const {firstName, lastName, email, affiliation, graduationYear, department, description, posts} : {firstName: string, lastName: string, email: string, affiliation: string, graduationYear: string, department: string, description: string, posts: []} = req.body;
     try {
+
       const data = await profiles.update(_id, firstName, lastName, email, affiliation, department, {graduationYear, description, posts});
       if (!data) {
         res.status(404).json({ msg: "User not found" });
@@ -91,7 +107,8 @@ router.put("/:_id", async (req: any, res: any) => {
 });
 
 router.get("/demographics/:_id", async (req: any, res: any) => {
-  const { _id }: { _id: string } = req.params;
+  const { _id }: { _id: string} = req.params;
+  const { start }: { start: string} = req.query;
   try {
     const startProfile = await profiles.readViewsById(_id);
     if (!startProfile) {
@@ -99,7 +116,9 @@ router.get("/demographics/:_id", async (req: any, res: any) => {
     }
     let viewerIds: any[] = [];
     try {
-      viewerIds = startProfile.views.map((view: { viewerId: any; }) => view.viewerId)
+      viewerIds = startProfile.views
+        .filter((view: { timestamp: string }) => new Date(view.timestamp) >= new Date(start))
+        .map((view: { viewerId: any; }) => view.viewerId)
     }
     catch(error) { // If no views, return empty dictionaries, not an error
       const departments = {};

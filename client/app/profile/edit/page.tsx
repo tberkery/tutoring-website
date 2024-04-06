@@ -92,6 +92,8 @@ const Page : FC = () => {
 				body["graduationYear"] = year.toString();
 			}
       console.log(body);
+	  console.log(`${process.env.NEXT_PUBLIC_BACKEND_URL}/profiles/update/${userId}`)
+
 			await axios.put(`${process.env.NEXT_PUBLIC_BACKEND_URL}/profiles/${userId}`, body);
 			router.replace('/profile');
 		}

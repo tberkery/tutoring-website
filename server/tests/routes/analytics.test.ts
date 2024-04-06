@@ -2,7 +2,6 @@ export {}
 const request = require('supertest');
 const express = require('express');
 const router = require('../../../server/routes/index.ts')
-const activityPost = require('../../../server/model/ActivityPost'); 
 const App = require('../../../server/app.ts')
 
 App.dbConnection(true)
@@ -47,7 +46,7 @@ describe('Test analytics reporting capabilities', () => {
         const profile2Id = res2.body.data._id;
 
         const resAnalytics = await request(app)
-            .get(`/profiles/demographics/${profile1Id}`)
+            .get(`/profiles/demographics/${profile1Id}?start=2020-03-05T19:49:35.744Z`)
 
         expect(resAnalytics.body.departments).toMatchObject([]);
         expect(resAnalytics.body.affiliations).toMatchObject([]);
@@ -94,7 +93,7 @@ describe('Test analytics reporting capabilities', () => {
 
         const viewInfo = {
             "viewerId": profile2Id,
-            "start_time": "2022-02-17T13:36:45.954Z",
+            "timestamp": "2022-02-17T13:36:45.954Z",
             "duration": 120
         }
 
@@ -102,10 +101,8 @@ describe('Test analytics reporting capabilities', () => {
             .put(`/profiles/views/${profile1Id}`)
             .send(viewInfo)
 
-        console.log(resView.body.data.views);
-
         const resAnalytics = await request(app)
-            .get(`/profiles/demographics/${profile1Id}`)
+            .get(`/profiles/demographics/${profile1Id}?start=2020-03-05T19:49:35.744Z`)
 
         expect(resAnalytics.body.departments).toHaveLength(1);
         expect(resAnalytics.body.affiliations).toHaveLength(1);
@@ -124,7 +121,7 @@ describe('Test analytics reporting capabilities', () => {
         expect(graduationYear2023.count).toBe(1);
 
         const resAnalytics2 = await request(app)
-            .get(`/profiles/demographics/${profile2Id}`)
+            .get(`/profiles/demographics/${profile2Id}?start=2020-03-05T19:49:35.744Z`)
 
         expect(resAnalytics2.body.departments).toMatchObject([]);
         expect(resAnalytics2.body.affiliations).toMatchObject([]);
@@ -186,13 +183,13 @@ describe('Test analytics reporting capabilities', () => {
 
         const viewInfo1 = {
             "viewerId": profile2Id,
-            "start_time": "2022-02-17T13:36:45.954Z",
+            "timestamp": "2022-02-17T13:36:45.954Z",
             "duration": 120
         }
 
         const viewInfo2 = {
             "viewerId": profile3Id,
-            "start_time": "2022-02-18T13:36:45.954Z",
+            "timestamp": "2022-02-18T13:36:45.954Z",
             "duration": 130
         }
 
@@ -205,8 +202,9 @@ describe('Test analytics reporting capabilities', () => {
             .send(viewInfo2)
 
         const resAnalytics1 = await request(app)
-            .get(`/profiles/demographics/${profile1Id}`)
+            .get(`/profiles/demographics/${profile1Id}?start=2021-03-05T19:49:35.744Z`)
 
+        console.log(resAnalytics1.body)
         expect(resAnalytics1.body.departments).toHaveLength(2);
         expect(resAnalytics1.body.affiliations).toHaveLength(1);
         expect(resAnalytics1.body.graduationYears).toHaveLength(2);
@@ -232,7 +230,7 @@ describe('Test analytics reporting capabilities', () => {
         expect(graduationYear2024.count).toBe(1);
 
         const resAnalytics2 = await request(app)
-            .get(`/profiles/demographics/${profile2Id}`)
+            .get(`/profiles/demographics/${profile2Id}?start=2021-03-05T19:49:35.744Z`)
 
         expect(resAnalytics2.body.departments).toMatchObject([]);
         expect(resAnalytics2.body.affiliations).toMatchObject([]);
@@ -240,7 +238,7 @@ describe('Test analytics reporting capabilities', () => {
 
 
         const resAnalytics3 = await request(app)
-            .get(`/profiles/demographics/${profile3Id}`)
+            .get(`/profiles/demographics/${profile3Id}?start=2021-03-05T19:49:35.744Z`)
 
         expect(resAnalytics3.body.departments).toMatchObject([]);
         expect(resAnalytics3.body.affiliations).toMatchObject([]);

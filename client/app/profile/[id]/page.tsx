@@ -20,6 +20,7 @@ interface Profile {
   graduationYear: string;
   lastName: string;
   posts: string[];
+  availability: number[];
 }
 
 interface ActivityPost {
@@ -81,9 +82,78 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
   useEffect(() => {
     visitorIdRef.current = visitorId;
   }, [visitorId])
-
+  
   const { isLoaded, isSignedIn, user } = useUser();
   const router = useRouter();
+
+  const availabilityToInterval = (availability: number[]) => {
+    const sortedArray = availability.sort((a, b) => a - b);
+    let start = sortedArray[0];
+    let end = sortedArray[0];
+    const intervals = [];
+
+    for (let i = 1; i < sortedArray.length; i++) {
+        if (sortedArray[i] === end + 1) {
+            end = sortedArray[i];
+        } else {
+            intervals.push([start, end]);
+            start = sortedArray[i];
+            end = sortedArray[i];
+        }
+    }
+    intervals.push([start, end]);
+    return intervals;
+  }
+
+  function formatStartTime(t) {
+    const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
+    const dayIndex = Math.floor((t- 1) / 96);
+    const timeIndex = ((t - 1) % 96) * 15; 
+
+    const startHours = Math.floor(timeIndex / 60).toString().padStart(2, '0');
+    const startMinutes = (timeIndex % 60).toString().padStart(2, '0');
+
+    const endHours = Math.floor((timeIndex + 15) / 60).toString().padStart(2, '0');
+    const endMinutes = ((timeIndex + 15) % 60).toString().padStart(2, '0');
+
+    const formattedString = `${days[dayIndex]} ${startHours}:${startMinutes}`;
+
+    return formattedString;
+}
+
+function formatEndTime(t) {
+    const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
+    const dayIndex = Math.floor((t- 1) / 96);
+    const timeIndex = ((t - 1) % 96) * 15; 
+
+    const startHours = Math.floor(timeIndex / 60).toString().padStart(2, '0');
+    const startMinutes = (timeIndex % 60).toString().padStart(2, '0');
+
+    const endHours = Math.floor((timeIndex + 15) / 60).toString().padStart(2, '0');
+    const endMinutes = ((timeIndex + 15) % 60).toString().padStart(2, '0');
+
+    const formattedString = `${endHours}:${endMinutes}`;
+
+    return formattedString;
+}
+  const compareAvail = async () => {
+    const userInfo = await axios.get(`${api}/profiles/getByEmail/${user.primaryEmailAddress.toString()}`);
+    const bothAvailable = profileData.availability.filter(value => userInfo.data.data[0].availability.includes(value));
+
+    //overlapping intervals!!
+    const intervals = availabilityToInterval(bothAvailable);
+
+    let result = "";
+    intervals.forEach((interval) => {
+      const from = formatStartTime(interval[0]);
+      const to = formatEndTime(interval[1]);
+      result +=  from + " - " + to + '\n';
+    })
+    window.alert('Ovelapping times:' + result);
+
+  }
 
   const fetchData = async () => {
     try {
@@ -198,11 +268,14 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
           <img className="w-48 h-48 snap-center rounded-md" src={imgUrl} alt={`${profileData.firstName}`} />
           <RatingStars rating={4.5} starSize={26} numReviews={42} className="mt-2"/>
           <div className="flex mt-2 space-x-4">
-            <Link href="/profile/" passHref>
+            <Link href="/chat/" passHref>
               <button className="bg-custom-blue hover:bg-blue-900 text-white font-bold py-2 px-4 rounded-md">
                 Message
               </button>
             </Link>
+              <button className="bg-custom-blue hover:bg-blue-900 text-white font-bold py-2 px-4 rounded-md" onClick={() => compareAvail()}>
+                Compare Availability
+              </button>
           </div>
         </div>
       </div>
