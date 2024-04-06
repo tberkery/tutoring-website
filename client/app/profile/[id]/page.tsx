@@ -75,6 +75,7 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
   const [profileData, setProfile] = useState<Profile>();
   const [posts, setPosts] = useState<Post[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [reviewAvg, setReviewAvg] = useState(5);
   const [imgUrl, setImgUrl] = useState("../defaultimg.jpeg");
   const [activeSection, setActiveSection] = useState("Posts");
   const [timeSpent, setTimeSpent] = useState(0);
@@ -90,6 +91,13 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
   useEffect(() => {
     visitorIdRef.current = visitorId;
   }, [visitorId])
+
+  useEffect(() => {
+    let ratingTotal = 0;
+    reviews.forEach((review) => ratingTotal += review.rating);
+    console.log(ratingTotal);
+    setReviewAvg(ratingTotal / reviews.length);
+  }, [reviews])
   
   const { isLoaded, isSignedIn, user } = useUser();
   const router = useRouter();
@@ -283,7 +291,11 @@ function formatEndTime(t) {
         </div>
         <div className="flex-none flex flex-col items-center mx-8">
           <img className="w-48 h-48 snap-center rounded-md" src={imgUrl} alt={`${profileData.firstName}`} />
-          <RatingStars rating={4.5} starSize={26} numReviews={42} className="mt-2"/>
+          { reviews.length > 0 ?
+            <RatingStars rating={reviewAvg} starSize={26} numReviews={reviews.length} className="mt-2"/>
+          :
+            <></>
+          }
           <div className="flex mt-2 space-x-4">
             <Link href="/chat/" passHref>
               <button className="bg-custom-blue hover:bg-blue-900 text-white font-bold py-2 px-4 rounded-md">

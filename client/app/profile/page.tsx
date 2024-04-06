@@ -51,6 +51,7 @@ const Page : FC = () => {
   const api = process.env.NEXT_PUBLIC_BACKEND_URL;
   const [posts, setPosts] = useState<Post[]>([]);
   const [bestPosts, setBestPosts] = useState<Post[]>([]);
+  const [reviewAvg, setReviewAvg] = useState(5);
   const [profileData, setProfileData] = useState(null);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
@@ -114,6 +115,13 @@ const Page : FC = () => {
     fetchData();
   }, [api, user, isLoaded, isSignedIn]);
 
+  useEffect(() => {
+    let ratingTotal = 0;
+    reviews.forEach((review) => ratingTotal += review.rating);
+    console.log(ratingTotal);
+    setReviewAvg(ratingTotal / reviews.length);
+  }, [reviews])
+
   if (loading || !profileData) {
     return (
       <>
@@ -170,7 +178,11 @@ const Page : FC = () => {
         </div>
         <div className="flex-none flex flex-col items-center">
           <img className="w-48 h-48 snap-center rounded-md" src={imgUrl} alt={`${profileData.firstName}`} />
-          <RatingStars rating={3.7} starSize={26} numReviews={42} className="mt-2"/>
+          { reviews.length > 0 ?
+            <RatingStars rating={reviewAvg} starSize={26} numReviews={reviews.length} className="mt-2"/>
+          :
+            <></>
+          }
           <div className="flex mt-2 space-x-4">
             <Link href="/profile/edit" passHref>
               <button className="bg-custom-blue hover:bg-blue-900 text-white font-bold py-2 px-4 rounded-md">

@@ -33,8 +33,12 @@ const ReviewCard : FC<props> = (props) => {
     const profileEndpoint = `${api}/profiles/${review.reviewerId}`;
     const profileResponse = await axios.get(profileEndpoint);
     const profile = profileResponse.data.data;
-    setLeftByName(`${profile.firstName} ${profile.lastName}`);
-    setAnonymous(props.review.isAnonymous);
+    if (profile) {
+      setLeftByName(`${profile.firstName} ${profile.lastName}`);
+      setAnonymous(props.review.isAnonymous);
+    } else {
+      setAnonymous(true);
+    }
   }
 
   const isTextClamped = (element : Element) => {

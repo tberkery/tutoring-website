@@ -1,7 +1,6 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from "next/navigation";
-import RatingStars from './RatingStars';
 import { Star } from 'lucide-react';
 
 interface Post {
@@ -22,8 +21,21 @@ interface Post {
   professorTakenWith?: string;
   takenAtHopkins?: boolean;
   schoolTakenAt?: string;
+  reviews: review[];
   tags?: string[];
   __v: number;
+}
+
+type review = {
+  postId: string,
+  postName?: string,
+  postType?: string,
+  posterId: string,
+  reviewerId: string,
+  title?: string,
+  isAnonymous?: boolean,
+  reviewDescription: string,
+  rating: number,
 }
 
 interface PostCardProps {
@@ -33,9 +45,16 @@ interface PostCardProps {
 const PostCard: React.FC<PostCardProps> = ({ post }) => {
   const defaultImage = '/jhulogo.jpeg';
   const [titleUnderline, setTitleUnderline] = useState(false);
+  const [avgRating, setAvgRating] = useState(5);
   const router = useRouter();
 
   const postUrl = post.courseName ? `/post/course/${post._id}` : `/post/activity/${post._id}`;
+
+  useEffect(() => {
+    let total = 0;
+    post.reviews.forEach(r => total += r.rating);
+    setAvgRating(total / post.reviews.length);
+  }, [post])
 
   const handleClick = () => {
     if (titleUnderline) {
@@ -75,11 +94,15 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
         </div>
         <div className={`flex items-center justify-between ${post.courseNumber !== '' ? 'justify-between' : ''}`}>
           <p className="text-slate-500 text-sm font-sans">{post.courseNumber}</p>
-          <div className="ratings flex items-center">
-            <Star size={20} className="fill-black text-black inline-block mr-1"/>
-            <h1 className="font-bold pt-0.25 pr-1">5.0</h1>
-            <a href="/reviews" className="text-slate-500">(72)</a>
-          </div>
+          { post.reviews.length > 0 ?
+            <div className="ratings flex items-center">
+              <Star size={20} className="fill-black text-black inline-block mr-1"/>
+              <h1 className="font-bold pt-0.25 pr-1">{avgRating.toFixed(1)}</h1>
+              <a href="/reviews" className="text-slate-500">({post.reviews.length})</a>
+            </div>
+          :
+            <></>
+          }
         </div>
         <p className="text-slate-800 text-base font-sans line-clamp-2 cursor-pointe">
           {post.description ? post.description : post.activityDescription}
