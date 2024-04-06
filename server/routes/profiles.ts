@@ -11,7 +11,7 @@ router.post("/", async (req: any, res: any) => {
   try {    
     const {firstName, lastName, email, affiliation, graduationYear, department, description} : {firstName: string, lastName: string, email: string, affiliation: string, graduationYear: string, department: string, description: string} = req.body;
     const data = await profiles.create( firstName, lastName, email, affiliation, department, {graduationYear, description});
-    res.json({ data });
+    res.status(200).json({ data });
   } catch (err) {
     res.status(500).send("Server Error");
   }
