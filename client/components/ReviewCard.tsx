@@ -10,6 +10,7 @@ type review = {
   posterId: string,
   reviewerId: string,
   title?: string,
+  isAnonymous?: boolean,
   reviewDescription: string,
   rating: number,
 }
@@ -26,7 +27,6 @@ const ReviewCard : FC<props> = (props) => {
   const [showFull, setShowFull] = useState(false);
   const [isClamped, setIsClamped] = useState(false);
   const [leftByName, setLeftByName] = useState("");
-  const [leftById, setLeftById] = useState("");
   const [anonymous, setAnonymous] = useState(false);
 
   const fetchData = async () => {
@@ -34,8 +34,7 @@ const ReviewCard : FC<props> = (props) => {
     const profileResponse = await axios.get(profileEndpoint);
     const profile = profileResponse.data.data;
     setLeftByName(`${profile.firstName} ${profile.lastName}`);
-    setLeftById(profile._id);
-    setAnonymous(false); // TODO update
+    setAnonymous(props.review.isAnonymous);
   }
 
   const isTextClamped = (element : Element) => {
