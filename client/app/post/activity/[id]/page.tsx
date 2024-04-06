@@ -50,6 +50,41 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
   const [isAnonymous, setIsAnonymous] = useState(false);
   const { isLoaded, isSignedIn, user } = useUser();
 
+  const [reviews, setReviews] = useState([]);
+  const [averageRating, setAverageRating] = useState(0);
+  const [reviewCount, setReviewCount] = useState(0);
+
+  const loadReviews = async () => {
+    try {
+        const response = await axios.get(`${api}/postReviews/getByPostId/${postId}`);
+        const fetchedReviews = response.data.reviews;
+            console.log(fetchedReviews);
+
+            let sumOfRatings = 0;
+            const numberOfReviews = fetchedReviews.length;
+            setReviewCount(numberOfReviews);
+
+            if (numberOfReviews > 0) {
+                for (let i = 0; i < numberOfReviews; i++) {
+                    sumOfRatings += fetchedReviews[i].rating;
+                }
+                setAverageRating(sumOfRatings / numberOfReviews);
+                console.log(`Average Rating: ${averageRating}`);
+            } else {
+                console.log("No ratings yet");
+            }
+            setReviews(fetchedReviews); // Set reviews state at the end
+        } catch (error) {
+        console.error('Error fetching reviews:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (postId) {
+        loadReviews();
+    }
+  }, [postId, averageRating]);
+
 
   const loadOldPost = async () => {
     if (!isLoaded || !isSignedIn) {
@@ -99,7 +134,9 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
       });
       alert(`Your review has been created!`);
       console.log('Review submitted:', response.data);
-      // Handle success (e.g., clear form, show success message)
+      setRating(0);
+      setComment('');
+      setIsAnonymous(false);
     } catch (error) {
       console.error('Error submitting review:', error);
     }
@@ -144,7 +181,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
           <div className="flex flex-col items-end">
             <RatingStars rating={4.8} starSize={20} />
             <span className="text-sm">
-              4.8 from 30 reviews
+              {averageRating.toFixed(1)} from {reviewCount} reviews
             </span>
           </div>
         </div>
