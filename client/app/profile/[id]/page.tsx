@@ -28,6 +28,7 @@ interface ActivityPost {
   userId: string;
   activityTitle: string;
   activityDescription: string;
+  reviews: Review[],
   imageUrl: string;
   price: number;
   tags: string[];
@@ -40,6 +41,7 @@ interface CoursePost {
   courseName: string;
   description: string;
   price: number;
+  reviews: Review[],
   courseNumber: string;
   courseDepartment: string[];
   gradeReceived: string;
@@ -54,6 +56,8 @@ type Post = ActivityPost | CoursePost;
 
 type Review = {
   postId: string,
+  postName?: string,
+  postType?: string,
   posterId: string,
   reviewerId: string,
   title?: string,
@@ -162,6 +166,16 @@ function formatEndTime(t) {
       const posts = await axios.get(`${api}/allPosts/findAllByUserId/${userInfo.data.data._id}`);
       if (posts.data.length !== 0) {
         setPosts(posts.data);
+        let reviews : Review[] = [];
+        posts.data.forEach((post : Post) => {
+          post.reviews.forEach((review) => {
+            // @ts-ignore
+            review.postName = post.courseName ? post.courseName : post.activityTitle;
+            review.postType = 'courseName' in post ? 'course' : 'activity';
+            reviews.push(review);
+          })
+        })
+        setReviews(reviews);
       }
       if (userInfo.data.data.profilePicKey) {
         const picUrl = await axios.get(`${api}/profilePics/get/${userInfo.data.data.profilePicKey}`);
@@ -186,10 +200,9 @@ function formatEndTime(t) {
       const response = await axios.get(`${api}/profiles/getByEmail/${user.primaryEmailAddress.toString()}`);
       const id = response.data.data[0]._id;
       setVisitorId(id);
-      // TODO uncomment this once analytics manual testing is done
-      // if (id === params.id) {
-      //   router.replace('profile');
-      // }
+      if (id === params.id) {
+        router.replace('profile');
+      }
     } catch (error) {
       console.error(error);
     }
@@ -314,7 +327,7 @@ function formatEndTime(t) {
               )) }
             </div>
           :
-            <div className="flex flex-col justify-center max-w-3xl">
+            <div className="flex flex-col justify-center max-w-3xl w-full">
               { reviews.map((review) => (
                 <ReviewCard 
                   review={review}

@@ -60,12 +60,13 @@ const ReviewCard : FC<props> = (props) => {
         </p>
         <p className='text-sm mt-0.5 text-gray-800'>
           {'Left by '}
-          <span 
+          <a 
             className={`font-bold 
             ${anonymous ? '' : 'cursor-pointer hover:underline'}`}
+            href={`/profile/${review.posterId}`}
           >
             {leftByName}
-          </span>
+          </a>
         </p>
       </div>
       <RatingStars rating={review.rating} className='mb-2'/>
