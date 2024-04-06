@@ -28,6 +28,7 @@ interface ActivityPost {
     userLastName: string;
     price: number;
     tags: string[];
+    reviews: review[];
     __v: number;
 }
 
@@ -46,8 +47,21 @@ interface CoursePost {
     professorTakenWith: string;
     takenAtHopkins: boolean;
     schoolTakenAt: string;
+    reviews: review[];
     __v: number;
 }
+
+type review = {
+    postId: string,
+    postName?: string,
+    postType?: string,
+    posterId: string,
+    reviewerId: string,
+    title?: string,
+    isAnonymous?: boolean,
+    reviewDescription: string,
+    rating: number,
+  }
 
 type Post = ActivityPost | CoursePost;
 
