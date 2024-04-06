@@ -43,6 +43,13 @@ const NavBar: FC = () => {
         >
           Profiles
         </Link>
+        <Link 
+          href="/chat" 
+          className="inline-block px-2 py-1 ease-linear duration-75
+          hover:bg-blue-300 rounded-md font-extrabold font-sans text-lg"
+        >
+          Messages
+        </Link>
       </div>
       <div>
           <div>
