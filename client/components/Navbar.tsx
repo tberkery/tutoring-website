@@ -65,7 +65,9 @@ const NavBar: FC = () => {
                   <Link href="/chat">Messages</Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Log Out</DropdownMenuItem>
+                <DropdownMenuItem>
+                  <SignOutButton/>
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
             </>
