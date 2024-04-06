@@ -59,7 +59,6 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
     try {
         const response = await axios.get(`${api}/postReviews/getByPostId/${postId}`);
         const fetchedReviews = response.data.reviews;
-            console.log(fetchedReviews);
 
             let sumOfRatings = 0;
             const numberOfReviews = fetchedReviews.length;
@@ -74,6 +73,11 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
             } else {
                 console.log("No ratings yet");
             }
+            fetchedReviews.forEach((review) => {
+              // @ts-ignore
+              review.postName = post.activityTitle;
+              review.postType = 'activity';
+            });
             setReviews(fetchedReviews); // Set reviews state at the end
         } catch (error) {
         console.error('Error fetching reviews:', error);
@@ -81,10 +85,10 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
   };
 
   useEffect(() => {
-    if (postId) {
+    if (postId && post.activityTitle) {
         loadReviews();
     }
-  }, [postId, averageRating]);
+  }, [postId, post, averageRating]);
 
 
   const loadOldPost = async () => {
@@ -112,7 +116,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
     setLoadedPost(true);
   }
 
-  useEffect(() => { loadOldPost() }, []);
+  useEffect(() => { loadOldPost() }, [isLoaded, isSignedIn, user]);
 
   const handleCommentChange = (event) => {
     setComment(event.target.value);
@@ -180,7 +184,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
             <span className="text-xs text-gray-500">published Mar 30, 2024</span>
           </div>
           <div className="flex flex-col items-end">
-            <RatingStars rating={4.8} starSize={20} />
+            <RatingStars rating={averageRating} starSize={20} />
             <span className="text-sm">
               {averageRating.toFixed(1)} from {reviewCount} reviews
             </span>

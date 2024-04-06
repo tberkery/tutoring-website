@@ -81,6 +81,11 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
             } else {
                 console.log("No ratings yet");
             }
+            fetchedReviews.forEach((review) => {
+              // @ts-ignore
+              review.postName = post.courseName;
+              review.postType = 'course';
+            });
             setReviews(fetchedReviews); // Set reviews state at the end
         } catch (error) {
         console.error('Error fetching reviews:', error);
@@ -119,7 +124,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
     setLoadedPost(true);
   }
 
-  useEffect(() => { loadOldPost() }, []);
+  useEffect(() => { loadOldPost() }, [isLoaded, isSignedIn, user]);
 
   const handleCommentChange = (event) => {
     setComment(event.target.value);
