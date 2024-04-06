@@ -24,6 +24,8 @@ interface ActivityPost {
     activityTitle: string;
     activityDescription: string;
     imageUrl: string;
+    userFirstName: string;
+    userLastName: string;
     price: number;
     tags: string[];
     __v: number;
@@ -32,6 +34,8 @@ interface ActivityPost {
 interface CoursePost {
     _id: string;
     userId: string;
+    userFirstName: string;
+    userLastName: string;
     courseName: string;
     description: string;
     price: number;

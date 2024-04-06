@@ -26,6 +26,8 @@ interface Profile {
 interface ActivityPost {
   _id: string;
   userId: string;
+  userFirstName: string;
+  userLastName: string;
   activityTitle: string;
   activityDescription: string;
   reviews: Review[],
@@ -38,6 +40,8 @@ interface ActivityPost {
 interface CoursePost {
   _id: string;
   userId: string;
+  userFirstName: string;
+  userLastName: string;
   courseName: string;
   description: string;
   price: number;

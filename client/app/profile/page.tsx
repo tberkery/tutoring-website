@@ -15,7 +15,8 @@ import ProfileAnalytics from "@/components/ProfileAnalytics";
 interface Post {
   _id: string;
   userId: string;
-  username?: string;
+  userFirstName: string;
+  userLastName: string;
   activityTitle?: string;
   activityDescription?: string;
   courseName?: string;
