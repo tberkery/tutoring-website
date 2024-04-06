@@ -1,13 +1,18 @@
 "use client";
 import React, { FC, HTMLAttributes, useEffect, useRef, useState } from 'react';
 import RatingStars from './RatingStars';
+import axios from 'axios';
 
 type review = {
-  title: string,
+  postId: string,
+  postName?: string,
+  postType?: string,
+  posterId: string,
+  reviewerId: string,
+  title?: string,
+  isAnonymous?: boolean,
+  reviewDescription: string,
   rating: number,
-  leftBy: string,
-  post: string,
-  text: string
 }
 
 type props = {
@@ -16,41 +21,58 @@ type props = {
 
 const ReviewCard : FC<props> = (props) => {
   const review = props.review;
+  const api = process.env.NEXT_PUBLIC_BACKEND_URL;
   const textRef = useRef<HTMLParagraphElement>(null);
+
   const [showFull, setShowFull] = useState(false);
   const [isClamped, setIsClamped] = useState(false);
-  const anonymous = review.leftBy === 'Anonymous';
+  const [leftByName, setLeftByName] = useState("");
+  const [anonymous, setAnonymous] = useState(false);
+
+  const fetchData = async () => {
+    const profileEndpoint = `${api}/profiles/${review.posterId}`;
+    const profileResponse = await axios.get(profileEndpoint);
+    const profile = profileResponse.data.data;
+    setLeftByName(`${profile.firstName} ${profile.lastName}`);
+    setAnonymous(props.review.isAnonymous);
+  }
 
   const isTextClamped = (element : Element) => {
     return element.scrollHeight > element.clientHeight;
   }
+
+  useEffect(() => { fetchData() }, []);
 
   useEffect(() => { setIsClamped(isTextClamped(textRef.current)) }, [])
 
   return (
     <div className={`${props.className} px-4 py-3`}>
       <div className='flex justify-between'>
-        <h3 className='text-2xl font-bold'>{review.title}</h3>
+        <p className='text-xl text-gray-800'>
+          {"Review of "}
+          <a 
+            className='font-bold hover:cursor-pointer hover:underline'
+            href={`/post/${review.postType}/${review.postId}`}
+          >
+            {review.postName}
+          </a>
+        </p>
         <p className='text-sm mt-0.5 text-gray-800'>
           {'Left by '}
-          <span 
+          <a 
             className={`font-bold 
             ${anonymous ? '' : 'cursor-pointer hover:underline'}`}
+            href={`/profile/${review.posterId}`}
           >
-            {review.leftBy}
-          </span>
+            {leftByName}
+          </a>
         </p>
       </div>
-      <RatingStars rating={review.rating}/>
-      <p className='text-sm mt-1 text-gray-800'>
-        Review of <span className='font-bold cursor-pointer hover:underline'>
-          {review.post}
-        </span>
-      </p>
+      <RatingStars rating={review.rating} className='mb-2'/>
       <p 
         className={`mt-1 ${showFull ? '' : 'line-clamp-2'}`} ref={textRef}
       >
-        {review.text}
+        {review.reviewDescription}
       </p>
       { isClamped ?
         <div className='flex justify-center'>

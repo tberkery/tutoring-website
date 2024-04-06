@@ -1,5 +1,5 @@
 "use client";
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useEffect, useRef, useState } from "react";
 import "@/styles/global.css";
 import axios from "axios";
 import Navbar from "@/components/Navbar"
@@ -8,8 +8,8 @@ import Loader from "@/components/Loader";
 import PostCard from "@/components/PostCard";
 import RatingStars from "@/components/RatingStars";
 import ReviewCard from "@/components/ReviewCard";
-import { useUser } from '@clerk/clerk-react';
-import { result } from "cypress/types/lodash";
+import { useUser } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 
 interface Profile {
   affiliation: string;
@@ -30,6 +30,7 @@ interface ActivityPost {
   userLastName: string;
   activityTitle: string;
   activityDescription: string;
+  reviews: Review[],
   imageUrl: string;
   price: number;
   tags: string[];
@@ -44,6 +45,7 @@ interface CoursePost {
   courseName: string;
   description: string;
   price: number;
+  reviews: Review[],
   courseNumber: string;
   courseDepartment: string[];
   gradeReceived: string;
@@ -56,14 +58,41 @@ interface CoursePost {
 
 type Post = ActivityPost | CoursePost;
 
+type Review = {
+  postId: string,
+  postName?: string,
+  postType?: string,
+  posterId: string,
+  reviewerId: string,
+  title?: string,
+  reviewDescription: string,
+  rating: number,
+}
+
 const Page : FC = ({ params }: { params : { id: string }}) => {
   const api = process.env.NEXT_PUBLIC_BACKEND_URL;
   const [loading, setLoading] = useState(true);
   const [profileData, setProfile] = useState<Profile>();
   const [posts, setPosts] = useState<Post[]>([]);
+  const [reviews, setReviews] = useState<Review[]>([]);
   const [imgUrl, setImgUrl] = useState("../defaultimg.jpeg");
   const [activeSection, setActiveSection] = useState("Posts");
+  const [timeSpent, setTimeSpent] = useState(0);
+  const [onPage, setOnPage] = useState(true);
+  const [visitorId, setVisitorId] = useState('');
+
+  const timeSpentRef = useRef<Number>();
+  useEffect(() => {
+    timeSpentRef.current = timeSpent;
+  }, [onPage]);
+
+  const visitorIdRef = useRef<string>();
+  useEffect(() => {
+    visitorIdRef.current = visitorId;
+  }, [visitorId])
+  
   const { isLoaded, isSignedIn, user } = useUser();
+  const router = useRouter();
 
   const availabilityToInterval = (availability: number[]) => {
     const sortedArray = availability.sort((a, b) => a - b);
@@ -134,30 +163,6 @@ function formatEndTime(t) {
 
   }
 
-  const reviews = [
-    {
-      'title' : 'Very Good!!',
-      'rating' : 5,
-      'leftBy' : 'Kat Forbes',
-      'post' : 'Piano Lessons',
-      'text' : "Review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text",
-    },
-    {
-      'title' : 'Bad Experience...',
-      'rating' : 2,
-      'leftBy' : 'Ilana Chalom',
-      'post' : 'Linear Algebra',
-      'text' : "Short review text review text review text review text review text review text review text review text",
-    },
-    {
-      'title' : 'Learned a Lot!',
-      'rating' : 4,
-      'leftBy' : 'Anonymous',
-      'post' : 'Piano Lessons',
-      'text' : "Review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text review text",
-    },
-  ]
-
   const fetchData = async () => {
     try {
       const userInfo = await axios.get(`${api}/profiles/${params.id}`);
@@ -165,9 +170,25 @@ function formatEndTime(t) {
       const posts = await axios.get(`${api}/allPosts/findAllByUserId/${userInfo.data.data._id}`);
       if (posts.data.length !== 0) {
         setPosts(posts.data);
+        let reviews : Review[] = [];
+        posts.data.forEach((post : Post) => {
+          post.reviews.forEach((review) => {
+            // @ts-ignore
+            review.postName = post.courseName ? post.courseName : post.activityTitle;
+            review.postType = 'courseName' in post ? 'course' : 'activity';
+            reviews.push(review);
+          })
+        })
+        setReviews(reviews);
       }
-      const picUrl = await axios.get(`${api}/profilePics/get/${userInfo.data.data.profilePicKey}`);
-      setImgUrl(picUrl.data.imageUrl);
+      if (userInfo.data.data.profilePicKey) {
+        const picUrl = await axios.get(`${api}/profilePics/get/${userInfo.data.data.profilePicKey}`);
+        setImgUrl(picUrl.data.imageUrl);
+      }
+      const profileId = userInfo.data.data._id;
+      const reviewEndpoint = `${api}/postReviews/getByProfileId/${profileId}`;
+      const reviewResponse = await axios.get(reviewEndpoint);
+      console.log(reviewResponse);
     } catch (error) {
       console.error('Error fetching posts', error);
     } finally {
@@ -175,9 +196,78 @@ function formatEndTime(t) {
     };
   };
 
+  const getVisitor = async () => {
+    if (!isLoaded || !isSignedIn || !user) {
+      return;
+    }
+    try {
+      const response = await axios.get(`${api}/profiles/getByEmail/${user.primaryEmailAddress.toString()}`);
+      const id = response.data.data[0]._id;
+      setVisitorId(id);
+      if (id === params.id) {
+        router.replace('profile');
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  const updateProfileViewsAsync = async () => {
+    console.log('a');
+    if (visitorIdRef.current === '') {
+      return;
+    }
+    console.log('b');
+    const endpoint = `${api}/profiles/views/${params.id}`;
+    const body = { 
+      viewerId: visitorIdRef.current,
+      timestamp: new Date(),
+      duration: timeSpentRef.current
+    };
+    await axios.put(endpoint, body);
+    return;
+  }
+
+  const updateProfileViews = () => {
+    console.log('a');
+    if (visitorIdRef.current === '') {
+      return;
+    }
+    console.log('b');
+    const endpoint = `${api}/profiles/views/${params.id}`;
+    const body = { 
+      viewerId: visitorIdRef.current,
+      timestamp: new Date(),
+      duration: timeSpentRef.current
+    };
+    axios.put(endpoint, body);
+    return;
+  }
+
+  useEffect(() => { getVisitor() }, [isLoaded, isSignedIn, user]);
+
   useEffect(() => {
     fetchData();
-  }, [api]);
+    window.addEventListener("blur", () => setOnPage(false));
+    window.addEventListener("focus", () => setOnPage(true));
+    window.addEventListener("beforeunload", updateProfileViewsAsync);
+    return () => {
+      window.removeEventListener("blur", () => setOnPage(false));
+      window.removeEventListener("focus", () => setOnPage(true));
+      window.removeEventListener("beforeunload", updateProfileViewsAsync);
+    }
+  }, []);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      if (onPage) {
+        setTimeSpent(prev => prev + 1);
+      }
+    }, 1000);
+    return () => clearInterval(intervalId);
+  }, [onPage]);
+
+  useEffect(() => updateProfileViews, [])
 
   if (loading) return ( <> <Loader /> </>);
 
@@ -241,7 +331,7 @@ function formatEndTime(t) {
               )) }
             </div>
           :
-            <div className="flex flex-col justify-center max-w-3xl">
+            <div className="flex flex-col justify-center max-w-3xl w-full">
               { reviews.map((review) => (
                 <ReviewCard 
                   review={review}

@@ -21,6 +21,16 @@ export class ProfileDao {
     return data;
   }
 
+  async readViewsByIdAndDate(_id: string, start: string) {
+    const data = await Profile.find({
+      _id: _id,
+      views: {
+          $gt: new Date(start)
+      }
+    }).lean().select("views");
+    return data;
+  }
+
   async readViewsById(_id: string) {
     const data = await Profile.findById(_id).lean().select("views");
     return data;
@@ -93,7 +103,6 @@ export class ProfileDao {
   }
 
   async updateViews(_id: String, viewerId: String, timestamp: String, duration: Number) {
-    console.log(timestamp)
     const data = await Profile.findByIdAndUpdate(_id,
       { $push: { views: { viewerId: viewerId, timestamp: timestamp, durationInSeconds: duration } } },
       { new: true })

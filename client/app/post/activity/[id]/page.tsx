@@ -18,6 +18,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Heading1, SpadeIcon } from "lucide-react";
 import { useUser } from '@clerk/clerk-react';
+import ReviewCard from "@/components/ReviewCard";
 
 type activityPostType = {
   _id? : string,
@@ -50,6 +51,41 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
   const [isAnonymous, setIsAnonymous] = useState(false);
   const { isLoaded, isSignedIn, user } = useUser();
 
+  const [reviews, setReviews] = useState([]);
+  const [averageRating, setAverageRating] = useState(0);
+  const [reviewCount, setReviewCount] = useState(0);
+
+  const loadReviews = async () => {
+    try {
+        const response = await axios.get(`${api}/postReviews/getByPostId/${postId}`);
+        const fetchedReviews = response.data.reviews;
+            console.log(fetchedReviews);
+
+            let sumOfRatings = 0;
+            const numberOfReviews = fetchedReviews.length;
+            setReviewCount(numberOfReviews);
+
+            if (numberOfReviews > 0) {
+                for (let i = 0; i < numberOfReviews; i++) {
+                    sumOfRatings += fetchedReviews[i].rating;
+                }
+                setAverageRating(sumOfRatings / numberOfReviews);
+                console.log(`Average Rating: ${averageRating}`);
+            } else {
+                console.log("No ratings yet");
+            }
+            setReviews(fetchedReviews); // Set reviews state at the end
+        } catch (error) {
+        console.error('Error fetching reviews:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (postId) {
+        loadReviews();
+    }
+  }, [postId, averageRating]);
+
 
   const loadOldPost = async () => {
     if (!isLoaded || !isSignedIn) {
@@ -58,7 +94,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
     const userInfo = await axios.get(`${api}/profiles/getByEmail/${user.primaryEmailAddress.toString()}`);
     setReviewerId(userInfo.data.data[0]._id);
 
-    const response = await axios.get(`${api}/coursePosts/findOne/${postId}`);
+    const response = await axios.get(`${api}/activityPosts/findOne/${postId}`);
     setPost(response.data.post);
 
     const imgKey = response.data.post.coursePostPicKey;
@@ -67,7 +103,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
     setPosterId(response.data.post.userId);
     if (imgKey) {
       try {
-        const url = await axios.get(`${api}/coursePostPics/get/${imgKey}`);
+        const url = await axios.get(`${api}/activityPostPics/get/${imgKey}`);
         setImgUrl(url.data.coursePostPicKey);
       } catch (e) {
         console.error(e);
@@ -99,7 +135,9 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
       });
       alert(`Your review has been created!`);
       console.log('Review submitted:', response.data);
-      // Handle success (e.g., clear form, show success message)
+      setRating(0);
+      setComment('');
+      setIsAnonymous(false);
     } catch (error) {
       console.error('Error submitting review:', error);
     }
@@ -144,12 +182,22 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
           <div className="flex flex-col items-end">
             <RatingStars rating={4.8} starSize={20} />
             <span className="text-sm">
-              4.8 from 30 reviews
+              {averageRating.toFixed(1)} from {reviewCount} reviews
             </span>
           </div>
         </div>
       </div>
       <p className="py-8">{post.activityDescription}</p>
+      <h1 className="font-sans font-extrabold uppercase text-3xl leading-none mt-0 mb-1 text-slate-800 py-2">Reviews</h1>
+      <div className="flex flex-col justify-center max-w-3xl">
+          { reviews.map((review, index) => (
+            <ReviewCard 
+              key={`review-${index}`}
+              review={review}
+              className="mb-4 bg-white rounded-lg shadow-md"
+            />
+          )) }
+        </div>
     </div>
       <div className="w-1/3 flex flex-col items-center pr-20 my-10">
         <div className="content px-20">

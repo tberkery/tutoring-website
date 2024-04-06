@@ -18,38 +18,42 @@ const PostReviewSchema = PostReview.schema;
 
 router.get('/getByProfileId/:profileId', async (req: any, res: any) => {
     try {
+        const profileId =  req.params.profileId;
         // Fetch the profile by ID
         const profile = await ProfileDao.readById(req.params.profileId);
         if (!profile) {
             return res.status(404).json({ error: 'Profile not found' });
         }
 
-       // Extract posts from the fetched profile
-       const posts = profile.posts;
+        const coursePosts = await CoursePostDao.readAllByUser(profileId);
+        const activityPosts = await ActivityPostDao.readAllByUser(profileId);
+        const allPosts = [...coursePosts, ...activityPosts];
 
-       // Extract reviews for each post
-       const reviewsPromises = posts.map(async (post: any) => {
-           // Fetch the reviews associated with the current post
-           const reviews = await PostReviewDao.readAllByPostId(post._id);
+        if (allPosts.length === 0) {
+            return res.status(200).json([]);
+        }
 
-           // Extract only the review objects from the reviews array
-           return reviews.map((review: { toObject: () => any; }) => review.toObject());
-       });
+        const allReviews = [];
+        for (const post of allPosts) {
+            const reviews = await PostReviewDao.readAllByPostId(post._id);
+            if (reviews && reviews.length > 0) {
+                allReviews.push(...reviews);
+            }
+        }
 
-       // Wait for all reviews promises to resolve
-       const reviewsArrays = await Promise.all(reviewsPromises);
+        if (allReviews.length === 0) {
+            return res.status(200).json([]);
+        }
 
-       // Merge all reviews arrays into a single array
-       const allReviews = reviewsArrays.reduce((acc, reviews) => [...acc, ...reviews], []);
-
-       // Send the combined data as a single response
-       res.json({ posts, reviews: allReviews });
+        // Return all reviews
+        res.status(200).json(allReviews);
 
     } catch (error) {
         console.error('Error fetching reviews:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
+       
 
 router.get('/getByPostId/:postId', async (req: any, res: any) => {
     try {
@@ -78,9 +82,9 @@ router.get('/getByPostId/:postId', async (req: any, res: any) => {
 
 router.post('/:postId', async (req: any, res:any) => {
     try {
-        const { postId, posterId, reviewerId, reviewDescription, rating }: {postId: string, posterId: string, reviewerId: string, reviewDescription: string, rating: number} = req.body;
+        const { postId, posterId, reviewerId, reviewDescription, rating, isAnonymous }: {postId: string, posterId: string, reviewerId: string, reviewDescription: string, rating: number, isAnonymous: boolean} = req.body;
 
-        const newPostReview = await PostReviewDao.create(postId, posterId, reviewerId, reviewDescription, rating);
+        const newPostReview = await PostReviewDao.create(postId, posterId, reviewerId, reviewDescription, rating, {isAnonymous});
 
         // Fetch the post by ID
         let post = await ActivityPostDao.readOne(req.params.postId);
