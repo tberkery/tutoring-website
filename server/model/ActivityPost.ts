@@ -1,12 +1,22 @@
 export {}
 
 const mongoose = require('mongoose');
+const PostReview = require("../model/PostReview.ts");
+const PostReviewSchema = PostReview.schema;
 
 const ActivityPostSchema = new mongoose.Schema({
     userId: {
       type: String,
       required: true,
     },
+    userFirstName: {
+      type: String,
+      required: true,
+  },
+  userLastName: {
+      type: String,
+      required: true,
+  },
     activityTitle: {
       type: String,
       required: true,
@@ -26,6 +36,10 @@ const ActivityPostSchema = new mongoose.Schema({
     tags: {
       type: [String],
       default: null
+    },
+    reviews: {
+      type: [PostReviewSchema],
+      default: []
     }
 });
 

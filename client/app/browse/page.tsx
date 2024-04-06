@@ -15,6 +15,8 @@ import PostCard from "@/components/PostCard";
 import "../../styles/loader.css";
 import Loader from "@/components/Loader";
 import { Checkbox } from "@/components/ui/checkbox"
+import { useUser } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 
 interface ActivityPost {
     _id: string;
@@ -22,14 +24,19 @@ interface ActivityPost {
     activityTitle: string;
     activityDescription: string;
     imageUrl: string;
+    userFirstName: string;
+    userLastName: string;
     price: number;
     tags: string[];
+    reviews: review[];
     __v: number;
 }
 
 interface CoursePost {
     _id: string;
     userId: string;
+    userFirstName: string;
+    userLastName: string;
     courseName: string;
     description: string;
     price: number;
@@ -40,8 +47,21 @@ interface CoursePost {
     professorTakenWith: string;
     takenAtHopkins: boolean;
     schoolTakenAt: string;
+    reviews: review[];
     __v: number;
 }
+
+type review = {
+    postId: string,
+    postName?: string,
+    postType?: string,
+    posterId: string,
+    reviewerId: string,
+    title?: string,
+    isAnonymous?: boolean,
+    reviewDescription: string,
+    rating: number,
+  }
 
 type Post = ActivityPost | CoursePost;
 
@@ -71,13 +91,27 @@ const Page : FC = () => {
         athletic: false,
     });
 
+	const { user } = useUser();
+    const router = useRouter();
+
+    const checkProfile = async () => {
+        if (!user) {
+            return;
+        }
+        const email = user.primaryEmailAddress.toString();
+        const response = await axios.get(`${api}/profiles/getByEmail/${email}`);
+        if (response.data.data.length === 0) {
+            router.replace('createAccount');
+        }
+    }
+
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
             try {
+                await checkProfile();
                 const postResponse = await axios.get(`${api}/allPosts`);
                 setPosts(postResponse.data);
-                console.log(postResponse.data);
             } catch (error) {
                 console.error('Error fetching posts', error);
             } finally {
@@ -85,7 +119,7 @@ const Page : FC = () => {
             };
             }
             fetchData();
-        }, [api]);
+        }, [api, user]);
 
     useEffect(() => {
         filterPosts();

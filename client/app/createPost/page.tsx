@@ -1,10 +1,16 @@
 "use client";
 import "../../styles/global.css";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import axios from "axios";
 import CreatePost from "@/components/CreatePost";
 import { useRouter } from "next/navigation";
+
+type sisCourse = {
+  courseTitle: string,
+  courseNumber: string,
+  courseDepartment: string[],
+}
 
 const Page : FC = () => {
 	const { user } = useUser();
@@ -26,6 +32,28 @@ const Page : FC = () => {
   const [photoFile, setPhotoFile] = useState<File>(null);
 	const [refilling, setRefilling] = useState(false);
 
+  const [sisCourses, setSisCourses] = useState<sisCourse[]>([]);
+
+  useEffect(() => { getProfile() }, [user]);
+
+  const getSisCourses = async () => {
+    const response = await axios.get(`${api}/courses/all`);
+    setSisCourses(response.data.courses);
+  }
+
+  useEffect(() => { getSisCourses() }, []);
+
+  const getProfile = async () => {
+    if (!user) {
+      return;
+    }
+    const email = user.primaryEmailAddress.toString();
+    const response = await axios.get(`${api}/profiles/getByEmail/${email}`);
+    if (response.data.data.length === 0) {
+      router.replace('createAccount');
+    }
+  }
+
   const createCoursePost = async () => {
     const email = user.primaryEmailAddress.toString();
     const response = await axios.get(`${api}/profiles/getByEmail/${email}`);
@@ -33,9 +61,11 @@ const Page : FC = () => {
     let body = {
       courseName: title,
       userId: profile._id,
+      userFirstName: profile.firstName,
+      userLastName: profile.lastName,
       courseNumber: number,
       courseDepartment: [ department ],
-      takenAtHopkins: atJHU === "Yes"
+      takenAtHopkins: atJHU === "Yes",
     }
     if (price !== "") {
       body["price"] = price.replace(/\D/g, '');
@@ -64,7 +94,9 @@ const Page : FC = () => {
     const profile = response.data.data[0];
     let body = { 
       activityTitle: title,
-      userId: profile._id
+      userId: profile._id,
+      userFirstName: profile.firstName,
+      userLastName: profile.lastName,
     }
     if (price !== "") {
       body["price"] = price.replace(/\D/g, '');
@@ -111,6 +143,7 @@ const Page : FC = () => {
   return <>
     <div className="flex flex-col justify-center items-center my-24 mx-24">
       <CreatePost
+        sisCourses={sisCourses}
         postType={postType}
         setPostType={setPostType}
         title={title}

@@ -51,37 +51,49 @@ describe('Test allPosts routes', () => {
 
         const newCourseData1 = {
             userId: 'exampleUserId',
+            userFirstName: 'Dokyung',
+            userLastName: 'Yang',
             courseName: 'Example Course 108',
             description: 'Example description',
             imageUrl: 'exampleImageUrl',
             price: 1,
+            courseNumber: 'AS.000.000',
             takenAtHopkins: true
         };
 
         const newCourseData2 = {
             userId: 'exampleUserId',
+            userFirstName: 'Dokyung',
+            userLastName: 'Yang',
             courseName: 'Example Course 107',
             description: 'Example description',
             imageUrl: 'exampleImageUrl',
             price: 1, 
+            courseNumber: 'AS.000.001',
             takenAtHopkins: true
         };
 
         const newCourseData3 = {
             userId: 'exampleUserId',
+            userFirstName: 'Dokyung',
+            userLastName: 'Yang',
             courseName: 'Example Course 106',
             description: 'Example description',
             imageUrl: 'exampleImageUrl',
             price: 1, 
+            courseNumber: 'AS.000.002',
             takenAtHopkins: true
         };
 
         const newCourseData4 = {
             userId: 'exampleUserId',
+            userFirstName: 'Dokyung',
+            userLastName: 'Yang',
             courseName: 'Example Course 105',
             description: 'Example description',
             imageUrl: 'exampleImageUrl',
             price: 1, 
+            courseNumber: 'AS.000.002',
             takenAtHopkins: true
         };
 
@@ -106,6 +118,8 @@ describe('Test allPosts routes', () => {
 
         const newPostData1 = {
             userId: 'exampleUserId',
+            userFirstName: 'Dokyung',
+            userLastName: 'Yang',
             activityTitle: 'Example Activity 108',
             activityDescription: 'Example description',
             imageUrl: 'exampleImageUrl',
@@ -116,6 +130,8 @@ describe('Test allPosts routes', () => {
 
         const newPostData2 = {
             userId: 'exampleUserId',
+            userFirstName: 'Dokyung',
+            userLastName: 'Yang',
             activityTitle: 'Example Activity 107',
             activityDescription: 'Example description',
             imageUrl: 'exampleImageUrl',
@@ -126,6 +142,8 @@ describe('Test allPosts routes', () => {
 
         const newPostData3 = {
             userId: 'exampleUserId',
+            userFirstName: 'Dokyung',
+            userLastName: 'Yang',
             activityTitle: 'Example Activity 106',
             activityDescription: 'Example description',
             imageUrl: 'exampleImageUrl',
@@ -136,6 +154,8 @@ describe('Test allPosts routes', () => {
 
         const newPostData4 = {
             userId: 'exampleUserId',
+            userFirstName: 'Dokyung',
+            userLastName: 'Yang',
             activityTitle: 'Example Activity 105',
             activityDescription: 'Example description',
             imageUrl: 'exampleImageUrl',
@@ -167,6 +187,8 @@ describe('Test allPosts routes', () => {
             
             const newCourseData1 = {
                 userId: 'exampleUserId',
+                userFirstName: 'Dok',
+                userLastName: 'Yang',
                 courseName: 'Example Course 108',
                 description: 'Example description',
                 imageUrl: 'exampleImageUrl',
@@ -176,6 +198,8 @@ describe('Test allPosts routes', () => {
     
             const newPostData1 = {
                 userId: 'exampleUserId',
+                userFirstName: 'Dokyung',
+                userLastName: 'Yang',
                 activityTitle: 'Example Activity 108',
                 activityDescription: 'Example description',
                 imageUrl: 'exampleImageUrl',
@@ -186,6 +210,8 @@ describe('Test allPosts routes', () => {
 
             const newCourseData2 = {
                 userId: 'exampleUserId',
+                userFirstName: 'Dok',
+                userLastName: 'Yang',
                 courseName: 'Example Course 107',
                 description: 'Example description',
                 imageUrl: 'exampleImageUrl',
@@ -195,6 +221,8 @@ describe('Test allPosts routes', () => {
 
             const newPostData2 = {
                 userId: 'exampleUserId',
+                userFirstName: 'Dokyung',
+                userLastName: 'Yang',
                 activityTitle: 'Example Activity 107',
                 activityDescription: 'Example description',
                 imageUrl: 'exampleImageUrl',

@@ -26,7 +26,7 @@ import {
 const NavBar: FC = () => {
   const { isLoaded, isSignedIn } = useUser();
   return (
-    <nav className="flex justify-between items-center p-4 bg-white">
+    <nav className="flex justify-between items-center p-4 bg-white h-18">
       <div className="flex items-center space-x-4">
         <span className="text-xl font-bold mr-2">TUTORHUB</span>
         <Link 
@@ -42,6 +42,13 @@ const NavBar: FC = () => {
           hover:bg-blue-300 rounded-md font-extrabold font-sans text-lg"
         >
           Profiles
+        </Link>
+        <Link 
+          href="/chat" 
+          className="inline-block px-2 py-1 ease-linear duration-75
+          hover:bg-blue-300 rounded-md font-extrabold font-sans text-lg"
+        >
+          Messages
         </Link>
       </div>
       <div>
@@ -65,7 +72,9 @@ const NavBar: FC = () => {
                   <Link href="/chat">Messages</Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Log Out</DropdownMenuItem>
+                <DropdownMenuItem>
+                  <SignOutButton/>
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
             </>

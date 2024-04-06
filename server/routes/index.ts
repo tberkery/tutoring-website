@@ -21,4 +21,6 @@ router.use('/coursePostPics', require('./coursePostPics'))
 
 router.use('/allPosts', require('./allPosts.ts'))
 
+router.use('/postReviews', require('./postReviews.ts'))
+
 module.exports = router;

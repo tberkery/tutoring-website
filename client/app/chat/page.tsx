@@ -6,6 +6,7 @@ import Head from 'next/head'
 import dynamic from "next/dynamic";
 import '@sendbird/uikit-react/dist/index.css';
 import { useUser } from "@clerk/nextjs";
+import NavBar from '@/components/Navbar';
 
 const DynamicAppWithNoSSR = dynamic(() => import("../../components/Chat"), {
   ssr: false,
@@ -32,6 +33,7 @@ export default function Home() {
 
   return (
     <>
+      <NavBar/>
       <Head>
         <title>UIKit with NextJS 13</title>
         <meta name="description" content="" />

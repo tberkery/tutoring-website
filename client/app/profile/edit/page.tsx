@@ -33,6 +33,9 @@ const Page : FC = () => {
       if (!user) return;
       try {
         const response = await axios.get(`${BACKEND_URL}/profiles/getByEmail/${user.primaryEmailAddress.toString()}`);
+				if (response.data.data.length === 0) {
+					router.replace('/createAccount');
+				}
         setProfileData(response.data);
       } catch (error) {
         console.error("Failed to fetch profile:", error);
@@ -89,6 +92,8 @@ const Page : FC = () => {
 				body["graduationYear"] = year.toString();
 			}
       console.log(body);
+	  console.log(`${process.env.NEXT_PUBLIC_BACKEND_URL}/profiles/update/${userId}`)
+
 			await axios.put(`${process.env.NEXT_PUBLIC_BACKEND_URL}/profiles/${userId}`, body);
 			router.replace('/profile');
 		}

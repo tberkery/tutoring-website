@@ -29,6 +29,19 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
 	const [refilling, setRefilling] = useState(false);
   const [photoFile, setPhotoFile] = useState<File>(null);
   const [loadedPost, setLoadedPost] = useState(false);
+  
+  useEffect(() => { getProfile() }, [user]);
+
+  const getProfile = async () => {
+    if (!user) {
+      return;
+    }
+    const email = user.primaryEmailAddress.toString();
+    const response = await axios.get(`${api}/profiles/getByEmail/${email}`);
+    if (response.data.data.length === 0) {
+      router.replace('createAccount');
+    }
+  }
 
   const loadOldPost = async () => {
     const isCourse = postType === "course";
@@ -67,6 +80,8 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
     let body = {
       courseName: title,
       userId: profile._id,
+      userFirstName: profile.firstName,
+      userLastName: profile.lastName,
       courseNumber: number,
       courseDepartment: [ department ],
       takenAtHopkins: atJHU === "Yes"
@@ -98,7 +113,9 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
     const profile = response.data.data[0];
     let body = { 
       activityTitle: title,
-      userId: profile._id
+      userId: profile._id,
+      userFirstName: profile.firstName,
+      userLastName: profile.lastName,
     }
     if (price !== "") {
       body["price"] = price.replace(/\D/g, '');

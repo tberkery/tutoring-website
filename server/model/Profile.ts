@@ -1,6 +1,7 @@
 export {}
 
 import mongoose = require("mongoose");
+import ViewSchema = require("./Views");
 
 const ProfileSchema = new mongoose.Schema({
     firstName: {
@@ -39,9 +40,19 @@ const ProfileSchema = new mongoose.Schema({
     profilePicKey: {
         type: String,
         default: null,
+    },
+    views: {
+        type: [ViewSchema],
+        default: []
+    },
+    viewsCounter: {
+        type: Number,
+        default: null
+    },
+    availability: {
+        type: [Number],
+        default: []
     }
-    
-
   });
 const Profile = mongoose.model("Profile", ProfileSchema);
 
