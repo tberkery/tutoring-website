@@ -5,6 +5,8 @@ import axios from 'axios';
 
 type review = {
   postId: string,
+  postName?: string,
+  postType?: string,
   posterId: string,
   reviewerId: string,
   title?: string,
@@ -47,7 +49,15 @@ const ReviewCard : FC<props> = (props) => {
   return (
     <div className={`${props.className} px-4 py-3`}>
       <div className='flex justify-between'>
-        <h3 className='text-2xl font-bold'>{review.title}</h3>
+        <p className='text-xl text-gray-800'>
+          {"Review of "}
+          <a 
+            className='font-bold hover:cursor-pointer hover:underline'
+            href={`/post/${review.postType}/${review.postId}`}
+          >
+            {review.postName}
+          </a>
+        </p>
         <p className='text-sm mt-0.5 text-gray-800'>
           {'Left by '}
           <span 
@@ -58,12 +68,7 @@ const ReviewCard : FC<props> = (props) => {
           </span>
         </p>
       </div>
-      <RatingStars rating={review.rating}/>
-      <p className='text-sm mt-1 text-gray-800'>
-        Review of <span className='font-bold cursor-pointer hover:underline'>
-          POST NAME
-        </span>
-      </p>
+      <RatingStars rating={review.rating} className='mb-2'/>
       <p 
         className={`mt-1 ${showFull ? '' : 'line-clamp-2'}`} ref={textRef}
       >

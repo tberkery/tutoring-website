@@ -17,6 +17,7 @@ interface ActivityPost {
   userId: string;
   activityTitle: string;
   activityDescription: string;
+  reviews: Review[],
   imageUrl: string;
   price: number;
   tags: string[];
@@ -29,6 +30,7 @@ interface CoursePost {
   courseName: string;
   description: string;
   price: number;
+  reviews: Review[],
   courseNumber: string;
   courseDepartment: string[];
   gradeReceived: string;
@@ -43,6 +45,8 @@ type Post = ActivityPost | CoursePost;
 
 type Review = {
   postId: string,
+  postName?: string,
+  postType?: string,
   posterId: string,
   reviewerId: string,
   title?: string,
@@ -75,15 +79,21 @@ const Page : FC = () => {
       const posts = await axios.get(`${api}/allPosts/findAllByUserId/${userInfo.data.data[0]._id}`);
       if (posts.data.length !== 0) {
         setPosts(posts.data);
+        let reviews : Review[] = [];
+        posts.data.forEach((post : Post) => {
+          post.reviews.forEach((review) => {
+            // @ts-ignore
+            review.postName = post.courseName ? post.courseName : post.activityTitle;
+            review.postType = 'courseName' in post ? 'course' : 'activity';
+            reviews.push(review);
+          })
+        })
+        setReviews(reviews);
       }
       if (userInfo.data.data[0].profilePicKey) {
         const picUrl = await axios.get(`${api}/profilePics/get/${userInfo.data.data[0].profilePicKey}`);
         setImgUrl(picUrl.data.imageUrl);
       }
-      const profileId = userInfo.data.data[0]._id;
-      const reviewEndpoint = `${api}/postReviews/getByProfileId/${profileId}`;
-      const reviewResponse = await axios.get(reviewEndpoint);
-      console.log(reviewResponse);
     } catch (error) {
       console.error('Error fetching posts', error);
     } finally {
@@ -117,7 +127,7 @@ const Page : FC = () => {
       )
     } else if (activeSection === "Reviews") {
       return (
-        <div className="flex flex-col justify-center max-w-3xl">
+        <div className="flex flex-col justify-center max-w-3xl w-full">
           { reviews.map((review, index) => (
             <ReviewCard 
               key={`review-${index}`}
