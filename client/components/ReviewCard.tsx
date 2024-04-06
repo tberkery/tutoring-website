@@ -27,10 +27,10 @@ const ReviewCard : FC<props> = (props) => {
   const [showFull, setShowFull] = useState(false);
   const [isClamped, setIsClamped] = useState(false);
   const [leftByName, setLeftByName] = useState("");
-  const [anonymous, setAnonymous] = useState(false);
+  const [anonymous, setAnonymous] = useState(true);
 
   const fetchData = async () => {
-    const profileEndpoint = `${api}/profiles/${review.posterId}`;
+    const profileEndpoint = `${api}/profiles/${review.reviewerId}`;
     const profileResponse = await axios.get(profileEndpoint);
     const profile = profileResponse.data.data;
     setLeftByName(`${profile.firstName} ${profile.lastName}`);
@@ -59,13 +59,20 @@ const ReviewCard : FC<props> = (props) => {
         </p>
         <p className='text-sm mt-0.5 text-gray-800'>
           {'Left by '}
-          <a 
-            className={`font-bold 
-            ${anonymous ? '' : 'cursor-pointer hover:underline'}`}
-            href={`/profile/${review.posterId}`}
-          >
-            {leftByName}
-          </a>
+          { anonymous ?
+            <span
+              className='font-bold'
+            >
+              Anonymous
+            </span>
+          :
+            <a 
+              className='font-bold cursor-pointer hover:underline'
+              href={`/profile/${review.posterId}`}
+            >
+              {leftByName}
+            </a>
+          }
         </p>
       </div>
       <RatingStars rating={review.rating} className='mb-2'/>

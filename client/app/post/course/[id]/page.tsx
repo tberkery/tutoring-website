@@ -66,7 +66,6 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
     try {
         const response = await axios.get(`${api}/postReviews/getByPostId/${postId}`);
         const fetchedReviews = response.data.reviews;
-            console.log(fetchedReviews);
 
             let sumOfRatings = 0;
             const numberOfReviews = fetchedReviews.length;
@@ -77,10 +76,12 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
                     sumOfRatings += fetchedReviews[i].rating;
                 }
                 setAverageRating(sumOfRatings / numberOfReviews);
-                console.log(`Average Rating: ${averageRating}`);
-            } else {
-                console.log("No ratings yet");
             }
+            fetchedReviews.forEach((review) => {
+              // @ts-ignore
+              review.postName = post.courseName;
+              review.postType = 'course';
+            });
             setReviews(fetchedReviews); // Set reviews state at the end
         } catch (error) {
         console.error('Error fetching reviews:', error);
@@ -119,27 +120,28 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
     setLoadedPost(true);
   }
 
-  useEffect(() => { loadOldPost() }, []);
+  useEffect(() => { loadOldPost() }, [isLoaded, isSignedIn, user]);
 
   const handleCommentChange = (event) => {
     setComment(event.target.value);
   };
-
-  const handleAnonymousChange = (event) => {
-    setIsAnonymous(event.target.checked);
-  };
+  const handleCheckedChange = () => {
+    setIsAnonymous(!isAnonymous);
+  }
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      console.log(postId, posterId, reviewerId, rating, comment, isAnonymous)
-      const response = await axios.post(`${api}/postReviews/${postId}`, {
+      const body = {
         postId,
         posterId,
         reviewerId: reviewerId,
         reviewDescription: comment,
-        rating
-      });
+        rating,
+        isAnonymous: isAnonymous,
+      };
+      console.log(body);
+      const response = await axios.post(`${api}/postReviews/${postId}`, body);
       alert(`Your review has been created!`);
       console.log('Review submitted:', response.data);
       setRating(0);
@@ -233,7 +235,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
             <h2 className="font-sans font-extrabold uppercase text-l leading-none mt-2 mb-0 text-slate-700 pt-2 self-start">Comment *</h2>
             <Textarea className="resize-none my-2 rounded" onChange={handleCommentChange}/>
             <div className="flex items-center space-x-2">
-              <Checkbox id="terms" checked={isAnonymous} onChange={handleAnonymousChange}/>
+              <Checkbox id="terms" checked={isAnonymous} onCheckedChange={handleCheckedChange}/>
               <label
                 htmlFor="terms"
                 className="text-sm font-medium leading-none capitalize peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
