@@ -12,36 +12,27 @@ import RatingStars from "@/components/RatingStars";
 import ReviewCard from "@/components/ReviewCard";
 import ProfileAnalytics from "@/components/ProfileAnalytics";
 
-interface ActivityPost {
+interface Post {
   _id: string;
   userId: string;
-  activityTitle: string;
-  activityDescription: string;
-  reviews: Review[],
-  imageUrl: string;
+  username?: string;
+  activityTitle?: string;
+  activityDescription?: string;
+  courseName?: string;
+  description?: string;
+  imageUrl?: string;
   price: number;
-  tags: string[];
+  courseNumber?: string;
+  courseDepartment?: string[];
+  gradeReceived?: string;
+  semesterTaken?: string;
+  professorTakenWith?: string;
+  takenAtHopkins?: boolean;
+  schoolTakenAt?: string;
+  tags?: string[];
+  reviews: Review[],
   __v: number;
 }
-
-interface CoursePost {
-  _id: string;
-  userId: string;
-  courseName: string;
-  description: string;
-  price: number;
-  reviews: Review[],
-  courseNumber: string;
-  courseDepartment: string[];
-  gradeReceived: string;
-  semesterTaken: string;
-  professorTakenWith: string;
-  takenAtHopkins: boolean;
-  schoolTakenAt: string;
-  __v: number;
-}
-
-type Post = ActivityPost | CoursePost;
 
 type Review = {
   postId: string,
@@ -58,6 +49,7 @@ const Page : FC = () => {
   const { isLoaded, isSignedIn, user } = useUser();
   const api = process.env.NEXT_PUBLIC_BACKEND_URL;
   const [posts, setPosts] = useState<Post[]>([]);
+  const [bestPosts, setBestPosts] = useState<Post[]>([]);
   const [profileData, setProfileData] = useState(null);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
@@ -89,6 +81,22 @@ const Page : FC = () => {
           })
         })
         setReviews(reviews);
+        let sorted : Post[] = posts.data.sort((a : Post, b : Post) => {
+          let aValue = 0;
+          if (a.reviews.length > 0) {
+            a.reviews.forEach((review) => aValue += review.rating);
+            aValue /= a.reviews.length;
+          }
+          let bValue = 0
+          if (b.reviews.length > 0) {
+            b.reviews.forEach((review) => bValue += review.rating);
+            bValue /= b.reviews.length;
+          }
+          return bValue - aValue;
+        })
+        let best = sorted.slice(0, Math.min(3, sorted.length));
+        best = best.filter((post) => post.reviews.length > 0);
+        setBestPosts(best);
       }
       if (userInfo.data.data[0].profilePicKey) {
         const picUrl = await axios.get(`${api}/profilePics/get/${userInfo.data.data[0].profilePicKey}`);
@@ -141,7 +149,7 @@ const Page : FC = () => {
       if (!profileData || !profileData._id) {
         return <></>
       }
-      return <ProfileAnalytics profileId={profileData._id}/>
+      return <ProfileAnalytics profileId={profileData._id} bestPosts={bestPosts}/>
     } else {
       return <></>
     }

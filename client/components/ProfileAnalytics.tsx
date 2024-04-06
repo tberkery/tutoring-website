@@ -17,10 +17,48 @@ type lineGraphPoint = { label: string, value: number }
 
 type pieGraphPoint = { _id: string, count: number }
 
-const ProfileAnalytics : FC<{profileId : string}> = (params) => {
+type Post = {
+  _id: string;
+  userId: string;
+  username?: string;
+  activityTitle?: string;
+  activityDescription?: string;
+  courseName?: string;
+  description?: string;
+  imageUrl?: string;
+  price: number;
+  courseNumber?: string;
+  courseDepartment?: string[];
+  gradeReceived?: string;
+  semesterTaken?: string;
+  professorTakenWith?: string;
+  takenAtHopkins?: boolean;
+  schoolTakenAt?: string;
+  tags?: string[];
+  reviews: Review[],
+  __v: number;
+}
+
+type props = {
+  profileId: string,
+  bestPosts: Post[],
+}
+
+type Review = {
+  postId: string,
+  postName?: string,
+  postType?: string,
+  posterId: string,
+  reviewerId: string,
+  title?: string,
+  reviewDescription: string,
+  rating: number,
+}
+
+const ProfileAnalytics : FC<props> = (props) => {
   const analyticsSections = ["Overview", "Profile Viewers"];
   const api = process.env.NEXT_PUBLIC_BACKEND_URL;
-  const id = params.profileId;
+  const id = props.profileId;
   const animDuration = 1000;
 
   const [activeAnalytics, setActiveAnalytics] = useState(analyticsSections[0]);
@@ -204,6 +242,12 @@ const ProfileAnalytics : FC<{profileId : string}> = (params) => {
     );
   };
 
+  const getRating = (post : Post) => {
+    let total = 0;
+    post.reviews.forEach((r) => total += r.rating);
+    return (total / post.reviews.length).toFixed(1);
+  }
+
   const getAnalyticsOverview = () => {
     return (
       <>
@@ -280,35 +324,39 @@ const ProfileAnalytics : FC<{profileId : string}> = (params) => {
             <h3 className="text-2xl font-bold mb-4 text-center">
               Highest Rated Posts
             </h3>
-            { ratedPosts.map((post, index) => {
-              return <>
-                <div 
-                  className="flex justify-between items-center mb-2"
-                  key={`rated-post-${index}`}
-                >
-                  <div className="flex items-center">
-                    <div
-                      className="w-9 h-9 mr-5 flex flex-shrink-0
-                      justify-center items-center bg-sky-800 rounded-3xl"
-                    >
-                      <p className="text-white font-bold text-2xl">
-                        {index + 1}
-                      </p>
+            { props.bestPosts.length > 0 ?
+              props.bestPosts.map((post, index) => {
+                return <>
+                  <div 
+                    className="flex justify-between items-center mb-2"
+                    key={`rated-post-${index}`}
+                  >
+                    <div className="flex items-center">
+                      <div
+                        className="w-9 h-9 mr-5 flex flex-shrink-0
+                        justify-center items-center bg-sky-800 rounded-3xl"
+                      >
+                        <p className="text-white font-bold text-2xl">
+                          {index + 1}
+                        </p>
+                      </div>
+                      <a
+                        className="text-lg mr-2 line-clamp-1
+                        hover:cursor-pointer hover:underline"
+                      >
+                        {post.courseName ? post.courseName : post.activityTitle }
+                      </a>
                     </div>
-                    <a
-                      className="text-lg mr-2 line-clamp-1
-                      hover:cursor-pointer hover:underline"
-                    >
-                      {post.title}
-                    </a>
+                    <div className="flex items-center gap-x-1">
+                      <Star size={20} strokeWidth={1} className="fill-yellow-300"/>
+                      <p>{ getRating(post) }</p>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-x-1">
-                    <Star size={20} strokeWidth={1} className="fill-yellow-300"/>
-                    <p>{post.rating}</p>
-                  </div>
-                </div>
-              </>
-            })}
+                </>
+              })
+            :
+              <h3 className='text-lg'>Not enough ratings on your posts!</h3>
+            }
           </div>
         </div>
       </>
@@ -316,13 +364,13 @@ const ProfileAnalytics : FC<{profileId : string}> = (params) => {
   }
 
   const getViewersSection = () => {
-    // if (majorData.length < 1) {
-    //   return <div className='h-96'>
-    //     <h3 className='text-2xl'>
-    //       Your profile does not have enough views!
-    //     </h3>
-    //   </div>;
-    // }
+    if (majorData.length < 1) {
+      return <div className='h-96'>
+        <h3 className='text-2xl'>
+          Your profile does not have enough views!
+        </h3>
+      </div>;
+    }
     console.log(majorData);
     return <>
       <div
