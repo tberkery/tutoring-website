@@ -297,11 +297,6 @@ function formatEndTime(t) {
             <></>
           }
           <div className="flex mt-2 space-x-4">
-            <Link href="/chat/" passHref>
-              <button className="bg-custom-blue hover:bg-blue-900 text-white font-bold py-2 px-4 rounded-md">
-                Message
-              </button>
-            </Link>
               <button className="bg-custom-blue hover:bg-blue-900 text-white font-bold py-2 px-4 rounded-md" onClick={() => compareAvail()}>
                 Compare Availability
               </button>
