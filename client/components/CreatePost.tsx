@@ -1,5 +1,5 @@
 import { useUser } from "@clerk/nextjs";
-import { ChangeEventHandler, Dispatch, FC, SetStateAction } from "react";
+import { ChangeEventHandler, Dispatch, FC, SetStateAction, useState } from "react";
 import { Label } from "./ui/label";
 import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 import { Input } from "./ui/input";
@@ -9,7 +9,14 @@ import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
 import { X } from "lucide-react";
 
+type sisCourse = {
+  courseTitle: string,
+  courseNumber: string,
+  courseDepartment: string[],
+}
+
 type createPostProps = {
+  sisCourses?: sisCourse[],
   editing?: boolean,
   postType: string,
   setPostType: Dispatch<SetStateAction<string>>,
@@ -45,10 +52,11 @@ type createPostProps = {
 const CreatePost : FC<createPostProps> = 
 ({
   editing,
+  sisCourses,
   postType,
   setPostType,
-  title,
-  setTitle,
+  title: propsTitle,
+  setTitle: propsSetTitle,
   number,
   setNumber,
   price,
@@ -75,9 +83,47 @@ const CreatePost : FC<createPostProps> =
   submit,
 }) => {
 	const { isLoaded } = useUser();
+
+  const [title, setTitle] = useState("");
+  const [sisAutofills, setSisAutofills] = useState<sisCourse[]>([]);
+  const [realCourse, setRealCourse] = useState(false);
+  const [showCourses, setShowCourses] = useState(false);
   
+  const inputTitle = (title : string) => {
+    setTitle(title);
+    propsSetTitle(title);
+    setRealCourse(false);
+    if (postType === "course") {
+      if (sisCourses) {
+        if (title === "") {
+          setSisAutofills([]);
+        } else {
+          const filtered = sisCourses.filter((course) => {
+            return course.courseTitle.toLowerCase().includes(title.toLowerCase());
+          })
+          setSisAutofills(filtered);
+        }
+      }
+    }
+  }
+
+  const titleOnBlur = async () => {
+    if (postType === "course") {
+      await new Promise(r => setTimeout(r, 100));
+      setShowCourses(false);
+    }
+  }
+
   const inputPrice = (input: string) => {
     setPrice(`$${input.replace(/\D/g, '')}`);
+  }
+
+  const sisButtonClick = (input: sisCourse) => {
+    setTitle(input.courseTitle);
+    propsSetTitle(input.courseTitle);
+    setNumber(input.courseNumber);
+    setDepartment(input.courseDepartment[0])
+    setRealCourse(true);
   }
 
   const addTag = (tag: string) => {
@@ -96,13 +142,6 @@ const CreatePost : FC<createPostProps> =
     }
     setTags(newTags);
   }
-
-	const departments = [
-		"Computer Science",
-		"Applied Math",
-		"Physics",
-		"Really Really Really Long Department Name",
-	];
 
   const tagOptions = [
     "Athletic",
@@ -161,7 +200,7 @@ const CreatePost : FC<createPostProps> =
       </div>
       <hr/>
       <div className="mt-4 flex gap-x-8">
-        <div className="flex flex-col flex-grow basis-1">
+        <div className="relative flex flex-col flex-grow basis-1">
           <Label htmlFor="title">
             { postType === "course" ?
               "Course Title*"
@@ -171,18 +210,46 @@ const CreatePost : FC<createPostProps> =
           </Label>
           <Input
             id="title"
-            className={`mt-1 ${ title.length === 0 && refilling
+            className={`mt-1 ${ propsTitle.length === 0 && refilling
               ? "outline outline-red-500"
               : ''
             }`}
             placeholder="Title"
             value={ title }
-            onChange={ (event) => setTitle(event.target.value) }
+            onChange={ (event) => inputTitle(event.target.value) }
+            onFocus={ () => setShowCourses(postType === "course") }
+            onBlur={ () => { titleOnBlur() } }
           />
+          <div 
+            className={`absolute top-14 w-full max-h-60 border rounded-md
+            bg-white shadow-sm overflow-x-hidden overflow-y-scroll
+            ${showCourses ? '' : 'hidden'}`}
+          >
+            { sisAutofills.length > 0 ? 
+              sisAutofills.map((course) => {
+                return (
+                  <button 
+                    className="text-sm px-3 py-1 hover:bg-gray-100 w-full
+                    border-b"
+                    onClick={ () => sisButtonClick(course) }
+                  >
+                    { course.courseTitle }
+                  </button>
+                )
+              })
+            :
+              title === "" ?
+                <></>
+              :
+                <div className="text-sm px-3 py-1 w-full">
+                  No Courses Found
+                </div>
+            }
+          </div>
         </div>
         { postType === "course" ?
           <div className="flex flex-col flex-grow basis-1">
-            <Label htmlFor="number">Course Number*</Label>
+            <Label htmlFor="number">Course Number</Label>
             <Input
               id="number"
               className={`mt-1 ${ number.length === 0 && refilling
@@ -191,14 +258,14 @@ const CreatePost : FC<createPostProps> =
               }`}
               placeholder="Number"
               value={ number }
-              onChange={ (event) => setNumber(event.target.value) }
+              disabled={true}
             />
           </div>
         :
           <></>
         }
       </div>
-      <div className="mt-4 flex items-center gap-x-8 h-10">
+      <div className="mt-4 flex items-end gap-x-8">
         <div className="flex flex-grow basis-1 items-center">
           <Label 
             htmlFor="price"
@@ -216,17 +283,15 @@ const CreatePost : FC<createPostProps> =
         <div className="flex flex-col flex-grow basis-1">
           { postType === "course" ? 
             <>
-              <ComboBox
-                id="department"
-                prompt="Department*"
-                options={departments}
-                value={department}
-                onValueChange={setDepartment}
-                className={`w-full ${ department === "" && refilling
-                  ? "outline outline-red-500"
-                  : ''
-                }`}
-              />
+              <div className="flex flex-col flex-grow basis-1">
+                <Label htmlFor="department" className="mb-1">Department</Label>
+                <Input
+                  id="department"
+                  placeholder="Department"
+                  value={ department }
+                  disabled={true}
+                />
+              </div>
             </>
           :
             <div className="flex items-baseline gap-x-1">
@@ -383,7 +448,7 @@ const CreatePost : FC<createPostProps> =
       <Textarea
         id="description"
         className={`resize-none ${ 
-          title.length === 0 && refilling && postType === "activity"
+          propsTitle.length === 0 && refilling && postType === "activity"
           ? "outline outline-red-500"
           : ''
         }`}
@@ -399,7 +464,7 @@ const CreatePost : FC<createPostProps> =
       <Button 
         id="submit" 
         className="text-lg mt-8"
-        disabled={!isLoaded}
+        disabled={!isLoaded || (!realCourse && postType === "course")}
         onClick={ submit }
       >
         { submitText }

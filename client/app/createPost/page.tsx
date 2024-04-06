@@ -8,7 +8,8 @@ import { useRouter } from "next/navigation";
 
 type sisCourse = {
   courseTitle: string,
-  courseNumber: string
+  courseNumber: string,
+  courseDepartment: string[],
 }
 
 const Page : FC = () => {
@@ -106,7 +107,6 @@ const Page : FC = () => {
     if (tags.length > 0) {
       body["tags"] = tags;
     }
-    console.log('body: ', body)
     const newPost = await axios.post(`${api}/activityPosts`, body);
     if (photoFile !== null) {
       const formData = new FormData();
@@ -143,6 +143,7 @@ const Page : FC = () => {
   return <>
     <div className="flex flex-col justify-center items-center my-24 mx-24">
       <CreatePost
+        sisCourses={sisCourses}
         postType={postType}
         setPostType={setPostType}
         title={title}
