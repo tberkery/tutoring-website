@@ -16,7 +16,6 @@ export class CourseDao {
     }
     async readAll({courseTitle, courseNumber, courseDepartment} : {courseTitle: string, courseNumber: string, courseDepartment: string}) {
         const filter : any = {};
-        console.log(courseTitle);
         if (courseTitle) {
             filter.courseTitle = {$regex: courseTitle, $options: 'i'};
         }
@@ -27,7 +26,6 @@ export class CourseDao {
             filter.courseDepartment = {$regex: courseDepartment, $options: 'i'};
         }
         try {
-            console.log(filter);
             const courses = await Course.find(filter);
             return courses
         } catch (error) {

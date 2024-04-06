@@ -93,7 +93,6 @@ test('test readAll() on non empty table returns partial matches for filter by co
         const post =  await courseDao.create(courseTitle,  courseNumber, courseDepartment);
     }
     const posts = await courseDao.readAll({courseTitle: "Software Testing"});
-    console.log("POSTS ARE ", posts)
     expect(posts.length).toBe(5);
 });
 
