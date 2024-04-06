@@ -36,34 +36,5 @@ describe('Test postReviews routes', () => {
         await PostReviewSchema.deleteMany({});
     });
 
-    // Test for POST /postReviews/:postId with malformed post ID
-    // test('POST /postReviews/:postId with malformed post ID', async () => {
-    //     const malformedPostId = 1234;
-    //     const reviewData = {
-    //         postId: malformedPostId,
-    //         posterId: 'posterId',
-    //         reviewerId: 'reviewerId',
-    //         reviewDescription: 'Test review description',
-    //         rating: 5
-    //     };
-
-    //     const res = await request(app)
-    //         .post(`/postReviews/${malformedtPostId}`)
-    //         .send(reviewData);
-
-    //     expect(res.status).toBe(500);
-    //     expect(res.body.error).toBe('Internal server error');
-        
-    // });
-
-    // Test for DELETE /postReviews/:reviewId with malformed review ID
-    // test('DELETE /postReviews/:reviewId with malformed review ID', async () => {
-    //     const malformedtReviewId = 1234;
-
-    //     const res = await request(app)
-    //         .delete(`/postReviews/${malformedtReviewId}`);
-
-    //     expect(res.status).toBe(500);
-    //     expect(res.body.error).toBe('Internal server error');
-    // });
+    
 });
