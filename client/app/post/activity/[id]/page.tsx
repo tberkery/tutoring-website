@@ -187,7 +187,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
           </div>
         </div>
       </div>
-      <p className="py-8 border-b mb-8 border-black">{post.activityDescription}</p>
+      <p className="py-8">{post.activityDescription}</p>
       <h1 className="font-sans font-extrabold uppercase text-3xl leading-none mt-0 mb-1 text-slate-800 py-2">Reviews</h1>
       <div className="flex flex-col justify-center max-w-3xl">
           { reviews.map((review, index) => (
