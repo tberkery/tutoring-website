@@ -98,7 +98,6 @@ const Page : FC = () => {
                 await checkProfile();
                 const postResponse = await axios.get(`${api}/allPosts`);
                 setPosts(postResponse.data);
-                console.log(postResponse.data);
             } catch (error) {
                 console.error('Error fetching posts', error);
             } finally {
