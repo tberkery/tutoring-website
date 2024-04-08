@@ -82,3 +82,7 @@ To confirm that it is working, you can visit the url and check if you see "Hello
 ### Navigating the App
 
 Since we haven't created a landing page, please click the poorly formatted 'Sign-In' button to create an account using your JHU email(must end in @jhu.edu). Once an account is created, add '/profile' to the URL to navigate to your profile page. From here, you should be able to Edit Profile as well as Create Posts using the designated buttons. 
+
+### Remark
+
+Currently, we have some Vercel deployment errors relating to rather one-off style things, like for example the favicon file, and errors relating to pages with content specific to a given user. This would seemingly be straightforward to fix but over several hours of unsuccessfuly attempts we found this to be quite to the contrary. We wanted to note this here for completeness and transparency and encourage evaluation of the app run locally on these fronts to whatever extent possible
