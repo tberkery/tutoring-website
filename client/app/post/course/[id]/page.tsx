@@ -62,6 +62,8 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
   const [averageRating, setAverageRating] = useState(0);
   const [reviewCount, setReviewCount] = useState(0);
 
+  const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(false);
+
   const loadReviews = async () => {
     try {
         const response = await axios.get(`${api}/postReviews/getByPostId/${postId}`);
@@ -93,6 +95,10 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
         loadReviews();
     }
   }, [postId, averageRating]);
+
+  useEffect(() => {
+    setIsButtonDisabled(posterId === reviewerId);
+  }, [posterId, reviewerId]);
 
   const loadOldPost = async () => {
     if (!isLoaded || !isSignedIn) {
@@ -140,7 +146,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
         rating,
         isAnonymous: isAnonymous,
       };
-      console.log(body);
+      console.log(body);    
       const response = await axios.post(`${api}/postReviews/${postId}`, body);
       alert(`Your review has been created!`);
       console.log('Review submitted:', response.data);
@@ -244,11 +250,11 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
               </label>
             </div>
             <button 
-              onClick={handleSubmit} 
-              className="uppercase info-box max-w p-4 border-2 border-black mt-4 mb-6 font-md font-bold bg-blue-300" style={{
-              boxShadow: '2px 2px 0px rgba(0, 0, 0, 10)',
-            }}>
-              post comment
+              onClick={handleSubmit} disabled={isButtonDisabled}
+              className={`uppercase info-box max-w p-4 border-2 border-black mt-4 mb-6 font-md font-bold ${isButtonDisabled ? 'bg-gray-400 text-gray-600 cursor-not-allowed' : 'bg-blue-300 text-black'}`} style={{
+                boxShadow: '2px 2px 0px rgba(0, 0, 0, 10)',
+              }}>
+              Post Comment
             </button>
           </div>
         </div>
