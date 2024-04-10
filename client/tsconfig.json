@@ -32,7 +32,7 @@
     "next-env.d.ts",
     ".next/types/**/*.ts",
     "**/*.ts",
-    "**/*.tsx", "cypress/e2e/app.cy.js", "cypress/support/e2e.js", "cypress/support/commands.js", "app/createCourses.js",
+    "**/*.tsx",
   ],
   "exclude": [
     "node_modules",
