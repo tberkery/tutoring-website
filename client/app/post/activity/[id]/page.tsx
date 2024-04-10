@@ -60,6 +60,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
     try {
         const response = await axios.get(`${api}/postReviews/getByPostId/${postId}`);
         const fetchedReviews = response.data.reviews;
+        console.log(fetchedReviews);
 
             let sumOfRatings = 0;
             const numberOfReviews = fetchedReviews.length;
@@ -203,6 +204,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
             <ReviewCard 
               key={`review-${index}`}
               review={review}
+              loggedInUserId={reviewerId}
               className="mb-4 bg-white rounded-lg shadow-md"
             />
           )) }

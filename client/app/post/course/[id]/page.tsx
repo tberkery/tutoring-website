@@ -209,6 +209,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
             <ReviewCard 
               key={`review-${index}`}
               review={review}
+              loggedInUserId={reviewerId}
               className="mb-4 bg-white rounded-lg shadow-md"
             />
           )) }
