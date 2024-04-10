@@ -55,8 +55,8 @@ const CreatePost : FC<createPostProps> =
   sisCourses,
   postType,
   setPostType,
-  title: propsTitle,
-  setTitle: propsSetTitle,
+  title,
+  setTitle,
   number,
   setNumber,
   price,
@@ -84,14 +84,15 @@ const CreatePost : FC<createPostProps> =
 }) => {
 	const { isLoaded } = useUser();
 
-  const [title, setTitle] = useState("");
   const [sisAutofills, setSisAutofills] = useState<sisCourse[]>([]);
   const [realCourse, setRealCourse] = useState(false);
-  const [showCourses, setShowCourses] = useState(false);
+  const [showCourseDropdown, setShowCourseDropdown] = useState(false);
+  const [showNumberDropdown, setShowNumberDropdown] = useState(false);
+  const [onCourseDropdown, setOnCourseDropdown] = useState(false);
+  const [onNumberDropdown, setOnNumberDropdown] = useState(false);
   
   const inputTitle = (title : string) => {
     setTitle(title);
-    propsSetTitle(title);
     setRealCourse(false);
     if (postType === "course") {
       if (sisCourses) {
@@ -107,10 +108,20 @@ const CreatePost : FC<createPostProps> =
     }
   }
 
-  const titleOnBlur = async () => {
+  const inputNumber = (number : string) => {
+    setNumber(number);
+    setRealCourse(false);
     if (postType === "course") {
-      await new Promise(r => setTimeout(r, 100));
-      setShowCourses(false);
+      if (sisCourses) {
+        if (number === "") {
+          setSisAutofills([]);
+        } else {
+          const filtered = sisCourses.filter((course) => {
+            return course.courseNumber.toLowerCase().includes(number.toLowerCase());
+          })
+          setSisAutofills(filtered);
+        }
+      }
     }
   }
 
@@ -120,10 +131,34 @@ const CreatePost : FC<createPostProps> =
 
   const sisButtonClick = (input: sisCourse) => {
     setTitle(input.courseTitle);
-    propsSetTitle(input.courseTitle);
     setNumber(input.courseNumber);
-    setDepartment(input.courseDepartment[0])
+    setDepartment(createDepartmentString(input.courseDepartment))
     setRealCourse(true);
+  }
+
+  const hideCourseDropdown = async () => {
+    await new Promise(r => setTimeout(r, 100));
+    if (!onCourseDropdown) {
+      setShowCourseDropdown(false);
+    }
+  }
+
+  const hideNumberDropdown = async () => {
+    await new Promise(r => setTimeout(r, 100));
+    if (!onNumberDropdown) {
+      setShowNumberDropdown(false);
+    }
+  }
+
+  const createDepartmentString = (departments : string[]) => {
+    let result = "";
+    departments.forEach((s, index) => {
+      result += s;
+      if (index != departments.length - 1) {
+        result += ", ";
+      }
+    });
+    return result;
   }
 
   const addTag = (tag: string) => {
@@ -150,6 +185,54 @@ const CreatePost : FC<createPostProps> =
     "Performing Art",
     "Visual Art",
   ].sort();
+
+  const getCourseDropdown = () => {
+    return getAutofillDropdown(
+      showCourseDropdown, setShowCourseDropdown, setOnCourseDropdown
+    )
+  }
+
+  const getNumberDropdown = () => {
+    return getAutofillDropdown(
+      showNumberDropdown, setShowNumberDropdown, setOnNumberDropdown
+    )
+  }
+
+  const getAutofillDropdown = (
+    hide : boolean, hideFunction : any, onFunction: any
+  ) => {
+    return (
+      <div 
+        className={`absolute top-14 w-full max-h-60 border rounded-md
+        bg-white border-gray-500 overflow-x-hidden overflow-y-scroll
+        ${hide ? '' : 'hidden'}`}
+      >
+        { sisAutofills.length > 0 ? 
+          sisAutofills.map((course) => {
+            return (
+              <button 
+                className="px-3 py-1 hover:bg-gray-100 w-full border-b
+                text-sm text-left"
+                onMouseDown={ () => onFunction(true) }
+                onClick={ () => sisButtonClick(course) }
+                onMouseUp={ () => { hideFunction(false); onFunction(false) } }
+              >
+                <p className="font-bold">{ course.courseTitle }</p>
+                {course.courseNumber}
+              </button>
+            )
+          })
+        :
+          title === "" ?
+            <></>
+          :
+            <div className="text-sm px-3 py-1 w-full">
+              No Courses Found
+            </div>
+        }
+      </div>
+    )
+  }
 
   return <>
     <div 
@@ -210,45 +293,21 @@ const CreatePost : FC<createPostProps> =
           </Label>
           <Input
             id="title"
-            className={`mt-1 ${ propsTitle.length === 0 && refilling
+            className={`mt-1 ${ title.length === 0 && refilling
               ? "outline outline-red-500"
               : ''
             }`}
             placeholder="Title"
+            autoComplete="off"
             value={ title }
             onChange={ (event) => inputTitle(event.target.value) }
-            onFocus={ () => setShowCourses(postType === "course") }
-            onBlur={ () => { titleOnBlur() } }
+            onFocus={ () => setShowCourseDropdown(postType === "course") }
+            onBlur={ () => { hideCourseDropdown() }}
           />
-          <div 
-            className={`absolute top-14 w-full max-h-60 border rounded-md
-            bg-white shadow-sm overflow-x-hidden overflow-y-scroll
-            ${showCourses ? '' : 'hidden'}`}
-          >
-            { sisAutofills.length > 0 ? 
-              sisAutofills.map((course) => {
-                return (
-                  <button 
-                    className="text-sm px-3 py-1 hover:bg-gray-100 w-full
-                    border-b"
-                    onClick={ () => sisButtonClick(course) }
-                  >
-                    { course.courseTitle }
-                  </button>
-                )
-              })
-            :
-              title === "" ?
-                <></>
-              :
-                <div className="text-sm px-3 py-1 w-full">
-                  No Courses Found
-                </div>
-            }
-          </div>
+          { getCourseDropdown() }
         </div>
         { postType === "course" ?
-          <div className="flex flex-col flex-grow basis-1">
+          <div className="relative flex flex-col flex-grow basis-1 z-10">
             <Label htmlFor="number">Course Number</Label>
             <Input
               id="number"
@@ -257,9 +316,13 @@ const CreatePost : FC<createPostProps> =
                 : ''
               }`}
               placeholder="Number"
+              autoComplete="off"
               value={ number }
-              disabled={true}
+              onChange={ (event) => inputNumber(event.target.value) }
+              onFocus={ () => setShowNumberDropdown(true) }
+              onBlur={ () => { hideNumberDropdown() } }
             />
+            { getNumberDropdown() }
           </div>
         :
           <></>
@@ -448,7 +511,7 @@ const CreatePost : FC<createPostProps> =
       <Textarea
         id="description"
         className={`resize-none ${ 
-          propsTitle.length === 0 && refilling && postType === "activity"
+          description.length === 0 && refilling && postType === "activity"
           ? "outline outline-red-500"
           : ''
         }`}
