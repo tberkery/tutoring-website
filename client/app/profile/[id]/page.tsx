@@ -340,7 +340,7 @@ function formatEndTime(t) {
           :
             <div className="flex flex-col justify-center max-w-3xl w-full">
               { reviews.map((review) => (
-                <ReviewCard 
+                <ReviewCard
                   review={review}
                   className="mb-4 bg-white rounded-lg shadow-md"
                 />
