@@ -158,8 +158,8 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
 
   return <>
     <Navbar/>
-    <div className="flex min-h-screen">
-      <div className="w-2/3 flex flex-col px-20 my-14 border-r border-black">
+    <div className="flex min-h-screen flex-col lg:flex-row">
+      <div className="w-full lg:w-2/3 flex flex-col px-4 my-14 lg:border-r lg:border-black">
         <div className="intro border-b border-black pb-10">
           <Breadcrumb>
             <BreadcrumbList>
@@ -208,9 +208,9 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
           )) }
         </div>
     </div>
-      <div className="w-1/3 flex flex-col items-center pr-20 my-10">
-        <div className="content px-20">
-          <div className="w-[300px] info-box max-w p-4 border-2 border-black mt-10 mb-6" style={{
+      <div className="w-full lg:w-1/3 flex flex-col items-center px-4 lg:my-10">
+          <div className="w-full px-4">
+            <div className="info-box p-4 border-2 border-black lg:mt-10 mb-6 md:w-2/3" style={{
               boxShadow: '5px 5px 0px rgba(0, 0, 0, 10)',
             }}>
             <h1 className="bg-blue-300 text-black text-lg font-extrabold uppercase p-1 mb-2 inline-block font-sans">
