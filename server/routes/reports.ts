@@ -89,3 +89,5 @@ router.delete("/:id", async (req: any, res: any) => {
         res.status(500).send("Server Error");
     }
 });
+
+module.exports = router;
