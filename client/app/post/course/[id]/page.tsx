@@ -142,7 +142,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
       };
       console.log(body);
       const response = await axios.post(`${api}/postReviews/${postId}`, body);
-      alert(`Your review has been created!`);
+      setReviews(prevReviews => [...prevReviews, response.data.review]);
       console.log('Review submitted:', response.data);
       setRating(0);
       setComment('');

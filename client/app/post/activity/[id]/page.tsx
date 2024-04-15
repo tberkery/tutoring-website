@@ -88,7 +88,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
     if (postId && post.activityTitle) {
         loadReviews();
     }
-  }, [postId, post, averageRating]);
+  }, [postId, post]);
 
 
   const loadOldPost = async () => {
@@ -138,8 +138,8 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
         rating,
         isAnonymous: isAnonymous
       });
-      alert(`Your review has been created!`);
       console.log('Review submitted:', response.data);
+      setReviews(prevReviews => [...prevReviews, response.data.review]);
       setRating(0);
       setComment('');
       setIsAnonymous(false);
