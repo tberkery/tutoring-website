@@ -49,9 +49,10 @@ const ComboBox : FC<props> = (props : props) => {
 				<Command>
 					<CommandInput placeholder="Search..." />
 					<CommandEmpty>Not found</CommandEmpty>
-					<CommandGroup>
+					<CommandGroup className="max-h-64 overflow-scroll">
 						{options.map((option) => (
 							<CommandItem
+								className="cursor-pointer border-b"
 								key={option}
 								value={option}
 								onSelect={(currentValue) => {
