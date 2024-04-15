@@ -105,7 +105,6 @@ const Page : FC = () => {
       body["activityDescription"] = description;
     }
     if (tags.length > 0) {
-      console.log(tags)
       body["tags"] = tags;
     }
     const newPost = await axios.post(`${api}/activityPosts`, body);
