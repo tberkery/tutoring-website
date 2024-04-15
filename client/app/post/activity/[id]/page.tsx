@@ -16,7 +16,7 @@ import Link from "next/link";
 import StarReview from "@/components/StarReview";
 import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Heading1, SpadeIcon } from "lucide-react";
+import { ChevronDown, Heading1, SpadeIcon } from "lucide-react";
 import { useUser } from '@clerk/clerk-react';
 import ReviewCard from "@/components/ReviewCard";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -238,7 +238,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
                 className='text-md font-bold bg-custom-blue hover:bg-blue-900
                 rounded-lg'
               >
-                {reviewSort}
+                {reviewSort} <ChevronDown/>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent 
