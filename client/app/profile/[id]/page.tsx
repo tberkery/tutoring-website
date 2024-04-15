@@ -252,6 +252,11 @@ function formatEndTime(t) {
     return;
   }
 
+  const handleClickReportUser = () => {
+    router.push(`/profile/report/${params.id}`);
+  }
+
+
   useEffect(() => { getVisitor() }, [isLoaded, isSignedIn, user]);
 
   useEffect(() => {
@@ -300,7 +305,8 @@ function formatEndTime(t) {
             <button className="bg-custom-blue hover:bg-blue-900 text-white font-bold py-2 px-4 rounded-md" onClick={() => compareAvail()}>
                 Compare Availability
             </button>
-            <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-md" onClick={() => reportUser()}>
+            
+            <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-md" onClick={() => handleClickReportUser()}>
                 Report this user
             </button>
           </div>
