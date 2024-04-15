@@ -61,6 +61,20 @@ router.get("/findAllByReporteeId/:reporteeId", async (req: any, res: any ) => {
     }
 });
 
+router.put("/resolve/:id", async (req: any, res: any) => {
+    const id : number = req.params.id;
+    try {
+        const report = await ReportDao.updateResolved( id );
+        if (!report) {
+        return res.status(404).json({ msg: "Report not found" });
+        }
+        res.status(200).json({ report });
+    } catch (err) {
+        console.log(err);
+        res.status(500).send("Server Error");
+    }
+});
+
 router.put("/:id", async (req: any, res: any) => {
     const id : number = req.params.id;
     const {reporterId, reporterFirstName, reporterLastName, content, reporteeId, reporteeFirstName, reporteeLastName}: {reporterId: string, reporterFirstName: string, reporterLastName: string, content: string, reporteeId: string, reporteeFirstName: string, reporteeLastName: string} = req.body;

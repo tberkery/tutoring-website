@@ -14,7 +14,7 @@ interface PostReview {
 export class ReportDao {
 
     async create(reporterId: string, reporterFirstName: string, reporterLastName: string, content: string, reporteeId: string, reporteeFirstName: string, reporteeLastName: string) {
-        const newReport = {reporterId, reporterFirstName, reporterLastName, content, reporteeId, reporteeFirstName, reporteeLastName}
+        const newReport = {reporterId, reporterFirstName, reporterLastName, content, reporteeId, reporteeFirstName, reporteeLastName, resolved: false}
         const data = await Report.create(newReport);
         return data;
     }
@@ -46,6 +46,12 @@ export class ReportDao {
     async update( id: any, reporterId: string, reporterFirstName: string, reporterLastName: string, content: string, reporteeId: string, reporteeFirstName: string, reporteeLastName: string) {
         const updatedReport = {reporterId, reporterFirstName, reporterLastName, content, reporteeId, reporteeFirstName, reporteeLastName}
         const data = await Report.findByIdAndUpdate(id, updatedReport, {new: true});
+        return data;
+    }
+
+    async updateResolved( id: any ) {
+        const report = await Report.findOne({ _id: id });
+        const data = await Report.findByIdAndUpdate(id, {resolved: !report.resolved});
         return data;
     }
 

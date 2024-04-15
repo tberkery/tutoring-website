@@ -30,7 +30,10 @@ const ReportSchema = new mongoose.Schema({
     reporteeLastName: {
         type: String,
         required: true,
-    }
+    },
+    resolved: {
+        type: Boolean,
+    },
 })
 
 const Report = mongoose.model("Review", ReportSchema);
