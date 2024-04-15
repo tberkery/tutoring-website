@@ -155,8 +155,10 @@ const Page : FC = () => {
 
         if (searchInput) {
             filtered = filtered.filter(post => {
-                if ('courseName' in post) {
-                    return post.courseName.toLowerCase().includes(searchInput.toLowerCase());
+                 if ('courseName' in post && 'courseNumber' in post) {
+                    // Check if the search input matches either the course name or course number
+                    return post.courseName.toLowerCase().includes(searchInput.toLowerCase()) ||
+                           post.courseNumber.toLowerCase().includes(searchInput.toLowerCase());
                 } else if ('activityTitle' in post) {
                     return post.activityTitle.toLowerCase().includes(searchInput.toLowerCase());
                 }
