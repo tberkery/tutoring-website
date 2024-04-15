@@ -19,6 +19,8 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Heading1, SpadeIcon } from "lucide-react";
 import { useUser } from '@clerk/clerk-react';
 import ReviewCard from "@/components/ReviewCard";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 
 type activityPostType = {
   _id? : string,
@@ -33,6 +35,19 @@ type userType = {
   firstName? : string,
   lastName? : string,
   description? : string,
+}
+
+type review = {
+  _id: string,
+  postId: string,
+  postName?: string,
+  postType?: string,
+  posterId: string,
+  reviewerId: string,
+  title?: string,
+  isAnonymous?: boolean,
+  reviewDescription: string,
+  rating: number,
 }
 
 const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
@@ -51,10 +66,16 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
   const [isAnonymous, setIsAnonymous] = useState(false);
   const { isLoaded, isSignedIn, user } = useUser();
 
-  const [reviews, setReviews] = useState([]);
+  const [reviews, setReviews] = useState<review[]>([]);
   const [averageRating, setAverageRating] = useState(0);
   const [reviewCount, setReviewCount] = useState(0);
   const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(false);
+
+  const reviewSortMethods = [
+    "Highest Rating",
+    "Lowest Rating"
+  ]
+  const [reviewSort, setReviewSort] = useState(reviewSortMethods[0]);
 
   const loadReviews = async () => {
     try {
@@ -79,6 +100,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
               review.postName = post.activityTitle;
               review.postType = 'activity';
             });
+            fetchedReviews.sort((a, b) => b.rating - a.rating);
             setReviews(fetchedReviews); // Set reviews state at the end
         } catch (error) {
         console.error('Error fetching reviews:', error);
@@ -116,6 +138,16 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
     }
     setLoadedPost(true);
   }
+
+  useEffect(() => {
+    let newReviews = reviews.slice();
+    if (reviewSort === "Lowest Rating") {
+      newReviews.sort((a, b) => a.rating - b.rating);
+    } else if (reviewSort === "Highest Rating") {
+      newReviews.sort((a, b) => b.rating - a.rating);
+    }
+    setReviews(newReviews);
+  }, [reviewSort]);
 
   useEffect(() => { loadOldPost() }, [isLoaded, isSignedIn, user]);
 
@@ -198,16 +230,47 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
         </div>
       </div>
       <p className="py-8">{post.activityDescription}</p>
-      <h1 className="font-sans font-extrabold uppercase text-3xl leading-none mt-0 mb-1 text-slate-800 py-2">Reviews</h1>
-      <div className="flex flex-col justify-center max-w-3xl">
-          { reviews.map((review, index) => (
-            <ReviewCard 
-              key={`review-${index}`}
-              review={review}
-              className="mb-4 bg-white rounded-lg shadow-md"
-            />
-          )) }
+      <div className="flex flex-row gap-x-4 mb-4">
+        <h1 className="font-sans font-extrabold uppercase text-3xl leading-none mt-0 mb-1 text-slate-800 py-2">Reviews</h1>
+        <DropdownMenu>
+            <DropdownMenuTrigger>
+              <Button 
+                className='text-md font-bold bg-custom-blue hover:bg-blue-900
+                rounded-lg'
+              >
+                {reviewSort}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent 
+              className='bg-blue-300 rounded-xl px-2 py-1.5 border mt-1'
+            >
+              {
+                reviewSortMethods.map((method) => {
+                  return (
+                    <DropdownMenuItem 
+                      className='p-0 mb-1 hover:cursor-pointer text-lg font-bold
+                      rounded-xl overflow-hidden'
+                      onClick={ () => setReviewSort(method) }
+                    >
+                      <div className='hover:bg-sky-100 px-3 py-1 w-full'>
+                        {method}
+                      </div>
+                    </DropdownMenuItem>
+                  );
+                })
+              }
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
+        <div className="flex flex-col justify-center max-w-3xl">
+        { reviews.map((review, index) => (
+          <ReviewCard 
+            key={`review-${index}`}
+            review={review}
+            className="mb-4 bg-white rounded-lg shadow-md"
+          />
+        )) }
+      </div>
     </div>
       <div className="w-1/3 flex flex-col items-center pr-20 my-10">
         <div className="content px-20">
