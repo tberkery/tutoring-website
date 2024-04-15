@@ -105,6 +105,7 @@ const Page : FC = () => {
       body["activityDescription"] = description;
     }
     if (tags.length > 0) {
+      console.log(tags)
       body["tags"] = tags;
     }
     const newPost = await axios.post(`${api}/activityPosts`, body);
@@ -141,7 +142,7 @@ const Page : FC = () => {
   }
 
   return <>
-    <div className="flex flex-col justify-center items-center my-24 mx-24">
+    <div className="flex flex-col items-center justify-center mx-24 my-24">
       <CreatePost
         sisCourses={sisCourses}
         postType={postType}
