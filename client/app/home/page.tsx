@@ -20,7 +20,7 @@ const LandingPage = () => {
           Whether it's math, science, language, sports, or music, TutorHub has you
           covered.
         </p>
-        <Link href="/">
+        <Link href="/browse">
             <button className="get-started-btn">Get Started</button>
         </Link>
         
