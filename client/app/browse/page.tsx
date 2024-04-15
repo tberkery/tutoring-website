@@ -201,7 +201,7 @@ const Page : FC = () => {
   return <>
   <NavBar />
     <div className="flex min-h-screen">
-        <div className="w-1/4 flex flex-col items-center py-3 bg-blue-300">
+        <div className="hidden lg:flex lg:w-1/4 flex-col items-center py-3 bg-blue-300">
             <div className="input-container my-6">
                 <input type="text" name="text" 
                         className="input" 
@@ -298,9 +298,22 @@ const Page : FC = () => {
                 </Accordion>
             </div>
         </div>
-        <div className="w-3/4">
-                <div className="container mx-auto px-6 py-8">
-                    <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+
+        <div className="w-full lg:w-3/4 py-4">
+                <div className="container mx-auto px-6">
+                <div className="flex flex-col items-center justify-center lg:hidden py-6 mb-4 w-full">
+                    <div className="input-container w-full">
+                        <input type="text" name="text" 
+                                className="input w-full" 
+                                placeholder="Search"
+                                onChange={ (e) => searchItems(e.target.value) }></input>
+                        <label className="label">Search</label>
+                        <div className="top-line"></div>
+                        <div className="under-line"></div>
+                    </div>
+                </div>
+                {/* POSTS SECTION */}
+                <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {filteredPosts.map((posts) => (
                         <PostCard key={posts._id} post={posts} />
                     ))}
