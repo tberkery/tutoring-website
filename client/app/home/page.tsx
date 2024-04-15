@@ -12,12 +12,12 @@ const LandingPage = () => {
       <div className="header">
         {/* <img src={TutorHubLogo} alt="TutorHub Logo" className="logo" /> */}
         <h1 className="title">Welcome to TutorHub</h1>
-        <p className="subtitle">Connecting students with expert tutors</p>
+        <p className="subtitle">Comprehensive Tutoring/Learning Platform for BlueJays</p>
       </div>
       <div className="content">
         <p className="description">
-          Find the perfect tutor for any subject or skill you want to learn.
-          Whether it's math, science, language, or music, TutorHub has you
+          Find someone at Hopkins who wants to teach exactly what you want to learn. <br/><br/>
+          Whether it's math, science, language, sports, or music, TutorHub has you
           covered.
         </p>
         <Link href="/">
