@@ -149,9 +149,12 @@ const Page : FC = () => {
 
         if (searchInput) {
             filtered = filtered.filter(post => {
-                if ('courseName' in post) {
-                    return post.courseName.toLowerCase().includes(searchInput.toLowerCase());
+                if ('courseName' in post && 'courseNumber' in post) {
+                    // Check if the search input matches either the course name or course number
+                    return post.courseName.toLowerCase().includes(searchInput.toLowerCase()) ||
+                           post.courseNumber.toLowerCase().includes(searchInput.toLowerCase());
                 } else if ('activityTitle' in post) {
+                    // Only search by activity title for activity posts
                     return post.activityTitle.toLowerCase().includes(searchInput.toLowerCase());
                 }
                 return false;
@@ -201,8 +204,8 @@ const Page : FC = () => {
   return <>
   <NavBar />
     <div className="flex min-h-screen">
-        <div className="w-1/4 flex flex-col items-center py-3 bg-blue-300">
-            <div className="input-container my-6">
+        <div className="flex flex-col items-center w-1/4 py-3 bg-blue-300">
+            <div className="my-6 input-container">
                 <input type="text" name="text" 
                         className="input" 
                         placeholder="Search"
@@ -212,12 +215,12 @@ const Page : FC = () => {
                 <div className="under-line"></div>
             </div>
             <div>
-                <h1 className="font-sans font-bold text-2xl uppercase">filter listings</h1>
+                <h1 className="font-sans text-2xl font-bold uppercase">filter listings</h1>
                 <Accordion type="single" collapsible className="w-full">
                     <AccordionItem value="item-1">
                         <AccordionTrigger>By Type</AccordionTrigger>
                         <AccordionContent>
-                            <div className="ml-2 pb-1">
+                            <div className="pb-1 ml-2">
                                 <div className="flex items-center space-x-2">                                    
                                     <Checkbox id="courses" checked={typeFilters.courses} onCheckedChange={(e) => handleTypeChange('courses')}/>
                                     <label
@@ -244,7 +247,7 @@ const Page : FC = () => {
                     <AccordionItem value="item-2">
                         <AccordionTrigger>By Price</AccordionTrigger>
                         <AccordionContent>
-                        <div className="ml-2 pb-1">
+                        <div className="pb-1 ml-2">
                                 <div className="flex items-center space-x-2">
                                     <Checkbox id="highToLow" checked={priceFilters.highToLow} onCheckedChange={(e) => handlePriceChange('highToLow')} />
                                     <label
@@ -255,7 +258,7 @@ const Page : FC = () => {
                                     </label>
                                 </div>
                             </div>
-                            <div className="ml-2 pb-1">
+                            <div className="pb-1 ml-2">
                                 <div className="flex items-center space-x-2">
                                     <Checkbox id="lowToHigh" checked={priceFilters.lowToHigh} onCheckedChange={(e) => handlePriceChange('lowToHigh')}/>
                                     <label
@@ -271,7 +274,7 @@ const Page : FC = () => {
                     <AccordionItem value="item-3">
                         <AccordionTrigger>By Tag</AccordionTrigger>
                         <AccordionContent>
-                            <div className="ml-2 pb-1">
+                            <div className="pb-1 ml-2">
                                 <div className="flex items-center space-x-2">
                                     <Checkbox id="athletic" checked={tagFilters.athletic} onCheckedChange={(e) => handleTagChange('athletic')} />
                                     <label
@@ -282,7 +285,7 @@ const Page : FC = () => {
                                     </label>
                                 </div>
                             </div>
-                            <div className="ml-2 pb-1">
+                            <div className="pb-1 ml-2">
                                 <div className="flex items-center space-x-2">
                                     <Checkbox id="music" checked={tagFilters.music} onCheckedChange={(e) => handleTagChange('music')}/>
                                     <label
@@ -299,8 +302,8 @@ const Page : FC = () => {
             </div>
         </div>
         <div className="w-3/4">
-                <div className="container mx-auto px-6 py-8">
-                    <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="container px-6 py-8 mx-auto">
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                     {filteredPosts.map((posts) => (
                         <PostCard key={posts._id} post={posts} />
                     ))}
