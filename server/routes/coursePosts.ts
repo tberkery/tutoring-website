@@ -80,4 +80,44 @@ router.delete("/:id", async (req: any, res: any) => {
     }
 });
 
+// Modify the route to include the functionality to compare prices
+router.get("/comparePrice/:id", async (req: any, res: any) => {
+  const { id }: { id: string } = req.params;
+  try {
+      const currentPost = await CoursePostDao.readOne(id);
+      if (!currentPost) {
+          return res.status(404).json({ msg: "Post not found" });
+      }
+
+      const { courseNumber } = currentPost;
+      const coursePosts = await CoursePostDao.readAll({ courseNumber });
+
+      let total = 0;
+      for (const post of coursePosts) {
+          total += post.price;
+      }
+      const meanPrice = total / coursePosts.length;
+
+      const myPostPrice = currentPost.price
+
+      let comparisonResult;
+      let percentDiff;
+      if (myPostPrice > meanPrice) {
+        comparisonResult = "higher";
+        percentDiff = (((myPostPrice - meanPrice) / meanPrice) * 100).toFixed(2);;
+      } else if (myPostPrice < meanPrice) {
+        comparisonResult = "lower";
+        percentDiff = (((myPostPrice - meanPrice) / meanPrice) * 100).toFixed(2);;
+      } else {
+        comparisonResult = "same";
+        percentDiff = 0;
+      }
+
+      res.status(200).json({ meanPrice, comparisonResult, myPostPrice, percentDiff});
+  } catch (err) {
+      console.error(err);
+      res.status(500).send("Server Error");
+  }
+});
+
 module.exports = router;
