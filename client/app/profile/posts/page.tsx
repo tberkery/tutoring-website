@@ -31,6 +31,7 @@ const postFormSchema = z.object({
     description: z.string().min(1, "Description is required"),
     picture: z.string().optional(),
     price: z.string().min(1, "Price is required"),
+    bookmark: z.boolean()
   });
   
   type PostFormData = z.infer<typeof postFormSchema>;
@@ -65,6 +66,7 @@ const CreatePost : FC = () => {
       description: "",
       picture: "",
       price: "",
+      bookmark: false
     },
   });
 
@@ -83,6 +85,15 @@ const CreatePost : FC = () => {
 
     const newPost = await axios.post(`${BACKEND_URL}/posts`, postData);
     router.push('/profile')
+  }
+
+  async function onBookmarkClick(data: z.infer<typeof postFormSchema>) {
+    await fetchProfile();
+    const profileIdOfBookmarker = profileData.data[0]._id
+    const post = await axios.get(`${BACKEND_URL}/`) // TODO: fix
+    const newBookmark = await axios.put(`${BACKEND_URL}/addBookmark/${profileIdOfBookmarker}`,  {
+      "bookmark": data[0]._id, "isCourse": 'courseName' in post ? 'course' : 'activity'
+    })
   }
 
   return (
