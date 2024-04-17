@@ -90,6 +90,8 @@ const CreatePost : FC = () => {
   async function onBookmarkClick(data: z.infer<typeof postFormSchema>) {
     await fetchProfile();
     const profileIdOfBookmarker = profileData.data[0]._id
+    console.log("profileIdOfBookmarker:")
+    console.log(profileIdOfBookmarker)
     const post = await axios.get(`${BACKEND_URL}/`) // TODO: fix
     const newBookmark = await axios.put(`${BACKEND_URL}/addBookmark/${profileIdOfBookmarker}`,  {
       "bookmark": data[0]._id, "isCourse": 'courseName' in post ? 'course' : 'activity'
