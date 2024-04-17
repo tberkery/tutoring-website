@@ -113,7 +113,6 @@ export class ProfileDao {
         {new: true})
       return data;
     }
-    
   }
 
   async updateAvailability(_id: String, availability: Number[]) {
