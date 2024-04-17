@@ -102,18 +102,32 @@ router.get("/comparePrice/:id", async (req: any, res: any) => {
 
       let comparisonResult;
       let percentDiff;
+      let percentDiffNum;
       if (myPostPrice > meanPrice) {
         comparisonResult = "higher";
-        percentDiff = (((myPostPrice - meanPrice) / meanPrice) * 100).toFixed(2);;
+        percentDiff = (((myPostPrice - meanPrice) / meanPrice) * 100);
+        percentDiffNum = Math.round( percentDiff * 1e2 ) / 1e2;
       } else if (myPostPrice < meanPrice) {
         comparisonResult = "lower";
-        percentDiff = (((myPostPrice - meanPrice) / meanPrice) * 100).toFixed(2);;
+        percentDiff = (((myPostPrice - meanPrice) / meanPrice) * 100);
+        percentDiffNum = Math.round( percentDiff * 1e2 ) / 1e2;
       } else {
         comparisonResult = "same";
         percentDiff = 0;
+        percentDiffNum = 0;
       }
 
-      res.status(200).json({ meanPrice, comparisonResult, myPostPrice, percentDiff});
+      // Compare percentDiff to determine market position
+      let marketPosition;
+      if (percentDiffNum < -20) {
+        marketPosition = "belowMarket";
+      } else if (percentDiffNum > 20) {
+        marketPosition = "aboveMarket";
+      } else {
+        marketPosition = "marketPrice";
+      }
+
+      res.status(200).json({ meanPrice, comparisonResult, myPostPrice, percentDiff, marketPosition});
   } catch (err) {
       console.error(err);
       res.status(500).send("Server Error");
