@@ -77,6 +77,21 @@ export class CoursePostDao {
         }
     }
 
+    async readViewsByIdAndDate(_id: string, start: string) {
+        const data = await CoursePost.find({
+          _id: _id,
+          views: {
+              $gt: new Date(start)
+          }
+        }).lean().select("views");
+        return data;
+    }
+
+    async readViewsById(_id: string) {
+        const data = await CoursePost.findById(_id).lean().select("views");
+        return data;
+    }
+
     async update( id: any, userId: string, userFirstName: string, userLastName: string, courseName: string, takenAtHopkins: boolean, options?: {description?: string, price?: number, courseNumber?: string, courseDepartment?: string[], gradeReceived?: string, semesterTaken?: string, professorTakenWith?: string, schoolTakenAt?: string, reviews?: PostReview[]} ) {
         let newPost: any = {userId, userFirstName, userLastName, courseName, takenAtHopkins}
         if (options){
@@ -110,6 +125,13 @@ export class CoursePostDao {
         }
         let post = await CoursePost.findByIdAndUpdate(id, newPost );
         return post;
+    }
+
+    async updateViews(_id: String, viewerId: String, timestamp: String, duration: Number) {
+        const data = await CoursePost.findByIdAndUpdate(_id,
+          { $push: { views: { viewerId: viewerId, timestamp: timestamp, durationInSeconds: duration } } },
+          { new: true })
+        return data
     }
 
     async delete(_id: Number) {

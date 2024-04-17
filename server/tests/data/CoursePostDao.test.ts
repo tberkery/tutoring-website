@@ -428,3 +428,65 @@ test('test delete() for an invalid id', async ()=> {
     const foundPost = await coursePostDao.delete(id);
     expect(foundPost).toBe(null);
 });
+
+test('test add profile view for valid id', async() => {
+    const coursePostDao = new CoursePostDao();
+    await mg.connect(URI);
+    const userId = faker.lorem.word();
+    const userFirstName = faker.person.firstName();
+    const userLastName = faker.person.lastName();
+    const courseName =  faker.lorem.word();
+    const price = faker.number.int(100);
+    const courseNumber = (faker.finance.accountNumber());
+    const courseDepartment = ["Computer Science"]
+    const professorTakenWith = faker.person.lastName();
+    const takenAtHopkins = true;
+    
+    const post =  await coursePostDao.create(userId, userFirstName, userLastName, courseName, takenAtHopkins, { price, courseNumber, courseDepartment, professorTakenWith});
+
+    const id = new ObjectId(1);
+    const timestamp = "2022-02-17T13:36:45.954Z";
+    const duration = 120;
+    const updatedPost = await coursePostDao.updateViews(post._id, id, timestamp, duration)
+
+    expect(updatedPost._id).toMatchObject(post._id);
+    expect(updatedPost.views).toHaveLength(1);
+
+    const firstView = updatedPost.views[0];
+    expect(firstView.timestamp.toISOString()).toBe(timestamp); // Convert toISOString to match MongoDB Date format
+    expect(firstView.durationInSeconds).toBe(duration);
+    expect(firstView.viewerId).toMatchObject(id);
+})
+
+test('test observe profile view for valid id', async() => {
+    const coursePostDao = new CoursePostDao();
+    await mg.connect(URI);
+    const userId = faker.lorem.word();
+    const userFirstName = faker.person.firstName();
+    const userLastName = faker.person.lastName();
+    const courseName =  faker.lorem.word();
+    const price = faker.number.int(100);
+    const courseNumber = (faker.finance.accountNumber());
+    const courseDepartment = ["Computer Science"]
+    const professorTakenWith = faker.person.lastName();
+    const takenAtHopkins = true;
+    
+    const post =  await coursePostDao.create(userId, userFirstName, userLastName, courseName, takenAtHopkins, { price, courseNumber, courseDepartment, professorTakenWith});
+
+
+    const id = new ObjectId(1);
+    const timestamp = "2022-02-17T13:36:45.954Z";
+    const duration = 120;
+    const updatedPost = await coursePostDao.updateViews(post._id, id, timestamp, duration)
+    
+    const retrievedPost = await coursePostDao.readViewsById(post._id);
+
+    expect(retrievedPost._id).toMatchObject(post._id);
+    expect(retrievedPost.views).toHaveLength(1);
+
+    const firstView = retrievedPost.views[0];
+    expect(firstView.timestamp.toISOString()).toBe(timestamp); // Convert toISOString to match MongoDB Date format
+    expect(firstView.durationInSeconds).toBe(duration);
+    expect(firstView.viewerId).toMatchObject(id);
+})
+
