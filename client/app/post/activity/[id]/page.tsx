@@ -85,6 +85,32 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
     }
   };
 
+  const onBookmarkClick = async () => {
+    const profileIdOfBookmarker = profileData.data[0]._id
+    console.log("profileIdOfBookmarker:")
+    console.log(profileIdOfBookmarker)
+    const postData = {
+      userId: profileData.data[0]._id,
+      title: data.title,
+      description: data.description,
+      imageUrl: data.picture,
+      price: data.price,
+      courseId: data.courseId,
+    }
+    console.log("postData")
+    console.log(postData)
+    let isCoursePost = true
+    if (!postData.courseId) {
+      isCoursePost = false
+    }
+    console.log("isCoursePost")
+    console.log(isCoursePost)
+    const newBookmark = await axios.put(`${BACKEND_URL}/addBookmark/${profileIdOfBookmarker}`,  {
+      "bookmark": data[0]._id, "isCourse": isCoursePost
+    })
+    router.push('/posts')
+  }
+
   useEffect(() => {
     if (postId && post.activityTitle) {
         loadReviews();
