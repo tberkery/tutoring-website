@@ -3,7 +3,7 @@ import "@/styles/global.css";
 
 const Page : FC = ({ params }: { params : { test: string }}) => {
   return <>
-    <p>{JSON.stringify(params)}</p>
+    <p>params: {JSON.stringify(params)}</p>
   </>;
 };
 
