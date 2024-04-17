@@ -92,10 +92,26 @@ const CreatePost : FC = () => {
     const profileIdOfBookmarker = profileData.data[0]._id
     console.log("profileIdOfBookmarker:")
     console.log(profileIdOfBookmarker)
-    const post = await axios.get(`${BACKEND_URL}/`) // TODO: fix
+    const postData = {
+      userId: profileData.data[0]._id,
+      title: data.title,
+      description: data.description,
+      imageUrl: data.picture,
+      price: data.price,
+      courseId: data.courseId,
+    }
+    console.log("postData")
+    console.log(postData)
+    let isCoursePost = true
+    if (!postData.courseId) {
+      isCoursePost = false
+    }
+    console.log("isCoursePost")
+    console.log(isCoursePost)
     const newBookmark = await axios.put(`${BACKEND_URL}/addBookmark/${profileIdOfBookmarker}`,  {
-      "bookmark": data[0]._id, "isCourse": 'courseName' in post ? 'course' : 'activity'
+      "bookmark": data[0]._id, "isCourse": isCoursePost
     })
+    router.push('/posts')
   }
 
   return (
