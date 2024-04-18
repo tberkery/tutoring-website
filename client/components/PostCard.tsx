@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from "next/navigation";
 import { Star } from 'lucide-react';
+import BookmarkIcon from './ui/bookmark';
 
 interface Post {
   _id: string;
@@ -46,6 +47,7 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
   const defaultImage = '/jhulogo.jpeg';
   const [titleUnderline, setTitleUnderline] = useState(false);
   const [avgRating, setAvgRating] = useState(5);
+  const [isBookmarked, setIsBookmarked] = useState(false);
   const router = useRouter();
 
   const postUrl = post.courseName ? `/post/course/${post._id}` : `/post/activity/${post._id}`;
@@ -70,6 +72,10 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
     }
   }
 
+  const toggleBookmark = () => {
+    setIsBookmarked(prevState => !prevState);
+  }
+
   return (<> 
     <div 
       className="max-w-sm overflow-hidden bg-white rounded shadow-lg
@@ -78,6 +84,10 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
       onMouseEnter={() => setTitleUnderline(true)}
       onMouseLeave={() => setTitleUnderline(false)}
     >
+      {/* Bookmark icon positioned at the top right corner */}
+      <div className="absolute top-2 right-2" onClick={toggleBookmark}>
+        <BookmarkIcon className="h-6 w-6 text-gray-500" />
+      </div>
       <img
         className="w-full h-48 object-cover"
         src={post.imageUrl || defaultImage}
