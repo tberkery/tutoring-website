@@ -41,9 +41,10 @@ type review = {
 
 interface PostCardProps {
   post: Post;
+  onUpdateBookmark: (postId: string, isBookmarked: boolean) => void;
 }
 
-const PostCard: React.FC<PostCardProps> = ({ post }) => {
+const PostCard: React.FC<PostCardProps> = ({ post, onUpdateBookmark }) => {
   const defaultImage = '/jhulogo.jpeg';
   const [titleUnderline, setTitleUnderline] = useState(false);
   const [avgRating, setAvgRating] = useState(5);
@@ -51,6 +52,11 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
   const router = useRouter();
 
   const postUrl = post.courseName ? `/post/course/${post._id}` : `/post/activity/${post._id}`;
+
+  const toggleBookmark = () => {
+    setIsBookmarked(prevState => !prevState);
+    onUpdateBookmark(post._id, !isBookmarked); // Trigger callback with postId and new bookmark status
+  };
 
   useEffect(() => {
     let total = 0;
@@ -70,10 +76,6 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
     } else {
       return `From $${price}`;
     }
-  }
-
-  const toggleBookmark = () => {
-    setIsBookmarked(prevState => !prevState);
   }
 
   return (<> 
