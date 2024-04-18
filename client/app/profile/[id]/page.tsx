@@ -82,6 +82,14 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
   const [onPage, setOnPage] = useState(true);
   const [visitorId, setVisitorId] = useState('');
 
+  const handleBookmarkUpdate = async (postId: string, isBookmarked: boolean, isCoursePost: boolean) => {
+    try {
+      const response = await axios.put(`${api}/profiles/addBookmark/${postId}`, { isBookmarked, isCoursePost });
+    } catch (error) {
+      console.error('Error updating bookmark status:', error);
+    }
+  };
+
   const timeSpentRef = useRef<Number>();
   useEffect(() => {
     timeSpentRef.current = timeSpent;
@@ -334,7 +342,7 @@ function formatEndTime(t) {
               lg:grid-cols-3 gap-4"
             >
               { posts.map((post) => (
-                <PostCard key={post._id} post={post} />
+                <PostCard key={post._id} post={post} onUpdateBookmark={handleBookmarkUpdate} />
               )) }
             </div>
           :

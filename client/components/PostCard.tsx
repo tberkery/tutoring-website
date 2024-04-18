@@ -41,7 +41,7 @@ type review = {
 
 interface PostCardProps {
   post: Post;
-  onUpdateBookmark: (postId: string, isBookmarked: boolean) => void;
+  onUpdateBookmark: (postId: string, isBookmarked: boolean, isCoursePost: boolean) => void;
 }
 
 const PostCard: React.FC<PostCardProps> = ({ post, onUpdateBookmark }) => {
@@ -55,7 +55,8 @@ const PostCard: React.FC<PostCardProps> = ({ post, onUpdateBookmark }) => {
 
   const toggleBookmark = () => {
     setIsBookmarked(prevState => !prevState);
-    onUpdateBookmark(post._id, !isBookmarked); // Trigger callback with postId and new bookmark status
+    const isCoursePost = post.courseName ? true : false
+    onUpdateBookmark(post._id, !isBookmarked, isCoursePost); // Trigger callback with postId and new bookmark status
   };
 
   useEffect(() => {
