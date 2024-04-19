@@ -77,7 +77,6 @@ router.put("/availability/:_id", async (req: any, res: any) => {
   const { _id }: { _id: string } = req.params;
   const { availability }: { availability: number[] } = req.body;
   try {
-    console.log('endpoint hit!!!!!!')
     const data = await profiles.updateAvailability(_id, availability) 
     if (!data) {
       res.status(404).json({ msg: "Profile availability update not made" });

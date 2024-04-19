@@ -99,7 +99,7 @@ export class ProfileDao {
     console.log('in dao for updating avail!!!!')
     console.log('availability: ', availability);
     const data = await Profile.findByIdAndUpdate(_id, 
-      { $push: {availability : availability}}, 
+      {availability : availability}, 
       {new: true}
     );
     console.log('about to return the data!!')

@@ -90,24 +90,39 @@ const Page = () => {
     const toggleSelection = async (index) => {
         const newSelections = [...selections];
         newSelections[index] = !newSelections[index];
+       
+
+        let trueIndices = [];
+        newSelections.forEach((selection, index) => {
+            if (selection) {
+                trueIndices.push(index);
+            }
+        });
+        console.log('trueIndices: ' + trueIndices);
+        console.log('newSelections: ' + selections);
+
         setSelections(newSelections);
 
-        const trueIndices = selections.reduce((acc, curr, index) => {
-            if (curr) {
-                acc.push(index);
-            }
-            return acc;
-        }, []);
-        console.log('trueIndices:....\n\n')
-        console.log(trueIndices);
-
-
-
-        const updateAvailabilityResponse = await axios.put(`${api}/profiles/availability/${userId}`, {
+        const response = await axios.put(`${api}/profiles/availability/${userId}`, {
             availability: trueIndices
         });
+        console.log('response: ', response);
 
-        console.log(updateAvailabilityResponse);
+        
+
+        // console.log('trueIndices:....\n\n')
+        // console.log(trueIndices);
+        // trueIndices.forEach((index) => {
+        //     console.log(index);
+        // });
+
+
+
+        // const updateAvailabilityResponse = await axios.put(`${api}/profiles/availability/${userId}`, {
+        //     availability: trueIndices
+        // });
+
+        // console.log(updateAvailabilityResponse);
 
 
     };
