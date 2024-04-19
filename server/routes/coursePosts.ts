@@ -120,11 +120,11 @@ router.get("/comparePrice/:id", async (req: any, res: any) => {
       // Compare percentDiff to determine market position
       let marketPosition;
       if (percentDiffNum < -20) {
-        marketPosition = "belowMarket";
+        marketPosition = "Great Deal!";
       } else if (percentDiffNum > 20) {
-        marketPosition = "aboveMarket";
+        marketPosition = "Overpriced";
       } else {
-        marketPosition = "marketPrice";
+        marketPosition = "Fair";
       }
 
       res.status(200).json({ meanPrice, comparisonResult, myPostPrice, percentDiff, marketPosition});
