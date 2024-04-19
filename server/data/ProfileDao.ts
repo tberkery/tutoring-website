@@ -96,9 +96,13 @@ export class ProfileDao {
   }
 
   async updateAvailability(_id: String, availability: Number[]) {
-    const data = await Profile.findByIdAndUpdate(_id,
-      { $set: { availability: availability } },
-      { new: true })
+    console.log('in dao for updating avail!!!!')
+    console.log('availability: ', availability);
+    const data = await Profile.findByIdAndUpdate(_id, 
+      { $push: {availability : availability}}, 
+      {new: true}
+    );
+    console.log('about to return the data!!')
     return data
   }
 
