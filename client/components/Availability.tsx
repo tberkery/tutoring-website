@@ -8,11 +8,11 @@ const api = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 const TimeSlot = ({ intervalIndex, selectActive, isSelected, onToggle }) => {
     const borderClass = intervalIndex % 2 !== 0 ? "border-dashed" : "border-solid";
-    const backgroundColor = isSelected ? "bg-green-200" : "bg-white"; // Toggle background based on selection
+    const backgroundColor = isSelected ? "bg-green-200" : "bg-white";
     return (
       <div
         className={`border-t border-black h-6 ${borderClass} ${backgroundColor} cursor-pointer`}
-        onClick={() => onToggle(intervalIndex)}
+        onClick={selectActive ? () => onToggle(intervalIndex) : undefined}
       />
     );
 };
@@ -61,7 +61,7 @@ const HourLabels = () => {
 
 const Page = () => {
     const [select, setSelect] = useState(false);
-    const [selections, setSelections] = useState(new Array(336).fill(false));
+    const [selections, setSelections] = useState(new Array(336).fill(0));
     const { isLoaded, isSignedIn, user } = useUser();
     const [userId, setUserId] = useState('');
 
@@ -70,7 +70,6 @@ const Page = () => {
           return false;
         }
         const userInfo = await axios.get(`${api}/profiles/getByEmail/${user.primaryEmailAddress.toString()}`);
-        console.log('UserInfo: ', userInfo.data.data[0])
         const userId = userInfo.data.data[0]._id;
         setUserId(userId);
     }
@@ -79,52 +78,20 @@ const Page = () => {
         fetchData();
     }, [api, user, isLoaded, isSignedIn]);
 
-
-
-
-
     const handleEditAvailability = () => {
         setSelect((prevSelect) => !prevSelect);
     };
 
     const toggleSelection = async (index) => {
         const newSelections = [...selections];
-        newSelections[index] = !newSelections[index];
-       
-
-        let trueIndices = [];
-        newSelections.forEach((selection, index) => {
-            if (selection) {
-                trueIndices.push(index);
-            }
-        });
-        console.log('trueIndices: ' + trueIndices);
-        console.log('newSelections: ' + selections);
-
-        setSelections(newSelections);
-
-        const response = await axios.put(`${api}/profiles/availability/${userId}`, {
-            availability: trueIndices
-        });
-        console.log('response: ', response);
-
+        if (newSelections[index] === 0) {
+            newSelections[index] = 1;
+        } else {
+            newSelections[index] = 0;
+        }
         
-
-        // console.log('trueIndices:....\n\n')
-        // console.log(trueIndices);
-        // trueIndices.forEach((index) => {
-        //     console.log(index);
-        // });
-
-
-
-        // const updateAvailabilityResponse = await axios.put(`${api}/profiles/availability/${userId}`, {
-        //     availability: trueIndices
-        // });
-
-        // console.log(updateAvailabilityResponse);
-
-
+        setSelections(newSelections);
+        console.log('newSelections:....\n\n', newSelections);
     };
 
     return (
