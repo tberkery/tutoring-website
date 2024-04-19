@@ -83,9 +83,11 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
   const [visitorId, setVisitorId] = useState('');
   const [bookmarkedPosts, setBookmarkedPosts] = useState<Post[]>([]);
 
-  const handleBookmarkUpdate = async (postId: string, isBookmarked: boolean, isCoursePost: boolean) => {
+  const handleBookmarkUpdate = async (postId: string, isCoursePost: boolean) => {
     try {
-      const response = await axios.put(`${api}/profiles/addBookmark/${postId}`, { isBookmarked, isCoursePost });
+      const response = await axios.put(`${api}/profiles/addBookmark/${visitorId}`, { postId, isCoursePost });
+      console.log("BOOKMARK RESPONSE")
+      console.log(response)
       console.log("Bookmarked!")
     } catch (error) {
       console.error('Error updating bookmark status:', error);
@@ -292,39 +294,32 @@ function formatEndTime(t) {
 
   useEffect(() => updateProfileViews, [])
 
-  const getAllBookmarkedPosts = async () => {
-    if (!isLoaded || !isSignedIn || !user) {
-      return;
-    }
-    try {
-      console.log("USER IS:")
-      console.log(visitorId)
-      const response = await axios.get(`${api}/profiles/allBookmarks/${visitorId}`);
-      console.log("response.data")
-      console.log(response.data)
-      return response.data
-    } catch (error) {
-      console.log('Error retrieving bookmarks for current viewer')
-    }
-  }
-
-
-  const fetchBookmarkedPosts = async () => {
-    console.log("In async")
-    if (!isLoaded || !isSignedIn || !user) {
-      return;
-    }
-    try {
-      console.log("in try")
-      const idsOfBookmarkedPosts = await getAllBookmarkedPosts();
-      setBookmarkedPosts(idsOfBookmarkedPosts);
-      console.log("Bookmarks have been set")
-    } catch (error) {
-      console.log('Error retrieving bookmarks for current viewer:', error);
-    }
-  };
-
-  fetchBookmarkedPosts()
+  useEffect(() => {
+    const getAllBookmarkedPosts = async () => {
+      if (!isLoaded || !isSignedIn || !user || !visitorId) {
+        return;
+      }
+      try {
+        const response = await axios.get(`${api}/profiles/allBookmarks/${visitorId}`);
+        return response.data;
+      } catch (error) {
+        console.log('Error retrieving bookmarks for current viewer');
+      }
+    };
+  
+    const fetchBookmarkedPosts = async () => {
+      try {
+        const idsOfBookmarkedPosts = await getAllBookmarkedPosts();
+        setBookmarkedPosts(idsOfBookmarkedPosts);
+      } catch (error) {
+        console.log('Error retrieving bookmarks for current viewer:', error);
+      }
+    };
+  
+    fetchBookmarkedPosts();
+  
+  }, [isLoaded, isSignedIn, user, visitorId]);
+  
 
   if (loading) return ( <> <Loader /> </>);
 

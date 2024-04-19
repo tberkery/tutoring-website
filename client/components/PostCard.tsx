@@ -40,7 +40,7 @@ type review = {
 
 interface PostCardProps {
   post: Post;
-  onUpdateBookmark: (postId: string, isBookmarked: boolean, isCoursePost: boolean) => void;
+  onUpdateBookmark: (postId: string, isCoursePost: boolean) => void;
 }
 
 const PostCard: React.FC<PostCardProps> = ({ post, onUpdateBookmark }) => {
@@ -58,12 +58,6 @@ const PostCard: React.FC<PostCardProps> = ({ post, onUpdateBookmark }) => {
     setAvgRating(total / post.reviews.length);
   }, [post])
 
-  useEffect(() => {
-    // Check if the post is bookmarked and update the state accordingly
-    // You might need to fetch this information from an API
-    setIsBookmarked(/* Set this based on your logic */);
-  }, [/* Dependencies that might change the bookmark status */]);
-
   const handleClick = () => {
     if (titleUnderline) {
       router.push(postUrl);
@@ -78,11 +72,13 @@ const PostCard: React.FC<PostCardProps> = ({ post, onUpdateBookmark }) => {
     }
   }
 
-  const toggleBookmark = () => {
+  const toggleBookmark = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    event.stopPropagation(); // Prevents the click event from propagating to the parent div
     // Toggle the bookmark status and update the state
     setIsBookmarked(prevState => !prevState);
     const isCoursePost = post.courseName ? true : false;
-    onUpdateBookmark(post._id, !isBookmarked, isCoursePost); // Trigger callback with postId and new bookmark status
+    console.log("Toggling bookmark!")
+    onUpdateBookmark(post._id, isCoursePost); // Trigger callback with postId and new bookmark status
   };
 
   return (<> 
@@ -93,9 +89,9 @@ const PostCard: React.FC<PostCardProps> = ({ post, onUpdateBookmark }) => {
       onMouseLeave={() => setTitleUnderline(false)}
     >
       {/* Bookmark icon positioned at the top right corner */}
-      <div className="absolute top-2 right-2" onClick={toggleBookmark}>
+      <div className="absolute top-2 right-2" onClick={(e) => e.stopPropagation()}>
         {/* Use conditional rendering to fill the bookmark icon in black if the post is bookmarked */}
-        <BookmarkIcon className={`h-6 w-6 ${isBookmarked ? 'text-black' : 'text-gray-500'}`} />
+        <BookmarkIcon className={`h-6 w-6 ${isBookmarked ? 'text-black' : 'text-gray-500'}`} onClick={toggleBookmark} />
       </div>
       <img
         className="w-full h-48 object-cover"
