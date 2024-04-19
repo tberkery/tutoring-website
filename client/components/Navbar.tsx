@@ -3,6 +3,7 @@ import React, { FC } from 'react';
 import Link from 'next/link'; 
 import { SignOutButton } from '@clerk/nextjs';
 import { useUser } from '@clerk/clerk-react';
+import { useEffect } from 'react';
 import {
   Avatar,
   AvatarFallback,
@@ -24,7 +25,17 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 const NavBar: FC = () => {
-  const { isLoaded, isSignedIn } = useUser();
+  const { isLoaded, isSignedIn, user } = useUser();
+  const [ isAdmin, setIsAdmin ] = React.useState(false);
+  useEffect(() => {
+    if (isSignedIn) {
+      if (String(user.primaryEmailAddress) == "admin@jhu.edu") {
+        console.log('admin!')
+        setIsAdmin(true);
+      }
+    }
+  }, [user])
+  
   return (
     <nav className="flex justify-between items-center p-4 bg-white h-18">
       <div className="flex items-center space-x-4">
@@ -50,6 +61,16 @@ const NavBar: FC = () => {
         >
           Messages
         </Link>
+        { isAdmin ? 
+          <Link 
+            href="/reports" 
+            className="inline-block px-2 py-1 ease-linear duration-75
+            hover:bg-blue-300 rounded-md font-extrabold font-sans text-lg"
+          >
+            Reports
+          </Link>
+          : <></>
+        }
       </div>
       <div>
           <div>

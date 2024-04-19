@@ -53,6 +53,21 @@ export class ActivityPostDao {
         }
     }
 
+    async readViewsByIdAndDate(_id: string, start: string) {
+        const data = await ActivityPost.find({
+          _id: _id,
+          views: {
+              $gt: new Date(start)
+          }
+        }).lean().select("views");
+        return data;
+    }
+
+    async readViewsById(_id: string) {
+        const data = await ActivityPost.findById(_id).lean().select("views");
+        return data;
+    }
+
     async readSome( options: any) {
         // Remark: consider our query options for ActivityPosts:
         // - Query only by user_id
@@ -118,6 +133,13 @@ export class ActivityPostDao {
         }
         let post = await ActivityPost.findByIdAndUpdate(id, newPost);
         return post;
+    }
+
+    async updateViews(_id: String, viewerId: String, timestamp: String, duration: Number) {
+        const data = await ActivityPost.findByIdAndUpdate(_id,
+          { $push: { views: { viewerId: viewerId, timestamp: timestamp, durationInSeconds: duration } } },
+          { new: true })
+        return data
     }
     
     async delete(id : any) {

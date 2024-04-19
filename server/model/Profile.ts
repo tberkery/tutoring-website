@@ -52,7 +52,17 @@ const ProfileSchema = new mongoose.Schema({
     availability: {
         type: [Number],
         default: []
-    }
+    },
+    courseBookmarks: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'CoursePost',
+        default: null
+    }],
+    activityBookmarks: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'ActivityPost',
+        default: null
+    }]
   });
 const Profile = mongoose.model("Profile", ProfileSchema);
 

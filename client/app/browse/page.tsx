@@ -89,6 +89,9 @@ const Page : FC = () => {
     const [tagFilters, setTagFilters] = useState({
         music: false,
         athletic: false,
+        cooking: false,
+        performingArt: false,
+        visualArt: false,
     });
 
 	const { user } = useUser();
@@ -140,21 +143,23 @@ const Page : FC = () => {
             filtered = [...filtered.sort((a, b) => a.price - b.price)];
         }
 
-        if (tagFilters.music || tagFilters.athletic) {
+        if (tagFilters.music || tagFilters.athletic || tagFilters.cooking || tagFilters.performingArt || tagFilters.visualArt) {
             filtered = filtered.filter(post => {
-                return (tagFilters.music && 'activityTitle' in post && post.tags.includes('music')) || 
-                       (tagFilters.athletic && 'activityTitle' in post && post.tags.includes('athletic'));
+                return (tagFilters.music && 'activityTitle' in post && post.tags.includes('Music')) || 
+                       (tagFilters.athletic && 'activityTitle' in post && post.tags.includes('Athletic')) ||
+                       (tagFilters.cooking && 'activityTitle' in post && post.tags.includes('Cooking')) ||
+                       (tagFilters.performingArt && 'activityTitle' in post && post.tags.includes('Performing Art')) || 
+                       (tagFilters.visualArt && 'activityTitle' in post && post.tags.includes('Visual Art'));
             });
         }
 
         if (searchInput) {
             filtered = filtered.filter(post => {
-                if ('courseName' in post && 'courseNumber' in post) {
+                 if ('courseName' in post && 'courseNumber' in post) {
                     // Check if the search input matches either the course name or course number
                     return post.courseName.toLowerCase().includes(searchInput.toLowerCase()) ||
                            post.courseNumber.toLowerCase().includes(searchInput.toLowerCase());
                 } else if ('activityTitle' in post) {
-                    // Only search by activity title for activity posts
                     return post.activityTitle.toLowerCase().includes(searchInput.toLowerCase());
                 }
                 return false;
@@ -293,6 +298,39 @@ const Page : FC = () => {
                                         className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                                     >
                                         Music
+                                    </label>
+                                </div>
+                            </div>
+                            <div className="pb-1 ml-2">
+                                <div className="flex items-center space-x-2">
+                                    <Checkbox id="cooking" checked={tagFilters.cooking} onCheckedChange={(e) => handleTagChange('cooking')}/>
+                                    <label
+                                        htmlFor="terms2"
+                                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                    >
+                                        Cooking
+                                    </label>
+                                </div>
+                            </div>
+                            <div className="pb-1 ml-2">
+                                <div className="flex items-center space-x-2">
+                                    <Checkbox id="performingArt" checked={tagFilters.performingArt} onCheckedChange={(e) => handleTagChange('performingArt')}/>
+                                    <label
+                                        htmlFor="terms2"
+                                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                    >
+                                        Performing Arts
+                                    </label>
+                                </div>
+                            </div>
+                            <div className="pb-1 ml-2">
+                                <div className="flex items-center space-x-2">
+                                    <Checkbox id="visualArt" checked={tagFilters.visualArt} onCheckedChange={(e) => handleTagChange('visualArt')}/>
+                                    <label
+                                        htmlFor="terms2"
+                                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                    >
+                                        Visual Arts
                                     </label>
                                 </div>
                             </div>
