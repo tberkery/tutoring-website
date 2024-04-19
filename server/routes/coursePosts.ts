@@ -94,7 +94,7 @@ router.get("/comparePrice/:id", async (req: any, res: any) => {
 
       let total = 0;
       for (const post of coursePosts) {
-          total += post.price;
+        total += post.price;
       }
       const meanPrice = total / coursePosts.length;
 
