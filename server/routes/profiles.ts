@@ -73,6 +73,7 @@ router.put("/addBookmark/:_id", async (req:any, res: any) => {
   const {bookmark, isCourse} : {bookmark: string, isCourse: boolean} = req.body;
   try {
     const data = await profiles.updateBookmarks(_id, bookmark, isCourse);
+    console.log("BOOKMARKED!");
     res.status(200).json({data});
   } catch (err) {
     res.status(500).send("Server Error");
