@@ -1,4 +1,3 @@
-"use client";
 import React, { useEffect, useState } from 'react';
 import { useRouter } from "next/navigation";
 import { Star } from 'lucide-react';
@@ -48,16 +47,10 @@ const PostCard: React.FC<PostCardProps> = ({ post, onUpdateBookmark }) => {
   const defaultImage = '/jhulogo.jpeg';
   const [titleUnderline, setTitleUnderline] = useState(false);
   const [avgRating, setAvgRating] = useState(5);
-  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [isBookmarked, setIsBookmarked] = useState(false); // State to track bookmark status
   const router = useRouter();
 
   const postUrl = post.courseName ? `/post/course/${post._id}` : `/post/activity/${post._id}`;
-
-  const toggleBookmark = () => {
-    setIsBookmarked(prevState => !prevState);
-    const isCoursePost = post.courseName ? true : false
-    onUpdateBookmark(post._id, !isBookmarked, isCoursePost); // Trigger callback with postId and new bookmark status
-  };
 
   useEffect(() => {
     let total = 0;
@@ -65,31 +58,44 @@ const PostCard: React.FC<PostCardProps> = ({ post, onUpdateBookmark }) => {
     setAvgRating(total / post.reviews.length);
   }, [post])
 
+  useEffect(() => {
+    // Check if the post is bookmarked and update the state accordingly
+    // You might need to fetch this information from an API
+    setIsBookmarked(/* Set this based on your logic */);
+  }, [/* Dependencies that might change the bookmark status */]);
+
   const handleClick = () => {
     if (titleUnderline) {
       router.push(postUrl);
     }
   }
 
-  const formatPrice = (price : number) => {
-    if (!price || price == 0) {
+  const formatPrice = (price: number) => {
+    if (!price || price === 0) {
       return "Free!"
     } else {
       return `From $${price}`;
     }
   }
 
+  const toggleBookmark = () => {
+    // Toggle the bookmark status and update the state
+    setIsBookmarked(prevState => !prevState);
+    const isCoursePost = post.courseName ? true : false;
+    onUpdateBookmark(post._id, !isBookmarked, isCoursePost); // Trigger callback with postId and new bookmark status
+  };
+
   return (<> 
     <div 
-      className="max-w-sm overflow-hidden bg-white rounded shadow-lg
-        cursor-pointer hover:-translate-y-2 transition duration-75" 
+      className="max-w-sm overflow-hidden bg-white rounded shadow-lg cursor-pointer hover:-translate-y-2 transition duration-75" 
       onClick={handleClick}
       onMouseEnter={() => setTitleUnderline(true)}
       onMouseLeave={() => setTitleUnderline(false)}
     >
       {/* Bookmark icon positioned at the top right corner */}
       <div className="absolute top-2 right-2" onClick={toggleBookmark}>
-        <BookmarkIcon className="h-6 w-6 text-gray-500" />
+        {/* Use conditional rendering to fill the bookmark icon in black if the post is bookmarked */}
+        <BookmarkIcon className={`h-6 w-6 ${isBookmarked ? 'text-black' : 'text-gray-500'}`} />
       </div>
       <img
         className="w-full h-48 object-cover"
