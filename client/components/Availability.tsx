@@ -72,13 +72,22 @@ const Page = () => {
         const userInfo = await axios.get(`${api}/profiles/getByEmail/${user.primaryEmailAddress.toString()}`);
         const userId = userInfo.data.data[0]._id;
         setUserId(userId);
+        const availability = userInfo.data.data[0].availability;
+        const avail = new Array(336).fill(0);
+        availability.forEach(index => avail[index] = 1);
+        setSelections(avail);
     }
 
     useEffect(() => {
         fetchData();
     }, [api, user, isLoaded, isSignedIn]);
 
-    const handleEditAvailability = () => {
+    const handleEditAvailability = async () => {
+        const availability = selections.map((value, index) => value === 1 ? index : -1).filter(index => index !== -1);
+        if (select) {
+            axios.put(`${api}/profiles/availability/${userId}`, { availability: availability });
+        }
+        console.log('availability:....\n\n', availability);
         setSelect((prevSelect) => !prevSelect);
     };
 
@@ -91,7 +100,6 @@ const Page = () => {
         }
         
         setSelections(newSelections);
-        console.log('newSelections:....\n\n', newSelections);
     };
 
     return (

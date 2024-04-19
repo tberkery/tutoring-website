@@ -10,6 +10,7 @@ import RatingStars from "@/components/RatingStars";
 import ReviewCard from "@/components/ReviewCard";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
+import Availability from "@/components/Availability";
 
 interface Profile {
   affiliation: string;
@@ -279,6 +280,38 @@ function formatEndTime(t) {
 
   if (loading) return ( <> <Loader /> </>);
 
+  const getTabSection = () => {
+    if (activeSection === "Posts") {
+      return (
+        <div 
+              className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2
+              lg:grid-cols-3 gap-4"
+            >
+              { posts.map((post) => (
+                <PostCard key={post._id} post={post} />
+              )) }
+            </div>
+      )
+    } else if (activeSection === "Reviews") {
+        return (
+          <div className="flex flex-col justify-center max-w-3xl w-full">
+            { reviews.map((review) => (
+              <ReviewCard 
+                review={review}
+                className="mb-4 bg-white rounded-lg shadow-md"
+              />
+            )) }
+          </div>
+        )
+    } else if (activeSection === "Availability") {
+        return (
+          <div className="flex flex-col justify-center max-w-3xl w-full">
+              <Availability />
+          </div>
+        )
+    }
+  }
+
   return (
     <>
       <Navbar />
@@ -296,16 +329,11 @@ function formatEndTime(t) {
           :
             <></>
           }
-          <div className="flex mt-2 space-x-4">
-              <button className="bg-custom-blue hover:bg-blue-900 text-white font-bold py-2 px-4 rounded-md" onClick={() => compareAvail()}>
-                Compare Availability
-              </button>
-          </div>
         </div>
       </div>
       <div className="w-full bg-blue-300 relative">
         <div className="ml-8 flex items-end">
-          { ["Posts", "Reviews"].map((value, index) => {
+          { ["Posts", "Reviews", "Availability"].map((value, index) => {
             return (
               <button 
                 key={index}
@@ -328,25 +356,7 @@ function formatEndTime(t) {
           className="relative z-10 border-t border-black bg-pageBg px-6 py-8
           flex justify-center"
         >
-          { activeSection === "Posts" ?
-            <div 
-              className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2
-              lg:grid-cols-3 gap-4"
-            >
-              { posts.map((post) => (
-                <PostCard key={post._id} post={post} />
-              )) }
-            </div>
-          :
-            <div className="flex flex-col justify-center max-w-3xl w-full">
-              { reviews.map((review) => (
-                <ReviewCard 
-                  review={review}
-                  className="mb-4 bg-white rounded-lg shadow-md"
-                />
-              )) }
-            </div>
-          }
+          { getTabSection() }
         </div>
       </div>
     </>

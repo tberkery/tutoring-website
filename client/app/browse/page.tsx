@@ -17,6 +17,7 @@ import Loader from "@/components/Loader";
 import { Checkbox } from "@/components/ui/checkbox"
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
+import { use } from "chai";
 
 interface ActivityPost {
     _id: string;
@@ -69,6 +70,7 @@ const Page : FC = () => {
     // Data from Backend
     const api = process.env.NEXT_PUBLIC_BACKEND_URL;
     const [posts, setPosts] = useState<Post[]>([]);
+    const [userId, setUserId] = useState<string>();
     const [filteredPosts, setFilteredPosts] = useState<Post[]>([]);
     
     // Loading State
@@ -90,6 +92,7 @@ const Page : FC = () => {
         music: false,
         athletic: false,
     });
+    const [availabilityFilter, setAvailabilityFilter] = useState(false);
 
 	const { user } = useUser();
     const router = useRouter();
@@ -103,6 +106,7 @@ const Page : FC = () => {
         if (response.data.data.length === 0) {
             router.replace('createAccount');
         }
+        setUserId(response.data.data[0]._id);
     }
 
     useEffect(() => {
@@ -125,7 +129,7 @@ const Page : FC = () => {
         filterPosts();
     }, [posts, searchInput, typeFilters, tagFilters, priceFilters]);
 
-    const filterPosts = () => {
+    const filterPosts = async () => {
         let filtered = posts;
         if (typeFilters.courses || typeFilters.activities) {
             filtered = filtered.filter(post => {
@@ -147,6 +151,10 @@ const Page : FC = () => {
             });
         }
 
+        if (availabilityFilter) {
+            
+        }
+
         if (searchInput) {
             filtered = filtered.filter(post => {
                 if ('courseName' in post) {
@@ -160,6 +168,12 @@ const Page : FC = () => {
         
         setFilteredPosts(filtered);
     };
+
+    const handleAvailabilityChange = async () => {
+        const response = await axios.get(`${api}/allPosts/getAllAvailable/${userId}`);
+            console.log('response:', response.data)
+            setPosts(response.data);
+    }
 
     const handleTypeChange = (filterCategory) => {
         setTypeFilters(prev => {
@@ -293,6 +307,22 @@ const Page : FC = () => {
                                     </label>
                                 </div>
                             </div>
+                        </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="item-4">
+                        <AccordionTrigger>By Availability</AccordionTrigger>
+                            <AccordionContent>
+                                <div className="ml-2 pb-1">
+                                    <div className="flex items-center space-x-2">
+                                        <Checkbox id="availability" checked={availabilityFilter} onCheckedChange={(e) => handleAvailabilityChange()} />
+                                        <label
+                                            htmlFor="avail"
+                                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                        >
+                                            Matching Schedules
+                                        </label>
+                                    </div>
+                                </div>
                         </AccordionContent>
                     </AccordionItem>
                 </Accordion>
