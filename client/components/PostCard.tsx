@@ -72,20 +72,17 @@ const PostCard: React.FC<PostCardProps> = ({ post, onUpdateBookmark }) => {
     }
   }
 
-  const toggleBookmark = async () => {
+  const toggleBookmark = async (event: MouseEvent<HTMLDivElement>) => {
+    // Prevent the event from propagating to the parent div
+    event.stopPropagation();
+    
     setIsBookmarked(prevState => !prevState);
     const isCoursePost = post.courseName ? true : false;
-    console.log("Toggling bookmark!")
-    console.log("Post ID:")
-    console.log(post._id)
-    console.log("isCoursePost")
-    console.log(isCoursePost)
-    const bookmark = post._id
-    console.log("bookmark")
-    console.log(bookmark)
+    const bookmark = post._id;
+
     await onUpdateBookmark(bookmark, isCoursePost); // Trigger callback with postId and new bookmark status
-    console.log("Front-end process for updating bookmark is complete")
   };
+
 
   return (<> 
     <div 

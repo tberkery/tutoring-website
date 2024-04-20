@@ -94,8 +94,10 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
       }
       if (bookmarkIds.has(bookmark)) {
         const response = await axios.put(`${api}/profiles/deleteBookmark/${visitorId}`, { bookmark: bookmark, isCourse: isCourse });
+        console.log("Bookmark deleted")
       } else {
         const response = await axios.put(`${api}/profiles/addBookmark/${visitorId}`, { bookmark: bookmark, isCourse: isCourse });
+        console.log("Bookmark added")
       } 
     } catch (error) {
       console.error('Error updating bookmark status:', error);
