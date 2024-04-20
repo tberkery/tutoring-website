@@ -54,9 +54,9 @@ const ReviewCard : FC<Props> = (props) => {
     return element.scrollHeight > element.clientHeight;
   }
 
-  useEffect(() => { fetchData() }, []);
+  useEffect(() => { fetchData() }, [review]);
 
-  useEffect(() => { setIsClamped(isTextClamped(textRef.current)) }, [])
+  useEffect(() => { setIsClamped(isTextClamped(textRef.current)) }, [review])
 
   const handleDeleteReview = async () => {
     try {
