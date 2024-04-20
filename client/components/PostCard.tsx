@@ -72,11 +72,15 @@ const PostCard: React.FC<PostCardProps> = ({ post, onUpdateBookmark }) => {
     }
   }
 
-  const toggleBookmark = () => {
+  const toggleBookmark = async () => {
     setIsBookmarked(prevState => !prevState);
     const isCoursePost = post.courseName ? true : false;
     console.log("Toggling bookmark!")
-    onUpdateBookmark(post._id, isCoursePost); // Trigger callback with postId and new bookmark status
+    console.log("Post ID:")
+    console.log(post._id)
+    console.log("isCoursePost")
+    console.log(isCoursePost)
+    await onUpdateBookmark(post._id, isCoursePost); // Trigger callback with postId and new bookmark status
     console.log("Front-end process for updating bookmark is complete")
   };
 

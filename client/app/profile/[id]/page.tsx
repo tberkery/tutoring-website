@@ -84,7 +84,14 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
   const [bookmarkedPosts, setBookmarkedPosts] = useState<Post[]>([]);
 
   const handleBookmarkUpdate = async (postId: string, isCoursePost: boolean) => {
+    console.log("in handleBookmarkUpdate")
     try {
+      console.log("visitorId")
+      console.log(visitorId)
+      console.log("postId")
+      console.log(postId)
+      console.log("isCoursePost")
+      console.log(isCoursePost)
       const response = await axios.put(`${api}/profiles/addBookmark/${visitorId}`, { postId, isCoursePost });
     } catch (error) {
       console.error('Error updating bookmark status:', error);

@@ -222,14 +222,16 @@ const Page : FC = () => {
 
     const handleBookmarkUpdate = async (postId: string, isCoursePost: boolean) => {
         try {
-          console.log("user:")
-          console.log(user)
-          console.log("user.id")
-          console.log(user.id)
+          console.log("in handleBookmarkUpdate")
           console.log("visitorId")
           console.log(visitorId)
-          console.log("done")
+          console.log("postId")
+          console.log(postId)
+          console.log("isCoursePost")
+          console.log(isCoursePost)
           const response = await axios.put(`${api}/profiles/addBookmark/${visitorId}`, { postId, isCoursePost });
+          console.log("response.data")
+          console.log(response.data)
         } catch (error) {
           console.error('Error updating bookmark status:', error);
         }
