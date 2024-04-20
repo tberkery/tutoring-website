@@ -7,7 +7,7 @@ export class CourseDao {
             const data = await Course.create({courseTitle, courseNumber, courseDepartment});
             return data;
         } catch (err) {
-            console.error("Error creating course: ", err);
+            console.error("Error creating course ", courseTitle, ": ", err);
         }
     }
     async readOne( id : any ) { // find one course by _id
