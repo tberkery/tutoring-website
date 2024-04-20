@@ -70,7 +70,7 @@ const ReviewCard : FC<Props> = (props) => {
 
   return (
     <div className={`${props.className} px-4 py-3`}>
-      <div className='flex justify-between'>
+      <div className='flex md:flex-row flex-col justify-between'>
         <p className='text-xl text-gray-800'>
           {"Review of "}
           <a 
@@ -91,8 +91,12 @@ const ReviewCard : FC<Props> = (props) => {
           }
         </p>
       </div>
-      <RatingStars rating={review.rating} className='mb-2'/>
-      <p className={`mt-1 ${showFull ? '' : 'line-clamp-2'}`} ref={textRef}>
+      <RatingStars rating={review.rating} className='mb-2 mt-2 md:mt-0'/>
+      <p 
+        className={`mt-1 pt-1 md:pt-0 border-t md:border-none
+        ${showFull ? '' : 'line-clamp-2'}`} 
+        ref={textRef}
+      >
         {review.reviewDescription}
       </p>
       {isClamped &&
