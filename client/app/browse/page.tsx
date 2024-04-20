@@ -17,6 +17,7 @@ import Loader from "@/components/Loader";
 import { Checkbox } from "@/components/ui/checkbox"
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
+import { use } from "chai";
 
 interface ActivityPost {
     _id: string;
@@ -70,6 +71,7 @@ const Page : FC = () => {
     // Data from Backend
     const api = process.env.NEXT_PUBLIC_BACKEND_URL;
     const [posts, setPosts] = useState<Post[]>([]);
+    const [userId, setUserId] = useState<string>();
     const [filteredPosts, setFilteredPosts] = useState<Post[]>([]);
     
     // Loading State
@@ -94,6 +96,7 @@ const Page : FC = () => {
         performingArt: false,
         visualArt: false,
     });
+    const [availabilityFilter, setAvailabilityFilter] = useState(false);
 
 	const { user } = useUser();
     const router = useRouter();
@@ -107,6 +110,7 @@ const Page : FC = () => {
         if (response.data.data.length === 0) {
             router.replace('createAccount');
         }
+        setUserId(response.data.data[0]._id);
     }
 
     useEffect(() => {
@@ -129,7 +133,7 @@ const Page : FC = () => {
         filterPosts();
     }, [posts, searchInput, typeFilters, tagFilters, priceFilters]);
 
-    const filterPosts = () => {
+    const filterPosts = async () => {
         let filtered = posts;
         if (typeFilters.courses || typeFilters.activities) {
             filtered = filtered.filter(post => {
@@ -169,6 +173,17 @@ const Page : FC = () => {
         
         setFilteredPosts(filtered);
     };
+
+    const handleAvailabilityChange = async () => {
+        let response;
+        if (!availabilityFilter) {
+            response = await axios.get(`${api}/allPosts/getAllAvailable/${userId}`);
+        } else {
+            response = await axios.get(`${api}/allPosts`);
+        }
+            setPosts(response.data);
+            setAvailabilityFilter(!availabilityFilter);
+    }
 
     const handleTypeChange = (filterCategory) => {
         setTypeFilters(prev => {
@@ -210,8 +225,8 @@ const Page : FC = () => {
   return <>
   <NavBar />
     <div className="flex min-h-screen">
-        <div className="flex flex-col items-center w-1/4 py-3 bg-blue-300">
-            <div className="my-6 input-container">
+        <div className="w-1/4 flex flex-col items-center py-3 bg-blue-300">
+            <div className="input-container my-6">
                 <input type="text" name="text" 
                         className="input" 
                         placeholder="Search"
@@ -337,12 +352,41 @@ const Page : FC = () => {
                             </div>
                         </AccordionContent>
                     </AccordionItem>
+                    <AccordionItem value="item-4">
+                        <AccordionTrigger>By Availability</AccordionTrigger>
+                            <AccordionContent>
+                                <div className="ml-2 pb-1">
+                                    <div className="flex items-center space-x-2">
+                                        <Checkbox id="availability" checked={availabilityFilter} onCheckedChange={(e) => handleAvailabilityChange()} />
+                                        <label
+                                            htmlFor="avail"
+                                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                        >
+                                            Matching Schedules
+                                        </label>
+                                    </div>
+                                </div>
+                        </AccordionContent>
+                    </AccordionItem>
                 </Accordion>
             </div>
         </div>
-        <div className="w-3/4">
-                <div className="container px-6 py-8 mx-auto">
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+
+        <div className="w-full lg:w-3/4 py-4">
+                <div className="container mx-auto px-6">
+                <div className="flex flex-col items-center justify-center lg:hidden py-6 mb-4 w-full">
+                    <div className="input-container w-full">
+                        <input type="text" name="text" 
+                                className="input w-full" 
+                                placeholder="Search"
+                                onChange={ (e) => searchItems(e.target.value) }></input>
+                        <label className="label">Search</label>
+                        <div className="top-line"></div>
+                        <div className="under-line"></div>
+                    </div>
+                </div>
+                {/* POSTS SECTION */}
+                <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {filteredPosts.map((posts) => (
                         <PostCard key={posts._id} post={posts} />
                     ))}

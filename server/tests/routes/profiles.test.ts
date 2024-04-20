@@ -182,11 +182,13 @@ describe('Test profile routes', () => {
             lastName: 'Smith',
             email: 'janesmith@example.com',
             affiliation: 'Faculty',
-            department: 'Physics'
+            department: 'AMS'
         };
         const newProfile = await Profile.create(newProfileData);
         
         const res = await request(app).get(`/profiles/getByEmail/${newProfile.email}`);
+
+        const profileId = res.body.data[0]._id;
 
         expect(res.status).toBe(200);
         expect(res.body.data[0].firstName).toBe(newProfileData.firstName);
@@ -194,6 +196,13 @@ describe('Test profile routes', () => {
         expect(res.body.data[0].email).toBe(newProfileData.email);
         expect(res.body.data[0].affiliation).toBe(newProfileData.affiliation);
         expect(res.body.data[0].department).toBe(newProfileData.department);
+
+        const resDelete = await request(app).delete(`/profiles/${profileId}`);
+
+    });
+
+    afterAll(async () => {
+        await App.close(); // Close the MongoDB connection
     });
 
     test('PUT /profiles/addBookmark/:id', async () => {

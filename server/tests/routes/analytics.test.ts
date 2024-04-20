@@ -250,7 +250,6 @@ describe('Test analytics reporting capabilities', () => {
     });
 
 
-
     test('GET /coursePosts/demographics/:_id with no views of coursePost _id', async () => {
         
         const profile = {
@@ -785,6 +784,10 @@ describe('Test analytics reporting capabilities', () => {
         await request(app).delete(`/profiles/${profile3Id}`);
         await request(app).delete(`/activityPosts/${postId}`);
         await request(app).delete(`/activityPosts/${otherPostId}`);
+    });
+  
+  afterAll(async () => {
+        await App.close(); // Close the MongoDB connection
     });
 
 });

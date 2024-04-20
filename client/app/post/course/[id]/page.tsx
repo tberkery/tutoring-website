@@ -153,7 +153,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
       };
       console.log(body);
       const response = await axios.post(`${api}/postReviews/${postId}`, body);
-      alert(`Your review has been created!`);
+      setReviews(prevReviews => [...prevReviews, response.data.review]);
       console.log('Review submitted:', response.data);
       setRating(0);
       setComment('');
@@ -169,9 +169,9 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
 
   return <>
     <Navbar/>
-    <div className="flex min-h-screen">
-      <div className="flex flex-col w-2/3 px-20 border-r border-black my-14">
-        <div className="pb-10 border-b border-black intro">
+    <div className="flex min-h-screen flex-col lg:flex-row">
+      <div className="w-full lg:w-2/3 flex flex-col px-4 my-14 lg:border-r lg:border-black">
+        <div className="intro border-b border-black pb-10">
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem>
@@ -219,11 +219,11 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
           )) }
         </div>
     </div>
-      <div className="flex flex-col items-center w-1/3 pr-20 my-10">
-        <div>
-          <PriceAnalytics postId={postId} />
-        </div>
-        <div className="px-20 content">
+      <div className="w-1/3 flex flex-col items-center pr-20 my-10">
+        <div className="content px-20">
+          <div>
+            <PriceAnalytics postId={postId}/>
+          </div>
           <div className="w-[300px] info-box max-w p-4 border-2 border-black mt-10 mb-6" style={{
               boxShadow: '5px 5px 0px rgba(0, 0, 0, 10)',
             }}>
