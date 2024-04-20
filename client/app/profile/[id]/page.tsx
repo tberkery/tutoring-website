@@ -359,48 +359,52 @@ function formatEndTime(t) {
               )) }
             </div>
           :
-            <div className="flex w-full items-start justify-center">
-              <div className="mt-4 mr-8 pt-4 pr-8 min-w-52 h-full border-r border-black"> 
-                <DropdownMenu>
-                  <DropdownMenuTrigger>
-                    <div 
-                      className='px-4 py-2 text-md text-white font-bold bg-custom-blue
-                      hover:bg-blue-900 rounded-lg flex'
+            ( reviews.length === 0 ? 
+              <h3 className="mt-8 text-xl">This user has no reviews</h3>
+            :
+              <div className="flex w-full items-start justify-center">
+                <div className="mt-4 mr-8 pt-4 pr-8 min-w-52 h-full border-r border-black"> 
+                  <DropdownMenu>
+                    <DropdownMenuTrigger>
+                      <div 
+                        className='px-4 py-2 text-md text-white font-bold bg-custom-blue
+                        hover:bg-blue-900 rounded-lg flex'
+                      >
+                        {reviewSort} <ChevronDown/>
+                      </div>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent 
+                      className='bg-blue-300 rounded-xl px-2 py-1.5 border mt-1'
                     >
-                      {reviewSort} <ChevronDown/>
-                    </div>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent 
-                    className='bg-blue-300 rounded-xl px-2 py-1.5 border mt-1'
-                  >
-                    {
-                      reviewSortMethods.map((method) => {
-                        return (
-                          <DropdownMenuItem 
-                            key={`sort-${method}`}
-                            className='p-0 mb-1 hover:cursor-pointer text-lg font-bold
-                            rounded-xl overflow-hidden'
-                            onClick={ () => setReviewSort(method) }
-                          >
-                            <div className='hover:bg-sky-100 px-3 py-1 w-full'>
-                              {method}
-                            </div>
-                          </DropdownMenuItem>
-                        );
-                      })
-                    }
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                      {
+                        reviewSortMethods.map((method) => {
+                          return (
+                            <DropdownMenuItem 
+                              key={`sort-${method}`}
+                              className='p-0 mb-1 hover:cursor-pointer text-lg font-bold
+                              rounded-xl overflow-hidden'
+                              onClick={ () => setReviewSort(method) }
+                            >
+                              <div className='hover:bg-sky-100 px-3 py-1 w-full'>
+                                {method}
+                              </div>
+                            </DropdownMenuItem>
+                          );
+                        })
+                      }
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+                <div className="mt-4 flex flex-col justify-center max-w-3xl w-full">
+                  { reviews.map((review) => (
+                    <ReviewCard 
+                      review={review}
+                      className="mb-4 bg-white rounded-lg shadow-md"
+                    />
+                  )) }
+                </div>
               </div>
-              <div className="mt-4 flex flex-col justify-center max-w-3xl w-full">
-                { reviews.map((review) => (
-                  <ReviewCard 
-                    review={review}
-                    className="mb-4 bg-white rounded-lg shadow-md"
-                  />
-                )) }
-              </div>
-            </div>
+            )
           }
         </div>
       </div>
