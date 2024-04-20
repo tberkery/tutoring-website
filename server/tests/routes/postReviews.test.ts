@@ -36,5 +36,105 @@ describe('Test postReviews routes', () => {
         await PostReviewSchema.deleteMany({});
     });
 
+    // Test for DELETE /postReviews/:reviewId with a course post
+    test('DELETE /postReviews/:reviewId with course post', async () => {
+
+        // Create a post to get a valid post ID
+        const newPostData = {
+            userId: 'exampleUserId',
+            userFirstName: 'Ilana',
+            userLastName: 'Chalom',
+            courseName: 'Intro to Example',
+            description: 'Example description',
+            price: 20,
+            courseNumber: "AS.000.000",
+            takenAtHopkins: true
+        };
+
+        const resPost = await request(app)
+        .post('/coursePosts')
+        .send(newPostData);
+
+        // Extract the created post ID from the response
+        const postId = resPost.body.newPost._id;
+
+        // Create a test review
+        const newReview = await PostReviewSchema.create({
+            postId: postId,
+            posterId: new ObjectId(),
+            reviewerId: new ObjectId(),
+            reviewDescription: 'Test review',
+            rating: 5,
+            isAnonymous: false
+        });
+
+        // Make a DELETE request to delete the review
+        const resReview = await request(app).delete(`/postReviews/${newReview._id}`);
+
+        // Check the response
+        expect(resReview.status).toBe(200);
+        expect(resReview.body.message).toBe('Review deleted successfully');
+        expect(resReview.body.deletedReview._id).toBe(newReview._id.toString());
+
+        // Check if the review was actually deleted from the database
+        const deletedReview = await PostReviewSchema.findById(newReview._id);
+        expect(deletedReview).toBeNull();
+    });
+
+    // Test for DELETE /postReviews/:reviewId with an activity post
+    test('DELETE /postReviews/:reviewId with activity post', async () => {
+
+        // Create a post to get a valid post ID
+        const newPostData = {
+            userId: 'exampleUserId',
+            userFirstName: 'Ilana',
+            userLastName: 'Chalom',
+            activityTitle: 'Example Activity',
+            activityDescription: 'Example description',
+            activityPostPicKey: 'exampleactivityPostPicKey',
+            price: 1,
+            tags: ['exampleTag1', 'exampleTag2']
+        };
+
+        const resPost = await request(app)
+        .post('/activityPosts')
+        .send(newPostData);
+
+        // Extract the created post ID from the response
+        const postId = resPost.body.newPost._id;
+
+        // Create a test review
+        const newReview = await PostReviewSchema.create({
+            postId: postId,
+            posterId: new ObjectId(),
+            reviewerId: new ObjectId(),
+            reviewDescription: 'Test review',
+            rating: 5,
+            isAnonymous: false
+        });
+
+        // Make a DELETE request to delete the review
+        const resReview = await request(app).delete(`/postReviews/${newReview._id}`);
+
+        // Check the response
+        expect(resReview.status).toBe(200);
+        expect(resReview.body.message).toBe('Review deleted successfully');
+        expect(resReview.body.deletedReview._id).toBe(newReview._id.toString());
+
+        // Check if the review was actually deleted from the database
+        const deletedReview = await PostReviewSchema.findById(newReview._id);
+        expect(deletedReview).toBeNull();
+    });
+
+    // Test for DELETE /postReviews/:reviewId when review does not exist
+    test('DELETE /postReviews/:reviewId when review does not exist', async () => {
+        // Make a DELETE request with a non-existent review ID
+        const res = await request(app).delete(`/postReviews/${new ObjectId()}`);
+
+        // Check the response
+        expect(res.status).toBe(404);
+        expect(res.body.error).toBe('Review not found');
+    });
+
     
 });
