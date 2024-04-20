@@ -45,7 +45,7 @@ const ReviewCard : FC<props> = (props) => {
     return element.scrollHeight > element.clientHeight;
   }
 
-  useEffect(() => { fetchData() }, []);
+  useEffect(() => { fetchData() }, [review]);
 
   useEffect(() => { setIsClamped(isTextClamped(textRef.current)) }, [])
 
