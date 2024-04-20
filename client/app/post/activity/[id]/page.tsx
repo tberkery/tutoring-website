@@ -241,7 +241,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
             <h2 className="font-sans font-extrabold uppercase text-l leading-none mt-2 mb-0 text-slate-700 pt-2 self-start">Comment *</h2>
             <Textarea className="resize-none my-2 rounded" onChange={handleCommentChange}/>
             <div className="flex items-center space-x-2">
-              <Checkbox id="terms" checked={isAnonymous} onChange={handleCheckedChange}/>
+              <Checkbox id="terms" checked={isAnonymous} onCheckedChange={handleCheckedChange}/>
               <label
                 htmlFor="terms"
                 className="text-sm font-medium leading-none capitalize peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
