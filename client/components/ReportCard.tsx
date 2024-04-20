@@ -22,6 +22,7 @@ type props = {
 const ReportCard : FC<props> = (props) => {
   const api = process.env.NEXT_PUBLIC_BACKEND_URL;
   const report = props.report;
+  const [loading, setLoading] = useState(true);
   const [isClamped, setIsClamped] = useState(false);
   const [showFull, setShowFull] = useState(false);
   const [reporterPic, setReporterPic] = useState("/defaultimg.jpeg");
@@ -45,10 +46,16 @@ const ReportCard : FC<props> = (props) => {
   }
 
   const isTextClamped = (element : Element) => {
-    return element.scrollHeight > element.clientHeight;
+    if (element) {
+      return element.scrollHeight > element.clientHeight;
+    } else {
+      return false;
+    }
   }
 
-  useEffect(() => { setIsClamped(isTextClamped(textRef.current)) }, [report])
+  useEffect(() => { 
+    setIsClamped(isTextClamped(textRef.current)) 
+  }, [report])
 
   const loadReporterImg = async () => {
     const url = `${api}/profiles/${report.reporterId}`;
@@ -58,6 +65,8 @@ const ReportCard : FC<props> = (props) => {
       const picUrl = `${api}/profilePics/get/${profile.profilePicKey}`;
       const picResponse = await axios.get(picUrl);
       setReporterPic(picResponse.data.imageUrl);
+    } else {
+      setReporterPic('/defaultimg.jpeg')
     }
   }
   
@@ -69,12 +78,21 @@ const ReportCard : FC<props> = (props) => {
       const picUrl = `${api}/profilePics/get/${profile.profilePicKey}`;
       const picResponse = await axios.get(picUrl);
       setReporteePic(picResponse.data.imageUrl);
+    } else {
+      setReporteePic('/defaultimg.jpeg')
     }
   }
 
+  const loadImages = async () => {
+    const promise = loadReporteeImg();
+    await loadReporterImg();
+    await promise;
+    setLoading(false);
+  }
+
   useEffect(() => {
-    loadReporteeImg();
-    loadReporterImg();
+    setLoading(true);
+    loadImages();
   }, [report])
 
   const generateTitleElement = () => {
@@ -137,35 +155,41 @@ const ReportCard : FC<props> = (props) => {
 
   return (
     <div className={`${props.className} px-4 py-3`}>
-      <div className="flex flex-wrap justify-between gap-y-2">
-      {generateTitleElement()}
-      {generateResolveButton()}
-      </div>
-      <p 
-        className={`mt-3 ${showFull ? '' : 'line-clamp-2'}`} ref={textRef}
-      >
-        {report.content}
-      </p>
-      { isClamped ?
-        <div className='flex justify-center'>
-          { showFull ? 
-            <button 
-              className='text-sm text-gray-500 mt-1 hover:underline'
-              onClick={() => setShowFull(false)}
-            >
-              Hide Full Report
-            </button>
+      { loading ?
+        <div className="text-lg min-h-24">Loading...</div>
+      : 
+        <>
+          <div className="flex flex-wrap justify-between gap-y-2">
+          {generateTitleElement()}
+          {generateResolveButton()}
+          </div>
+          <p 
+            className={`mt-3 ${showFull ? '' : 'line-clamp-2'}`} ref={textRef}
+          >
+            {report.content}
+          </p>
+          { isClamped ?
+            <div className='flex justify-center'>
+              { showFull ? 
+                <button 
+                  className='text-sm text-gray-500 mt-1 hover:underline'
+                  onClick={() => setShowFull(false)}
+                >
+                  Hide Full Report
+                </button>
+              :
+                <button 
+                  className='text-sm text-gray-500 mt-1 hover:underline'
+                  onClick={() => setShowFull(true)}
+                >
+                  Show Full Report...
+                </button>
+              }
+            </div>
           :
-            <button 
-              className='text-sm text-gray-500 mt-1 hover:underline'
-              onClick={() => setShowFull(true)}
-            >
-              Show Full Report...
-            </button>
+            ''
           }
-        </div>
-      :
-        ''
+        </>
       }
     </div>
   );
