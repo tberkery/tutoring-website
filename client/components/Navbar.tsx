@@ -1,5 +1,5 @@
 "use client";
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import Link from 'next/link'; 
 import { SignOutButton } from '@clerk/nextjs';
 import { useUser } from '@clerk/clerk-react';
@@ -26,11 +26,11 @@ import {
 
 const NavBar: FC = () => {
   const { isLoaded, isSignedIn, user } = useUser();
-  const [ isAdmin, setIsAdmin ] = React.useState(false);
+  const [ isAdmin, setIsAdmin ] = useState(false);
   useEffect(() => {
     if (isSignedIn) {
-      if (String(user.primaryEmailAddress) == "admin@jhu.edu") {
-        console.log('admin!')
+      // TODO change after creating page
+      if (String(user.primaryEmailAddress) == "mflynn24@jhu.edu") {
         setIsAdmin(true);
       }
     }
