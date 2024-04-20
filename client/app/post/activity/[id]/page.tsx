@@ -233,15 +233,20 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
       </div>
       <p className="py-8">{post.activityDescription}</p>
       <div className="flex flex-row gap-x-4 mb-4">
-        <h1 className="font-sans font-extrabold uppercase text-3xl leading-none mt-0 mb-1 text-slate-800 py-2">Reviews</h1>
-        <DropdownMenu>
+        { reviews.length === 0 ? 
+          <h1 className="text-xl font-bold">No Reviews</h1>
+        :
+          <h1 className="font-sans font-extrabold uppercase text-3xl leading-none mt-0 mb-1 text-slate-800 py-2">Reviews</h1>
+        }
+        { reviews.length === 0 ? "" :
+          <DropdownMenu>
             <DropdownMenuTrigger>
-              <Button 
-                className='text-md font-bold bg-custom-blue hover:bg-blue-900
-                rounded-lg'
+              <div 
+                className='px-4 py-2 text-md text-white font-bold bg-custom-blue
+                hover:bg-blue-900 rounded-lg flex'
               >
                 {reviewSort} <ChevronDown/>
-              </Button>
+              </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent 
               className='bg-blue-300 rounded-xl px-2 py-1.5 border mt-1'
@@ -250,6 +255,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
                 reviewSortMethods.map((method) => {
                   return (
                     <DropdownMenuItem 
+                      key={`sort-${method}`}
                       className='p-0 mb-1 hover:cursor-pointer text-lg font-bold
                       rounded-xl overflow-hidden'
                       onClick={ () => setReviewSort(method) }
@@ -263,15 +269,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
               }
             </DropdownMenuContent>
           </DropdownMenu>
-        </div>
-        <div className="flex flex-col justify-center max-w-3xl">
-        { reviews.map((review, index) => (
-          <ReviewCard 
-            key={`review-${index}`}
-            review={review}
-            className="mb-4 bg-white rounded-lg shadow-md"
-          />
-        )) }
+        }
       </div>
     </div>
       <div className="w-1/3 flex flex-col items-center pr-20 my-10">
