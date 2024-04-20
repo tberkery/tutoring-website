@@ -27,8 +27,8 @@ import axios from 'axios';
 const NavBar: FC = () => {
   const api = process.env.NEXT_PUBLIC_BACKEND_URL;
   const { isLoaded, isSignedIn, user } = useUser();
-  const [imgUrl, setImgUrl] = useState("/defaultimg.jpeg");
   const [ isAdmin, setIsAdmin ] = useState(false);
+  const [imgUrl, setImgUrl] = useState("/defaultimg.jpeg");
 
   const fetchUserData = async () => {
     if (!isLoaded || !isSignedIn) {
@@ -48,8 +48,8 @@ const NavBar: FC = () => {
 
   useEffect(() => {
     if (isSignedIn) {
+      // TODO change after creating page
       if (String(user.primaryEmailAddress) == "admin@jhu.edu") {
-        console.log('admin!')
         setIsAdmin(true);
       }
     }
