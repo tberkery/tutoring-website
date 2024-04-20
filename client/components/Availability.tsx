@@ -104,10 +104,30 @@ const Page = () => {
 
     return (
     <div className="p-5">
-        <button onClick={handleEditAvailability} className="h-10 rounded bg-custom-blue p-2 my-2 text-white">
+      <div className="grid grid-cols-8"> 
+        <div />
+        <div>
+          <button 
+            onClick={handleEditAvailability}
+            className={`h-10 w-24 p-2 mt-2 mb-4 font-bold rounded-md
+            text-white
+            ${select 
+              ? 'bg-green-500 hover:bg-green-600' 
+              : 'bg-custom-blue hover:bg-blue-900'
+            }`}
+          >
             {select ? 'Save' : 'Edit'}
-        </button>
-        <WeekGrid selectActive={select} selections={selections} onToggle={toggleSelection} />
+          </button>
+          <p className={`font-bold w-96 ${select ? 'text-red-600' : ''}`}>
+            { select ?
+              "Currently editing availability..."
+            :
+              "Your Availability"
+            }
+          </p>
+        </div>
+      </div>
+      <WeekGrid selectActive={select} selections={selections} onToggle={toggleSelection} />
     </div>
     );
 };

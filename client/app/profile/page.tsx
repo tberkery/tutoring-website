@@ -175,7 +175,7 @@ const Page : FC = () => {
 
   return (
     <>
-      {/* <Navbar /> */}
+      <Navbar />
       <div 
         className="flex flex-col md:flex-row justify-evenly items-center
        bg-blue-300 pt-8 pb-6 md:py-16 px-6 md:px-16"
@@ -258,38 +258,37 @@ const Page : FC = () => {
           </button>
           <DropdownMenu>
             <DropdownMenuTrigger>
-              <button 
+              <p 
                 className="text-md w-32 mx-1 py-2 rounded-t-lg font-bold 
                 transition border-black relative -bottom-2 pb-4 bg-sky-100"
               >
                 Others
-              </button>
+              </p>
             </DropdownMenuTrigger>
             <DropdownMenuContent 
               className='bg-sky-100 rounded-xl px-2 py-1.5 border mt-1'
             >
-              <DropdownMenuItem 
-                className='p-0 mb-1 hover:cursor-pointer text-lg font-bold
-                rounded-xl overflow-hidden'
-              >
-                <div className='hover:bg-pageBg px-3 py-1 w-full'>
-                  Last Week
-                </div>
-              </DropdownMenuItem>
-              <DropdownMenuItem 
-                className='p-0 mb-1 hover:cursor-pointer text-lg font-bold
-                rounded-xl overflow-hidden'
-              >
-                <div className='hover:bg-pageBg px-3 py-1 w-full'>
-                  Last 30 Days
-                </div>
-              </DropdownMenuItem>
+              { ["Posts", "Reviews", "Analytics", "Availability"]
+                .filter((value) => value !== activeSection).map((value, index) => {
+                return (
+                  <DropdownMenuItem 
+                    className='p-0 mb-1 hover:cursor-pointer text-lg font-bold
+                    rounded-xl overflow-hidden'
+                    key={`tab-dropdown-${index}`}
+                    onClick={ () => setActiveSection(value) }
+                  >
+                    <div className='hover:bg-pageBg px-3 py-1 w-full'>
+                      {value}
+                    </div>
+                  </DropdownMenuItem>
+                )
+              } )}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
         <div className="w-full bg-pageBg absolute h-4 top-[50px] z-30"/>
         <div
-          className="relative z-10 border-t border-black bg-pageBg px-6 py-8
+          className="relative z-10 border-t border-black bg-pageBg md:px-6 py-8
           flex justify-center"
         >
           { getTabSection() }
