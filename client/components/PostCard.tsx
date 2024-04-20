@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { MouseEvent, useEffect, useState } from 'react';
 import { useRouter } from "next/navigation";
 import { Star } from 'lucide-react';
 import BookmarkIcon from './ui/bookmark';
@@ -72,9 +72,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onUpdateBookmark }) => {
     }
   }
 
-  const toggleBookmark = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    event.stopPropagation(); // Prevents the click event from propagating to the parent div
-    // Toggle the bookmark status and update the state
+  const toggleBookmark = () => {
     setIsBookmarked(prevState => !prevState);
     const isCoursePost = post.courseName ? true : false;
     console.log("Toggling bookmark!")
@@ -89,9 +87,11 @@ const PostCard: React.FC<PostCardProps> = ({ post, onUpdateBookmark }) => {
       onMouseLeave={() => setTitleUnderline(false)}
     >
       {/* Bookmark icon positioned at the top right corner */}
-      <div className="absolute top-2 right-2" onClick={(e) => e.stopPropagation()}>
+      <div className="absolute top-2 right-2" onClick={toggleBookmark}>
         {/* Use conditional rendering to fill the bookmark icon in black if the post is bookmarked */}
-        <BookmarkIcon className={`h-6 w-6 ${isBookmarked ? 'text-black' : 'text-gray-500'}`} onClick={toggleBookmark} />
+        <BookmarkIcon
+          className={`h-6 w-6 ${isBookmarked ? 'text-black' : 'text-gray-500'}`}
+        />
       </div>
       <img
         className="w-full h-48 object-cover"
