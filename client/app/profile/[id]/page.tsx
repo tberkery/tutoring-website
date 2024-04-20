@@ -62,6 +62,7 @@ interface CoursePost {
 type Post = ActivityPost | CoursePost;
 
 type Review = {
+  _id: string,
   postId: string,
   postName?: string,
   postType?: string,
