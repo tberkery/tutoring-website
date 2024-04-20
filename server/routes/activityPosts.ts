@@ -4,7 +4,7 @@ const router = require('express').Router();
 const ActivityPostDaoClass = require('../data/ActivityPostDao');
 const ActivityPostDao = new ActivityPostDaoClass();
 
-const db = require('../model/CoursePost');
+const db = require('../model/Profile');
 
 interface PostReview {
   postId: string;
