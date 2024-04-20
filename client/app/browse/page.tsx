@@ -170,9 +170,14 @@ const Page : FC = () => {
     };
 
     const handleAvailabilityChange = async () => {
-        const response = await axios.get(`${api}/allPosts/getAllAvailable/${userId}`);
-            console.log('response:', response.data)
+        let response;
+        if (!availabilityFilter) {
+            response = await axios.get(`${api}/allPosts/getAllAvailable/${userId}`);
+        } else {
+            response = await axios.get(`${api}/allPosts`);
+        }
             setPosts(response.data);
+            setAvailabilityFilter(!availabilityFilter);
     }
 
     const handleTypeChange = (filterCategory) => {
