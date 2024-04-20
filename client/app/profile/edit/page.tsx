@@ -13,10 +13,17 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 
+type sisCourse = {
+  courseTitle: string,
+  courseNumber: string,
+  courseDepartment: string[],
+}
+
 const Page : FC = () => {
 	const { isLoaded, isSignedIn, user } = useUser();
 	const router = useRouter();
   const BACKEND_URL : string = process.env.NEXT_PUBLIC_BACKEND_URL;
+	const [allDepartments, setAllDepartments] = useState<string[]>([]);
 
 	const [firstName, setFirstName] = useState("");
 	const [lastName, setLastName] = useState("");
@@ -26,8 +33,9 @@ const Page : FC = () => {
 	const [refilling, setRefilling] = useState(false);
 	const [affliiateType, setAffiliateType] = useState("student");
   const [userId, setUserId] = useState("");
+	const [photoFile, setPhotoFile] = useState<File>(null);
 
-  const [profileData, setProfileData] = React.useState(null);
+  const [profileData, setProfileData] = useState(null);
   useEffect(() => {
     const fetchProfile = async () => {
       if (!user) return;
@@ -45,6 +53,21 @@ const Page : FC = () => {
     fetchProfile();
   }, [user, BACKEND_URL]);
 
+	const loadDepartments = async () => {
+		const response = await axios.get(`${BACKEND_URL}/courses/all`);
+		const courses : sisCourse[] = response.data.courses;
+		const departmentSet = new Set<string>();
+		courses.forEach((course) => {
+			course.courseDepartment.forEach((department) => {
+				departmentSet.add(department.substring(3));
+			})
+		});
+		let departmentArray = Array.from(departmentSet);
+		departmentArray.sort();
+		setAllDepartments(departmentArray);
+	}
+
+	useEffect(() => { loadDepartments() }, []);
 
   useEffect(() => {
     if (profileData) {
@@ -52,7 +75,10 @@ const Page : FC = () => {
       setLastName(profileData.data[0].lastName);
       setAbout(profileData.data[0].description);
       setDepartment(profileData.data[0].department);
-      setYear(profileData.data[0].graduationYear);
+			if (profileData.data[0].graduationYear) {
+				setYear(profileData.data[0].graduationYear);
+			}
+			setAffiliateType(profileData.data[0].affiliation);
       setUserId(profileData.data[0]._id);
     }
   }, [profileData]);
@@ -73,6 +99,11 @@ const Page : FC = () => {
 		console.log(process.env.NEXT_PUBLIC_BACKEND_URL);
 	}
 
+	const handleFileSelected = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const files = Array.from(e.target.files)
+    setPhotoFile(files[0]);
+  }
+
 	const checkAndSubmit = async () => {
 		if (firstName === "" || lastName === "" || department === "") {
 			// missing field!
@@ -91,27 +122,25 @@ const Page : FC = () => {
 			if (affliiateType === "student") {
 				body["graduationYear"] = year.toString();
 			}
-      console.log(body);
-	  console.log(`${process.env.NEXT_PUBLIC_BACKEND_URL}/profiles/update/${userId}`)
-
 			await axios.put(`${process.env.NEXT_PUBLIC_BACKEND_URL}/profiles/${userId}`, body);
+			if (photoFile !== null) {
+				const formData = new FormData();
+				formData.append("profilePicture", photoFile);
+				const endpoint = `${BACKEND_URL}/profilePics/upload/${userId}`;
+				await axios.post(endpoint, formData);
+				// clerk profile image
+				await user.setProfileImage({file: photoFile});
+			}
 			router.replace('/profile');
 		}
 	}
 
-	const departments = [
-		"Computer Science",
-		"Applied Math",
-		"Physics",
-		"Really Really Really Long Department Name",
-	]
-
   return <>
     <NavBar />
-		<div className="flex flex-col justify-center items-center my-6 mx-24">
+		<div className="flex flex-col justify-center items-center my-6 md:mx-24">
 			<div className="
-				bg-background flex-grow w-full max-w-4xl p-12 rounded-xl
-				shadow-2xl"
+				bg-background flex-grow w-full max-w-4xl p-12 md:rounded-xl
+				md:shadow-2xl"
 			>
 				<h1 className="text-4xl font-bold">Edit Profile</h1>
 				<hr/>
@@ -157,7 +186,13 @@ const Page : FC = () => {
 					</div>
 					<div className="flex flex-col flex-grow basis-4 min-w-60">
 						<Label htmlFor="picture">Profile Picture</Label>
-						<Input id="picture" type="file" className="mt-1 cursor-pointer"/>
+						<Input
+							id="picture"
+							type="file"
+							accept="image/png, image/gif, image/jpeg"
+							className="mt-1 cursor-pointer"
+							onChange={ handleFileSelected }
+						/>
 					</div>
 				</div>
 				<Label htmlFor="about" className="inline-block mt-4">About Me</Label>
@@ -173,7 +208,7 @@ const Page : FC = () => {
 						<Label className="inline-block">Affiliate Type</Label>
 						<RadioGroup 
 							className="mt-2"
-							defaultValue="student"
+							value={affliiateType}
 							onValueChange={ (value) => setAffiliateType(value) }
 						>
 							<div className="flex items-center space-x-2">
@@ -199,8 +234,10 @@ const Page : FC = () => {
 									: ''
 								}` }
 								prompt="Select Department"
-								options={ departments }
+								options={ allDepartments }
 								onValueChange={ setDepartment }
+								value={ department }
+								id="department"
 							/>
 						</div>
 						{ affliiateType === "student" ?
