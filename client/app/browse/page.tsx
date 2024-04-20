@@ -23,7 +23,7 @@ interface ActivityPost {
     userId: string;
     activityTitle: string;
     activityDescription: string;
-    imageUrl: string;
+    activityPostPicKey: string;
     userFirstName: string;
     userLastName: string;
     price: number;
@@ -39,6 +39,7 @@ interface CoursePost {
     userLastName: string;
     courseName: string;
     description: string;
+    coursePostPicKey: string;
     price: number;
     courseNumber: string;
     courseDepartment: string[];

@@ -51,6 +51,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
   const [poster, setPoster] = useState<userType>({});
   const [imgUrl, setImgUrl] = useState("/jhulogo.jpeg");
   const [loadedPost, setLoadedPost] = useState(false);
+  const [profilePic, setProfilePic] = useState("/defaultimg.jpeg");
 
   const [posterId, setPosterId] = useState('');
   const [reviewerId, setReviewerId] = useState('');
@@ -119,6 +120,10 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
         console.error(e);
       }
     }
+    if (profile.data.data.profilePicKey) {
+      const picUrl = await axios.get(`${api}/profilePics/get/${profile.data.data.profilePicKey}`);
+      setProfilePic(picUrl.data.imageUrl);
+    }
     setLoadedPost(true);
   }
 
@@ -186,7 +191,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
           <h3 className="w-full mb-3 text-xs font-medium leading-tight tracking-wide capitalize text-slate-700">${post.price} / hour</h3>
           <div className="flex items-center justify-between space-x-2">
           <img
-            src="/defaultimg.jpeg"
+            src={profilePic}
             alt={`Avatar`}
             className="w-10 h-10 rounded-full"
           />
