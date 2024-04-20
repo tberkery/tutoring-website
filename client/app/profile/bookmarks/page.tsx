@@ -104,6 +104,7 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
       console.log("here4")
       const userInfo = await axios.get(`${api}/profiles/${mongooseUserId}`);
       console.log("here5")
+      console.log(userInfo)
       setProfile(userInfo.data.data);
       const profileId = userInfo.data.data._id
       console.log("profileId")
@@ -121,9 +122,12 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
       console.log("Noted bookmarks:");
       console.log(bookmarks);
 
-      const postsResponse = await axios.get(`${api}/allPosts/findAllByUserId/${userInfo.data.data._id}`);
+      const postsResponse = await axios.get(`${api}/allPosts/`);
+      console.log("postsResponse.data")
+      console.log(postsResponse.data)
       const filteredPosts = postsResponse.data.filter(post => bookmarks.includes(post._id));
-
+      console.log("Here is filteredPosts:")
+      console.log(filteredPosts)
       if (filteredPosts.length !== 0) {
         setPosts(filteredPosts);
         let reviews : Review[] = [];
@@ -168,13 +172,30 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
     }
   }
 
-  const handleBookmarkUpdate = async (postId: string, isCoursePost: boolean) => {
+  /* Somewhat different than handleBookmarkUpdate in other pages due to removal of post from display if unbookmarked */
+  const handleBookmarkUpdate = async (bookmark: string, isCourse: boolean) => {
     try {
-      const response = await axios.put(`${api}/profiles/addBookmark/${visitorId}`, { postId, isCoursePost });
+      const allBookmarks = await axios.get(`${api}/profiles/allBookmarks/${visitorId}`)
+      let bookmarkIds;
+      if (isCourse) {
+        bookmarkIds = new Set(allBookmarks.data.data.courseBookmarks);
+      } else {
+        bookmarkIds = new Set(allBookmarks.data.data.activityBookmarks);
+      }
+      if (bookmarkIds.has(bookmark)) {
+        const response = await axios.put(`${api}/profiles/deleteBookmark/${visitorId}`, { bookmark: bookmark, isCourse: isCourse });
+        console.log("Bookmark deleted");
+        
+        // Remove the unbookmarked post from the state
+        setPosts(prevPosts => prevPosts.filter(post => post._id !== bookmark));
+      } else {
+        const response = await axios.put(`${api}/profiles/addBookmark/${visitorId}`, { bookmark: bookmark, isCourse: isCourse });
+        console.log("Bookmark added");
+      }
     } catch (error) {
       console.error('Error updating bookmark status:', error);
     }
-  };
+  };  
 
   useEffect(() => { getVisitor() }, [isLoaded, isSignedIn, user]);
 
@@ -187,31 +208,33 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
   return (
     <>
       <Navbar />
-      <div className="flex justify-evenly items-center bg-blue-300 py-16 px-16">
-        <div className="flex-1 max-w-xl">
-          <h1 className="text-2xl font-extrabold font-sans uppercase text-black">{profile.firstName} {profile.lastName} - {profile.department}
-                                            {profile.graduationYear ? `, ${profile.graduationYear}` : ''}</h1>
-          <p className="text-s underline font-light mb-2">{profile.email}</p>
-          <p className="text-gray-700 text-base">{profile.description}</p>
-        </div>
-        <div className="flex-none flex flex-col items-center mx-8">
-          <img className="w-48 h-48 snap-center rounded-md" src={imgUrl} alt={`${profile.firstName}`} />
-          { reviews.length > 0 ?
-            <RatingStars rating={reviewAvg} starSize={26} numReviews={reviews.length} className="mt-2"/>
-          :
-            <></>
-          }
-        </div>
-        <div className="w-3/4">
+      {profile && ( // Only render content if profile is defined
+        <div className="flex justify-evenly items-center bg-blue-300 py-16 px-16">
+          <div className="flex-1 max-w-xl">
+            <h1 className="text-2xl font-extrabold font-sans uppercase text-black">{profile.firstName} {profile.lastName} - {profile.department}
+              {profile.graduationYear ? `, ${profile.graduationYear}` : ''}</h1>
+            <p className="text-s underline font-light mb-2">{profile.email}</p>
+            <p className="text-gray-700 text-base">{profile.description}</p>
+          </div>
+          <div className="flex-none flex flex-col items-center mx-8">
+            <img className="w-48 h-48 snap-center rounded-md" src={imgUrl} alt={`${profile.firstName}`} />
+            {reviews.length > 0 ?
+              <RatingStars rating={reviewAvg} starSize={26} numReviews={reviews.length} className="mt-2" />
+              :
+              <></>
+            }
+          </div>
+          <div className="w-3/4">
             <div className="container px-6 py-8 mx-auto">
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-                {posts.map((posts) => (
-                    <PostCard key={posts._id} post={posts} onUpdateBookmark={handleBookmarkUpdate}/>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                {posts.map((post) => (
+                  <PostCard key={post._id} post={post} onUpdateBookmark={handleBookmarkUpdate} />
                 ))}
-                </div>
+              </div>
             </div>
+          </div>
         </div>
-      </div>
+      )}
     </>
   );
 };
