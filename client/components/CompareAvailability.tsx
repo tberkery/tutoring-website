@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import axios from "axios";
 import { useUser } from '@clerk/clerk-react';
 
+type Availability = {
+    availability: number[];
+  }
 
 const daysOfWeek = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 const api = process.env.NEXT_PUBLIC_BACKEND_URL;
@@ -59,54 +62,24 @@ const HourLabels = () => {
     );
 };
 
-const Page = () => {
+const Page = ({ availability }) => {
     const [select, setSelect] = useState(false);
     const [selections, setSelections] = useState(new Array(336).fill(0));
-    const { isLoaded, isSignedIn, user } = useUser();
-    const [userId, setUserId] = useState('');
-
-    const fetchData = async () => {
-        if (!isLoaded || !isSignedIn) {
-          return false;
-        }
-        const userInfo = await axios.get(`${api}/profiles/getByEmail/${user.primaryEmailAddress.toString()}`);
-        const userId = userInfo.data.data[0]._id;
-        setUserId(userId);
-        const availability = userInfo.data.data[0].availability;
-        const avail = new Array(336).fill(0);
-        availability.forEach(index => avail[index] = 1);
-        setSelections(avail);
-    }
-
+  
     useEffect(() => {
-        fetchData();
-    }, [api, user, isLoaded, isSignedIn]);
-
-    const handleEditAvailability = async () => {
-        const availability = selections.map((value, index) => value === 1 ? index : -1).filter(index => index !== -1);
-        if (select) {
-            axios.put(`${api}/profiles/availability/${userId}`, { availability: availability });
-        }
-        console.log('availability:....\n\n', availability);
-        setSelect((prevSelect) => !prevSelect);
-    };
-
-    const toggleSelection = async (index) => {
-        const newSelections = [...selections];
-        if (newSelections[index] === 0) {
-            newSelections[index] = 1;
-        } else {
-            newSelections[index] = 0;
-        }
-        
-        setSelections(newSelections);
+      setSelections(availability);  
+    }, [availability]); 
+  
+    const toggleSelection = (index) => {
+      setSelections(prevSelections => {
+        const newSelections = [...prevSelections];
+        newSelections[index] = newSelections[index] === 0 ? 1 : 0;
+        return newSelections;
+      });
     };
 
     return (
     <div className="p-5">
-        <button onClick={handleEditAvailability} className="h-10 rounded bg-custom-blue p-2 my-2 text-white">
-            {select ? 'Save' : 'Edit'}
-        </button>
         <WeekGrid selectActive={select} selections={selections} onToggle={toggleSelection} />
     </div>
     );

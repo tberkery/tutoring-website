@@ -10,7 +10,7 @@ import RatingStars from "@/components/RatingStars";
 import ReviewCard from "@/components/ReviewCard";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import Availability from "@/components/Availability";
+import CompareAvailability from "@/components/CompareAvailability";
 
 interface Profile {
   affiliation: string;
@@ -82,6 +82,7 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
   const [timeSpent, setTimeSpent] = useState(0);
   const [onPage, setOnPage] = useState(true);
   const [visitorId, setVisitorId] = useState('');
+  const [availability, setAvailability] = useState(new Array(336).fill(0));
 
   const timeSpentRef = useRef<Number>();
   useEffect(() => {
@@ -96,81 +97,27 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
   useEffect(() => {
     let ratingTotal = 0;
     reviews.forEach((review) => ratingTotal += review.rating);
-    console.log(ratingTotal);
     setReviewAvg(ratingTotal / reviews.length);
   }, [reviews])
   
   const { isLoaded, isSignedIn, user } = useUser();
   const router = useRouter();
 
-  const availabilityToInterval = (availability: number[]) => {
-    const sortedArray = availability.sort((a, b) => a - b);
-    let start = sortedArray[0];
-    let end = sortedArray[0];
-    const intervals = [];
-
-    for (let i = 1; i < sortedArray.length; i++) {
-        if (sortedArray[i] === end + 1) {
-            end = sortedArray[i];
-        } else {
-            intervals.push([start, end]);
-            start = sortedArray[i];
-            end = sortedArray[i];
-        }
-    }
-    intervals.push([start, end]);
-    return intervals;
-  }
-
-  function formatStartTime(t) {
-    const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-
-    const dayIndex = Math.floor((t- 1) / 96);
-    const timeIndex = ((t - 1) % 96) * 15; 
-
-    const startHours = Math.floor(timeIndex / 60).toString().padStart(2, '0');
-    const startMinutes = (timeIndex % 60).toString().padStart(2, '0');
-
-    const endHours = Math.floor((timeIndex + 15) / 60).toString().padStart(2, '0');
-    const endMinutes = ((timeIndex + 15) % 60).toString().padStart(2, '0');
-
-    const formattedString = `${days[dayIndex]} ${startHours}:${startMinutes}`;
-
-    return formattedString;
-}
-
-function formatEndTime(t) {
-    const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-
-    const dayIndex = Math.floor((t- 1) / 96);
-    const timeIndex = ((t - 1) % 96) * 15; 
-
-    const startHours = Math.floor(timeIndex / 60).toString().padStart(2, '0');
-    const startMinutes = (timeIndex % 60).toString().padStart(2, '0');
-
-    const endHours = Math.floor((timeIndex + 15) / 60).toString().padStart(2, '0');
-    const endMinutes = ((timeIndex + 15) % 60).toString().padStart(2, '0');
-
-    const formattedString = `${endHours}:${endMinutes}`;
-
-    return formattedString;
-}
   const compareAvail = async () => {
-    const userInfo = await axios.get(`${api}/profiles/getByEmail/${user.primaryEmailAddress.toString()}`);
-    const bothAvailable = profileData.availability.filter(value => userInfo.data.data[0].availability.includes(value));
+    try {
+      const userInfo = await axios.get(`${api}/profiles/${params.id}`);
+      const profileAvail = userInfo.data.data.availability;
+      const pa = new Array(336).fill(0);
+      profileAvail.forEach(index => pa[index] = 1);
+      setAvailability(pa);
+    } catch (error) {
+      console.error('Failed to fetch availability:', error);
+    }
+  };
 
-    //overlapping intervals!!
-    const intervals = availabilityToInterval(bothAvailable);
-
-    let result = "";
-    intervals.forEach((interval) => {
-      const from = formatStartTime(interval[0]);
-      const to = formatEndTime(interval[1]);
-      result +=  from + " - " + to + '\n';
-    })
-    window.alert('Ovelapping times:' + result);
-
-  }
+  useEffect(() => {
+    compareAvail();
+  }, []);
 
   const fetchData = async () => {
     try {
@@ -197,7 +144,6 @@ function formatEndTime(t) {
       const profileId = userInfo.data.data._id;
       const reviewEndpoint = `${api}/postReviews/getByProfileId/${profileId}`;
       const reviewResponse = await axios.get(reviewEndpoint);
-      console.log(reviewResponse);
     } catch (error) {
       console.error('Error fetching posts', error);
     } finally {
@@ -222,11 +168,9 @@ function formatEndTime(t) {
   }
 
   const updateProfileViewsAsync = async () => {
-    console.log('a');
     if (visitorIdRef.current === '') {
       return;
     }
-    console.log('b');
     const endpoint = `${api}/profiles/views/${params.id}`;
     const body = { 
       viewerId: visitorIdRef.current,
@@ -238,11 +182,9 @@ function formatEndTime(t) {
   }
 
   const updateProfileViews = () => {
-    console.log('a');
     if (visitorIdRef.current === '') {
       return;
     }
-    console.log('b');
     const endpoint = `${api}/profiles/views/${params.id}`;
     const body = { 
       viewerId: visitorIdRef.current,
@@ -306,7 +248,7 @@ function formatEndTime(t) {
     } else if (activeSection === "Availability") {
         return (
           <div className="flex flex-col justify-center max-w-3xl w-full">
-              <Availability />
+              <CompareAvailability availability={availability} />
           </div>
         )
     }
