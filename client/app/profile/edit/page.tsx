@@ -75,7 +75,9 @@ const Page : FC = () => {
       setLastName(profileData.data[0].lastName);
       setAbout(profileData.data[0].description);
       setDepartment(profileData.data[0].department);
-      setYear(profileData.data[0].graduationYear);
+			if (profileData.data[0].graduationYear) {
+				setYear(profileData.data[0].graduationYear);
+			}
 			setAffiliateType(profileData.data[0].affiliation);
       setUserId(profileData.data[0]._id);
     }
@@ -135,10 +137,10 @@ const Page : FC = () => {
 
   return <>
     <NavBar />
-		<div className="flex flex-col justify-center items-center my-6 mx-24">
+		<div className="flex flex-col justify-center items-center my-6 md:mx-24">
 			<div className="
-				bg-background flex-grow w-full max-w-4xl p-12 rounded-xl
-				shadow-2xl"
+				bg-background flex-grow w-full max-w-4xl p-12 md:rounded-xl
+				md:shadow-2xl"
 			>
 				<h1 className="text-4xl font-bold">Edit Profile</h1>
 				<hr/>
