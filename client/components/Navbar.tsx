@@ -3,7 +3,6 @@ import React, { FC, useEffect, useState } from 'react';
 import Link from 'next/link'; 
 import { SignOutButton } from '@clerk/nextjs';
 import { useUser } from '@clerk/clerk-react';
-import { useEffect } from 'react';
 import {
   Avatar,
   AvatarFallback,
