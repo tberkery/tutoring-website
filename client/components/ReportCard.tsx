@@ -96,15 +96,18 @@ const ReportCard : FC<props> = (props) => {
 
   const generateTitleElement = () => {
     return (
-      <div className="mr-2 text-xl flex items-center gap-x-2">
+      <div 
+        className="mr-2 md:text-xl flex flex-wrap items-center gap-y-2 gap-x-2"
+      >
         <a 
-          className="font-bold hover:underline inline-flex items-center"
+          className="font-bold hover:underline inline-flex items-center
+          text-nowrap"
           href={reporterLink()}
         >
           <img
             src={reporterPic}
             alt={`Avatar`}
-            className="inline-block mr-1 w-8 h-8 rounded-full"
+            className="hidden md:inline-block mr-1 w-8 h-8 rounded-full"
           />
           { reporterFullName() }
         </a>
@@ -116,7 +119,7 @@ const ReportCard : FC<props> = (props) => {
           <img
             src={reporteePic}
             alt={`Avatar`}
-            className="inline-block mr-1 w-8 h-8 rounded-full"
+            className="hidden md:inline-block mr-1 w-8 h-8 rounded-full"
           />
           { reporteeFullName() }
         </a>
@@ -129,11 +132,11 @@ const ReportCard : FC<props> = (props) => {
       return (
         <button 
           className="relative flex pl-2 pr-3 py-1 rounded-md border-2
-          border-green-500 bg-green-500 text-white text-bold text-lg
+          border-green-500 bg-green-500 text-white text-bold md:text-lg
           shadow-sm"
           disabled={true}
         >
-          <Check className="relative top-0.5 mr-1"/>
+          <Check className="relative md:top-0.5 mr-1"/>
           Resolved
         </button>
       )
@@ -141,11 +144,11 @@ const ReportCard : FC<props> = (props) => {
       return (
         <button 
           className="relative flex pl-2 pr-3 py-1 rounded-md border-2
-          border-red-500 text-red-500 text-bold text-lg shadow-sm
+          border-red-500 text-red-500 text-bold md:text-lg shadow-sm
           hover:bg-red-500 hover:text-white transition"
           onClick={ props.resolveFunc }
         >
-          <Lightbulb className="relative top-0.5 mr-1"/>
+          <Lightbulb className="relative md:top-0.5 mr-1"/>
           Mark Resolved
         </button>
       )
@@ -163,7 +166,9 @@ const ReportCard : FC<props> = (props) => {
           {generateResolveButton()}
           </div>
           <p 
-            className={`mt-3 ${showFull ? '' : 'line-clamp-2'}`} ref={textRef}
+            className={`mt-3 border-t pt-2 md:border-none md:pt-0
+            ${showFull ? '' : 'line-clamp-2'}`} 
+            ref={textRef}
           >
             {report.content}
           </p>

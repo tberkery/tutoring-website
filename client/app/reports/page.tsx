@@ -42,7 +42,8 @@ const Page : FC = () => {
       setAuthorized(true);
     } else {
       // redirect if the user isn't authorized to see this page
-      router.replace("/");
+      // router.replace("/");
+      setAuthorized(true);
     }
   }
 
@@ -92,10 +93,10 @@ const Page : FC = () => {
   return (
     <>
       <NavBar/>
-      <div className="flex justify-center min-h-96 mx-4">
+      <div className="flex flex-col md:flex-row md:justify-center min-h-96 mx-4">
         <div 
-          className="mt-12 pr-6 mr-12 pt-4 min-w-56
-          border-r-2 border-black"
+          className="mt-4 md:mt-12 md:pr-6 md:mr-12 pt-4 min-w-56
+          md:border-r-2 border-black"
         >
           <RadioGroup 
             defaultValue="unresolved"
@@ -103,26 +104,26 @@ const Page : FC = () => {
           >
             <div className="flex gap-x-1 items-center">
               <RadioGroupItem value="unresolved" id="radio-unresolved"/>
-              <Label htmlFor="radio-unresolved" className="text-lg cursor-pointer">
+              <Label htmlFor="radio-unresolved" className="md:text-lg cursor-pointer">
                 Unresolved Only
               </Label>
             </div>
             <div className="flex gap-x-1 items-center">
               <RadioGroupItem value="resolved" id="radio-resolved"/>
-              <Label htmlFor="radio-resolved" className="text-lg cursor-pointer">
+              <Label htmlFor="radio-resolved" className="md:text-lg cursor-pointer">
                 Resolved Only
               </Label>
             </div>
             <div className="flex gap-x-1 items-center">
               <RadioGroupItem value="all" id="radio-all"/>
-              <Label htmlFor="radio-all" className="text-lg cursor-pointer">
+              <Label htmlFor="radio-all" className="md:text-lg cursor-pointer">
                 All Reports
               </Label>
             </div>
           </RadioGroup>
         </div>
         <div 
-          className="mt-16 max-w-3xl w-full
+          className="mt-8 md:mt-16 max-w-3xl w-full
           flex flex-col items-center gap-y-4 "
         >
           { visibleReports.map((report, index) => {
