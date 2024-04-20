@@ -84,6 +84,30 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
   const [timeSpent, setTimeSpent] = useState(0);
   const [onPage, setOnPage] = useState(true);
   const [visitorId, setVisitorId] = useState('');
+  const [bookmarkedPosts, setBookmarkedPosts] = useState<Post[]>([]);
+
+  const handleBookmarkUpdate = async (bookmark: string, isCourse: boolean) => {
+    try {
+      const allBookmarks = await axios.get(`${api}/profiles/allBookmarks/${visitorId}`)
+      let bookmarkIds;
+      if (isCourse) {
+        bookmarkIds = new Set(allBookmarks.data.data.courseBookmarks);
+      } else {
+        bookmarkIds = new Set(allBookmarks.data.data.activityBookmarks);
+      }
+      if (bookmarkIds.has(bookmark)) {
+        const response = await axios.put(`${api}/profiles/deleteBookmark/${visitorId}`, { bookmark: bookmark, isCourse: isCourse });
+        window.alert("Post was previously bookmarked and has now been unbookmarked!")
+        console.log("Bookmark deleted")
+      } else {
+        const response = await axios.put(`${api}/profiles/addBookmark/${visitorId}`, { bookmark: bookmark, isCourse: isCourse });
+        window.alert("Post has been bookmarked!")
+        console.log("Bookmark added")
+      } 
+    } catch (error) {
+      console.error('Error updating bookmark status:', error);
+    }
+  };
   const [availability, setAvailability] = useState(new Array(336).fill(0));
 
   const reviewSortMethods = [
@@ -103,7 +127,7 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
   }
 
   useEffect(() => { setReviews(sortReviews(reviews)) }, [reviewSort]);
-
+  
   const timeSpentRef = useRef<Number>();
   useEffect(() => {
     timeSpentRef.current = timeSpent;
@@ -245,6 +269,33 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
   }, [onPage]);
 
   useEffect(() => updateProfileViews, [])
+
+  useEffect(() => {
+    const getAllBookmarkedPosts = async () => {
+      if (!isLoaded || !isSignedIn || !user || !visitorId) {
+        return;
+      }
+      try {
+        const response = await axios.get(`${api}/profiles/allBookmarks/${visitorId}`);
+        return response.data;
+      } catch (error) {
+        console.log('Error retrieving bookmarks for current viewer');
+      }
+    };
+  
+    const fetchBookmarkedPosts = async () => {
+      try {
+        const idsOfBookmarkedPosts = await getAllBookmarkedPosts();
+        setBookmarkedPosts(idsOfBookmarkedPosts);
+      } catch (error) {
+        console.log('Error retrieving bookmarks for current viewer:', error);
+      }
+    };
+  
+    fetchBookmarkedPosts();
+  
+  }, [isLoaded, isSignedIn, user, visitorId]);
+  
 
   if (loading) return ( <> <Loader /> </>);
 
@@ -424,7 +475,25 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
           className="relative z-10 border-t border-black bg-pageBg md:px-6 py-8
           flex justify-center"
         >
-          { getTabSection() }
+          { activeSection === "Posts" ?
+            <div 
+              className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2
+              lg:grid-cols-3 gap-4"
+            >
+              { posts.map((post) => (
+                <PostCard key={post._id} post={post} onUpdateBookmark={handleBookmarkUpdate} />
+              )) }
+            </div>
+          :
+            <div className="flex flex-col justify-center max-w-3xl w-full">
+              { reviews.map((review) => (
+                <ReviewCard
+                  review={review}
+                  className="mb-4 bg-white rounded-lg shadow-md"
+                />
+              )) }
+            </div>
+          }
         </div>
       </div>
     </>

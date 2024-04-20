@@ -71,6 +71,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
   const [averageRating, setAverageRating] = useState(0);
   const [reviewCount, setReviewCount] = useState(0);
   const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(false);
+  const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
 
   const reviewSortMethods = [
     "Highest Rating",
