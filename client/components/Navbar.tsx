@@ -1,9 +1,8 @@
 "use client";
-import React, { FC } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import Link from 'next/link'; 
 import { SignOutButton } from '@clerk/nextjs';
 import { useUser } from '@clerk/clerk-react';
-import { useEffect } from 'react';
 import {
   Avatar,
   AvatarFallback,
@@ -23,10 +22,30 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import axios from 'axios';
 
 const NavBar: FC = () => {
+  const api = process.env.NEXT_PUBLIC_BACKEND_URL;
   const { isLoaded, isSignedIn, user } = useUser();
-  const [ isAdmin, setIsAdmin ] = React.useState(false);
+  const [imgUrl, setImgUrl] = useState("/defaultimg.jpeg");
+  const [ isAdmin, setIsAdmin ] = useState(false);
+
+  const fetchUserData = async () => {
+    if (!isLoaded || !isSignedIn) {
+      return false;
+    }
+    const userInfo = await axios.get(`${api}/profiles/getByEmail/${user.primaryEmailAddress.toString()}`);
+    if (userInfo.data.data.length === 0) {
+      return;
+    }
+    if (userInfo.data.data[0].profilePicKey) {
+      const picUrl = await axios.get(`${api}/profilePics/get/${userInfo.data.data[0].profilePicKey}`);
+      setImgUrl(picUrl.data.imageUrl);
+    }
+  }
+
+  useEffect(() => { fetchUserData() }, [isLoaded, isSignedIn, user]);
+
   useEffect(() => {
     if (isSignedIn) {
       if (String(user.primaryEmailAddress) == "admin@jhu.edu") {
@@ -79,7 +98,7 @@ const NavBar: FC = () => {
             <DropdownMenu>
               <DropdownMenuTrigger>
                 <Avatar>
-                  <AvatarImage src="/defaultimg.jpeg" alt="@shadcn" />
+                  <AvatarImage src={imgUrl} alt="@shadcn" />
                   <AvatarFallback>TH</AvatarFallback>
                 </Avatar>
               </DropdownMenuTrigger>
