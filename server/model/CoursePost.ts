@@ -2,6 +2,7 @@ export {}
 
 const mongoose = require('mongoose');
 const {Schema} = require('mongoose');
+import ViewSchema = require("./Views");
 
 const PostReview = require("../model/PostReview.ts");
 const PostReviewSchema = PostReview.schema;
@@ -66,8 +67,11 @@ const CoursePostSchema = new mongoose.Schema({
     reviews: {
         type: [PostReviewSchema],
         default: []
+    },
+    views: {
+        type: [ViewSchema],
+        default: []
     }
-
     // courseId: { // this field will be null if it's non-academic
     //   type: Number,
     //   ref: 'Course',

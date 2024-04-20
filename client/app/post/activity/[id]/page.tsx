@@ -43,6 +43,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
   const [poster, setPoster] = useState<userType>({});
   const [imgUrl, setImgUrl] = useState("/jhulogo.jpeg");
   const [loadedPost, setLoadedPost] = useState(false);
+  const [profilePic, setProfilePic] = useState("/defaultimg.jpeg");
 
   const [posterId, setPosterId] = useState('');
   const [reviewerId, setReviewerId] = useState('');
@@ -54,6 +55,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
   const [reviews, setReviews] = useState([]);
   const [averageRating, setAverageRating] = useState(0);
   const [reviewCount, setReviewCount] = useState(0);
+  const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(false);
 
   const loadReviews = async () => {
     try {
@@ -113,10 +115,18 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
         console.error(e);
       }
     }
+    if (profile.data.data.profilePicKey) {
+      const picUrl = await axios.get(`${api}/profilePics/get/${profile.data.data.profilePicKey}`);
+      setProfilePic(picUrl.data.imageUrl);
+    }
     setLoadedPost(true);
   }
 
   useEffect(() => { loadOldPost() }, [isLoaded, isSignedIn, user]);
+
+  useEffect(() => {
+    setIsButtonDisabled(posterId === reviewerId);
+  }, [posterId, reviewerId]);
 
   const handleCommentChange = (event) => {
     setComment(event.target.value);
@@ -176,7 +186,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
           <h3 className="w-full text-xs tracking-wide leading-tight capitalize font-medium mb-3 text-slate-700">${post.price} / hour</h3>
           <div className="flex items-center justify-between space-x-2">
           <img
-            src="/defaultimg.jpeg"
+            src={profilePic}
             alt={`Avatar`}
             className="w-10 h-10 rounded-full"
           />
@@ -240,11 +250,11 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
               </label>
             </div>
             <button 
-              onClick={handleSubmit} 
-              className="uppercase info-box max-w p-4 border-2 border-black mt-4 mb-6 font-md font-bold bg-blue-300" style={{
-              boxShadow: '2px 2px 0px rgba(0, 0, 0, 10)',
-            }}>
-              post comment
+              onClick={handleSubmit} disabled={isButtonDisabled}
+              className={`uppercase info-box max-w p-4 border-2 border-black mt-4 mb-6 font-md font-bold ${isButtonDisabled ? 'bg-gray-400 text-gray-600 cursor-not-allowed' : 'bg-blue-300 text-black'}`} style={{
+                boxShadow: '2px 2px 0px rgba(0, 0, 0, 10)',
+              }}>
+              Post Comment
             </button>
           </div>
         </div>

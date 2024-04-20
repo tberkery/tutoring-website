@@ -1,3 +1,5 @@
+import { ObjectId } from "mongodb";
+
 export {}
 const request = require('supertest');
 const express = require('express');
@@ -192,6 +194,119 @@ describe('Test profile routes', () => {
         expect(res.body.data[0].email).toBe(newProfileData.email);
         expect(res.body.data[0].affiliation).toBe(newProfileData.affiliation);
         expect(res.body.data[0].department).toBe(newProfileData.department);
+    });
+
+    test('PUT /profiles/addBookmark/:id', async () => {
+        // First, create a profile to get its ID
+        const newProfileData = {
+            firstName: 'Jane',
+            lastName: 'Smith',
+            email: 'janesmith@example.com',
+            affiliation: 'Faculty',
+            department: 'Physics'
+        };
+        const newProfile = await request(app).post('/profiles').send(newProfileData);
+
+        const _id = newProfile._body.data._id
+        const bmId = new ObjectId()
+        const bookmark = {
+            bookmark: bmId,
+            isCourse: false
+        }
+        const res = await request(app)
+        .put(`/profiles/addBookmark/${_id}`)
+        .send(bookmark);
+
+        expect(res.status).toBe(200);
+        expect(res._body.data.activityBookmarks).toHaveLength(1);
+        expect(res._body.data.courseBookmarks).toHaveLength(0);
+    });
+
+    test('PUT /profiles/deleteBookmark/:id', async () => {
+        // First, create a profile to get its ID
+        const newProfileData = {
+            firstName: 'Jane',
+            lastName: 'Smith',
+            email: 'janesmith@example.com',
+            affiliation: 'Faculty',
+            department: 'Physics'
+        };
+        const newProfile = await request(app).post('/profiles').send(newProfileData);
+
+        const _id = newProfile._body.data._id
+        const bmId = new ObjectId()
+        const bookmark1 = {
+            bookmark: bmId,
+            isCourse: false
+        }
+
+        const bmId2 = new ObjectId()
+        const bookmark2 = {
+            bookmark: bmId2,
+            isCourse: false
+        }
+        const res = await request(app)
+        .put(`/profiles/addBookmark/${_id}`)
+        .send(bookmark1);
+
+        const res2 = await request(app)
+        .put(`/profiles/addBookmark/${_id}`)
+        .send(bookmark2);
+
+        expect(res2.status).toBe(200);
+        expect(res2._body.data.activityBookmarks).toHaveLength(2);
+        expect(res2._body.data.courseBookmarks).toHaveLength(0);
+
+        const res3 = await request(app)
+        .put(`/profiles/deleteBookmark/${_id}`)
+        .send(bookmark2);
+
+        expect(res3.status).toBe(200);
+        expect(res3._body.data.activityBookmarks).toHaveLength(1);
+        expect(res3._body.data.courseBookmarks).toHaveLength(0);
+    });
+
+    test('GET /profiles/allBookmarks/:id', async () => {
+        // First, create a profile to get its ID
+        const newProfileData = {
+            firstName: 'Jane',
+            lastName: 'Smith',
+            email: 'janesmith@example.com',
+            affiliation: 'Faculty',
+            department: 'Physics'
+        };
+        const newProfile = await request(app).post('/profiles').send(newProfileData);
+
+        const _id = newProfile._body.data._id
+        const bmId = new ObjectId()
+        const bookmark1 = {
+            bookmark: bmId,
+            isCourse: false
+        }
+
+        const bmId2 = new ObjectId()
+        const bookmark2 = {
+            bookmark: bmId2,
+            isCourse: false
+        }
+        const res = await request(app)
+        .put(`/profiles/addBookmark/${_id}`)
+        .send(bookmark1);
+
+        const res2 = await request(app)
+        .put(`/profiles/addBookmark/${_id}`)
+        .send(bookmark2);
+
+        expect(res2.status).toBe(200);
+        expect(res2._body.data.activityBookmarks).toHaveLength(2);
+        expect(res2._body.data.courseBookmarks).toHaveLength(0);
+
+        const res3 = await request(app)
+        .get(`/profiles/allBookmarks/${_id}`)
+
+        expect(res3.status).toBe(200);
+        expect(res3._body.data.activityBookmarks).toHaveLength(2);
+        expect(res3._body.data.courseBookmarks).toHaveLength(0);
     });
 
 });

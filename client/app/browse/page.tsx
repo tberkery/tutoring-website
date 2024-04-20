@@ -24,7 +24,7 @@ interface ActivityPost {
     userId: string;
     activityTitle: string;
     activityDescription: string;
-    imageUrl: string;
+    activityPostPicKey: string;
     userFirstName: string;
     userLastName: string;
     price: number;
@@ -40,6 +40,7 @@ interface CoursePost {
     userLastName: string;
     courseName: string;
     description: string;
+    coursePostPicKey: string;
     price: number;
     courseNumber: string;
     courseDepartment: string[];
@@ -91,6 +92,9 @@ const Page : FC = () => {
     const [tagFilters, setTagFilters] = useState({
         music: false,
         athletic: false,
+        cooking: false,
+        performingArt: false,
+        visualArt: false,
     });
     const [availabilityFilter, setAvailabilityFilter] = useState(false);
 
@@ -144,21 +148,22 @@ const Page : FC = () => {
             filtered = [...filtered.sort((a, b) => a.price - b.price)];
         }
 
-        if (tagFilters.music || tagFilters.athletic) {
+        if (tagFilters.music || tagFilters.athletic || tagFilters.cooking || tagFilters.performingArt || tagFilters.visualArt) {
             filtered = filtered.filter(post => {
-                return (tagFilters.music && 'activityTitle' in post && post.tags.includes('music')) || 
-                       (tagFilters.athletic && 'activityTitle' in post && post.tags.includes('athletic'));
+                return (tagFilters.music && 'activityTitle' in post && post.tags.includes('Music')) || 
+                       (tagFilters.athletic && 'activityTitle' in post && post.tags.includes('Athletic')) ||
+                       (tagFilters.cooking && 'activityTitle' in post && post.tags.includes('Cooking')) ||
+                       (tagFilters.performingArt && 'activityTitle' in post && post.tags.includes('Performing Art')) || 
+                       (tagFilters.visualArt && 'activityTitle' in post && post.tags.includes('Visual Art'));
             });
-        }
-
-        if (availabilityFilter) {
-            
         }
 
         if (searchInput) {
             filtered = filtered.filter(post => {
-                if ('courseName' in post) {
-                    return post.courseName.toLowerCase().includes(searchInput.toLowerCase());
+                 if ('courseName' in post && 'courseNumber' in post) {
+                    // Check if the search input matches either the course name or course number
+                    return post.courseName.toLowerCase().includes(searchInput.toLowerCase()) ||
+                           post.courseNumber.toLowerCase().includes(searchInput.toLowerCase());
                 } else if ('activityTitle' in post) {
                     return post.activityTitle.toLowerCase().includes(searchInput.toLowerCase());
                 }
@@ -220,7 +225,7 @@ const Page : FC = () => {
   return <>
   <NavBar />
     <div className="flex min-h-screen">
-        <div className="hidden lg:flex lg:w-1/4 flex-col items-center py-3 bg-blue-300">
+        <div className="w-1/4 flex flex-col items-center py-3 bg-blue-300">
             <div className="input-container my-6">
                 <input type="text" name="text" 
                         className="input" 
@@ -231,12 +236,12 @@ const Page : FC = () => {
                 <div className="under-line"></div>
             </div>
             <div>
-                <h1 className="font-sans font-bold text-2xl uppercase">filter listings</h1>
+                <h1 className="font-sans text-2xl font-bold uppercase">filter listings</h1>
                 <Accordion type="single" collapsible className="w-full">
                     <AccordionItem value="item-1">
                         <AccordionTrigger>By Type</AccordionTrigger>
                         <AccordionContent>
-                            <div className="ml-2 pb-1">
+                            <div className="pb-1 ml-2">
                                 <div className="flex items-center space-x-2">                                    
                                     <Checkbox id="courses" checked={typeFilters.courses} onCheckedChange={(e) => handleTypeChange('courses')}/>
                                     <label
@@ -263,7 +268,7 @@ const Page : FC = () => {
                     <AccordionItem value="item-2">
                         <AccordionTrigger>By Price</AccordionTrigger>
                         <AccordionContent>
-                        <div className="ml-2 pb-1">
+                        <div className="pb-1 ml-2">
                                 <div className="flex items-center space-x-2">
                                     <Checkbox id="highToLow" checked={priceFilters.highToLow} onCheckedChange={(e) => handlePriceChange('highToLow')} />
                                     <label
@@ -274,7 +279,7 @@ const Page : FC = () => {
                                     </label>
                                 </div>
                             </div>
-                            <div className="ml-2 pb-1">
+                            <div className="pb-1 ml-2">
                                 <div className="flex items-center space-x-2">
                                     <Checkbox id="lowToHigh" checked={priceFilters.lowToHigh} onCheckedChange={(e) => handlePriceChange('lowToHigh')}/>
                                     <label
@@ -290,7 +295,7 @@ const Page : FC = () => {
                     <AccordionItem value="item-3">
                         <AccordionTrigger>By Tag</AccordionTrigger>
                         <AccordionContent>
-                            <div className="ml-2 pb-1">
+                            <div className="pb-1 ml-2">
                                 <div className="flex items-center space-x-2">
                                     <Checkbox id="athletic" checked={tagFilters.athletic} onCheckedChange={(e) => handleTagChange('athletic')} />
                                     <label
@@ -301,7 +306,7 @@ const Page : FC = () => {
                                     </label>
                                 </div>
                             </div>
-                            <div className="ml-2 pb-1">
+                            <div className="pb-1 ml-2">
                                 <div className="flex items-center space-x-2">
                                     <Checkbox id="music" checked={tagFilters.music} onCheckedChange={(e) => handleTagChange('music')}/>
                                     <label
@@ -309,6 +314,39 @@ const Page : FC = () => {
                                         className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                                     >
                                         Music
+                                    </label>
+                                </div>
+                            </div>
+                            <div className="pb-1 ml-2">
+                                <div className="flex items-center space-x-2">
+                                    <Checkbox id="cooking" checked={tagFilters.cooking} onCheckedChange={(e) => handleTagChange('cooking')}/>
+                                    <label
+                                        htmlFor="terms2"
+                                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                    >
+                                        Cooking
+                                    </label>
+                                </div>
+                            </div>
+                            <div className="pb-1 ml-2">
+                                <div className="flex items-center space-x-2">
+                                    <Checkbox id="performingArt" checked={tagFilters.performingArt} onCheckedChange={(e) => handleTagChange('performingArt')}/>
+                                    <label
+                                        htmlFor="terms2"
+                                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                    >
+                                        Performing Arts
+                                    </label>
+                                </div>
+                            </div>
+                            <div className="pb-1 ml-2">
+                                <div className="flex items-center space-x-2">
+                                    <Checkbox id="visualArt" checked={tagFilters.visualArt} onCheckedChange={(e) => handleTagChange('visualArt')}/>
+                                    <label
+                                        htmlFor="terms2"
+                                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                    >
+                                        Visual Arts
                                     </label>
                                 </div>
                             </div>

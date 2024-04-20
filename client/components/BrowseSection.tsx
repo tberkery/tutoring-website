@@ -13,6 +13,9 @@ import { profile } from "console";
     sortByPriceHighToLow: boolean;
     filterAthleticTag: boolean;
     filterMusicTag: boolean;
+    filterCookingTag: boolean;
+    filterPerformingArtTag: boolean;
+    filterVisualArtTag: boolean;
   }
 
   interface ActivityPost {
@@ -39,7 +42,7 @@ import { profile } from "console";
     coursePostPicKey: string | null;
   }
 
-  const BrowseSection: React.FC<BrowseSectionProps> = ({ filterCourses, filterActivities, sortByPriceLowToHigh, sortByPriceHighToLow, filterAthleticTag, filterMusicTag }) => {
+  const BrowseSection: React.FC<BrowseSectionProps> = ({ filterCourses, filterActivities, sortByPriceLowToHigh, sortByPriceHighToLow, filterAthleticTag, filterMusicTag, filterCookingTag, filterPerformingArtTag, filterVisualArtTag }) => {
     const [posts, setPosts] = useState<any[]>([]); // Set the type to any[] since we're using mongoose models directly
 
     const fetchPosts = async () => {
@@ -61,11 +64,23 @@ import { profile } from "console";
         
         // Filter posts based on selected tag filters
         if (filterAthleticTag) {
-          sortedPosts = sortedPosts.filter((post) => post.tags?.some(tag => tag.toLowerCase() === 'athletic'));
+          sortedPosts = sortedPosts.filter((post) => post.tags?.some(tag => tag === 'Athletic'));
         }
 
         if (filterMusicTag) {
-          sortedPosts = sortedPosts.filter((post) => post.tags?.some(tag => tag.toLowerCase() === 'music'));
+          sortedPosts = sortedPosts.filter((post) => post.tags?.some(tag => tag === 'Music'));
+        }
+
+        if (filterCookingTag) {
+          sortedPosts = sortedPosts.filter((post) => post.tags?.some(tag => tag === 'Cooking'));
+        }
+
+        if (filterPerformingArtTag) {
+          sortedPosts = sortedPosts.filter((post) => post.tags?.some(tag => tag === 'Performing Art'));
+        }
+
+        if (filterVisualArtTag) {
+          sortedPosts = sortedPosts.filter((post) => post.tags?.some(tag => tag === 'Visual Art'));
         }
 
         if (sortByPriceHighToLow && !sortByPriceLowToHigh) {
@@ -85,12 +100,12 @@ import { profile } from "console";
 
     useEffect(() => {
       fetchPosts();
-    }, [filterCourses, filterActivities, sortByPriceLowToHigh, sortByPriceHighToLow, filterAthleticTag, filterMusicTag]); // Run this effect whenever filterCourses or filterActivities changes
+    }, [filterCourses, filterActivities, sortByPriceLowToHigh, sortByPriceHighToLow, filterAthleticTag, filterMusicTag, filterCookingTag, filterPerformingArtTag, filterVisualArtTag]); // Run this effect whenever filterCourses or filterActivities changes
   
   
     return (
-      <div className="container mx-auto px-6 py-8">
-        <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="container px-6 py-8 mx-auto">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           {posts.map((post) => (
             <PostCard key={post.id} post={post} />
           ))}

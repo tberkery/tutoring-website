@@ -4,6 +4,7 @@ const router = require('express').Router();
 const ActivityPostDaoClass = require('../data/ActivityPostDao');
 const ActivityPostDao = new ActivityPostDaoClass();
 
+const db = require('../model/Profile');
 
 interface PostReview {
   postId: string;
@@ -49,6 +50,77 @@ router.get("/findAllByUserId/:userId", async (req: any, res: any ) => {
   }
 });
 
+router.get("/views/:_id", async (req: any, res: any) => {
+  const { _id }: { _id: string } = req.params;
+  try {
+    const data = await ActivityPostDao.readViewsById(_id);
+    res.status(200).json({ data });
+  } catch (err) {
+    res.status(500).send("Server Error");
+  }
+});
+
+router.get("/demographics/:_id", async (req: any, res: any) => {
+  const { _id }: { _id: string} = req.params;
+  const { start }: { start: string} = req.query;
+  try {
+    const startProfile = await ActivityPostDao.readViewsById(_id);
+    if (!startProfile) {
+      res.status(500).send("Profile not found. Invalid ID");
+    }
+    let viewerIds: any[] = [];
+    try {
+      viewerIds = startProfile.views
+        .filter((view: { timestamp: string }) => new Date(view.timestamp) >= new Date(start))
+        .map((view: { viewerId: any; }) => view.viewerId)
+    }
+    catch(error) { // If no views, return empty dictionaries, not an error
+      const departments = {};
+      const affiliations = {};
+      const graduationYears = {};
+      res.status(200).json({ departments, affiliations, graduationYears });
+      return;
+    }
+    const filteredViewerIds = viewerIds.filter((id: { id: any; }) => id !== undefined)
+    const departments = await db.aggregate( [
+      {
+        $match: { _id: { $in: filteredViewerIds } }
+      },
+      {
+        $group: {
+            _id: "$department",
+            count: { $count:{} } 
+        }
+      }
+    ]).exec()
+    const affiliations = await db.aggregate( [
+      {
+        $match: { _id: { $in: filteredViewerIds } }
+      },
+      {
+        $group: {
+            _id: "$affiliation",
+            count: { $count:{} }
+        }
+      }
+    ]).exec()
+    const graduationYears = await db.aggregate( [
+      {
+        $match: { _id: { $in: filteredViewerIds } }
+      },
+      {
+        $group: {
+            _id: "$graduationYear",
+            count: { $count:{} }
+        }
+      }
+    ]).exec()
+    res.status(200).json({ departments, affiliations, graduationYears });
+  } catch (err) {
+    res.status(500).send("Server Error");
+  }
+})
+
 router.put("/:id", async (req: any, res: any) => {
     const id : number = req.params.id;
     const {userId, userFirstName, userLastName, activityTitle, activityDescription, activityPostPicKey, price, tags}: {userId: string, userFirstName: string, userLastName: string, activityTitle: string, activityDescription: string, activityPostPicKey: string, price: number, tags: string[]} = req.body;
@@ -62,6 +134,21 @@ router.put("/:id", async (req: any, res: any) => {
         console.log(err);
         res.status(500).send("Server Error");
     }
+});
+
+router.put("/views/:_id", async (req: any, res: any) => {
+  const { _id }: { _id: string } = req.params;
+  const { viewerId, timestamp, duration }: { viewerId: string, timestamp: string, duration: number } = req.body; // start_time should be a date/time. duration should be a number of seconds.
+  try {
+    const data = await ActivityPostDao.updateViews(_id, viewerId, timestamp, duration) 
+    if (!data) {
+      res.status(404).json({ msg: "Profile view update not made" });
+      return;
+    }
+    res.status(200).json({ data });
+  } catch (err) {
+    res.status(500).send("Server Error");
+  }
 });
 
 router.delete("/:id", async (req: any, res: any) => {

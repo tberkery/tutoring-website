@@ -3,6 +3,7 @@ export {}
 const mongoose = require('mongoose');
 const PostReview = require("../model/PostReview.ts");
 const PostReviewSchema = PostReview.schema;
+import ViewSchema = require("./Views");
 
 const ActivityPostSchema = new mongoose.Schema({
     userId: {
@@ -40,6 +41,10 @@ const ActivityPostSchema = new mongoose.Schema({
     reviews: {
       type: [PostReviewSchema],
       default: []
+    },
+    views: {
+        type: [ViewSchema],
+        default: []
     }
 });
 
