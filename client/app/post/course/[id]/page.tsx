@@ -19,6 +19,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useUser } from '@clerk/clerk-react';
 import { set } from "cypress/types/lodash";
 import ReviewCard from "@/components/ReviewCard";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { ChevronDown } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import PriceAnalytics from "@/components/PriceAnalytics";
 
 type coursePostType = {
@@ -43,6 +46,17 @@ type userType = {
   description? : string,
 }
 
+type Review = {
+  postId: string,
+  postName?: string,
+  postType?: string,
+  posterId: string,
+  reviewerId: string,
+  title?: string,
+  reviewDescription: string,
+  rating: number,
+}
+
 const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
 	const api : string = process.env.NEXT_PUBLIC_BACKEND_URL;
   const postId = params.id;
@@ -60,15 +74,21 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
   const [isAnonymous, setIsAnonymous] = useState(false);
   const { isLoaded, isSignedIn, user } = useUser();
 
-  const [reviews, setReviews] = useState([]);
+  const [reviews, setReviews] = useState<Review[]>([]);
   const [averageRating, setAverageRating] = useState(0);
   const [reviewCount, setReviewCount] = useState(0);
   const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(false);
 
+  const reviewSortMethods = [
+    "Highest Rating",
+    "Lowest Rating"
+  ]
+  const [reviewSort, setReviewSort] = useState(reviewSortMethods[0]);
+
   const loadReviews = async () => {
     try {
         const response = await axios.get(`${api}/postReviews/getByPostId/${postId}`);
-        const fetchedReviews = response.data.reviews;
+        let fetchedReviews = response.data.reviews;
 
             let sumOfRatings = 0;
             const numberOfReviews = fetchedReviews.length;
@@ -83,8 +103,10 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
             fetchedReviews.forEach((review) => {
               // @ts-ignore
               review.postName = post.courseName;
+              console.log(post.courseName);
               review.postType = 'course';
             });
+            fetchedReviews = sortReviews(fetchedReviews);
             setReviews(fetchedReviews); // Set reviews state at the end
         } catch (error) {
         console.error('Error fetching reviews:', error);
@@ -126,6 +148,18 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
     }
     setLoadedPost(true);
   }
+
+  const sortReviews = (unsorted : Review[]) => {
+    let newReviews = unsorted.slice();
+    if (reviewSort === "Lowest Rating") {
+      newReviews.sort((a, b) => a.rating - b.rating);
+    } else if (reviewSort === "Highest Rating") {
+      newReviews.sort((a, b) => b.rating - a.rating);
+    }
+    return newReviews;
+  }
+
+  useEffect(() => { setReviews(sortReviews(reviews)) }, [reviewSort]);
 
   useEffect(() => { loadOldPost() }, [isLoaded, isSignedIn, user]);
 
@@ -208,16 +242,54 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
         </div>
       </div>
       <p className="py-8">{post.description}</p>
-      <h1 className="py-2 mt-0 mb-1 font-sans text-3xl font-extrabold leading-none uppercase text-slate-800">Reviews</h1>
+      <div className="flex flex-row gap-x-4 mb-4">
+        { reviews.length === 0 ? 
+          <h1 className="text-xl font-bold">No Reviews</h1>
+        :
+          <h1 className="font-sans font-extrabold uppercase text-3xl leading-none mt-0 mb-1 text-slate-800 py-2">Reviews</h1>
+        }
+        { reviews.length === 0 ? "" :
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              <div 
+                className='px-4 py-2 text-md text-white font-bold bg-custom-blue
+                hover:bg-blue-900 rounded-lg flex'
+              >
+                {reviewSort} <ChevronDown/>
+              </div>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent 
+              className='bg-blue-300 rounded-xl px-2 py-1.5 border mt-1'
+            >
+              {
+                reviewSortMethods.map((method) => {
+                  return (
+                    <DropdownMenuItem 
+                      key={`sort-${method}`}
+                      className='p-0 mb-1 hover:cursor-pointer text-lg font-bold
+                      rounded-xl overflow-hidden'
+                      onClick={ () => setReviewSort(method) }
+                    >
+                      <div className='hover:bg-sky-100 px-3 py-1 w-full'>
+                        {method}
+                      </div>
+                    </DropdownMenuItem>
+                  );
+                })
+              }
+            </DropdownMenuContent>
+          </DropdownMenu>
+        }
+      </div>
       <div className="flex flex-col justify-center max-w-3xl">
-          { reviews.map((review, index) => (
-            <ReviewCard 
-              key={`review-${index}`}
-              review={review}
-              className="mb-4 bg-white rounded-lg shadow-md"
-            />
-          )) }
-        </div>
+        { reviews.map((review, index) => (
+          <ReviewCard 
+            key={`review-${index}`}
+            review={review}
+            className="mb-4 bg-white rounded-lg shadow-md"
+          />
+        )) }
+      </div>
     </div>
       <div className="w-1/3 flex flex-col items-center pr-20 my-10">
         <div className="content px-20">

@@ -10,6 +10,8 @@ import RatingStars from "@/components/RatingStars";
 import ReviewCard from "@/components/ReviewCard";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { ChevronDown } from "lucide-react";
 import CompareAvailability from "@/components/CompareAvailability";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
@@ -85,6 +87,24 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
   const [visitorId, setVisitorId] = useState('');
   const [availability, setAvailability] = useState(new Array(336).fill(0));
 
+  const reviewSortMethods = [
+    "Highest Rating",
+    "Lowest Rating"
+  ]
+  const [reviewSort, setReviewSort] = useState(reviewSortMethods[0]);
+
+  const sortReviews = (unsorted : Review[]) => {
+    let newReviews = unsorted.slice();
+    if (reviewSort === "Lowest Rating") {
+      newReviews.sort((a, b) => a.rating - b.rating);
+    } else if (reviewSort === "Highest Rating") {
+      newReviews.sort((a, b) => b.rating - a.rating);
+    }
+    return newReviews;
+  }
+
+  useEffect(() => { setReviews(sortReviews(reviews)) }, [reviewSort]);
+
   const timeSpentRef = useRef<Number>();
   useEffect(() => {
     timeSpentRef.current = timeSpent;
@@ -136,6 +156,7 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
             reviews.push(review);
           })
         })
+        reviews = sortReviews(reviews);
         setReviews(reviews);
       }
       if (userInfo.data.data.profilePicKey) {
@@ -232,24 +253,61 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
     if (activeSection === "Posts") {
       return (
         <div 
-              className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2
-              lg:grid-cols-3 gap-4"
-            >
-              { posts.map((post) => (
-                <PostCard key={post._id} post={post} />
-              )) }
-            </div>
+          className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2
+          lg:grid-cols-3 gap-4"
+        >
+          { posts.map((post) => (
+            <PostCard key={post._id} post={post} />
+          )) }
+        </div>
       )
     } else if (activeSection === "Reviews") {
         return (
-          <div className="flex flex-col justify-center max-w-3xl w-full">
-            { reviews.map((review) => (
-              <ReviewCard 
-                review={review}
-                className="mb-4 bg-white md:rounded-lg md:shadow-md"
-              />
-            )) }
-          </div>
+          reviews.length === 0 ?
+            <h3 className="text-lg">No reviews on this profile</h3>
+          :
+            <div className="flex w-full items-start justify-center">
+              <div className="mt-4 mr-8 pt-4 pr-8 min-w-52 h-full border-r border-black"> 
+                <DropdownMenu>
+                  <DropdownMenuTrigger>
+                    <div 
+                      className='px-4 py-2 text-md text-white font-bold bg-custom-blue
+                      hover:bg-blue-900 rounded-lg flex'
+                    >
+                      {reviewSort} <ChevronDown/>
+                    </div>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent 
+                    className='bg-blue-300 rounded-xl px-2 py-1.5 border mt-1'
+                  >
+                    {
+                      reviewSortMethods.map((method) => {
+                        return (
+                          <DropdownMenuItem 
+                            key={`sort-${method}`}
+                            className='p-0 mb-1 hover:cursor-pointer text-lg font-bold
+                            rounded-xl overflow-hidden'
+                            onClick={ () => setReviewSort(method) }
+                          >
+                            <div className='hover:bg-sky-100 px-3 py-1 w-full'>
+                              {method}
+                            </div>
+                          </DropdownMenuItem>
+                        );
+                      })
+                    }
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+              <div className="mt-4 flex flex-col justify-center max-w-3xl w-full">
+                { reviews.map((review) => (
+                  <ReviewCard 
+                    review={review}
+                    className="mb-4 bg-white rounded-lg shadow-md"
+                  />
+                )) }
+              </div>
+            </div>
         )
     } else if (activeSection === "Availability") {
         return (

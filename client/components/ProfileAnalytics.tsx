@@ -1,6 +1,6 @@
 "use client";
 import axios from 'axios';
-import { Square, Star } from 'lucide-react';
+import { ChevronDown, Square, Star } from 'lucide-react';
 import React, { FC, useEffect, useState } from 'react';
 import { CartesianGrid, Cell, Line, LineChart, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuItem } from './ui/dropdown-menu';
@@ -495,7 +495,7 @@ const ProfileAnalytics : FC<props> = (props) => {
               className='text-lg font-bold bg-custom-blue hover:bg-blue-900
               rounded-lg'
             >
-              {timeScale}
+              {timeScale} <ChevronDown/>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent 

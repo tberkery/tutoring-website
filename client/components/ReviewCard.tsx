@@ -45,9 +45,9 @@ const ReviewCard : FC<props> = (props) => {
     return element.scrollHeight > element.clientHeight;
   }
 
-  useEffect(() => { fetchData() }, []);
+  useEffect(() => { fetchData() }, [review]);
 
-  useEffect(() => { setIsClamped(isTextClamped(textRef.current)) }, [])
+  useEffect(() => { setIsClamped(isTextClamped(textRef.current)) }, [review])
 
   return (
     <div className={`${props.className} px-4 py-3`}>
