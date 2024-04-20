@@ -276,6 +276,15 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
           </DropdownMenu>
         }
       </div>
+      <div className="flex flex-col justify-center max-w-3xl">
+        { reviews.map((review, index) => (
+          <ReviewCard 
+            key={`review-${index}`}
+            review={review}
+            className="mb-4 bg-white rounded-lg shadow-md"
+          />
+        )) }
+      </div>
     </div>
       <div className="w-full lg:w-1/3 flex flex-col items-center px-4 lg:my-10">
         <div className="w-full px-4">

@@ -282,14 +282,14 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
         }
       </div>
       <div className="flex flex-col justify-center max-w-3xl">
-          { reviews.map((review, index) => (
-            <ReviewCard 
-              key={`review-${index}`}
-              review={review}
-              className="mb-4 bg-white rounded-lg shadow-md"
-            />
-          )) }
-        </div>
+        { reviews.map((review, index) => (
+          <ReviewCard 
+            key={`review-${index}`}
+            review={review}
+            className="mb-4 bg-white rounded-lg shadow-md"
+          />
+        )) }
+      </div>
     </div>
       <div className="w-1/3 flex flex-col items-center pr-20 my-10">
         <div className="content px-20">
