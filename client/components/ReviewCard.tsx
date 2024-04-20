@@ -47,7 +47,7 @@ const ReviewCard : FC<props> = (props) => {
 
   useEffect(() => { fetchData() }, [review]);
 
-  useEffect(() => { setIsClamped(isTextClamped(textRef.current)) }, [])
+  useEffect(() => { setIsClamped(isTextClamped(textRef.current)) }, [review])
 
   return (
     <div className={`${props.className} px-4 py-3`}>
