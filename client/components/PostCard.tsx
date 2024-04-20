@@ -77,6 +77,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onUpdateBookmark }) => {
     const isCoursePost = post.courseName ? true : false;
     console.log("Toggling bookmark!")
     onUpdateBookmark(post._id, isCoursePost); // Trigger callback with postId and new bookmark status
+    console.log("Front-end process for updating bookmark is complete")
   };
 
   return (<> 
