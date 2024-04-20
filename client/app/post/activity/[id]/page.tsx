@@ -80,7 +80,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
   const loadReviews = async () => {
     try {
         const response = await axios.get(`${api}/postReviews/getByPostId/${postId}`);
-        const fetchedReviews = response.data.reviews;
+        let fetchedReviews = response.data.reviews;
 
             let sumOfRatings = 0;
             const numberOfReviews = fetchedReviews.length;
@@ -100,7 +100,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
               review.postName = post.activityTitle;
               review.postType = 'activity';
             });
-            fetchedReviews.sort((a, b) => b.rating - a.rating);
+            fetchedReviews = sortReviews(fetchedReviews);
             setReviews(fetchedReviews); // Set reviews state at the end
         } catch (error) {
         console.error('Error fetching reviews:', error);
@@ -139,15 +139,17 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
     setLoadedPost(true);
   }
 
-  useEffect(() => {
-    let newReviews = reviews.slice();
+  const sortReviews = (unsorted : review[]) => {
+    let newReviews = unsorted.slice();
     if (reviewSort === "Lowest Rating") {
       newReviews.sort((a, b) => a.rating - b.rating);
     } else if (reviewSort === "Highest Rating") {
       newReviews.sort((a, b) => b.rating - a.rating);
     }
-    setReviews(newReviews);
-  }, [reviewSort]);
+    return newReviews;
+  }
+
+  useEffect(() => { setReviews(sortReviews(reviews)) }, [reviewSort]);
 
   useEffect(() => { loadOldPost() }, [isLoaded, isSignedIn, user]);
 
