@@ -203,9 +203,9 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
 
   return <>
     <Navbar/>
-    <div className="flex min-h-screen flex-col lg:flex-row">
-      <div className="w-full lg:w-2/3 flex flex-col px-4 my-14 lg:border-r lg:border-black">
-        <div className="intro border-b border-black pb-10">
+    <div className="flex flex-col min-h-screen lg:flex-row">
+      <div className="flex flex-col w-full px-4 lg:w-2/3 my-14 lg:border-r lg:border-black">
+        <div className="pb-10 border-b border-black intro">
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem>
@@ -282,17 +282,18 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
         }
       </div>
       <div className="flex flex-col justify-center max-w-3xl">
-        { reviews.map((review, index) => (
-          <ReviewCard 
-            key={`review-${index}`}
-            review={review}
-            className="mb-4 bg-white rounded-lg shadow-md"
-          />
-        )) }
-      </div>
+          { reviews.map((review, index) => (
+            <ReviewCard 
+              key={`review-${index}`}
+              review={review}
+              loggedInUserId={reviewerId}
+              className="mb-4 bg-white rounded-lg shadow-md"
+            />
+          )) }
+        </div>
     </div>
-      <div className="w-1/3 flex flex-col items-center pr-20 my-10">
-        <div className="content px-20">
+      <div className="flex flex-col items-center w-1/3 pr-20 my-10">
+        <div className="px-20 content">
           <div>
             <PriceAnalytics postId={postId}/>
           </div>
