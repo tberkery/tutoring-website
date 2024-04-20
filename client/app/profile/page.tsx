@@ -185,7 +185,7 @@ const Page : FC = () => {
           <p className="text-gray-700 text-base">{profileData.description}</p>
         </div>
         <div className="flex-none flex flex-col items-center">
-          <img className="w-48 h-48 snap-center rounded-md" src={imgUrl} alt={`${profileData.firstName}`} />
+          <img className="w-48 h-48 object-cover rounded-md" src={imgUrl} alt={`${profileData.firstName}`} />
           { reviews.length > 0 ?
             <RatingStars rating={reviewAvg} starSize={26} numReviews={reviews.length} className="mt-2"/>
           :
