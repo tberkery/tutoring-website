@@ -8,7 +8,7 @@ const mg = require("mongoose");
 const URI = process.env.ATLAS_URI_TEST
 
 afterAll(async () => {
-    await mg.connection.close();
+    await mg.disconnect();
 });
 
 test('test create() with all fields', async ()=> {
