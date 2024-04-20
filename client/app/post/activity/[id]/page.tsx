@@ -58,6 +58,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
   const [poster, setPoster] = useState<userType>({});
   const [imgUrl, setImgUrl] = useState("/jhulogo.jpeg");
   const [loadedPost, setLoadedPost] = useState(false);
+  const [profilePic, setProfilePic] = useState("/defaultimg.jpeg");
 
   const [posterId, setPosterId] = useState('');
   const [reviewerId, setReviewerId] = useState('');
@@ -111,7 +112,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
     if (postId && post.activityTitle) {
         loadReviews();
     }
-  }, [postId, post, averageRating]);
+  }, [postId, post]);
 
 
   const loadOldPost = async () => {
@@ -135,6 +136,10 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
       } catch (e) {
         console.error(e);
       }
+    }
+    if (profile.data.data.profilePicKey) {
+      const picUrl = await axios.get(`${api}/profilePics/get/${profile.data.data.profilePicKey}`);
+      setProfilePic(picUrl.data.imageUrl);
     }
     setLoadedPost(true);
   }
@@ -177,8 +182,8 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
         rating,
         isAnonymous: isAnonymous
       });
-      alert(`Your review has been created!`);
       console.log('Review submitted:', response.data);
+      setReviews(prevReviews => [...prevReviews, response.data.review]);
       setRating(0);
       setComment('');
       setIsAnonymous(false);
@@ -193,8 +198,8 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
 
   return <>
     <Navbar/>
-    <div className="flex min-h-screen">
-      <div className="w-2/3 flex flex-col px-20 my-14 border-r border-black">
+    <div className="flex min-h-screen flex-col lg:flex-row">
+      <div className="w-full lg:w-2/3 flex flex-col px-4 my-14 lg:border-r lg:border-black">
         <div className="intro border-b border-black pb-10">
           <Breadcrumb>
             <BreadcrumbList>
@@ -215,7 +220,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
           <h3 className="w-full text-xs tracking-wide leading-tight capitalize font-medium mb-3 text-slate-700">${post.price} / hour</h3>
           <div className="flex items-center justify-between space-x-2">
           <img
-            src="/defaultimg.jpeg"
+            src={profilePic}
             alt={`Avatar`}
             className="w-10 h-10 rounded-full"
           />
@@ -272,22 +277,22 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
         }
       </div>
     </div>
-      <div className="w-1/3 flex flex-col items-center pr-20 my-10">
-        <div className="content px-20">
-          <div className="w-[300px] info-box max-w p-4 border-2 border-black mt-10 mb-6" style={{
-              boxShadow: '5px 5px 0px rgba(0, 0, 0, 10)',
-            }}>
-            <h1 className="bg-blue-300 text-black text-lg font-extrabold uppercase p-1 mb-2 inline-block font-sans">
-              About {poster.firstName} {poster.lastName}
-            </h1>
-            <p className="text-black mb-4 line-clamp-4 overflow-ellipsis">
-              {poster.description}
-            </p>
-            <Link href={`/profile/` + post.userId}  className="bg-black text-white uppercase text-sm px-4 py-2 mt-4">
-              Learn More
-            </Link>
+      <div className="w-full lg:w-1/3 flex flex-col items-center px-4 lg:my-10">
+        <div className="w-full px-4">
+          <div className="info-box p-4 border-2 border-black lg:mt-10 mb-6 md:w-2/3" style={{
+            boxShadow: '5px 5px 0px rgba(0, 0, 0, 10)',
+          }}>
+          <h1 className="bg-blue-300 text-black text-lg font-extrabold uppercase p-1 mb-2 inline-block font-sans">
+            About {poster.firstName} {poster.lastName}
+          </h1>
+          <p className="text-black mb-4 line-clamp-4 overflow-ellipsis">
+            {poster.description}
+          </p>
+          <Link href={`/profile/` + post.userId}  className="bg-black text-white uppercase text-sm px-4 py-2 mt-4">
+            Learn More
+          </Link>
           </div>
-          <div className="review-content">
+          <div className="review-content w-full">
             <h1 className="font-sans font-extrabold uppercase text-3xl leading-none mt-0 mb-1 text-slate-800 pt-2 self-start">
               leave a review
             </h1>
@@ -299,7 +304,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
             <h2 className="font-sans font-extrabold uppercase text-l leading-none mt-2 mb-0 text-slate-700 pt-2 self-start">Comment *</h2>
             <Textarea className="resize-none my-2 rounded" onChange={handleCommentChange}/>
             <div className="flex items-center space-x-2">
-              <Checkbox id="terms" checked={isAnonymous} onChange={handleCheckedChange}/>
+              <Checkbox id="terms" checked={isAnonymous} onCheckedChange={handleCheckedChange}/>
               <label
                 htmlFor="terms"
                 className="text-sm font-medium leading-none capitalize peer-disabled:cursor-not-allowed peer-disabled:opacity-70"

@@ -13,6 +13,7 @@ import ReviewCard from "@/components/ReviewCard";
 import ProfileAnalytics from "@/components/ProfileAnalytics";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { ChevronDown } from "lucide-react";
+import Availability from "@/components/Availability";
 
 interface Post {
   _id: string;
@@ -213,9 +214,16 @@ const Page : FC = () => {
     } else if (activeSection === "Analytics") {
       if (!profileData || !profileData._id) {
         return <></>
-      }
+      } 
       return <ProfileAnalytics profileId={profileData._id} bestPosts={bestPosts}/>
-    } else {
+    } else if (activeSection === "Availability") {
+        return (
+          <div className="flex flex-col justify-center max-w-3xl w-full">
+              <Availability />
+          </div>
+        )
+    }
+    else {
       return <></>
     }
   }
@@ -233,7 +241,7 @@ const Page : FC = () => {
           <p className="text-gray-700 text-base">{profileData.description}</p>
         </div>
         <div className="flex-none flex flex-col items-center">
-          <img className="w-48 h-48 snap-center rounded-md" src={imgUrl} alt={`${profileData.firstName}`} />
+          <img className="w-48 h-48 object-cover rounded-md" src={imgUrl} alt={`${profileData.firstName}`} />
           { reviews.length > 0 ?
             <RatingStars rating={reviewAvg} starSize={26} numReviews={reviews.length} className="mt-2"/>
           :
@@ -255,7 +263,7 @@ const Page : FC = () => {
       </div>
       <div className="w-full bg-blue-300 relative">
         <div className="ml-8 flex items-end">
-          { ["Posts", "Reviews", "Analytics"].map((value, index) => {
+          { ["Posts", "Reviews", "Analytics", "Availability"].map((value, index) => {
             return (
               <button 
                 key={`tab-${index}`}

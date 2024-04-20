@@ -23,4 +23,6 @@ router.use('/allPosts', require('./allPosts.ts'))
 
 router.use('/postReviews', require('./postReviews.ts'))
 
+router.use('/reports', require('./reports.ts'))
+
 module.exports = router;

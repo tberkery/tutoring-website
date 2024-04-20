@@ -118,6 +118,24 @@ router.delete('/:reviewId', async (req: any, res: any) => {
             return res.status(404).json({ error: 'Review not found' });
         }
 
+        // Fetch the post associated with the review
+        let post = await ActivityPostDao.readOne(review.postId);
+        if (!post) {
+            // If the activity post is not found, try fetching the course post
+            post = await CoursePostDao.readOne(review.postId);
+            if (!post) {
+                // If neither activity nor course post is found, return a 404 error
+                return res.status(404).json({ error: 'Post not found' });
+            } else {
+                // Remove the review from the post's reviews array
+                post.reviews = post.reviews.filter((review: { _id: { toString: () => any; }; }) => review._id.toString() !== reviewId);
+                post = await CoursePostDao.update(post._id, post.userId, post.userFirstName, post.userLastName, post.courseName, post.takenAtHopkins, { reviews: post.reviews });
+            }
+        } else {
+            post.reviews = post.reviews.filter((review: { _id: { toString: () => any; }; }) => review._id.toString() !== reviewId);
+            post = await ActivityPostDao.update(post._id, post.userId, post.userFirstName, post.userLastName, post.activityTitle, { reviews: post.reviews });
+        }
+
         // Delete the review
         const deletedReview = await PostReviewDao.delete(reviewId);
         res.json({ message: 'Review deleted successfully', deletedReview });

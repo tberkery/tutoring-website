@@ -12,6 +12,7 @@ import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { ChevronDown } from "lucide-react";
+import CompareAvailability from "@/components/CompareAvailability";
 
 interface Profile {
   affiliation: string;
@@ -83,6 +84,7 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
   const [timeSpent, setTimeSpent] = useState(0);
   const [onPage, setOnPage] = useState(true);
   const [visitorId, setVisitorId] = useState('');
+  const [availability, setAvailability] = useState(new Array(336).fill(0));
 
   const reviewSortMethods = [
     "Highest Rating",
@@ -115,81 +117,27 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
   useEffect(() => {
     let ratingTotal = 0;
     reviews.forEach((review) => ratingTotal += review.rating);
-    console.log(ratingTotal);
     setReviewAvg(ratingTotal / reviews.length);
   }, [reviews])
   
   const { isLoaded, isSignedIn, user } = useUser();
   const router = useRouter();
 
-  const availabilityToInterval = (availability: number[]) => {
-    const sortedArray = availability.sort((a, b) => a - b);
-    let start = sortedArray[0];
-    let end = sortedArray[0];
-    const intervals = [];
-
-    for (let i = 1; i < sortedArray.length; i++) {
-        if (sortedArray[i] === end + 1) {
-            end = sortedArray[i];
-        } else {
-            intervals.push([start, end]);
-            start = sortedArray[i];
-            end = sortedArray[i];
-        }
-    }
-    intervals.push([start, end]);
-    return intervals;
-  }
-
-  function formatStartTime(t) {
-    const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-
-    const dayIndex = Math.floor((t- 1) / 96);
-    const timeIndex = ((t - 1) % 96) * 15; 
-
-    const startHours = Math.floor(timeIndex / 60).toString().padStart(2, '0');
-    const startMinutes = (timeIndex % 60).toString().padStart(2, '0');
-
-    const endHours = Math.floor((timeIndex + 15) / 60).toString().padStart(2, '0');
-    const endMinutes = ((timeIndex + 15) % 60).toString().padStart(2, '0');
-
-    const formattedString = `${days[dayIndex]} ${startHours}:${startMinutes}`;
-
-    return formattedString;
-}
-
-function formatEndTime(t) {
-    const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-
-    const dayIndex = Math.floor((t- 1) / 96);
-    const timeIndex = ((t - 1) % 96) * 15; 
-
-    const startHours = Math.floor(timeIndex / 60).toString().padStart(2, '0');
-    const startMinutes = (timeIndex % 60).toString().padStart(2, '0');
-
-    const endHours = Math.floor((timeIndex + 15) / 60).toString().padStart(2, '0');
-    const endMinutes = ((timeIndex + 15) % 60).toString().padStart(2, '0');
-
-    const formattedString = `${endHours}:${endMinutes}`;
-
-    return formattedString;
-}
   const compareAvail = async () => {
-    const userInfo = await axios.get(`${api}/profiles/getByEmail/${user.primaryEmailAddress.toString()}`);
-    const bothAvailable = profileData.availability.filter(value => userInfo.data.data[0].availability.includes(value));
+    try {
+      const userInfo = await axios.get(`${api}/profiles/${params.id}`);
+      const profileAvail = userInfo.data.data.availability;
+      const pa = new Array(336).fill(0);
+      profileAvail.forEach(index => pa[index] = 1);
+      setAvailability(pa);
+    } catch (error) {
+      console.error('Failed to fetch availability:', error);
+    }
+  };
 
-    //overlapping intervals!!
-    const intervals = availabilityToInterval(bothAvailable);
-
-    let result = "";
-    intervals.forEach((interval) => {
-      const from = formatStartTime(interval[0]);
-      const to = formatEndTime(interval[1]);
-      result +=  from + " - " + to + '\n';
-    })
-    window.alert('Ovelapping times:' + result);
-
-  }
+  useEffect(() => {
+    compareAvail();
+  }, []);
 
   const fetchData = async () => {
     try {
@@ -217,7 +165,6 @@ function formatEndTime(t) {
       const profileId = userInfo.data.data._id;
       const reviewEndpoint = `${api}/postReviews/getByProfileId/${profileId}`;
       const reviewResponse = await axios.get(reviewEndpoint);
-      console.log(reviewResponse);
     } catch (error) {
       console.error('Error fetching posts', error);
     } finally {
@@ -242,11 +189,9 @@ function formatEndTime(t) {
   }
 
   const updateProfileViewsAsync = async () => {
-    console.log('a');
     if (visitorIdRef.current === '') {
       return;
     }
-    console.log('b');
     const endpoint = `${api}/profiles/views/${params.id}`;
     const body = { 
       viewerId: visitorIdRef.current,
@@ -258,11 +203,9 @@ function formatEndTime(t) {
   }
 
   const updateProfileViews = () => {
-    console.log('a');
     if (visitorIdRef.current === '') {
       return;
     }
-    console.log('b');
     const endpoint = `${api}/profiles/views/${params.id}`;
     const body = { 
       viewerId: visitorIdRef.current,
@@ -272,6 +215,11 @@ function formatEndTime(t) {
     axios.put(endpoint, body);
     return;
   }
+
+  const handleClickReportUser = () => {
+    router.push(`/profile/report/${params.id}`);
+  }
+
 
   useEffect(() => { getVisitor() }, [isLoaded, isSignedIn, user]);
 
@@ -300,6 +248,75 @@ function formatEndTime(t) {
 
   if (loading) return ( <> <Loader /> </>);
 
+  const getTabSection = () => {
+    if (activeSection === "Posts") {
+      return (
+        <div 
+          className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2
+          lg:grid-cols-3 gap-4"
+        >
+          { posts.map((post) => (
+            <PostCard key={post._id} post={post} />
+          )) }
+        </div>
+      )
+    } else if (activeSection === "Reviews") {
+        return (
+          reviews.length === 0 ?
+            <h3 className="text-lg">No reviews on this profile</h3>
+          :
+            <div className="flex w-full items-start justify-center">
+              <div className="mt-4 mr-8 pt-4 pr-8 min-w-52 h-full border-r border-black"> 
+                <DropdownMenu>
+                  <DropdownMenuTrigger>
+                    <div 
+                      className='px-4 py-2 text-md text-white font-bold bg-custom-blue
+                      hover:bg-blue-900 rounded-lg flex'
+                    >
+                      {reviewSort} <ChevronDown/>
+                    </div>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent 
+                    className='bg-blue-300 rounded-xl px-2 py-1.5 border mt-1'
+                  >
+                    {
+                      reviewSortMethods.map((method) => {
+                        return (
+                          <DropdownMenuItem 
+                            key={`sort-${method}`}
+                            className='p-0 mb-1 hover:cursor-pointer text-lg font-bold
+                            rounded-xl overflow-hidden'
+                            onClick={ () => setReviewSort(method) }
+                          >
+                            <div className='hover:bg-sky-100 px-3 py-1 w-full'>
+                              {method}
+                            </div>
+                          </DropdownMenuItem>
+                        );
+                      })
+                    }
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+              <div className="mt-4 flex flex-col justify-center max-w-3xl w-full">
+                { reviews.map((review) => (
+                  <ReviewCard 
+                    review={review}
+                    className="mb-4 bg-white rounded-lg shadow-md"
+                  />
+                )) }
+              </div>
+            </div>
+        )
+    } else if (activeSection === "Availability") {
+        return (
+          <div className="flex flex-col justify-center max-w-3xl w-full">
+              <CompareAvailability availability={availability} />
+          </div>
+        )
+    }
+  }
+
   return (
     <>
       <Navbar />
@@ -318,15 +335,20 @@ function formatEndTime(t) {
             <></>
           }
           <div className="flex mt-2 space-x-4">
-              <button className="bg-custom-blue hover:bg-blue-900 text-white font-bold py-2 px-4 rounded-md" onClick={() => compareAvail()}>
+            <button className="bg-custom-blue hover:bg-blue-900 text-white font-bold py-2 px-4 rounded-md" onClick={() => compareAvail()}>
                 Compare Availability
-              </button>
+            </button>
+            
+            <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-md" onClick={() => handleClickReportUser()}>
+                Report this user
+            </button>
           </div>
+
         </div>
       </div>
       <div className="w-full bg-blue-300 relative">
         <div className="ml-8 flex items-end">
-          { ["Posts", "Reviews"].map((value, index) => {
+          { ["Posts", "Reviews", "Availability"].map((value, index) => {
             return (
               <button 
                 key={index}
@@ -349,63 +371,7 @@ function formatEndTime(t) {
           className="relative z-10 border-t border-black bg-pageBg px-6 py-8
           flex justify-center"
         >
-          { activeSection === "Posts" ?
-            <div 
-              className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2
-              lg:grid-cols-3 gap-4"
-            >
-              { posts.map((post) => (
-                <PostCard key={post._id} post={post} />
-              )) }
-            </div>
-          :
-            ( reviews.length === 0 ? 
-              <h3 className="mt-8 text-xl">This user has no reviews</h3>
-            :
-              <div className="flex w-full items-start justify-center">
-                <div className="mt-4 mr-8 pt-4 pr-8 min-w-52 h-full border-r border-black"> 
-                  <DropdownMenu>
-                    <DropdownMenuTrigger>
-                      <div 
-                        className='px-4 py-2 text-md text-white font-bold bg-custom-blue
-                        hover:bg-blue-900 rounded-lg flex'
-                      >
-                        {reviewSort} <ChevronDown/>
-                      </div>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent 
-                      className='bg-blue-300 rounded-xl px-2 py-1.5 border mt-1'
-                    >
-                      {
-                        reviewSortMethods.map((method) => {
-                          return (
-                            <DropdownMenuItem 
-                              key={`sort-${method}`}
-                              className='p-0 mb-1 hover:cursor-pointer text-lg font-bold
-                              rounded-xl overflow-hidden'
-                              onClick={ () => setReviewSort(method) }
-                            >
-                              <div className='hover:bg-sky-100 px-3 py-1 w-full'>
-                                {method}
-                              </div>
-                            </DropdownMenuItem>
-                          );
-                        })
-                      }
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-                <div className="mt-4 flex flex-col justify-center max-w-3xl w-full">
-                  { reviews.map((review) => (
-                    <ReviewCard 
-                      review={review}
-                      className="mb-4 bg-white rounded-lg shadow-md"
-                    />
-                  )) }
-                </div>
-              </div>
-            )
-          }
+          { getTabSection() }
         </div>
       </div>
     </>

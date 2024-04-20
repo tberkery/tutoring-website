@@ -59,7 +59,10 @@ router.post('/upload/:objectID', upload.single('profilePicture'), async (req: Re
       // Update the user document in MongoDB with the profile picture key
       await Profiles.findByIdAndUpdate(objectID, { profilePicKey: key });
 
-      res.status(200).json({ message: 'Profile picture uploaded successfully'});
+      res.status(200).json({ 
+        message: 'Profile picture uploaded successfully',
+        key: key,
+      });
     }
     
   } catch (err) {

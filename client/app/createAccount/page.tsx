@@ -118,12 +118,14 @@ const Page : FC = () => {
 			}
 			const uri = `${api}/profiles`;
 			const response = (await axios.post(uri, body)).data;
-			// if (photoFile !== null) {
-			// 	const formData = new FormData();
-			// 	formData.append("profilePicture", photoFile);
-			// 	const photoUri = `${api}/profilePics/upload/${response.data._id}`;
-			// 	const r2 = await axios.post(photoUri, formData);
-			// }
+			if (photoFile !== null) {
+				const formData = new FormData();
+				formData.append("profilePicture", photoFile);
+				const endpoint = `${api}/profilePics/upload/${response.data._id}`;
+				await axios.post(endpoint, formData);
+				// clerk profile image
+				user.setProfileImage({file: photoFile});
+			}
 			// reigster the new user to the SendBird app for the chat
 			const sendBirdUri = `https://api-${APP_ID}.sendbird.com/v3/users`
 			console.log('uri: ', sendBirdUri);
@@ -141,7 +143,7 @@ const Page : FC = () => {
 				"user_id" : jhed_id,
 				"nickname" : `${firstName} ${lastName}`,
 				"profile_url": "",
-				"profile_file": ""
+				"profile_file": photoFile
 			}
 			console.log('sending to sendbird!\n\n\n\n')
 			console.log(sendBirdBody);

@@ -36,6 +36,11 @@ export class ProfileDao {
     return data;
   }
 
+  async readBookmarksById(_id: string) {
+    const data = await Profile.findById(_id).lean().select(["courseBookmarks", "activityBookmarks"]);
+    return data;
+  }
+
   async readByEmail(email:string) {
     const data = await Profile.find({email:email});
     return data;
@@ -95,10 +100,29 @@ export class ProfileDao {
     return data;
   }
 
+
+  async updateBookmarks(_id: String, bookmarkId: string, isCourse: boolean) {
+    if (isCourse) {
+      const data = await Profile.findByIdAndUpdate(_id, 
+        {$push: {"courseBookmarks": bookmarkId}},
+        {new: true})
+      return data;
+    } else {
+      const data = await Profile.findByIdAndUpdate(_id, 
+        {$push: {"activityBookmarks": bookmarkId}},
+        {new: true})
+      return data;
+    }
+  }
+
   async updateAvailability(_id: String, availability: Number[]) {
-    const data = await Profile.findByIdAndUpdate(_id,
-      { $set: { availability: availability } },
-      { new: true })
+    console.log('in dao for updating avail!!!!')
+    console.log('availability: ', availability);
+    const data = await Profile.findByIdAndUpdate(_id, 
+      {availability : availability}, 
+      {new: true}
+    );
+    console.log('about to return the data!!')
     return data
   }
 
@@ -107,6 +131,20 @@ export class ProfileDao {
       { $push: { views: { viewerId: viewerId, timestamp: timestamp, durationInSeconds: duration } } },
       { new: true })
     return data
+  }
+  
+  async deleteBookmark(_id: String, bookmarkId: string, isCourse: boolean){
+    if (isCourse) {
+      const data = await Profile.findByIdAndUpdate(_id, 
+        {$pull: {"courseBookmarks": bookmarkId}},
+        {new: true});
+      return data;
+    } else {
+      const data = await Profile.findByIdAndUpdate(_id, 
+        {$pull: {"activityBookmarks": bookmarkId}},
+        {new: true});
+      return data;
+    }
   }
 
   async delete(_id: Number) {

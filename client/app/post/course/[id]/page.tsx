@@ -22,6 +22,7 @@ import ReviewCard from "@/components/ReviewCard";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import PriceAnalytics from "@/components/PriceAnalytics";
 
 type coursePostType = {
   _id? : string,
@@ -64,6 +65,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
   const [poster, setPoster] = useState<userType>({});
   const [imgUrl, setImgUrl] = useState("/jhulogo.jpeg");
   const [loadedPost, setLoadedPost] = useState(false);
+  const [profilePic, setProfilePic] = useState("/defaultimg.jpeg");
 
   const [posterId, setPosterId] = useState('');
   const [reviewerId, setReviewerId] = useState('');
@@ -140,6 +142,10 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
         console.error(e);
       }
     }
+    if (profile.data.data.profilePicKey) {
+      const picUrl = await axios.get(`${api}/profilePics/get/${profile.data.data.profilePicKey}`);
+      setProfilePic(picUrl.data.imageUrl);
+    }
     setLoadedPost(true);
   }
 
@@ -181,7 +187,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
       };
       console.log(body);
       const response = await axios.post(`${api}/postReviews/${postId}`, body);
-      alert(`Your review has been created!`);
+      setReviews(prevReviews => [...prevReviews, response.data.review]);
       console.log('Review submitted:', response.data);
       setRating(0);
       setComment('');
@@ -197,8 +203,8 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
 
   return <>
     <Navbar/>
-    <div className="flex min-h-screen">
-      <div className="w-2/3 flex flex-col px-20 my-14 border-r border-black">
+    <div className="flex min-h-screen flex-col lg:flex-row">
+      <div className="w-full lg:w-2/3 flex flex-col px-4 my-14 lg:border-r lg:border-black">
         <div className="intro border-b border-black pb-10">
           <Breadcrumb>
             <BreadcrumbList>
@@ -215,15 +221,15 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
-          <h1 className="font-sans font-extrabold uppercase text-5xl leading-none mt-0 mb-1 text-slate-800 pt-2">{post.courseName}</h1>
-          <h3 className="w-full text-xs tracking-wide leading-tight capitalize font-medium mb-3 text-slate-700">${post.price} / hour</h3>
+          <h1 className="pt-2 mt-0 mb-1 font-sans text-5xl font-extrabold leading-none uppercase text-slate-800">{post.courseName}</h1>
+          <h3 className="w-full mb-3 text-xs font-medium leading-tight tracking-wide capitalize text-slate-700">${post.price} / hour</h3>
           <div className="flex items-center justify-between space-x-2">
           <img
-            src="/defaultimg.jpeg"
+            src={profilePic}
             alt={`Avatar`}
             className="w-10 h-10 rounded-full"
           />
-          <div className="flex-grow flex flex-col justify-center">
+          <div className="flex flex-col justify-center flex-grow">
             <span className="text-sm font-semibold">by {poster.firstName} {poster.lastName} - Tutor Hub</span>
             <span className="text-xs text-gray-500">published Mar 30, 2024</span>
           </div>
@@ -287,30 +293,33 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
     </div>
       <div className="w-1/3 flex flex-col items-center pr-20 my-10">
         <div className="content px-20">
+          <div>
+            <PriceAnalytics postId={postId}/>
+          </div>
           <div className="w-[300px] info-box max-w p-4 border-2 border-black mt-10 mb-6" style={{
               boxShadow: '5px 5px 0px rgba(0, 0, 0, 10)',
             }}>
-            <h1 className="bg-blue-300 text-black text-lg font-extrabold uppercase p-1 mb-2 inline-block font-sans">
+            <h1 className="inline-block p-1 mb-2 font-sans text-lg font-extrabold text-black uppercase bg-blue-300">
               About {poster.firstName} {poster.lastName}
             </h1>
-            <p className="text-black mb-4 line-clamp-4 overflow-ellipsis">
+            <p className="mb-4 text-black line-clamp-4 overflow-ellipsis">
               {poster.description}
             </p>
-            <Link href={`/profile/` + post.userId}  className="bg-black text-white uppercase text-sm px-4 py-2 mt-4">
+            <Link href={`/profile/` + post.userId}  className="px-4 py-2 mt-4 text-sm text-white uppercase bg-black">
               Learn More
             </Link>
           </div>
           <div className="review-content">
-            <h1 className="font-sans font-extrabold uppercase text-3xl leading-none mt-0 mb-1 text-slate-800 pt-2 self-start">
+            <h1 className="self-start pt-2 mt-0 mb-1 font-sans text-3xl font-extrabold leading-none uppercase text-slate-800">
               leave a review
             </h1>
             <p>Required fields are marked *</p>
-            <h2 className="font-sans font-extrabold uppercase text-l leading-none mt-2 mb-0 text-slate-700 pt-2 self-start">tutor rating *</h2>
+            <h2 className="self-start pt-2 mt-2 mb-0 font-sans font-extrabold leading-none uppercase text-l text-slate-700">tutor rating *</h2>
             <div className="flex py-1 ">
               <StarReview rating={rating} setRating={setRating} />
             </div>
-            <h2 className="font-sans font-extrabold uppercase text-l leading-none mt-2 mb-0 text-slate-700 pt-2 self-start">Comment *</h2>
-            <Textarea className="resize-none my-2 rounded" onChange={handleCommentChange}/>
+            <h2 className="self-start pt-2 mt-2 mb-0 font-sans font-extrabold leading-none uppercase text-l text-slate-700">Comment *</h2>
+            <Textarea className="my-2 rounded resize-none" onChange={handleCommentChange}/>
             <div className="flex items-center space-x-2">
               <Checkbox id="terms" checked={isAnonymous} onCheckedChange={handleCheckedChange}/>
               <label
