@@ -3,6 +3,7 @@ import React, { FC, useEffect, useState } from 'react';
 import Link from 'next/link'; 
 import { SignOutButton } from '@clerk/nextjs';
 import { useUser } from '@clerk/clerk-react';
+import { useEffect } from 'react';
 import {
   Avatar,
   AvatarFallback,
@@ -28,6 +29,7 @@ const NavBar: FC = () => {
   const api = process.env.NEXT_PUBLIC_BACKEND_URL;
   const { isLoaded, isSignedIn, user } = useUser();
   const [imgUrl, setImgUrl] = useState("/defaultimg.jpeg");
+  const [ isAdmin, setIsAdmin ] = useState(false);
 
   const fetchUserData = async () => {
     if (!isLoaded || !isSignedIn) {
@@ -45,6 +47,15 @@ const NavBar: FC = () => {
 
   useEffect(() => { fetchUserData() }, [isLoaded, isSignedIn, user]);
 
+  useEffect(() => {
+    if (isSignedIn) {
+      if (String(user.primaryEmailAddress) == "admin@jhu.edu") {
+        console.log('admin!')
+        setIsAdmin(true);
+      }
+    }
+  }, [user])
+  
   return (
     <nav className="flex justify-between items-center p-4 bg-white h-18">
       <div className="flex items-center space-x-4">
@@ -70,6 +81,16 @@ const NavBar: FC = () => {
         >
           Messages
         </Link>
+        { isAdmin ? 
+          <Link 
+            href="/reports" 
+            className="inline-block px-2 py-1 ease-linear duration-75
+            hover:bg-blue-300 rounded-md font-extrabold font-sans text-lg"
+          >
+            Reports
+          </Link>
+          : <></>
+        }
       </div>
       <div>
           <div>

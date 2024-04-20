@@ -58,6 +58,39 @@ router.get("/views/:_id", async (req: any, res: any) => {
   }
 });
 
+router.get("/allBookmarks/:_id", async (req:any, res: any) => {
+  const {_id} : {_id : string} = req.params;
+  try {
+    const data = await profiles.readBookmarksById(_id);
+    res.status(200).json({data});
+  } catch (err) {
+    res.status(500).send("Server Error");
+  }
+});
+
+router.put("/addBookmark/:_id", async (req:any, res: any) => {
+  const {_id} : {_id : string} = req.params;
+  const {bookmark, isCourse} : {bookmark: string, isCourse: boolean} = req.body;
+  try {
+    const data = await profiles.updateBookmarks(_id, bookmark, isCourse);
+    res.status(200).json({data});
+  } catch (err) {
+    res.status(500).send("Server Error");
+  }
+});
+
+router.put("/deleteBookmark/:_id", async (req:any, res: any) => {
+  const {_id} : {_id : string} = req.params;
+  const {bookmark, isCourse} : {bookmark: string, isCourse: boolean} = req.body;
+  try {
+    const data = await profiles.deleteBookmark(_id, bookmark, isCourse);
+    res.status(200).json({data});
+  } catch (err) {
+    res.status(500).send("Server Error");
+  }
+});
+
+
 router.put("/views/:_id", async (req: any, res: any) => {
   const { _id }: { _id: string } = req.params;
   const { viewerId, timestamp, duration }: { viewerId: string, timestamp: string, duration: number } = req.body; // start_time should be a date/time. duration should be a number of seconds.
@@ -90,7 +123,6 @@ router.put("/availability/:_id", async (req: any, res: any) => {
 
 
 router.put("/:_id", async (req: any, res: any) => {
-  console.log('endpoint hit')
     const { _id }: { _id: string } = req.params;
     const {firstName, lastName, email, affiliation, graduationYear, department, description, posts} : {firstName: string, lastName: string, email: string, affiliation: string, graduationYear: string, department: string, description: string, posts: []} = req.body;
     try {
