@@ -1,6 +1,5 @@
 import axios from "axios";
 import { FC, HTMLAttributes, useEffect, useRef, useState } from "react";
-import { Button } from "./ui/button";
 import { Check, Lightbulb } from "lucide-react";
 
 type report = {

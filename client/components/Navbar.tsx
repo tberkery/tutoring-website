@@ -30,7 +30,7 @@ const NavBar: FC = () => {
   useEffect(() => {
     if (isSignedIn) {
       // TODO change after creating page
-      if (String(user.primaryEmailAddress) == "mflynn24@jhu.edu") {
+      if (String(user.primaryEmailAddress) == "admin@jhu.edu") {
         setIsAdmin(true);
       }
     }

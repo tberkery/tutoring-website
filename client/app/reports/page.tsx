@@ -38,7 +38,7 @@ const Page : FC = () => {
     if (!isLoaded || !isSignedIn || !user) {
       return;
     }
-    if (user.primaryEmailAddress.toString() === "mflynn24@jhu.edu") {
+    if (user.primaryEmailAddress.toString() === "admin@jhu.edu") {
       setAuthorized(true);
     } else {
       // redirect if the user isn't authorized to see this page
