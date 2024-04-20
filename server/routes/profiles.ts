@@ -115,9 +115,10 @@ router.put("/availability/:_id", async (req: any, res: any) => {
       res.status(404).json({ msg: "Profile availability update not made" });
       return;
     }
+    
     res.status(200).json({ data });
   } catch (err) {
-    res.status(500).send("Server Error");
+    res.status(500).send("Server Error", err);
   }
 });
 
