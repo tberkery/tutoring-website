@@ -416,4 +416,184 @@ describe('Test coursePosts routes', () => {
         // Clean up: Delete all course posts
         await coursePost.deleteMany({});
     });
+
+    // Test GET for comparing prices
+    test('GET /coursePosts/comparePrice/:id for comparing prices', async () => {
+        // Clear all existing course posts
+        await coursePost.deleteMany({});
+    
+        // Create example data for course posts
+        const example1PostData = {
+            userId: 'exampleUserId',
+            userFirstName: 'Ilana',
+            userLastName: 'Chalom',
+            courseName: 'Intro to Example',
+            description: 'Example description',
+            price: 20,
+            courseNumber: "AS.000.000",
+            takenAtHopkins: true
+        };
+    
+        const example2PostData = {
+            userId: 'exampleUserId2',
+            userFirstName: 'Kat',
+            userLastName: 'Forbes',
+            courseName: 'Intro to Example',
+            description: 'Example description2',
+            price: 20,
+            courseNumber: "AS.000.000",
+            takenAtHopkins: true
+        };
+
+        const example3PostData = {
+            userId: 'exampleUserId3',
+            userFirstName: 'Tad',
+            userLastName: 'Berkery',
+            courseName: 'Intro to Example',
+            description: 'Example description2',
+            price: 20,
+            courseNumber: "AS.000.000",
+            takenAtHopkins: true
+        };
+
+        
+        // Make POST requests to create the posts
+        const postRes1 = await request(app).post('/coursePosts').send(example1PostData);
+        const postRes2 = await request(app).post('/coursePosts').send(example2PostData);
+        const postRes3 = await request(app).post('/coursePosts').send(example3PostData);
+
+        const res = await request(app).get(`/coursePosts/comparePrice/${postRes2.body.newPost._id}`);
+        
+        // Assertions
+        expect(res.status).toBe(200);
+        expect(res.body.meanPrice).toBe(20);
+        expect(res.body.comparisonResult).toBe('same');
+        expect(res.body.myPostPrice).toBe(20);
+        expect(res.body.percentDiff).toBe(0);
+        expect(res.body.marketPosition).toBe('Fair');
+        
+        // Clean up: Delete all course posts
+        await coursePost.deleteMany({});
+    })
+
+
+    // Test GET for comparing prices with a great deal
+    test('GET /coursePosts/comparePrice/:id for great deal', async () => {
+        // Clear all existing course posts
+        await coursePost.deleteMany({});
+    
+        // Create example data for course posts
+        const example1PostData = {
+            userId: 'exampleUserId',
+            userFirstName: 'Ilana',
+            userLastName: 'Chalom',
+            courseName: 'Intro to Example',
+            description: 'Example description',
+            price: 100,
+            courseNumber: "AS.000.000",
+            takenAtHopkins: true
+        };
+    
+        const example2PostData = {
+            userId: 'exampleUserId2',
+            userFirstName: 'Kat',
+            userLastName: 'Forbes',
+            courseName: 'Intro to Example',
+            description: 'Example description2',
+            price: 100,
+            courseNumber: "AS.000.000",
+            takenAtHopkins: true
+        };
+
+        const example3PostData = {
+            userId: 'exampleUserId3',
+            userFirstName: 'Tad',
+            userLastName: 'Berkery',
+            courseName: 'Intro to Example',
+            description: 'Example description2',
+            price: 10,
+            courseNumber: "AS.000.000",
+            takenAtHopkins: true
+        };
+
+        
+        // Make POST requests to create the posts
+        const postRes1 = await request(app).post('/coursePosts').send(example1PostData);
+        const postRes2 = await request(app).post('/coursePosts').send(example2PostData);
+        const postRes3 = await request(app).post('/coursePosts').send(example3PostData);
+
+        const res = await request(app).get(`/coursePosts/comparePrice/${postRes3.body.newPost._id}`);
+
+        // Assertions
+        expect(res.status).toBe(200);
+        expect(res.body.meanPrice).toBe(70);
+        expect(res.body.comparisonResult).toBe('lower');
+        expect(res.body.myPostPrice).toBe(10);
+        expect(res.body.marketPosition).toBe('Great Deal!');
+        
+        // Clean up: Delete all course posts
+        await coursePost.deleteMany({});
+    });
+
+    // Test GET for comparing prices with an overpriced deal
+    test('GET /coursePosts/comparePrice/:id for overpriced deal', async () => {
+        // Clear all existing course posts
+        await coursePost.deleteMany({});
+    
+        // Create example data for course posts
+        const example1PostData = {
+            userId: 'exampleUserId',
+            userFirstName: 'Ilana',
+            userLastName: 'Chalom',
+            courseName: 'Intro to Example',
+            description: 'Example description',
+            price: 10,
+            courseNumber: "AS.000.000",
+            takenAtHopkins: true
+        };
+    
+        const example2PostData = {
+            userId: 'exampleUserId2',
+            userFirstName: 'Kat',
+            userLastName: 'Forbes',
+            courseName: 'Intro to Example',
+            description: 'Example description2',
+            price: 10,
+            courseNumber: "AS.000.000",
+            takenAtHopkins: true
+        };
+
+        const example3PostData = {
+            userId: 'exampleUserId3',
+            userFirstName: 'Tad',
+            userLastName: 'Berkery',
+            courseName: 'Intro to Example',
+            description: 'Example description2',
+            price: 400,
+            courseNumber: "AS.000.000",
+            takenAtHopkins: true
+        };
+
+        
+        // Make POST requests to create the posts
+        const postRes1 = await request(app).post('/coursePosts').send(example1PostData);
+        const postRes2 = await request(app).post('/coursePosts').send(example2PostData);
+        const postRes3 = await request(app).post('/coursePosts').send(example3PostData);
+
+        const res = await request(app).get(`/coursePosts/comparePrice/${postRes3.body.newPost._id}`);
+
+        // Assertions
+        expect(res.status).toBe(200);
+        expect(res.body.meanPrice).toBe(140);
+        expect(res.body.comparisonResult).toBe('higher');
+        expect(res.body.myPostPrice).toBe(400);
+        expect(res.body.marketPosition).toBe('Overpriced');
+        
+        // Clean up: Delete all course posts
+        await coursePost.deleteMany({});
+    });
+
+    afterAll(async () => {
+        await App.close(); // Close the MongoDB connection
+    });
 }); 

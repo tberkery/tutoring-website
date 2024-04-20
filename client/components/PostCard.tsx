@@ -2,6 +2,7 @@ import React, { MouseEvent, useEffect, useState } from 'react';
 import { useRouter } from "next/navigation";
 import { Star } from 'lucide-react';
 import BookmarkIcon from './ui/bookmark';
+import axios from 'axios';
 
 interface Post {
   _id: string;
@@ -12,7 +13,8 @@ interface Post {
   activityDescription?: string;
   courseName?: string;
   description?: string;
-  imageUrl?: string;
+  coursePostPicKey?: string;
+  activityPostPicKey?: string;
   price: number;
   courseNumber?: string;
   courseDepartment?: string[];
@@ -44,10 +46,13 @@ interface PostCardProps {
 }
 
 const PostCard: React.FC<PostCardProps> = ({ post, onUpdateBookmark }) => {
+  const api = process.env.NEXT_PUBLIC_BACKEND_URL;
   const defaultImage = '/jhulogo.jpeg';
   const [titleUnderline, setTitleUnderline] = useState(false);
   const [avgRating, setAvgRating] = useState(5);
   const [isBookmarked, setIsBookmarked] = useState(false); // State to track bookmark status
+  const [imgUrl, setImgUrl] = useState(defaultImage);
+
   const router = useRouter();
 
   const postUrl = post.courseName ? `/post/course/${post._id}` : `/post/activity/${post._id}`;
@@ -56,7 +61,21 @@ const PostCard: React.FC<PostCardProps> = ({ post, onUpdateBookmark }) => {
     let total = 0;
     post.reviews.forEach(r => total += r.rating);
     setAvgRating(total / post.reviews.length);
+    loadImage(post);
   }, [post])
+
+  const loadImage = async (post : Post) => {
+    let endpoint;
+    if (post.coursePostPicKey) {
+      endpoint = `${api}/coursePostPics/get/${post.coursePostPicKey}`;
+      const response = await axios.get(endpoint);
+      setImgUrl(response.data.imageUrl);
+    } else if (post.activityPostPicKey) {
+      endpoint = `${api}/activityPostPics/get/${post.activityPostPicKey}`;
+      const response = await axios.get(endpoint);
+      setImgUrl(response.data.activityPostPicKey);
+    }
+  }
 
   const handleClick = () => {
     if (titleUnderline) {
@@ -100,7 +119,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onUpdateBookmark }) => {
       </div>
       <img
         className="w-full h-48 object-cover"
-        src={post.imageUrl || defaultImage}
+        src={imgUrl}
         alt="Post Image"
       />
       <div className="border-t px-3 pb-3 pt-1">

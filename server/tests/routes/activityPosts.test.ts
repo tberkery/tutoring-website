@@ -640,4 +640,8 @@ describe('Test activityPosts routes', () => {
         // Clean up: Delete all activity posts
         await activityPost.deleteMany({});
     });
+
+    afterAll(async () => {
+        await App.close(); // Close the MongoDB connection
+    });
 });

@@ -3,7 +3,7 @@ import exp from "constants";
 const router = require('express').Router();
 const CoursePostDaoClass = require('../data/CoursePostDao');
 const CoursePostDao = new CoursePostDaoClass();
-const db = require('../model/CoursePost');
+const db = require('../model/Profile');
 
 router.post("/", async (req: any, res: any) => {
   try {
@@ -68,7 +68,7 @@ router.get("/demographics/:_id", async (req: any, res: any) => {
   try {
     const startProfile = await CoursePostDao.readViewsById(_id);
     if (!startProfile) {
-      res.status(500).send("Profile not found. Invalid ID");
+      res.status(500).send("Course Post not found. Invalid ID");
     }
     let viewerIds: any[] = [];
     try {
@@ -77,6 +77,7 @@ router.get("/demographics/:_id", async (req: any, res: any) => {
         .map((view: { viewerId: any; }) => view.viewerId)
     }
     catch(error) { // If no views, return empty dictionaries, not an error
+      console.log("are we here?")
       const departments = {};
       const affiliations = {};
       const graduationYears = {};
@@ -117,6 +118,7 @@ router.get("/demographics/:_id", async (req: any, res: any) => {
         }
       }
     ]).exec()
+
     res.status(200).json({ departments, affiliations, graduationYears });
   } catch (err) {
     res.status(500).send("Server Error");
@@ -165,6 +167,60 @@ router.delete("/:id", async (req: any, res: any) => {
         console.error(err);
         res.status(500).send("Server Error");
     }
+});
+
+// Modify the route to include the functionality to compare prices
+router.get("/comparePrice/:id", async (req: any, res: any) => {
+  const { id }: { id: string } = req.params;
+  try {
+      const currentPost = await CoursePostDao.readOne(id);
+      if (!currentPost) {
+          return res.status(404).json({ msg: "Post not found" });
+      }
+
+      const { courseNumber } = currentPost;
+      const coursePosts = await CoursePostDao.readAll({ courseNumber });
+
+      let total = 0;
+      for (const post of coursePosts) {
+        total += post.price;
+      }
+      const meanPrice = total / coursePosts.length;
+
+      const myPostPrice = currentPost.price
+
+      let comparisonResult;
+      let percentDiff;
+      let percentDiffNum;
+      if (myPostPrice > meanPrice) {
+        comparisonResult = "higher";
+        percentDiff = (((myPostPrice - meanPrice) / meanPrice) * 100);
+        percentDiffNum = Math.round( percentDiff * 1e2 ) / 1e2;
+      } else if (myPostPrice < meanPrice) {
+        comparisonResult = "lower";
+        percentDiff = (((myPostPrice - meanPrice) / meanPrice) * 100);
+        percentDiffNum = Math.round( percentDiff * 1e2 ) / 1e2;
+      } else {
+        comparisonResult = "same";
+        percentDiff = 0;
+        percentDiffNum = 0;
+      }
+
+      // Compare percentDiff to determine market position
+      let marketPosition;
+      if (percentDiffNum < -20) {
+        marketPosition = "Great Deal!";
+      } else if (percentDiffNum > 20) {
+        marketPosition = "Overpriced";
+      } else {
+        marketPosition = "Fair";
+      }
+
+      res.status(200).json({ meanPrice, comparisonResult, myPostPrice, percentDiff, marketPosition});
+  } catch (err) {
+      console.error(err);
+      res.status(500).send("Server Error");
+  }
 });
 
 module.exports = router;

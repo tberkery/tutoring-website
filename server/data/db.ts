@@ -16,4 +16,13 @@ async function connect(isTest: boolean) {
   }
 }
 
-module.exports = connect;
+async function disconnect() {
+  try {
+    await mg.disconnect();
+    console.log("Disconnected from MongoDB!");
+  } catch (err) {
+    console.error("Error disconnecting from MongoDB:", err);
+  }
+}
+
+module.exports = { connect, disconnect };
