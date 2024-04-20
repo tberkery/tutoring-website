@@ -1,5 +1,4 @@
 "use client";
-import React, { FC, useState } from 'react';
 import React, { FC, useEffect, useState } from 'react';
 import Link from 'next/link'; 
 import { SignOutButton } from '@clerk/nextjs';
@@ -30,7 +29,6 @@ const NavBar: FC = () => {
   const { isLoaded, isSignedIn, user } = useUser();
   const [ isAdmin, setIsAdmin ] = useState(false);
   const [imgUrl, setImgUrl] = useState("/defaultimg.jpeg");
-  const [ isAdmin, setIsAdmin ] = useState(false);
 
   const fetchUserData = async () => {
     if (!isLoaded || !isSignedIn) {
