@@ -220,22 +220,45 @@ const Page : FC = () => {
         setSearchInput(searchValue);
     }
 
-    const handleBookmarkUpdate = async (postId: string, isCoursePost: boolean) => {
+    const handleBookmarkUpdate = async (bookmark: string, isCourse: boolean) => {
         try {
           console.log("in handleBookmarkUpdate")
           console.log("visitorId")
           console.log(visitorId)
-          console.log("postId")
-          console.log(postId)
-          console.log("isCoursePost")
-          console.log(isCoursePost)
-          const response = await axios.put(`${api}/profiles/addBookmark/${visitorId}`, { postId, isCoursePost });
-          console.log("response.data")
-          console.log(response.data)
+          console.log("bookmark")
+          console.log(bookmark)
+          console.log("isCourse")
+          console.log(isCourse)
+          const allBookmarks = await axios.get(`${api}/profiles/allBookmarks/${visitorId}`)
+          let bookmarkIds;
+          if (isCourse) {
+            console.log("Identified that bookmark pertains to a course")
+            bookmarkIds = new Set(allBookmarks.data.data.courseBookmarks);
+            console.log("Here's the other known bookmarks that pertain to courses")
+            console.log(bookmarkIds)
+          } else {
+            console.log("Identified that bookmark pertains to an activity")
+            bookmarkIds = new Set(allBookmarks.data.data.activityBookmarks);
+            console.log("Here's the other known bookmarks that pertain to activities")
+            console.log(bookmarkIds)
+          }
+          console.log("Bookmark Ids")
+          console.log(bookmarkIds)
+          console.log("bookmark in bookmarkIds")
+          console.log(bookmark in bookmarkIds)
+          if (bookmarkIds.has(bookmark)) {
+            console.log("Detected that bookmark needs to be deleted.")
+            const response = await axios.put(`${api}/profiles/deleteBookmark/${visitorId}`, { bookmark: bookmark, isCourse: isCourse });
+            console.log("Bookmark has been deleted")
+          } else {
+            console.log("Detected that bookmark needs to be added.")
+            const response = await axios.put(`${api}/profiles/addBookmark/${visitorId}`, { bookmark: bookmark, isCourse: isCourse });
+            console.log("Bookmark has been added.")
+          } 
         } catch (error) {
           console.error('Error updating bookmark status:', error);
         }
-      };
+    };
 
   if (loading) {
     return ( <> <Loader /> </>);

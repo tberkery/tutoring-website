@@ -60,6 +60,9 @@ router.get("/views/:_id", async (req: any, res: any) => {
 
 router.get("/allBookmarks/:_id", async (req:any, res: any) => {
   const {_id} : {_id : string} = req.params;
+  console.log("In /allBookmars/:_id, here is the _id detected and req.params")
+  console.log(_id)
+  console.log(req.params)
   try {
     const data = await profiles.readBookmarksById(_id);
     res.status(200).json({data});
@@ -71,6 +74,13 @@ router.get("/allBookmarks/:_id", async (req:any, res: any) => {
 router.put("/addBookmark/:_id", async (req:any, res: any) => {
   const {_id} : {_id : string} = req.params;
   const {bookmark, isCourse} : {bookmark: string, isCourse: boolean} = req.body;
+  console.log("In addBookmark/:_id")
+  console.log("Here is _id")
+  console.log(_id)
+  console.log("Here is bookmark")
+  console.log(bookmark)
+  console.log("Here is isCourse")
+  console.log(isCourse)
   try {
     const data = await profiles.updateBookmarks(_id, bookmark, isCourse);
     console.log("BOOKMARKED!");
