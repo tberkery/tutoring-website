@@ -31,6 +31,7 @@ const postFormSchema = z.object({
     description: z.string().min(1, "Description is required"),
     picture: z.string().optional(),
     price: z.string().min(1, "Price is required"),
+    bookmark: z.boolean()
   });
   
   type PostFormData = z.infer<typeof postFormSchema>;
@@ -65,6 +66,7 @@ const CreatePost : FC = () => {
       description: "",
       picture: "",
       price: "",
+      bookmark: false
     },
   });
 

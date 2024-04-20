@@ -80,6 +80,13 @@ const NavBar: FC = () => {
         >
           Messages
         </Link>
+        <Link 
+          href="/profile/bookmarks" 
+          className="inline-block px-2 py-1 ease-linear duration-75
+          hover:bg-blue-300 rounded-md font-extrabold font-sans text-lg"
+        >
+          Bookmarks
+        </Link>
         { isAdmin ? 
           <Link 
             href="/reports" 
