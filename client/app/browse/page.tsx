@@ -70,6 +70,8 @@ const Page : FC = () => {
     const api = process.env.NEXT_PUBLIC_BACKEND_URL;
     const [posts, setPosts] = useState<Post[]>([]);
     const [filteredPosts, setFilteredPosts] = useState<Post[]>([]);
+    const [bookmarkedPosts, setBookmarkedPosts] = useState<Post[]>([]);
+    const [visitorId, setVisitorId] = useState('');
     
     // Loading State
     const [loading, setLoading] = useState(true);
@@ -94,7 +96,7 @@ const Page : FC = () => {
         visualArt: false,
     });
 
-	const { user } = useUser();
+	const { isLoaded, isSignedIn, user } = useUser();
     const router = useRouter();
 
     const checkProfile = async () => {
@@ -107,6 +109,21 @@ const Page : FC = () => {
             router.replace('createAccount');
         }
     }
+
+    const getVisitor = async () => {
+        if (!isLoaded || !isSignedIn || !user) {
+          return;
+        }
+        try {
+          const response = await axios.get(`${api}/profiles/getByEmail/${user.primaryEmailAddress.toString()}`);
+          const id = response.data.data[0]._id;
+          setVisitorId(id);
+        } catch (error) {
+          console.error(error);
+        }
+    }
+
+    useEffect(() => { getVisitor() }, [isLoaded, isSignedIn, user]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -202,6 +219,21 @@ const Page : FC = () => {
     const searchItems = (searchValue) => {
         setSearchInput(searchValue);
     }
+
+    const handleBookmarkUpdate = async (postId: string, isCoursePost: boolean) => {
+        try {
+          console.log("user:")
+          console.log(user)
+          console.log("user.id")
+          console.log(user.id)
+          console.log("visitorId")
+          console.log(visitorId)
+          console.log("done")
+          const response = await axios.put(`${api}/profiles/addBookmark/${visitorId}`, { postId, isCoursePost });
+        } catch (error) {
+          console.error('Error updating bookmark status:', error);
+        }
+      };
 
   if (loading) {
     return ( <> <Loader /> </>);
@@ -343,7 +375,7 @@ const Page : FC = () => {
                 <div className="container px-6 py-8 mx-auto">
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                     {filteredPosts.map((posts) => (
-                        <PostCard key={posts._id} post={posts} />
+                        <PostCard key={posts._id} post={posts} onUpdateBookmark={handleBookmarkUpdate}/>
                     ))}
                     </div>
                 </div>
