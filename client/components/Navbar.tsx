@@ -129,7 +129,7 @@ const NavBar: FC = () => {
             <DropdownMenu>
               <DropdownMenuTrigger>
                 <Avatar>
-                  <AvatarImage src={imgUrl} alt="@shadcn" />
+                  <AvatarImage src={imgUrl} alt="@shadcn" className='object-cover'/>
                   <AvatarFallback>TH</AvatarFallback>
                 </Avatar>
               </DropdownMenuTrigger>
