@@ -204,7 +204,6 @@ describe('Test analytics reporting capabilities', () => {
         const resAnalytics1 = await request(app)
             .get(`/profiles/demographics/${profile1Id}?start=2021-03-05T19:49:35.744Z`)
 
-        console.log(resAnalytics1.body)
         expect(resAnalytics1.body.departments).toHaveLength(2);
         expect(resAnalytics1.body.affiliations).toHaveLength(1);
         expect(resAnalytics1.body.graduationYears).toHaveLength(2);
@@ -248,5 +247,9 @@ describe('Test analytics reporting capabilities', () => {
         await request(app).delete(`/profiles/${profile1Id}`);
         await request(app).delete(`/profiles/${profile2Id}`);
         await request(app).delete(`/profiles/${profile3Id}`);
+    });
+
+    afterAll(async () => {
+        await App.close(); // Close the MongoDB connection
     });
 });
