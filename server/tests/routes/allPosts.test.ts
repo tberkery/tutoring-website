@@ -251,4 +251,7 @@ describe('Test allPosts routes', () => {
     
     });
 
+    afterAll(async () => {
+        await App.close(); // Close the MongoDB connection
+    });
 });

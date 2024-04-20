@@ -4,25 +4,14 @@ const express = require('express');
 const App = require('../../../server/app.ts')
 const router = require('../../../server/routes/index.ts')
 const PostReviewSchema = require('../../model/PostReview');
+const coursePost = require('../../../server/model/CoursePost'); 
+const activityPost = require('../../../server/model/ActivityPost'); 
 const { ObjectId } = require('mongodb');
 
 App.dbConnection(true)
 const app = App.app
 
 describe('Test postReviews routes', () => {
-    // Test for GET /postReviews/getByPostId/:postId with empty database
-    test('GET /postReviews/getByPostId/:postId with empty database', async () => {
-        await PostReviewSchema.deleteMany({});
-
-        const postId = '65f37b3c888c108c2bddff9f';
-
-        const res = await request(app).get(`/postReviews/getByPostId/${postId}`);
-
-        expect(res.status).toBe(404);
-        expect(res.body.error).toBe('Post not found');
-        await PostReviewSchema.deleteMany({});
-    });
-
     // Test for GET /postReviews/getByPostId/:postId with empty database
     test('GET /postReviews/getByPostId/:postId with empty database', async () => {
         await PostReviewSchema.deleteMany({});
@@ -79,6 +68,8 @@ describe('Test postReviews routes', () => {
         // Check if the review was actually deleted from the database
         const deletedReview = await PostReviewSchema.findById(newReview._id);
         expect(deletedReview).toBeNull();
+
+        await coursePost.deleteMany({});
     });
 
     // Test for DELETE /postReviews/:reviewId with an activity post
@@ -124,6 +115,8 @@ describe('Test postReviews routes', () => {
         // Check if the review was actually deleted from the database
         const deletedReview = await PostReviewSchema.findById(newReview._id);
         expect(deletedReview).toBeNull();
+
+        await activityPost.deleteMany({});
     });
 
     // Test for DELETE /postReviews/:reviewId when review does not exist
@@ -136,5 +129,8 @@ describe('Test postReviews routes', () => {
         expect(res.body.error).toBe('Review not found');
     });
 
+    afterAll(async () => {
+        await App.close(); // Close the MongoDB connection
+    });
     
 });
