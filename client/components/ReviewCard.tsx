@@ -18,7 +18,7 @@ type Review = {
 
 type Props = {
   review: Review,
-  loggedInUserId: string,
+  loggedInUserId?: string,
 } & HTMLAttributes<HTMLDivElement>
 
 const ReviewCard : FC<Props> = (props) => {

@@ -44,7 +44,7 @@ const PriceAnalytics: FC<Props> = ({ postId }) => {
   }, [postId]);
 
   return (
-    <div className="px-20 content">
+    <div className="content">
       <div className={`w-[300px] info-box max-w p-4 border-2 border-black mt-5 mb-1 ${boxColor}`} style={{ boxShadow: '5px 5px 0px rgba(0, 0, 0, 10)', textTransform: 'uppercase', fontWeight: 'bold' }}>
         {analyticsData && (
           <p>Price Analysis: {analyticsData.marketPosition}</p>

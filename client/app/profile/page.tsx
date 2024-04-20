@@ -39,6 +39,7 @@ interface Post {
 }
 
 type Review = {
+  _id: string,
   postId: string,
   postName?: string,
   postType?: string,

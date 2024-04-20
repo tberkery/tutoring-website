@@ -47,6 +47,7 @@ type userType = {
 }
 
 type Review = {
+  _id: string
   postId: string,
   postName?: string,
   postType?: string,
@@ -282,62 +283,60 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
         }
       </div>
       <div className="flex flex-col justify-center max-w-3xl">
-          { reviews.map((review, index) => (
-            <ReviewCard 
-              key={`review-${index}`}
-              review={review}
-              loggedInUserId={reviewerId}
-              className="mb-4 bg-white rounded-lg shadow-md"
-            />
-          )) }
-        </div>
+        { reviews.map((review, index) => (
+          <ReviewCard 
+            key={`review-${index}`}
+            review={review}
+            loggedInUserId={reviewerId}
+            className="mb-4 bg-white rounded-lg shadow-md"
+          />
+        )) }
+      </div>
     </div>
-      <div className="flex flex-col items-center w-1/3 pr-20 my-10">
-        <div className="px-20 content">
-          <div>
-            <PriceAnalytics postId={postId}/>
+      <div className="flex flex-col w-1/3 my-10 mx-10">
+        <div className="w-full">
+          <PriceAnalytics postId={postId}/>
+        </div>
+        <div className="w-[300px] info-box max-w p-4 border-2 border-black mt-10 mb-6" style={{
+            boxShadow: '5px 5px 0px rgba(0, 0, 0, 10)',
+          }}>
+          <h1 className="inline-block p-1 mb-2 font-sans text-lg font-extrabold text-black uppercase bg-blue-300">
+            About {poster.firstName} {poster.lastName}
+          </h1>
+          <p className="mb-4 text-black line-clamp-4 overflow-ellipsis">
+            {poster.description}
+          </p>
+          <Link href={`/profile/` + post.userId}  className="px-4 py-2 mt-4 text-sm text-white uppercase bg-black">
+            Learn More
+          </Link>
+        </div>
+        <div className="review-content w-full">
+          <h1 className="self-start pt-2 mt-0 mb-1 font-sans text-3xl font-extrabold leading-none uppercase text-slate-800">
+            leave a review
+          </h1>
+          <p>Required fields are marked *</p>
+          <h2 className="self-start pt-2 mt-2 mb-0 font-sans font-extrabold leading-none uppercase text-l text-slate-700">tutor rating *</h2>
+          <div className="flex py-1 ">
+            <StarReview rating={rating} setRating={setRating} />
           </div>
-          <div className="w-[300px] info-box max-w p-4 border-2 border-black mt-10 mb-6" style={{
-              boxShadow: '5px 5px 0px rgba(0, 0, 0, 10)',
+          <h2 className="self-start pt-2 mt-2 mb-0 font-sans font-extrabold leading-none uppercase text-l text-slate-700">Comment *</h2>
+          <Textarea className="my-2 rounded resize-none" onChange={handleCommentChange}/>
+          <div className="flex items-center space-x-2">
+            <Checkbox id="terms" checked={isAnonymous} onCheckedChange={handleCheckedChange}/>
+            <label
+              htmlFor="terms"
+              className="text-sm font-medium leading-none capitalize peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              make my response anonymous
+            </label>
+          </div>
+          <button 
+            onClick={handleSubmit} disabled={isButtonDisabled}
+            className={`uppercase info-box max-w p-4 border-2 border-black mt-4 mb-6 font-md font-bold ${isButtonDisabled ? 'bg-gray-400 text-gray-600 cursor-not-allowed' : 'bg-blue-300 text-black'}`} style={{
+              boxShadow: '2px 2px 0px rgba(0, 0, 0, 10)',
             }}>
-            <h1 className="inline-block p-1 mb-2 font-sans text-lg font-extrabold text-black uppercase bg-blue-300">
-              About {poster.firstName} {poster.lastName}
-            </h1>
-            <p className="mb-4 text-black line-clamp-4 overflow-ellipsis">
-              {poster.description}
-            </p>
-            <Link href={`/profile/` + post.userId}  className="px-4 py-2 mt-4 text-sm text-white uppercase bg-black">
-              Learn More
-            </Link>
-          </div>
-          <div className="review-content">
-            <h1 className="self-start pt-2 mt-0 mb-1 font-sans text-3xl font-extrabold leading-none uppercase text-slate-800">
-              leave a review
-            </h1>
-            <p>Required fields are marked *</p>
-            <h2 className="self-start pt-2 mt-2 mb-0 font-sans font-extrabold leading-none uppercase text-l text-slate-700">tutor rating *</h2>
-            <div className="flex py-1 ">
-              <StarReview rating={rating} setRating={setRating} />
-            </div>
-            <h2 className="self-start pt-2 mt-2 mb-0 font-sans font-extrabold leading-none uppercase text-l text-slate-700">Comment *</h2>
-            <Textarea className="my-2 rounded resize-none" onChange={handleCommentChange}/>
-            <div className="flex items-center space-x-2">
-              <Checkbox id="terms" checked={isAnonymous} onCheckedChange={handleCheckedChange}/>
-              <label
-                htmlFor="terms"
-                className="text-sm font-medium leading-none capitalize peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-              >
-                make my response anonymous
-              </label>
-            </div>
-            <button 
-              onClick={handleSubmit} disabled={isButtonDisabled}
-              className={`uppercase info-box max-w p-4 border-2 border-black mt-4 mb-6 font-md font-bold ${isButtonDisabled ? 'bg-gray-400 text-gray-600 cursor-not-allowed' : 'bg-blue-300 text-black'}`} style={{
-                boxShadow: '2px 2px 0px rgba(0, 0, 0, 10)',
-              }}>
-              Post Comment
-            </button>
-          </div>
+            Post Comment
+          </button>
         </div>
       </div>
     </div>
