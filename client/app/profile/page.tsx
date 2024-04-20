@@ -151,7 +151,7 @@ const Page : FC = () => {
             <ReviewCard 
               key={`review-${index}`}
               review={review}
-              className="mb-4 bg-white rounded-lg shadow-md"
+              className="mb-4 bg-white md:rounded-lg md:shadow-md"
             />
           )) }
         </div>
