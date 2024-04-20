@@ -80,7 +80,10 @@ const PostCard: React.FC<PostCardProps> = ({ post, onUpdateBookmark }) => {
     console.log(post._id)
     console.log("isCoursePost")
     console.log(isCoursePost)
-    await onUpdateBookmark(post._id, isCoursePost); // Trigger callback with postId and new bookmark status
+    const bookmark = post._id
+    console.log("bookmark")
+    console.log(bookmark)
+    await onUpdateBookmark(bookmark, isCoursePost); // Trigger callback with postId and new bookmark status
     console.log("Front-end process for updating bookmark is complete")
   };
 
