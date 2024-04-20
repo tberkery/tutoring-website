@@ -11,6 +11,8 @@ import Loader from '../../components/Loader';
 import RatingStars from "@/components/RatingStars";
 import ReviewCard from "@/components/ReviewCard";
 import ProfileAnalytics from "@/components/ProfileAnalytics";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { ChevronDown } from "lucide-react";
 
 interface Post {
   _id: string;
@@ -57,6 +59,11 @@ const Page : FC = () => {
   const [loading, setLoading] = useState(true);
   const [imgUrl, setImgUrl] = useState("../defaultimg.jpeg");
   const [activeSection, setActiveSection] = useState("Posts");
+  const reviewSortMethods = [
+    "Highest Rating",
+    "Lowest Rating"
+  ]
+  const [reviewSort, setReviewSort] = useState(reviewSortMethods[0]);
 
   const router = useRouter();
 
@@ -82,6 +89,7 @@ const Page : FC = () => {
             reviews.push(review);
           })
         })
+        reviews = sortReviews(reviews);
         setReviews(reviews);
         let sorted : Post[] = posts.data.sort((a : Post, b : Post) => {
           let aValue = 0;
@@ -101,7 +109,7 @@ const Page : FC = () => {
         setBestPosts(best);
       }
       if (userInfo.data.data[0].profilePicKey) {
-        const picUrl = await axios.get(`${api}/profilePics/get/${userInfo.data.data[0].profilePicKey}`);
+        const picUrl = await axios.get(`${api}/profilePics/get/${userInfo.data.data[0].profilePicKey}`, {timeout: 2000});
         setImgUrl(picUrl.data.imageUrl);
       }
     } catch (error) {
@@ -121,6 +129,18 @@ const Page : FC = () => {
     console.log(ratingTotal);
     setReviewAvg(ratingTotal / reviews.length);
   }, [reviews])
+
+  const sortReviews = (unsorted : Review[]) => {
+    let newReviews = unsorted.slice();
+    if (reviewSort === "Lowest Rating") {
+      newReviews.sort((a, b) => a.rating - b.rating);
+    } else if (reviewSort === "Highest Rating") {
+      newReviews.sort((a, b) => b.rating - a.rating);
+    }
+    return newReviews;
+  }
+
+  useEffect(() => { setReviews(sortReviews(reviews)) }, [reviewSort]);
 
   if (loading || !profileData) {
     return (
@@ -143,15 +163,51 @@ const Page : FC = () => {
         </div>
       )
     } else if (activeSection === "Reviews") {
+      if (reviews.length === 0) {
+        return <h3 className="mt-8 text-xl">You have no reviews</h3>
+      }
       return (
-        <div className="flex flex-col justify-center max-w-3xl w-full">
-          { reviews.map((review, index) => (
-            <ReviewCard 
-              key={`review-${index}`}
-              review={review}
-              className="mb-4 bg-white rounded-lg shadow-md"
-            />
-          )) }
+        <div className="flex w-full items-start justify-center">
+          <div className="mt-4 mr-8 pt-4 pr-8 min-w-52 h-full border-r border-black"> 
+            <DropdownMenu>
+              <DropdownMenuTrigger>
+                <div 
+                  className='px-4 py-2 text-md text-white font-bold bg-custom-blue
+                  hover:bg-blue-900 rounded-lg flex'
+                >
+                  {reviewSort} <ChevronDown/>
+                </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent 
+                className='bg-blue-300 rounded-xl px-2 py-1.5 border mt-1'
+              >
+                {
+                  reviewSortMethods.map((method) => {
+                    return (
+                      <DropdownMenuItem 
+                        key={`sort-${method}`}
+                        className='p-0 mb-1 hover:cursor-pointer text-lg font-bold
+                        rounded-xl overflow-hidden'
+                        onClick={ () => setReviewSort(method) }
+                      >
+                        <div className='hover:bg-sky-100 px-3 py-1 w-full'>
+                          {method}
+                        </div>
+                      </DropdownMenuItem>
+                    );
+                  })
+                }
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+          <div className="mt-4 flex flex-col justify-center max-w-3xl w-full">
+            { reviews.map((review) => (
+              <ReviewCard 
+                review={review}
+                className="mb-4 bg-white rounded-lg shadow-md"
+              />
+            )) }
+          </div>
         </div>
       )
     } else if (activeSection === "Analytics") {
