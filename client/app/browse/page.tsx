@@ -231,9 +231,11 @@ const Page : FC = () => {
           }
           if (bookmarkIds.has(bookmark)) {
             const response = await axios.put(`${api}/profiles/deleteBookmark/${visitorId}`, { bookmark: bookmark, isCourse: isCourse });
+            window.alert("Post was previously bookmarked and has now been unbookmarked!")
             console.log("Bookmark deleted")
           } else {
             const response = await axios.put(`${api}/profiles/addBookmark/${visitorId}`, { bookmark: bookmark, isCourse: isCourse });
+            window.alert("Post has been bookmarked!")
             console.log("Bookmark added")
           } 
         } catch (error) {
