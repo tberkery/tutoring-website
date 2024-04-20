@@ -77,20 +77,7 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [reviewAvg, setReviewAvg] = useState(5);
   const [imgUrl, setImgUrl] = useState("../defaultimg.jpeg");
-  const [activeSection, setActiveSection] = useState("Posts");
-  const [timeSpent, setTimeSpent] = useState(0);
-  const [onPage, setOnPage] = useState(true);
   const [visitorId, setVisitorId] = useState('');
-
-  const timeSpentRef = useRef<Number>();
-  useEffect(() => {
-    timeSpentRef.current = timeSpent;
-  }, [onPage]);
-
-  const visitorIdRef = useRef<string>();
-  useEffect(() => {
-    visitorIdRef.current = visitorId;
-  }, [visitorId])
 
   useEffect(() => {
     let ratingTotal = 0;
@@ -181,68 +168,19 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
     }
   }
 
-  const updateProfileViewsAsync = async () => {
-    console.log('a');
-    if (visitorIdRef.current === '') {
-      return;
+  const handleBookmarkUpdate = async (postId: string, isCoursePost: boolean) => {
+    try {
+      const response = await axios.put(`${api}/profiles/addBookmark/${visitorId}`, { postId, isCoursePost });
+    } catch (error) {
+      console.error('Error updating bookmark status:', error);
     }
-    console.log('b');
-    const endpoint = `${api}/profiles/views/${params.id}`;
-    const body = { 
-      viewerId: visitorIdRef.current,
-      timestamp: new Date(),
-      duration: timeSpentRef.current
-    };
-    await axios.put(endpoint, body);
-    return;
-  }
-
-  const updateProfileViews = () => {
-    console.log('a');
-    if (visitorIdRef.current === '') {
-      return;
-    }
-    console.log('b');
-    const endpoint = `${api}/profiles/views/${params.id}`;
-    const body = { 
-      viewerId: visitorIdRef.current,
-      timestamp: new Date(),
-      duration: timeSpentRef.current
-    };
-    axios.put(endpoint, body);
-    return;
-  }
-
-  const handleClickReportUser = () => {
-    router.push(`/profile/report/${params.id}`);
-  }
-
+  };
 
   useEffect(() => { getVisitor() }, [isLoaded, isSignedIn, user]);
 
   useEffect(() => {
     fetchData();
-    window.addEventListener("blur", () => setOnPage(false));
-    window.addEventListener("focus", () => setOnPage(true));
-    window.addEventListener("beforeunload", updateProfileViewsAsync);
-    return () => {
-      window.removeEventListener("blur", () => setOnPage(false));
-      window.removeEventListener("focus", () => setOnPage(true));
-      window.removeEventListener("beforeunload", updateProfileViewsAsync);
-    }
   }, []);
-
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      if (onPage) {
-        setTimeSpent(prev => prev + 1);
-      }
-    }, 1000);
-    return () => clearInterval(intervalId);
-  }, [onPage]);
-
-  useEffect(() => updateProfileViews, [])
-  
 
   if (loading) return ( <> <Loader /> </>);
 
@@ -263,16 +201,6 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
           :
             <></>
           }
-          <div className="flex mt-2 space-x-4">
-            <button className="bg-custom-blue hover:bg-blue-900 text-white font-bold py-2 px-4 rounded-md" onClick={() => compareAvail()}>
-                Compare Availability
-            </button>
-            
-            <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-md" onClick={() => handleClickReportUser()}>
-                Report this user
-            </button>
-          </div>
-
         </div>
         <div className="w-3/4">
             <div className="container px-6 py-8 mx-auto">
