@@ -71,9 +71,6 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
                     sumOfRatings += fetchedReviews[i].rating;
                 }
                 setAverageRating(sumOfRatings / numberOfReviews);
-                console.log(`Average Rating: ${averageRating}`);
-            } else {
-                console.log("No ratings yet");
             }
             fetchedReviews.forEach((review) => {
               // @ts-ignore
