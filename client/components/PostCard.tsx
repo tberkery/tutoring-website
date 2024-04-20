@@ -42,7 +42,7 @@ type review = {
 
 interface PostCardProps {
   post: Post;
-  onUpdateBookmark: (postId: string, isCoursePost: boolean) => void;
+  onUpdateBookmark?: (postId: string, isCoursePost: boolean) => void;
 }
 
 const PostCard: React.FC<PostCardProps> = ({ post, onUpdateBookmark }) => {
