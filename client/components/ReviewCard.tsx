@@ -3,7 +3,8 @@ import React, { FC, HTMLAttributes, useEffect, useRef, useState } from 'react';
 import RatingStars from './RatingStars';
 import axios from 'axios';
 
-type review = {
+type Review = {
+  _id: string,
   postId: string,
   postName?: string,
   postType?: string,
@@ -15,12 +16,15 @@ type review = {
   rating: number,
 }
 
-type props = {
-  review: review,
+type Props = {
+  review: Review,
+  loggedInUserId: string,
 } & HTMLAttributes<HTMLDivElement>
 
-const ReviewCard : FC<props> = (props) => {
+const ReviewCard : FC<Props> = (props) => {
   const review = props.review;
+  const reviewId = review._id;
+  const loggedInUserId = props.loggedInUserId;
   const api = process.env.NEXT_PUBLIC_BACKEND_URL;
   const textRef = useRef<HTMLParagraphElement>(null);
 
@@ -28,6 +32,7 @@ const ReviewCard : FC<props> = (props) => {
   const [isClamped, setIsClamped] = useState(false);
   const [leftByName, setLeftByName] = useState("");
   const [anonymous, setAnonymous] = useState(true);
+  const [showDeleteButton, setShowDeleteButton] = useState(false);
 
   const fetchData = async () => {
     const profileEndpoint = `${api}/profiles/${review.reviewerId}`;
@@ -39,6 +44,10 @@ const ReviewCard : FC<props> = (props) => {
     } else {
       setAnonymous(true);
     }
+
+    if (loggedInUserId === review.reviewerId) {
+      setShowDeleteButton(true);
+    }
   }
 
   const isTextClamped = (element : Element) => {
@@ -48,6 +57,16 @@ const ReviewCard : FC<props> = (props) => {
   useEffect(() => { fetchData() }, []);
 
   useEffect(() => { setIsClamped(isTextClamped(textRef.current)) }, [])
+
+  const handleDeleteReview = async () => {
+    try {
+      const response = await axios.delete(`${api}/postReviews/${review._id}`);
+      alert('Review deleted successfully');
+      window.location.reload();
+    } catch (error) {
+      console.error('Error deleting review:', error);
+    }
+  };
 
   return (
     <div className={`${props.className} px-4 py-3`}>
@@ -63,49 +82,40 @@ const ReviewCard : FC<props> = (props) => {
         </p>
         <p className='text-sm mt-0.5 text-gray-800'>
           {'Left by '}
-          { anonymous ?
-            <span
-              className='font-bold'
-            >
-              Anonymous
-            </span>
-          :
-            <a 
-              className='font-bold cursor-pointer hover:underline'
-              href={`/profile/${review.posterId}`}
-            >
+          {anonymous ?
+            <span className='font-bold'>Anonymous</span>
+            :
+            <a className='font-bold cursor-pointer hover:underline' href={`/profile/${review.posterId}`}>
               {leftByName}
             </a>
           }
         </p>
       </div>
       <RatingStars rating={review.rating} className='mb-2'/>
-      <p 
-        className={`mt-1 ${showFull ? '' : 'line-clamp-2'}`} ref={textRef}
-      >
+      <p className={`mt-1 ${showFull ? '' : 'line-clamp-2'}`} ref={textRef}>
         {review.reviewDescription}
       </p>
-      { isClamped ?
+      {isClamped &&
         <div className='flex justify-center'>
-          { showFull ? 
-            <button 
-              className='text-sm text-gray-500 mt-1 hover:underline'
-              onClick={() => setShowFull(false)}
-            >
+           {showFull ? 
+            <button className='mt-1 text-sm text-gray-500 hover:underline' onClick={() => setShowFull(false)}>
               Hide Full Review
             </button>
           :
-            <button 
-              className='text-sm text-gray-500 mt-1 hover:underline'
-              onClick={() => setShowFull(true)}
-            >
+          <button className='mt-1 text-sm text-gray-500 hover:underline' onClick={() => setShowFull(true)}>
               Show Full Review...
             </button>
           }
         </div>
-      :
-        ''
+      
       }
+      <div className="flex justify-end">
+        {showDeleteButton && (
+          <button onClick={handleDeleteReview} className='mt-2 font-semibold text-red-500 hover:underline'>
+            Delete my review
+          </button>
+        )}
+      </div>
     </div>
   );
 }
