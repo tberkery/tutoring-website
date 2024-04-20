@@ -85,18 +85,22 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
 
   const handleBookmarkUpdate = async (bookmark: string, isCourse: boolean) => {
     try {
-      console.log("in handleBookmarkUpdate")
-      console.log("visitorId")
-      console.log(visitorId)
-      console.log("bookmark")
-      console.log(bookmark)
-      console.log("isCourse")
-      console.log(isCourse)
-      const response = await axios.put(`${api}/profiles/addBookmark/${visitorId}`, { bookmark: bookmark, isCourse: isCourse });
+      const allBookmarks = await axios.get(`${api}/profiles/allBookmarks/${visitorId}`)
+      let bookmarkIds;
+      if (isCourse) {
+        bookmarkIds = new Set(allBookmarks.data.data.courseBookmarks);
+      } else {
+        bookmarkIds = new Set(allBookmarks.data.data.activityBookmarks);
+      }
+      if (bookmarkIds.has(bookmark)) {
+        const response = await axios.put(`${api}/profiles/deleteBookmark/${visitorId}`, { bookmark: bookmark, isCourse: isCourse });
+      } else {
+        const response = await axios.put(`${api}/profiles/addBookmark/${visitorId}`, { bookmark: bookmark, isCourse: isCourse });
+      } 
     } catch (error) {
       console.error('Error updating bookmark status:', error);
     }
-  };
+};
 
   const timeSpentRef = useRef<Number>();
   useEffect(() => {
