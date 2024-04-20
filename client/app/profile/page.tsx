@@ -189,11 +189,11 @@ const Page : FC = () => {
           <p className="text-gray-700 text-base text-justify">{profileData.description}</p>
         </div>
         <div className="block md:hidden flex-1 max-w-xl">
-          <div className="flex justify-center gap-x-1">
+          <div className="flex justify-center items-center gap-x-1">
             <img
               src={imgUrl}
               alt={`Avatar`}
-              className="mr-1 w-8 h-8 rounded-full"
+              className="mr-1 w-12 h-12 rounded-full"
             />
             <h1 className="text-2xl text-center font-extrabold font-sans uppercase text-black">
               {profileData.firstName} {profileData.lastName}
