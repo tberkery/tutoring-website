@@ -8,8 +8,3 @@ export default authMiddleware({
 export const config = {
   matcher: ["/((?!.+\\.[\\w]+$|_next).*)", "/", "/(api|trpc)(.*)"],
 };
-
-// export function middleware(req: NextRequest) {
-//   console.log(req.url);
-//   return NextResponse.next();
-// }
