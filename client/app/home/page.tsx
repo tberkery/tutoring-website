@@ -14,6 +14,14 @@ const LandingPage = () => {
         <h1 className="title">Welcome to TutorHub</h1>
         <p className="subtitle">Comprehensive Tutoring/Learning Platform for BlueJays</p>
       </div>
+
+      <div className="typewriter">
+        <div className="slide"><i></i></div>
+        <div className="paper"></div>
+        <div className="keyboard"></div>
+      </div>
+
+
       <div className="content">
         <p className="description">
           Find someone at Hopkins who wants to teach exactly what you want to learn. <br/><br/>
@@ -21,7 +29,9 @@ const LandingPage = () => {
           covered.
         </p>
         <Link href="/browse">
-            <button className="get-started-btn">Get Started</button>
+          <button className="startButton">
+            Get Started
+          </button>
         </Link>
         
       </div>
@@ -39,3 +49,4 @@ const LandingPage = () => {
 };
 
 export default LandingPage;
+
