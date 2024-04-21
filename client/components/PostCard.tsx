@@ -105,7 +105,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onUpdateBookmark }) => {
 
   return (<> 
     <div 
-      className="max-w-sm overflow-hidden bg-white rounded shadow-lg cursor-pointer hover:-translate-y-2 transition duration-75" 
+      className="relative max-w-sm overflow-hidden bg-white rounded shadow-lg cursor-pointer hover:-translate-y-2 transition duration-75" 
       onClick={handleClick}
       onMouseEnter={() => setTitleUnderline(true)}
       onMouseLeave={() => setTitleUnderline(false)}
