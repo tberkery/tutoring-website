@@ -1,8 +1,5 @@
-// pages/index.js
-
 'use client';
 import Head from 'next/head'
-//import styles from '../styles/Home.module.css'
 import dynamic from "next/dynamic";
 import '@sendbird/uikit-react/dist/index.css';
 import { useUser } from "@clerk/nextjs";

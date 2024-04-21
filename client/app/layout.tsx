@@ -1,6 +1,14 @@
 import React, { FC, ReactNode } from "react";
 import { ClerkProvider } from "@clerk/nextjs";
 import { cn } from "@/lib/utils";
+import { Metadata } from "next";
+
+export const dynamicParams = true;
+export const dymaic = 'force-dynamic';
+
+export const metadata : Metadata = {
+  title: "Tutorhub"
+}
 
 const RootLayout : FC<{ children : ReactNode }> = ({ children }) => {
   return (
