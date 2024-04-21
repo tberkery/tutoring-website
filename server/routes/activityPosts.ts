@@ -20,7 +20,6 @@ router.post("/", async (req: any, res: any) => {
     const newPost = await ActivityPostDao.create(userId, userFirstName, userLastName, activityTitle, {activityDescription, activityPostPicKey, price, tags});
     res.status(201).json({ newPost });
   } catch (err) {
-    console.log(err);
     res.status(500).send("Server Error");
   }
 });
@@ -34,7 +33,6 @@ router.get("/findOne/:id", async (req: any, res: any) => {
       }
       res.status(200).json({ post });
     } catch (err) {
-        console.log(err);
         res.status(500).send("Server Error");
     }
 });
@@ -131,7 +129,6 @@ router.put("/:id", async (req: any, res: any) => {
         }
         res.status(200).json({ post });
     } catch (err) {
-        console.log(err);
         res.status(500).send("Server Error");
     }
 });
@@ -160,7 +157,6 @@ router.delete("/:id", async (req: any, res: any) => {
         }
         res.status(200).json({ msg: "Post deleted successfully" });
     } catch (err) {
-        console.log(err);
         res.status(500).send("Server Error");
     }
 });
@@ -196,7 +192,6 @@ router.get("/", async (req: any, res: any) => {
         }
         res.status(200).json({ posts });
       } catch (err) {
-        console.log(err);
         res.status(500).send("Server Error");
       }
     }

@@ -10,7 +10,6 @@ router.post("/", async (req: any, res: any) => {
     const newReport = await ReportDao.create(reporterId, reporterFirstName, reporterLastName, content, reporteeId, reporteeFirstName, reporteeLastName);
     res.status(201).json({ newReport });
   } catch (err) {
-    console.log(err);
     res.status(500).send("Server Error");
   }
 });
@@ -34,7 +33,6 @@ router.get("/findOne/:id", async (req: any, res: any) => {
       }
       res.status(200).json({ report });
     } catch (err) {
-        console.log(err);
         res.status(500).send("Server Error");
     }
 });
@@ -70,7 +68,6 @@ router.put("/resolve/:id", async (req: any, res: any) => {
         }
         res.status(200).json({ report });
     } catch (err) {
-        console.log(err);
         res.status(500).send("Server Error");
     }
 });
@@ -85,7 +82,6 @@ router.put("/:id", async (req: any, res: any) => {
         }
         res.status(200).json({ report });
     } catch (err) {
-        console.log(err);
         res.status(500).send("Server Error");
     }
 });
@@ -99,7 +95,6 @@ router.delete("/:id", async (req: any, res: any) => {
         }
         res.status(200).json({ msg: "Report deleted successfully" });
     } catch (err) {
-        console.log(err);
         res.status(500).send("Server Error");
     }
 });

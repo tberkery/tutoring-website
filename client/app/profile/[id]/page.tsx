@@ -404,9 +404,9 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
         </div>
         <div className="flex flex-col items-center gap-y-2 mt-2 gap-x-4">
           <img className="hidden md:block w-48 h-48 object-cover rounded-md" src={imgUrl} alt={`${profileData.firstName}`} />
-          <button className="bg-custom-blue hover:bg-blue-900 text-white font-bold py-2 px-4 rounded-md" onClick={() => compareAvail()}>
+          {/* <button className="bg-custom-blue hover:bg-blue-900 text-white font-bold py-2 px-4 rounded-md" onClick={() => compareAvail()}>
             Compare Availability
-          </button>
+          </button> */}
           <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-md" onClick={() => handleClickReportUser()}>
             Report this user
           </button>
