@@ -23,6 +23,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import PriceAnalytics from "@/components/PriceAnalytics";
+import PostAnalytics from "@/components/PostAnalytics";
 
 type coursePostType = {
   _id? : string,
@@ -291,6 +292,11 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
             className="mb-4 bg-white rounded-lg shadow-md"
           />
         )) }
+      </div>
+      <div className="flex flex-row gap-x-4 mb-4">
+        <div className="w-full">
+          <PostAnalytics postId={params.id}/>
+        </div>
       </div>
     </div>
       <div className="flex flex-col w-1/3 my-10 mx-10">
