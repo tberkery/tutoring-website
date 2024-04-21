@@ -476,25 +476,7 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
           className="relative z-10 border-t border-black bg-pageBg md:px-6 py-8
           flex justify-center"
         >
-          { activeSection === "Posts" ?
-            <div 
-              className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2
-              lg:grid-cols-3 gap-4"
-            >
-              { posts.map((post) => (
-                <PostCard key={post._id} post={post} onUpdateBookmark={handleBookmarkUpdate} />
-              )) }
-            </div>
-          :
-            <div className="flex flex-col justify-center max-w-3xl w-full">
-              { reviews.map((review) => (
-                <ReviewCard
-                  review={review}
-                  className="mb-4 bg-white rounded-lg shadow-md"
-                />
-              )) }
-            </div>
-          }
+          { getTabSection() }
         </div>
       </div>
     </>
