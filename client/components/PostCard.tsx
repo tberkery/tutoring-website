@@ -1,7 +1,8 @@
-"use client";
-import React, { useEffect, useState } from 'react';
+import React, { MouseEvent, useEffect, useState } from 'react';
 import { useRouter } from "next/navigation";
 import { Star } from 'lucide-react';
+import BookmarkIcon from './ui/bookmark';
+import axios from 'axios';
 
 interface Post {
   _id: string;
@@ -12,7 +13,8 @@ interface Post {
   activityDescription?: string;
   courseName?: string;
   description?: string;
-  imageUrl?: string;
+  coursePostPicKey?: string;
+  activityPostPicKey?: string;
   price: number;
   courseNumber?: string;
   courseDepartment?: string[];
@@ -40,12 +42,17 @@ type review = {
 
 interface PostCardProps {
   post: Post;
+  onUpdateBookmark?: (postId: string, isCoursePost: boolean) => void;
 }
 
-const PostCard: React.FC<PostCardProps> = ({ post }) => {
+const PostCard: React.FC<PostCardProps> = ({ post, onUpdateBookmark }) => {
+  const api = process.env.NEXT_PUBLIC_BACKEND_URL;
   const defaultImage = '/jhulogo.jpeg';
   const [titleUnderline, setTitleUnderline] = useState(false);
   const [avgRating, setAvgRating] = useState(5);
+  const [isBookmarked, setIsBookmarked] = useState(false); // State to track bookmark status
+  const [imgUrl, setImgUrl] = useState(defaultImage);
+
   const router = useRouter();
 
   const postUrl = post.courseName ? `/post/course/${post._id}` : `/post/activity/${post._id}`;
@@ -54,7 +61,21 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
     let total = 0;
     post.reviews.forEach(r => total += r.rating);
     setAvgRating(total / post.reviews.length);
+    loadImage(post);
   }, [post])
+
+  const loadImage = async (post : Post) => {
+    let endpoint;
+    if (post.coursePostPicKey) {
+      endpoint = `${api}/coursePostPics/get/${post.coursePostPicKey}`;
+      const response = await axios.get(endpoint);
+      setImgUrl(response.data.imageUrl);
+    } else if (post.activityPostPicKey) {
+      endpoint = `${api}/activityPostPics/get/${post.activityPostPicKey}`;
+      const response = await axios.get(endpoint);
+      setImgUrl(response.data.activityPostPicKey);
+    }
+  }
 
   const handleClick = () => {
     if (titleUnderline) {
@@ -62,25 +83,43 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
     }
   }
 
-  const formatPrice = (price : number) => {
-    if (!price || price == 0) {
+  const formatPrice = (price: number) => {
+    if (!price || price === 0) {
       return "Free!"
     } else {
       return `From $${price}`;
     }
   }
 
+  const toggleBookmark = async (event: MouseEvent<HTMLDivElement>) => {
+    // Prevent the event from propagating to the parent div
+    event.stopPropagation();
+    
+    setIsBookmarked(prevState => !prevState);
+    const isCoursePost = post.courseName ? true : false;
+    const bookmark = post._id;
+
+    await onUpdateBookmark(bookmark, isCoursePost); // Trigger callback with postId and new bookmark status
+  };
+
+
   return (<> 
     <div 
-      className="max-w-sm overflow-hidden bg-white rounded shadow-lg
-        cursor-pointer hover:-translate-y-2 transition duration-75" 
+      className="max-w-sm overflow-hidden bg-white rounded shadow-lg cursor-pointer hover:-translate-y-2 transition duration-75" 
       onClick={handleClick}
       onMouseEnter={() => setTitleUnderline(true)}
       onMouseLeave={() => setTitleUnderline(false)}
     >
+      {/* Bookmark icon positioned at the top right corner */}
+      <div className="absolute top-2 right-2" onClick={toggleBookmark}>
+        {/* Use conditional rendering to fill the bookmark icon in black if the post is bookmarked */}
+        <BookmarkIcon
+          className={`h-6 w-6 ${isBookmarked ? 'text-black' : 'text-gray-500'}`}
+        />
+      </div>
       <img
         className="w-full h-48 object-cover"
-        src={post.imageUrl || defaultImage}
+        src={imgUrl}
         alt="Post Image"
       />
       <div className="border-t px-3 pb-3 pt-1">

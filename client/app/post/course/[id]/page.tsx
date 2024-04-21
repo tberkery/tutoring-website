@@ -19,6 +19,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useUser } from '@clerk/clerk-react';
 import { set } from "cypress/types/lodash";
 import ReviewCard from "@/components/ReviewCard";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { ChevronDown } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import PriceAnalytics from "@/components/PriceAnalytics";
 
 type coursePostType = {
   _id? : string,
@@ -42,6 +46,18 @@ type userType = {
   description? : string,
 }
 
+type Review = {
+  _id: string
+  postId: string,
+  postName?: string,
+  postType?: string,
+  posterId: string,
+  reviewerId: string,
+  title?: string,
+  reviewDescription: string,
+  rating: number,
+}
+
 const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
 	const api : string = process.env.NEXT_PUBLIC_BACKEND_URL;
   const postId = params.id;
@@ -50,6 +66,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
   const [poster, setPoster] = useState<userType>({});
   const [imgUrl, setImgUrl] = useState("/jhulogo.jpeg");
   const [loadedPost, setLoadedPost] = useState(false);
+  const [profilePic, setProfilePic] = useState("/defaultimg.jpeg");
 
   const [posterId, setPosterId] = useState('');
   const [reviewerId, setReviewerId] = useState('');
@@ -58,14 +75,21 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
   const [isAnonymous, setIsAnonymous] = useState(false);
   const { isLoaded, isSignedIn, user } = useUser();
 
-  const [reviews, setReviews] = useState([]);
+  const [reviews, setReviews] = useState<Review[]>([]);
   const [averageRating, setAverageRating] = useState(0);
   const [reviewCount, setReviewCount] = useState(0);
+  const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(false);
+
+  const reviewSortMethods = [
+    "Highest Rating",
+    "Lowest Rating"
+  ]
+  const [reviewSort, setReviewSort] = useState(reviewSortMethods[0]);
 
   const loadReviews = async () => {
     try {
         const response = await axios.get(`${api}/postReviews/getByPostId/${postId}`);
-        const fetchedReviews = response.data.reviews;
+        let fetchedReviews = response.data.reviews;
 
             let sumOfRatings = 0;
             const numberOfReviews = fetchedReviews.length;
@@ -80,8 +104,10 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
             fetchedReviews.forEach((review) => {
               // @ts-ignore
               review.postName = post.courseName;
+              console.log(post.courseName);
               review.postType = 'course';
             });
+            fetchedReviews = sortReviews(fetchedReviews);
             setReviews(fetchedReviews); // Set reviews state at the end
         } catch (error) {
         console.error('Error fetching reviews:', error);
@@ -117,10 +143,30 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
         console.error(e);
       }
     }
+    if (profile.data.data.profilePicKey) {
+      const picUrl = await axios.get(`${api}/profilePics/get/${profile.data.data.profilePicKey}`);
+      setProfilePic(picUrl.data.imageUrl);
+    }
     setLoadedPost(true);
   }
 
+  const sortReviews = (unsorted : Review[]) => {
+    let newReviews = unsorted.slice();
+    if (reviewSort === "Lowest Rating") {
+      newReviews.sort((a, b) => a.rating - b.rating);
+    } else if (reviewSort === "Highest Rating") {
+      newReviews.sort((a, b) => b.rating - a.rating);
+    }
+    return newReviews;
+  }
+
+  useEffect(() => { setReviews(sortReviews(reviews)) }, [reviewSort]);
+
   useEffect(() => { loadOldPost() }, [isLoaded, isSignedIn, user]);
+
+  useEffect(() => {
+    setIsButtonDisabled(posterId === reviewerId);
+  }, [posterId, reviewerId]);
 
   const handleCommentChange = (event) => {
     setComment(event.target.value);
@@ -142,7 +188,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
       };
       console.log(body);
       const response = await axios.post(`${api}/postReviews/${postId}`, body);
-      alert(`Your review has been created!`);
+      setReviews(prevReviews => [...prevReviews, response.data.review]);
       console.log('Review submitted:', response.data);
       setRating(0);
       setComment('');
@@ -158,9 +204,9 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
 
   return <>
     <Navbar/>
-    <div className="flex min-h-screen">
-      <div className="w-2/3 flex flex-col px-20 my-14 border-r border-black">
-        <div className="intro border-b border-black pb-10">
+    <div className="flex flex-col min-h-screen lg:flex-row">
+      <div className="flex flex-col w-full px-4 lg:w-2/3 my-14 lg:border-r lg:border-black">
+        <div className="pb-10 border-b border-black intro">
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem>
@@ -176,15 +222,15 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
-          <h1 className="font-sans font-extrabold uppercase text-5xl leading-none mt-0 mb-1 text-slate-800 pt-2">{post.courseName}</h1>
-          <h3 className="w-full text-xs tracking-wide leading-tight capitalize font-medium mb-3 text-slate-700">${post.price} / hour</h3>
+          <h1 className="pt-2 mt-0 mb-1 font-sans text-5xl font-extrabold leading-none uppercase text-slate-800">{post.courseName}</h1>
+          <h3 className="w-full mb-3 text-xs font-medium leading-tight tracking-wide capitalize text-slate-700">${post.price} / hour</h3>
           <div className="flex items-center justify-between space-x-2">
           <img
-            src="/defaultimg.jpeg"
+            src={profilePic}
             alt={`Avatar`}
             className="w-10 h-10 rounded-full"
           />
-          <div className="flex-grow flex flex-col justify-center">
+          <div className="flex flex-col justify-center flex-grow">
             <span className="text-sm font-semibold">by {poster.firstName} {poster.lastName} - Tutor Hub</span>
             <span className="text-xs text-gray-500">published Mar 30, 2024</span>
           </div>
@@ -197,60 +243,100 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
         </div>
       </div>
       <p className="py-8">{post.description}</p>
-      <h1 className="font-sans font-extrabold uppercase text-3xl leading-none mt-0 mb-1 text-slate-800 py-2">Reviews</h1>
-      <div className="flex flex-col justify-center max-w-3xl">
-          { reviews.map((review, index) => (
-            <ReviewCard 
-              key={`review-${index}`}
-              review={review}
-              className="mb-4 bg-white rounded-lg shadow-md"
-            />
-          )) }
-        </div>
-    </div>
-      <div className="w-1/3 flex flex-col items-center pr-20 my-10">
-        <div className="content px-20">
-          <div className="w-[300px] info-box max-w p-4 border-2 border-black mt-10 mb-6" style={{
-              boxShadow: '5px 5px 0px rgba(0, 0, 0, 10)',
-            }}>
-            <h1 className="bg-blue-300 text-black text-lg font-extrabold uppercase p-1 mb-2 inline-block font-sans">
-              About {poster.firstName} {poster.lastName}
-            </h1>
-            <p className="text-black mb-4 line-clamp-4 overflow-ellipsis">
-              {poster.description}
-            </p>
-            <Link href={`/profile/` + post.userId}  className="bg-black text-white uppercase text-sm px-4 py-2 mt-4">
-              Learn More
-            </Link>
-          </div>
-          <div className="review-content">
-            <h1 className="font-sans font-extrabold uppercase text-3xl leading-none mt-0 mb-1 text-slate-800 pt-2 self-start">
-              leave a review
-            </h1>
-            <p>Required fields are marked *</p>
-            <h2 className="font-sans font-extrabold uppercase text-l leading-none mt-2 mb-0 text-slate-700 pt-2 self-start">tutor rating *</h2>
-            <div className="flex py-1 ">
-              <StarReview rating={rating} setRating={setRating} />
-            </div>
-            <h2 className="font-sans font-extrabold uppercase text-l leading-none mt-2 mb-0 text-slate-700 pt-2 self-start">Comment *</h2>
-            <Textarea className="resize-none my-2 rounded" onChange={handleCommentChange}/>
-            <div className="flex items-center space-x-2">
-              <Checkbox id="terms" checked={isAnonymous} onCheckedChange={handleCheckedChange}/>
-              <label
-                htmlFor="terms"
-                className="text-sm font-medium leading-none capitalize peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+      <div className="flex flex-row gap-x-4 mb-4">
+        { reviews.length === 0 ? 
+          <h1 className="text-xl font-bold">No Reviews</h1>
+        :
+          <h1 className="font-sans font-extrabold uppercase text-3xl leading-none mt-0 mb-1 text-slate-800 py-2">Reviews</h1>
+        }
+        { reviews.length === 0 ? "" :
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              <div 
+                className='px-4 py-2 text-md text-white font-bold bg-custom-blue
+                hover:bg-blue-900 rounded-lg flex'
               >
-                make my response anonymous
-              </label>
-            </div>
-            <button 
-              onClick={handleSubmit} 
-              className="uppercase info-box max-w p-4 border-2 border-black mt-4 mb-6 font-md font-bold bg-blue-300" style={{
+                {reviewSort} <ChevronDown/>
+              </div>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent 
+              className='bg-blue-300 rounded-xl px-2 py-1.5 border mt-1'
+            >
+              {
+                reviewSortMethods.map((method) => {
+                  return (
+                    <DropdownMenuItem 
+                      key={`sort-${method}`}
+                      className='p-0 mb-1 hover:cursor-pointer text-lg font-bold
+                      rounded-xl overflow-hidden'
+                      onClick={ () => setReviewSort(method) }
+                    >
+                      <div className='hover:bg-sky-100 px-3 py-1 w-full'>
+                        {method}
+                      </div>
+                    </DropdownMenuItem>
+                  );
+                })
+              }
+            </DropdownMenuContent>
+          </DropdownMenu>
+        }
+      </div>
+      <div className="flex flex-col justify-center max-w-3xl">
+        { reviews.map((review, index) => (
+          <ReviewCard 
+            key={`review-${index}`}
+            review={review}
+            loggedInUserId={reviewerId}
+            className="mb-4 bg-white rounded-lg shadow-md"
+          />
+        )) }
+      </div>
+    </div>
+      <div className="flex flex-col w-1/3 my-10 mx-10">
+        <div className="w-full">
+          <PriceAnalytics postId={postId}/>
+        </div>
+        <div className="w-[300px] info-box max-w p-4 border-2 border-black mt-10 mb-6" style={{
+            boxShadow: '5px 5px 0px rgba(0, 0, 0, 10)',
+          }}>
+          <h1 className="inline-block p-1 mb-2 font-sans text-lg font-extrabold text-black uppercase bg-blue-300">
+            About {poster.firstName} {poster.lastName}
+          </h1>
+          <p className="mb-4 text-black line-clamp-4 overflow-ellipsis">
+            {poster.description}
+          </p>
+          <Link href={`/profile/` + post.userId}  className="px-4 py-2 mt-4 text-sm text-white uppercase bg-black">
+            Learn More
+          </Link>
+        </div>
+        <div className="review-content w-full">
+          <h1 className="self-start pt-2 mt-0 mb-1 font-sans text-3xl font-extrabold leading-none uppercase text-slate-800">
+            leave a review
+          </h1>
+          <p>Required fields are marked *</p>
+          <h2 className="self-start pt-2 mt-2 mb-0 font-sans font-extrabold leading-none uppercase text-l text-slate-700">tutor rating *</h2>
+          <div className="flex py-1 ">
+            <StarReview rating={rating} setRating={setRating} />
+          </div>
+          <h2 className="self-start pt-2 mt-2 mb-0 font-sans font-extrabold leading-none uppercase text-l text-slate-700">Comment *</h2>
+          <Textarea className="my-2 rounded resize-none" onChange={handleCommentChange}/>
+          <div className="flex items-center space-x-2">
+            <Checkbox id="terms" checked={isAnonymous} onCheckedChange={handleCheckedChange}/>
+            <label
+              htmlFor="terms"
+              className="text-sm font-medium leading-none capitalize peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              make my response anonymous
+            </label>
+          </div>
+          <button 
+            onClick={handleSubmit} disabled={isButtonDisabled}
+            className={`uppercase info-box max-w p-4 border-2 border-black mt-4 mb-6 font-md font-bold ${isButtonDisabled ? 'bg-gray-400 text-gray-600 cursor-not-allowed' : 'bg-blue-300 text-black'}`} style={{
               boxShadow: '2px 2px 0px rgba(0, 0, 0, 10)',
             }}>
-              post comment
-            </button>
-          </div>
+            Post Comment
+          </button>
         </div>
       </div>
     </div>

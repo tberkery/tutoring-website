@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import '@sendbird/uikit-react/dist/index.css';
 import { useUser } from "@clerk/nextjs";
 import NavBar from '@/components/Navbar';
+import { useEffect, useState } from 'react';
 
 const DynamicAppWithNoSSR = dynamic(() => import("../../components/Chat"), {
   ssr: false,
@@ -11,22 +12,24 @@ const DynamicAppWithNoSSR = dynamic(() => import("../../components/Chat"), {
 });
 
 export default function Home() {
-    const { isLoaded, isSignedIn, user } = useUser();
-    let email = '';
-    let jhed_id = '';
+  const { isLoaded, isSignedIn, user } = useUser();
+  const [jhed, setJhed] = useState("");
 
+  const getSendbirdUserId = () => {
     if (user && user.primaryEmailAddress) {
-        email = user.primaryEmailAddress.toString();
-        const atIndex = email.indexOf('@');
-        if (atIndex !== -1 && email.endsWith('@jhu.edu')) {
-            jhed_id = email.substring(0, atIndex);
-            console.log(jhed_id);
-        } else {
-            console.log('Invalid email format');
-        }
+      const email = user.primaryEmailAddress.toString();
+      const atIndex = email.indexOf('@');
+      if (atIndex !== -1 && email.endsWith('@jhu.edu')) {
+        setJhed(email.substring(0, atIndex));
+      } else {
+        console.log('Invalid email format');
+      }
     } else {
-        console.log('Email address not available');
+      console.log('Email address not available');
     }
+  }
+
+  useEffect(getSendbirdUserId, [isLoaded, isSignedIn, user]);
 
   return (
     <>
@@ -39,7 +42,7 @@ export default function Home() {
       </Head>
       <main>
       {/* <main className={styles.main}> */}
-        <DynamicAppWithNoSSR userId={jhed_id}/>
+        <DynamicAppWithNoSSR userId={jhed}/>
       </main>
     </>
   )

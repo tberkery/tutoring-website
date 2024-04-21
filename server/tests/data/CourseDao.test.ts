@@ -7,6 +7,9 @@ const {faker} = require('@faker-js/faker');
 const mg = require("mongoose");
 const URI = process.env.ATLAS_URI_TEST
 
+afterAll(async () => {
+    await mg.disconnect();
+});
 
 test('test create() with all fields', async ()=> {
     const courseDao = new CourseDao();

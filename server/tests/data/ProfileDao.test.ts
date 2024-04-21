@@ -363,6 +363,125 @@ test('test update() to add an optional param originally not given', async ()=> {
     expect(updatedProfile.description).toBe(description)
 });
 
+
+test('test updateBookmarks() when none exist', async ()=> {
+    await mg.connect(URI);
+    const firstName = faker.person.firstName();
+    const lastName = faker.person.lastName();
+    const email = faker.internet.email();
+    const affiliation = "faculty";
+    const department = faker.lorem.word();
+    const profileDao = new ProfileDao();
+
+    
+    const profile =  await profileDao.create(firstName, lastName, email, affiliation, department);
+    expect(profile.courseBookmarks).toHaveLength(0);
+    expect(profile.activityBookmarks).toHaveLength(0);
+
+    const bookmark1 = new ObjectId()
+
+    const id = profile._id;
+    const profileUpdated = await profileDao.updateBookmarks(id, bookmark1, false);
+    expect(profileUpdated.firstName).toBe(firstName);
+    expect(profileUpdated.lastName).toBe(lastName);
+    expect(profileUpdated.email).toBe(email);
+    expect(profileUpdated.affiliation).toBe(affiliation);
+    expect(profileUpdated.department).toBe(department);
+    expect(profileUpdated.activityBookmarks).toHaveLength(1)
+    expect(profileUpdated.courseBookmarks).toHaveLength(0);
+
+});
+
+
+
+test('test updateBookmarks() when some exist', async ()=> {
+    await mg.connect(URI);
+    const firstName = faker.person.firstName();
+    const lastName = faker.person.lastName();
+    const email = faker.internet.email();
+    const affiliation = "faculty";
+    const department = faker.lorem.word();
+    const profileDao = new ProfileDao();
+    
+    const profile =  await profileDao.create(firstName, lastName, email, affiliation, department);
+    expect(profile.courseBookmarks).toHaveLength(0);
+    expect(profile.activityBookmarks).toHaveLength(0);
+
+    const id = profile._id;
+    const bookmark1 = new ObjectId()
+    const bookmark2 = new ObjectId()
+    const profileUpdate1 = await profileDao.updateBookmarks(id, bookmark1, false);
+    expect(profileUpdate1.activityBookmarks).toHaveLength(1)
+    const profileUpdated = await profileDao.updateBookmarks(id, bookmark2, false);
+    expect(profileUpdated.firstName).toBe(firstName);
+    expect(profileUpdated.lastName).toBe(lastName);
+    expect(profileUpdated.email).toBe(email);
+    expect(profileUpdated.affiliation).toBe(affiliation);
+    expect(profileUpdated.department).toBe(department);
+    expect(profileUpdated.activityBookmarks).toHaveLength(2)
+    expect(profileUpdated.courseBookmarks).toHaveLength(0);
+
+});
+
+
+test('test readBookmarksById() when some exist', async ()=> {
+    await mg.connect(URI);
+    const firstName = faker.person.firstName();
+    const lastName = faker.person.lastName();
+    const email = faker.internet.email();
+    const affiliation = "faculty";
+    const department = faker.lorem.word();
+    const profileDao = new ProfileDao();
+    
+    const profile =  await profileDao.create(firstName, lastName, email, affiliation, department);
+    expect(profile.courseBookmarks).toHaveLength(0);
+    expect(profile.activityBookmarks).toHaveLength(0);
+
+    const id = profile._id;
+    const bookmark1 = new ObjectId()
+    const bookmark2 = new ObjectId()
+    const bookmark3 = new ObjectId()
+    const profileUpdate1 = await profileDao.updateBookmarks(id, bookmark1, false);
+    expect(profileUpdate1.activityBookmarks).toHaveLength(1)
+    const profileUpdate2 = await profileDao.updateBookmarks(id, bookmark2, false);
+    expect(profileUpdate2.activityBookmarks).toHaveLength(2)
+    const profileUpdate3 = await profileDao.updateBookmarks(id, bookmark3, true);
+    expect(profileUpdate3.courseBookmarks).toHaveLength(1)
+
+
+
+    const bookmarks = await profileDao.readBookmarksById(id)
+    expect(bookmarks.courseBookmarks).toHaveLength(1);
+    expect(bookmarks.activityBookmarks).toHaveLength(2);
+});
+
+
+
+test('test deletBookmark()', async ()=> {
+    await mg.connect(URI);
+    const firstName = faker.person.firstName();
+    const lastName = faker.person.lastName();
+    const email = faker.internet.email();
+    const affiliation = "faculty";
+    const department = faker.lorem.word();
+    const profileDao = new ProfileDao();
+    
+    const profile =  await profileDao.create(firstName, lastName, email, affiliation, department);
+
+
+    const id = profile._id;
+    const bookmark1 = new ObjectId()
+    const bookmark2 = new ObjectId()
+    const profileUpdate1 = await profileDao.updateBookmarks(id, bookmark1, false);
+    expect(profileUpdate1.activityBookmarks).toHaveLength(1)
+    const profileUpdated = await profileDao.updateBookmarks(id, bookmark2, false);
+    expect(profileUpdated.activityBookmarks).toHaveLength(2)
+    expect(profileUpdated.courseBookmarks).toHaveLength(0);
+    const deleted = await profileDao.deleteBookmark(id, bookmark1, false)
+    expect(deleted.activityBookmarks).toHaveLength(1);
+
+});
+
 test('test delete() with a valid ID', async ()=> {
     await mg.connect(URI);
     const firstName = faker.person.firstName();

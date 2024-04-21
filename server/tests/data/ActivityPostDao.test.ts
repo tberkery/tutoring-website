@@ -209,3 +209,64 @@ test('test delete() for an invalid id', async ()=> {
     expect(foundCourse).toBe("Post not found");
     await ActivityPostModel.deleteMany({});
 });
+
+
+test('test add profile view for valid id', async() => {
+    const activityPostDao = new ActivityPostDao();
+    const userId = faker.lorem.word();
+    const userFirstName = faker.person.firstName();
+    const userLastName = faker.person.lastName();
+    const activityTitle =  faker.lorem.word();
+    const activityDescription =  faker.lorem.word();
+    const activityPostPicKey = faker.image.avatar();
+    const price = faker.number.int()
+    const tags = [];
+    for (let i = 0; i < 5; i++) {
+        tags.push(faker.lorem.word());
+    }
+
+    const post =  await activityPostDao.create(userId, userFirstName, userLastName, activityTitle, {activityDescription, activityPostPicKey, price, tags});
+    const id = new ObjectId(1);
+    const timestamp = "2022-02-17T13:36:45.954Z";
+    const duration = 120;
+    const updatedPost = await activityPostDao.updateViews(post._id, id, timestamp, duration)
+
+    expect(updatedPost._id).toMatchObject(post._id);
+    expect(updatedPost.views).toHaveLength(1);
+
+    const firstView = updatedPost.views[0];
+    expect(firstView.timestamp.toISOString()).toBe(timestamp); // Convert toISOString to match MongoDB Date format
+    expect(firstView.durationInSeconds).toBe(duration);
+    expect(firstView.viewerId).toMatchObject(id);
+})
+
+test('test observe profile view for valid id', async() => {
+    const activityPostDao = new ActivityPostDao();
+    const userId = faker.lorem.word();
+    const userFirstName = faker.person.firstName();
+    const userLastName = faker.person.lastName();
+    const activityTitle =  faker.lorem.word();
+    const activityDescription =  faker.lorem.word();
+    const activityPostPicKey = faker.image.avatar();
+    const price = faker.number.int()
+    const tags = [];
+    for (let i = 0; i < 5; i++) {
+        tags.push(faker.lorem.word());
+    }
+
+    const post =  await activityPostDao.create(userId, userFirstName, userLastName, activityTitle, {activityDescription, activityPostPicKey, price, tags});
+    const id = new ObjectId(1);
+    const timestamp = "2022-02-17T13:36:45.954Z";
+    const duration = 120;
+    const updatedPost = await activityPostDao.updateViews(post._id, id, timestamp, duration)
+    
+    const retrievedPost = await activityPostDao.readViewsById(post._id);
+
+    expect(retrievedPost._id).toMatchObject(post._id);
+    expect(retrievedPost.views).toHaveLength(1);
+
+    const firstView = retrievedPost.views[0];
+    expect(firstView.timestamp.toISOString()).toBe(timestamp); // Convert toISOString to match MongoDB Date format
+    expect(firstView.durationInSeconds).toBe(duration);
+    expect(firstView.viewerId).toMatchObject(id);
+})

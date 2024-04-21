@@ -14,6 +14,12 @@ import { useRouter } from "next/navigation";
 
 import FormData from "form-data";
 
+type sisCourse = {
+  courseTitle: string,
+  courseNumber: string,
+  courseDepartment: string[],
+}
+
 const APP_ID = process.env.NEXT_PUBLIC_SEND_BIRD_APP_ID;
 
 const Page : FC = () => {
@@ -21,6 +27,15 @@ const Page : FC = () => {
 	const router = useRouter();
 	const api : string = process.env.NEXT_PUBLIC_BACKEND_URL;
 	const [checkedProfileExists, setCheckedExists] = useState(false);
+	const [allDepartments, setAllDepartments] = useState<string[]>([]);
+	const [firstName, setFirstName] = useState("");
+	const [lastName, setLastName] = useState("");
+	const [about, setAbout] = useState("");
+	const [department, setDepartment] = useState("");
+	const [year, setYear] = useState(2024);
+	const [refilling, setRefilling] = useState(false);
+	const [affliiateType, setAffiliateType] = useState("student");
+	const [photoFile, setPhotoFile] = useState<File>(null);
 
 	const checkIfProfileExists = async () => {
 		if (!isLoaded)
@@ -41,17 +56,25 @@ const Page : FC = () => {
 			setCheckedExists(true);
 		}
 	}
-	
-	useEffect(() => { checkIfProfileExists() }, [user, router, isLoaded, isSignedIn, checkedProfileExists]);
 
-	const [firstName, setFirstName] = useState("");
-	const [lastName, setLastName] = useState("");
-	const [about, setAbout] = useState("");
-	const [department, setDepartment] = useState("");
-	const [year, setYear] = useState(2024);
-	const [refilling, setRefilling] = useState(false);
-	const [affliiateType, setAffiliateType] = useState("student");
-	const [photoFile, setPhotoFile] = useState<File>(null);
+	const loadDepartments = async () => {
+		const response = await axios.get(`${api}/courses/all`);
+		const courses : sisCourse[] = response.data.courses;
+		const departmentSet = new Set<string>();
+		console.log(courses);
+		courses.forEach((course) => {
+			course.courseDepartment.forEach((department) => {
+				departmentSet.add(department.substring(3));
+			})
+		});
+		let departmentArray = Array.from(departmentSet);
+		departmentArray.sort();
+		setAllDepartments(departmentArray);
+	}
+	
+	useEffect(() => { checkIfProfileExists() }, [user, router, isLoaded, isSignedIn]);
+
+	useEffect(() => { loadDepartments() }, []);
 
 	if (!isLoaded || !isSignedIn || !checkedProfileExists) {
 		return <></>;
@@ -95,12 +118,14 @@ const Page : FC = () => {
 			}
 			const uri = `${api}/profiles`;
 			const response = (await axios.post(uri, body)).data;
-			// if (photoFile !== null) {
-			// 	const formData = new FormData();
-			// 	formData.append("profilePicture", photoFile);
-			// 	const photoUri = `${api}/profilePics/upload/${response.data._id}`;
-			// 	const r2 = await axios.post(photoUri, formData);
-			// }
+			if (photoFile !== null) {
+				const formData = new FormData();
+				formData.append("profilePicture", photoFile);
+				const endpoint = `${api}/profilePics/upload/${response.data._id}`;
+				await axios.post(endpoint, formData);
+				// clerk profile image
+				user.setProfileImage({file: photoFile});
+			}
 			// reigster the new user to the SendBird app for the chat
 			const sendBirdUri = `https://api-${APP_ID}.sendbird.com/v3/users`
 			console.log('uri: ', sendBirdUri);
@@ -118,7 +143,7 @@ const Page : FC = () => {
 				"user_id" : jhed_id,
 				"nickname" : `${firstName} ${lastName}`,
 				"profile_url": "",
-				"profile_file": ""
+				"profile_file": photoFile
 			}
 			console.log('sending to sendbird!\n\n\n\n')
 			console.log(sendBirdBody);
@@ -138,13 +163,6 @@ const Page : FC = () => {
 			router.replace('/profile');
 		}
 	}
-
-	const departments = [
-		"Computer Science",
-		"Applied Math",
-		"Physics",
-		"Really Really Really Long Department Name",
-	]
 
   return <>
 		<div className="flex flex-col justify-center items-center my-24 mx-24">
@@ -248,8 +266,9 @@ const Page : FC = () => {
 									: ''
 								}` }
 								prompt="Select Department"
-								options={ departments }
+								options={ allDepartments }
 								onValueChange={ setDepartment }
+								value={ department }
 								id="department"
 							/>
 						</div>

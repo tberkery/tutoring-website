@@ -35,7 +35,6 @@ const client = new S3Client({
 // Update 'image.jpeg' with parameter name passed in
 router.post('/upload/:objectID', upload.single('profilePicture'), async (req: Request, res: Response) => {
   try {
-    console.log("here")
     const objectID = req.params.objectID;
     const fileContent = (req.file as Express.Multer.File).buffer; // Cast req.file to the correct type
     if (!fileContent) {
@@ -59,7 +58,10 @@ router.post('/upload/:objectID', upload.single('profilePicture'), async (req: Re
       // Update the user document in MongoDB with the profile picture key
       await Profiles.findByIdAndUpdate(objectID, { profilePicKey: key });
 
-      res.status(200).json({ message: 'Profile picture uploaded successfully'});
+      res.status(200).json({ 
+        message: 'Profile picture uploaded successfully',
+        key: key,
+      });
     }
     
   } catch (err) {
@@ -170,7 +172,6 @@ const uploadToS3 = async (fileContent: Buffer, bucketName: string, key: string) 
 
   try {
     const response = await client.send(command);
-    console.log("File uploaded successfully:", response);
     return response;
   } catch (err) {
     console.error("Error uploading file:", err);

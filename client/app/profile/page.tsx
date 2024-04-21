@@ -11,6 +11,9 @@ import Loader from '../../components/Loader';
 import RatingStars from "@/components/RatingStars";
 import ReviewCard from "@/components/ReviewCard";
 import ProfileAnalytics from "@/components/ProfileAnalytics";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { ChevronDown } from "lucide-react";
+import Availability from "@/components/Availability";
 
 interface Post {
   _id: string;
@@ -36,6 +39,7 @@ interface Post {
 }
 
 type Review = {
+  _id: string,
   postId: string,
   postName?: string,
   postType?: string,
@@ -57,6 +61,11 @@ const Page : FC = () => {
   const [loading, setLoading] = useState(true);
   const [imgUrl, setImgUrl] = useState("../defaultimg.jpeg");
   const [activeSection, setActiveSection] = useState("Posts");
+  const reviewSortMethods = [
+    "Highest Rating",
+    "Lowest Rating"
+  ]
+  const [reviewSort, setReviewSort] = useState(reviewSortMethods[0]);
 
   const router = useRouter();
 
@@ -82,6 +91,7 @@ const Page : FC = () => {
             reviews.push(review);
           })
         })
+        reviews = sortReviews(reviews);
         setReviews(reviews);
         let sorted : Post[] = posts.data.sort((a : Post, b : Post) => {
           let aValue = 0;
@@ -101,7 +111,7 @@ const Page : FC = () => {
         setBestPosts(best);
       }
       if (userInfo.data.data[0].profilePicKey) {
-        const picUrl = await axios.get(`${api}/profilePics/get/${userInfo.data.data[0].profilePicKey}`);
+        const picUrl = await axios.get(`${api}/profilePics/get/${userInfo.data.data[0].profilePicKey}`, {timeout: 2000});
         setImgUrl(picUrl.data.imageUrl);
       }
     } catch (error) {
@@ -121,6 +131,18 @@ const Page : FC = () => {
     console.log(ratingTotal);
     setReviewAvg(ratingTotal / reviews.length);
   }, [reviews])
+
+  const sortReviews = (unsorted : Review[]) => {
+    let newReviews = unsorted.slice();
+    if (reviewSort === "Lowest Rating") {
+      newReviews.sort((a, b) => a.rating - b.rating);
+    } else if (reviewSort === "Highest Rating") {
+      newReviews.sort((a, b) => b.rating - a.rating);
+    }
+    return newReviews;
+  }
+
+  useEffect(() => { setReviews(sortReviews(reviews)) }, [reviewSort]);
 
   if (loading || !profileData) {
     return (
@@ -143,23 +165,66 @@ const Page : FC = () => {
         </div>
       )
     } else if (activeSection === "Reviews") {
+      if (reviews.length === 0) {
+        return <h3 className="mt-8 text-xl">You have no reviews</h3>
+      }
       return (
-        <div className="flex flex-col justify-center max-w-3xl w-full">
-          { reviews.map((review, index) => (
-            <ReviewCard 
-              key={`review-${index}`}
-              review={review}
-              className="mb-4 bg-white rounded-lg shadow-md"
-            />
-          )) }
+        <div className="flex w-full items-start justify-center">
+          <div className="mt-4 mr-8 pt-4 pr-8 min-w-52 h-full border-r border-black"> 
+            <DropdownMenu>
+              <DropdownMenuTrigger>
+                <div 
+                  className='px-4 py-2 text-md text-white font-bold bg-custom-blue
+                  hover:bg-blue-900 rounded-lg flex'
+                >
+                  {reviewSort} <ChevronDown/>
+                </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent 
+                className='bg-blue-300 rounded-xl px-2 py-1.5 border mt-1'
+              >
+                {
+                  reviewSortMethods.map((method) => {
+                    return (
+                      <DropdownMenuItem 
+                        key={`sort-${method}`}
+                        className='p-0 mb-1 hover:cursor-pointer text-lg font-bold
+                        rounded-xl overflow-hidden'
+                        onClick={ () => setReviewSort(method) }
+                      >
+                        <div className='hover:bg-sky-100 px-3 py-1 w-full'>
+                          {method}
+                        </div>
+                      </DropdownMenuItem>
+                    );
+                  })
+                }
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+          <div className="mt-4 flex flex-col justify-center max-w-3xl w-full">
+            { reviews.map((review) => (
+              <ReviewCard 
+                review={review}
+                className="mb-4 bg-white rounded-lg shadow-md"
+              />
+            )) }
+          </div>
         </div>
       )
     } else if (activeSection === "Analytics") {
       if (!profileData || !profileData._id) {
         return <></>
-      }
+      } 
       return <ProfileAnalytics profileId={profileData._id} bestPosts={bestPosts}/>
-    } else {
+    } else if (activeSection === "Availability") {
+        return (
+          <div className="flex flex-col justify-center max-w-3xl w-full">
+              <Availability />
+          </div>
+        )
+    }
+    else {
       return <></>
     }
   }
@@ -167,17 +232,38 @@ const Page : FC = () => {
   return (
     <>
       <Navbar />
-      <div className="flex justify-evenly items-center bg-blue-300 py-16 px-16">
-        <div className="flex-1 max-w-xl">
+      <div 
+        className="flex flex-col md:flex-row justify-evenly items-center
+       bg-blue-300 pt-8 pb-6 md:py-16 px-6 md:px-16"
+       >
+        <div className="hidden md:block flex-1 max-w-xl">
           <h1 className="text-2xl font-extrabold font-sans uppercase text-black">
             {profileData.firstName} {profileData.lastName} - {profileData.department}
             {profileData.graduationYear ? `, ${profileData.graduationYear}` : ''}
           </h1>
           <p className="text-s underline font-light mb-2">{profileData.email}</p>
-          <p className="text-gray-700 text-base">{profileData.description}</p>
+          <p className="text-gray-700 text-base text-justify">{profileData.description}</p>
+        </div>
+        <div className="block md:hidden flex-1 max-w-xl">
+          <div className="flex justify-center items-center gap-x-1">
+            <img
+              src={imgUrl}
+              alt={`Avatar`}
+              className="mr-1 w-12 h-12 rounded-full"
+            />
+            <h1 className="text-2xl text-center font-extrabold font-sans uppercase text-black">
+              {profileData.firstName} {profileData.lastName}
+            </h1>
+          </div>
+          <p className="text-s text-center font-light mb-2">
+            <span className="underline">{profileData.email}</span>
+            {" - "}
+            {`${profileData.department}${profileData.graduationYear ? `, ${profileData.graduationYear}` : ''}`}
+          </p>
+          <p className="text-gray-700 text-base text-justify">{profileData.description}</p>
         </div>
         <div className="flex-none flex flex-col items-center">
-          <img className="w-48 h-48 snap-center rounded-md" src={imgUrl} alt={`${profileData.firstName}`} />
+          <img className="hidden md:block w-48 h-48 object-cover rounded-md" src={imgUrl} alt={`${profileData.firstName}`} />
           { reviews.length > 0 ?
             <RatingStars rating={reviewAvg} starSize={26} numReviews={reviews.length} className="mt-2"/>
           :
@@ -186,7 +272,7 @@ const Page : FC = () => {
           <div className="flex mt-2 space-x-4">
             <Link href="/profile/edit" passHref>
               <button className="bg-custom-blue hover:bg-blue-900 text-white font-bold py-2 px-4 rounded-md">
-                Edit Profile
+                Edit Your Profile
               </button>
             </Link>
             <Link href="/createPost" passHref>
@@ -198,8 +284,8 @@ const Page : FC = () => {
         </div>
       </div>
       <div className="w-full bg-blue-300 relative">
-        <div className="ml-8 flex items-end">
-          { ["Posts", "Reviews", "Analytics"].map((value, index) => {
+        <div className="hidden md:flex ml-8 items-end">
+          { ["Posts", "Reviews", "Analytics", "Availability"].map((value, index) => {
             return (
               <button 
                 key={`tab-${index}`}
@@ -217,9 +303,48 @@ const Page : FC = () => {
             )
           }) }
         </div>
+        <div className="flex md:hidden ml-8 items-end">
+          <button 
+            className="text-md w-32 mx-1 py-2 rounded-t-lg font-bold 
+            transition border-black relative -bottom-2 pb-4
+            bg-pageBg border-t border-l border-r z-20"
+            disabled={true}
+          >
+            { activeSection }
+          </button>
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              <p 
+                className="text-md w-32 mx-1 py-2 rounded-t-lg font-bold 
+                transition border-black relative -bottom-2 pb-4 bg-sky-100"
+              >
+                Others
+              </p>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent 
+              className='bg-sky-100 rounded-xl px-2 py-1.5 border mt-1'
+            >
+              { ["Posts", "Reviews", "Analytics", "Availability"]
+                .filter((value) => value !== activeSection).map((value, index) => {
+                return (
+                  <DropdownMenuItem 
+                    className='p-0 mb-1 hover:cursor-pointer text-lg font-bold
+                    rounded-xl overflow-hidden'
+                    key={`tab-dropdown-${index}`}
+                    onClick={ () => setActiveSection(value) }
+                  >
+                    <div className='hover:bg-pageBg px-3 py-1 w-full'>
+                      {value}
+                    </div>
+                  </DropdownMenuItem>
+                )
+              } )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
         <div className="w-full bg-pageBg absolute h-4 top-[50px] z-30"/>
         <div
-          className="relative z-10 border-t border-black bg-pageBg px-6 py-8
+          className="relative z-10 border-t border-black bg-pageBg md:px-6 py-8
           flex justify-center"
         >
           { getTabSection() }
