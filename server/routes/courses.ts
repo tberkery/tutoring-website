@@ -24,7 +24,6 @@ router.get("/findOne/:id", async (req: any, res: any) => {
       }
       res.status(200).json({ course });
     } catch (err) {
-        console.log(err);
         res.status(500).send("Server Error");
     }
   });
@@ -35,7 +34,6 @@ router.get("getByCourseTitle/:courseTitle", async (req: any, res: any) => {
     const courses = await CourseDao.readAll({courseTitle});
     res.status(200).json({courses});
   } catch (err) {
-    console.log(err);
     res.status(500).send("Server Error");
   }
 });
@@ -46,7 +44,6 @@ router.get("getByCourseNumber/:courseNumber", async (req: any, res: any) => {
     const courses = await CourseDao.readAll({courseNumber});
     res.status(200).json({courses});
   } catch (err) {
-    console.log(err);
     res.status(500).send("Server Error");
   }
 });
@@ -57,7 +54,6 @@ router.get("/all", async (req: any, res: any ) => {
     const courses = await CourseDao.readAll({courseTitle, courseNumber, courseDepartment});
     res.status(200).json({ courses });
   } catch (err) {
-    console.log(err);
     res.status(500).send("Server Error");
   }
 });
@@ -71,7 +67,6 @@ router.delete("/:id", async (req: any, res: any) => {
         }
         res.status(200).json({ course });
     } catch (err) {
-        console.log(err);
         res.status(500).send("Server Error");
     }
 });

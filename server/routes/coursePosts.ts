@@ -77,7 +77,6 @@ router.get("/demographics/:_id", async (req: any, res: any) => {
         .map((view: { viewerId: any; }) => view.viewerId)
     }
     catch(error) { // If no views, return empty dictionaries, not an error
-      console.log("are we here?")
       const departments = {};
       const affiliations = {};
       const graduationYears = {};

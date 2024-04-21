@@ -31,7 +31,6 @@ router.get("/", async (req: any, res: any ) => {
         }
         res.status(200).json(allPosts);
     } catch (err) {
-        console.log(err);
         res.status(500).send("Server Error");
     }
 });
@@ -61,14 +60,12 @@ router.get("/getAllAvailable/:userId", async (req: any, res: any ) => {
     const { userId }  = req.params;
     const currentUser = await ProfileDao.readById(userId);
     const currentUserAvailability = new Set(currentUser.availability);
-    console.log('currentUserAvailability: ', currentUserAvailability);
 
     const allUsers = await ProfileDao.readAll({});
     let overlapUserIds: any[] = [];
 
     for (const user of allUsers) {
         const userAvailability = user.availability;
-        console.log(userAvailability);
         for (const element of userAvailability) {
             if (currentUserAvailability.has(element)) {
                 overlapUserIds.push(user._id);
