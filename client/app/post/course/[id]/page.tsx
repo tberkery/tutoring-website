@@ -293,11 +293,6 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
           />
         )) }
       </div>
-      <div className="flex flex-row gap-x-4 mb-4">
-        <div className="w-full">
-          <PostAnalytics postId={params.id}/>
-        </div>
-      </div>
     </div>
       <div className="flex flex-col w-1/3 my-10 mx-10">
         <div className="w-full">
