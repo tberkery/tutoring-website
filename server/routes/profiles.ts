@@ -93,6 +93,12 @@ router.put("/addBookmark/:_id", async (req:any, res: any) => {
 router.put("/deleteBookmark/:_id", async (req:any, res: any) => {
   const {_id} : {_id : string} = req.params;
   const {bookmark, isCourse} : {bookmark: string, isCourse: boolean} = req.body;
+  console.log("_id")
+  console.log(_id)
+  console.log("bookmark:")
+  console.log(bookmark)
+  console.log("isCourse")
+  console.log(isCourse)
   try {
     const data = await profiles.deleteBookmark(_id, bookmark, isCourse);
     res.status(200).json({data});

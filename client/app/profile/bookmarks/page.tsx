@@ -211,34 +211,33 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
     <>
       <Navbar />
       {profile && ( // Only render content if profile is defined
-        <div className="flex justify-evenly items-center bg-blue-300 py-16 px-16">
-          <div className="flex-1 max-w-xl">
-            <h1 className="text-2xl font-extrabold font-sans uppercase text-black">{profile.firstName} {profile.lastName} - {profile.department}
-              {profile.graduationYear ? `, ${profile.graduationYear}` : ''}</h1>
-            <p className="text-s underline font-light mb-2">{profile.email}</p>
-            <p className="text-gray-700 text-base">{profile.description}</p>
-          </div>
-          <div className="flex-none flex flex-col items-center mx-8">
-            <img className="w-48 h-48 snap-center rounded-md" src={imgUrl} alt={`${profile.firstName}`} />
-            {reviews.length > 0 ?
-              <RatingStars rating={reviewAvg} starSize={26} numReviews={reviews.length} className="mt-2" />
-              :
-              <></>
-            }
-          </div>
-          <div className="w-3/4">
-            <div className="container px-6 py-8 mx-auto">
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-                {posts.map((post) => (
-                  <PostCard key={post._id} post={post} onUpdateBookmark={handleBookmarkUpdate} />
-                ))}
+        <div className="bg-blue-300 py-16 px-16">
+          <div className="max-w-4xl mx-auto flex items-center">
+            <div className="flex-1">
+              <div>
+                <h1 className="text-2xl font-extrabold font-sans uppercase text-black">
+                  {profile.firstName} {profile.lastName} - {profile.department}
+                  {profile.graduationYear ? `, ${profile.graduationYear}` : ''}
+                </h1>
+                <p className="text-s underline font-light mb-2">{profile.email}</p>
+                <p className="text-gray-700 text-base">{profile.description}</p>
               </div>
+            </div>
+            <div className="flex-none flex items-center">
+              <img className="w-24 h-24 rounded-full ml-8" src={imgUrl} alt={`${profile.firstName}`} />
+            </div>
+          </div>
+          <div className="container px-6 py-8 mx-auto">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+              {posts.map((post) => (
+                <PostCard key={post._id} post={post} onUpdateBookmark={handleBookmarkUpdate} />
+              ))}
             </div>
           </div>
         </div>
       )}
     </>
-  );
+  );  
 };
 
 export default Page;
