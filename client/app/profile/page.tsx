@@ -11,6 +11,7 @@ import Loader from '../../components/Loader';
 import RatingStars from "@/components/RatingStars";
 import ReviewCard from "@/components/ReviewCard";
 import ProfileAnalytics from "@/components/ProfileAnalytics";
+import PostAnalytics  from "@/components/PostAnalytics";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { ChevronDown } from "lucide-react";
 import Availability from "@/components/Availability";
