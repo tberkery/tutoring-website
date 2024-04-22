@@ -53,10 +53,12 @@ router.post('/upload/:objectID', upload.single('profilePicture'), async (req: Re
     }
 
     const response = await uploadToS3(fileContent, bucketName, key);
+    console.log("In Post, upload to S3 is complete.")
     
     if (response) {
       // Update the user document in MongoDB with the profile picture key
       await Profiles.findByIdAndUpdate(objectID, { profilePicKey: key });
+      console.log("In post, have update complete of photo URL to MongoDB")
 
       res.status(200).json({ 
         message: 'Profile picture uploaded successfully',
@@ -84,10 +86,13 @@ router.put('/update/:objectID/:key', upload.single('profilePicture'), async (req
     const bucketName = process.env.AWS_PROFILE_BUCKET_NAME;
 
     const response = await uploadToS3(fileContent, bucketName!, key);
-
+    console.log("Asynchronous return from S3 complete.");
     if (response) {
       // Update the user document in MongoDB with the profile picture key
-      await Profiles.findByIdAndUpdate(objectID, { profilePicKey: key });
+      console.log("AWS S3 KEY");
+      console.log(key)
+      const profilePicKey = key
+      await Profiles.findByIdAndUpdate(objectID, { profilePicKey: profilePicKey });
 
       res.status(200).json({ message: 'Profile picture updated successfully'});
     }
@@ -100,6 +105,8 @@ router.put('/update/:objectID/:key', upload.single('profilePicture'), async (req
 // GET endpoint to retrieve a profile picture
 router.get('/get/:key', async (req: Request, res: Response) => {
   try {
+    console.log("Here's the key to my heart!");
+    console.log(req.params.key);
     const key = req.params.key;
 
     if (!key) {
@@ -109,9 +116,12 @@ router.get('/get/:key', async (req: Request, res: Response) => {
     const bucketName = process.env.AWS_PROFILE_BUCKET_NAME;
 
     // Retrieve the file from S3 bucket based on the key
+    console.log("About to do GET object command")
     const command = new GetObjectCommand({ Bucket: bucketName, Key: key });
+    console.log("Done with GET object command")
 
     const response = await client.send(command);
+    console.log("Got response from client")
 
     /*
   * Retrieve the image from the S3 bucket based on the provided key.

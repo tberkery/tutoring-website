@@ -108,10 +108,16 @@ const Page : FC = () => {
       body["tags"] = tags;
     }
     const newPost = await axios.post(`${api}/activityPosts`, body);
-    if (photoFile !== null) {
+    console.log("Here is newPost data")
+    console.log(newPost)
+    if (photoFile && photoFile !== null) {
       const formData = new FormData();
       formData.append("activityPostPicture", photoFile);
       const photoUri = `${api}/activityPostPics/upload/${newPost.data.newPost._id}`;
+      console.log("photoUri")
+      console.log(newPost.data.newPost._id)
+      console.log("formData")
+      console.log(formData)
       await axios.post(photoUri, formData);
     }
     return newPost;
