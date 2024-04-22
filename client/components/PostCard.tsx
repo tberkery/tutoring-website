@@ -1,6 +1,6 @@
 import React, { MouseEvent, useEffect, useState } from 'react';
 import { useRouter } from "next/navigation";
-import { Star } from 'lucide-react';
+import { Bookmark, Plus, Star } from 'lucide-react';
 import BookmarkIcon from './ui/bookmark';
 import axios from 'axios';
 
@@ -102,7 +102,6 @@ const PostCard: React.FC<PostCardProps> = ({ post, onUpdateBookmark }) => {
     await onUpdateBookmark(bookmark, isCoursePost); // Trigger callback with postId and new bookmark status
   };
 
-
   return (<> 
     <div 
       className="relative max-w-sm overflow-hidden bg-white rounded shadow-lg cursor-pointer hover:-translate-y-2 transition duration-75" 
@@ -113,9 +112,10 @@ const PostCard: React.FC<PostCardProps> = ({ post, onUpdateBookmark }) => {
       {/* Bookmark icon positioned at the top right corner */}
       <div className="absolute top-2 right-2" onClick={toggleBookmark}>
         {/* Use conditional rendering to fill the bookmark icon in black if the post is bookmarked */}
-        <BookmarkIcon
-          className={`h-6 w-6 ${isBookmarked ? 'text-black' : 'text-gray-500'}`}
+        <Bookmark 
+          className={`relative ${isBookmarked ? 'fill-black' : ''}`}
         />
+        <Plus className='hidden hover:inline relative fill-black'/>
       </div>
       <img
         className="w-full h-48 object-cover"
