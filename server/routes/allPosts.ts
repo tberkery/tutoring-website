@@ -47,7 +47,7 @@ router.get("/findAllByUserId/:userId", async (req: any, res: any ) => {
             return timestampB - timestampA;
         });
         if (allPosts.length === 0) {
-            res.status(200).json([]);
+            return res.status(200).json([]);
         }
         res.status(200).json(allPosts);
     } catch (err) {
