@@ -227,7 +227,7 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
             </div>
           </div>
           <div className="flex-none flex items-center">
-            <img className="w-24 h-24 rounded-full ml-8" src={imgUrl} alt={`${profile.firstName}`} />
+            <img className="w-24 h-24 rounded-full ml-8 object-cover" src={imgUrl} alt={`${profile.firstName}`} />
           </div>
         </div>
       </div>

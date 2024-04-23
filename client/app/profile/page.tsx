@@ -250,7 +250,7 @@ const Page : FC = () => {
             <img
               src={imgUrl}
               alt={`Avatar`}
-              className="mr-1 w-12 h-12 rounded-full"
+              className="mr-1 w-12 h-12 rounded-full object-cover"
             />
             <h1 className="text-2xl text-center font-extrabold font-sans uppercase text-black">
               {profileData.firstName} {profileData.lastName}
