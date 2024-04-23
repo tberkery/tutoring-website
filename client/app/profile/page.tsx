@@ -111,8 +111,9 @@ const Page : FC = () => {
         setBestPosts(best);
       }
       if (userInfo.data.data[0].profilePicKey) {
-        const picUrl = await axios.get(`${api}/profilePics/get/${userInfo.data.data[0].profilePicKey}`, {timeout: 2000});
-        setImgUrl(picUrl.data.imageUrl);
+        const key = userInfo.data.data[0].profilePicKey;
+        const url = `https://tutorhubprofilepics.s3.amazonaws.com/${key}`
+        setImgUrl(url);
       }
     } catch (error) {
       console.error('Error fetching posts', error);

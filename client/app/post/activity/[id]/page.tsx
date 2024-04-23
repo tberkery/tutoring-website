@@ -56,7 +56,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
 
   const [post, setPost] = useState<activityPostType>({});
   const [poster, setPoster] = useState<userType>({});
-  const [imgUrl, setImgUrl] = useState("/jhulogo.jpeg");
+  // const [imgUrl, setImgUrl] = useState("/jhulogo.jpeg");
   const [loadedPost, setLoadedPost] = useState(false);
   // const [profilePic, setProfilePic] = useState("/defaultimg.jpeg");
 
@@ -127,18 +127,18 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
     const profile = await axios.get(`${api}/profiles/${response.data.post.userId}`)
     setPoster(profile.data.data);
     setPosterId(response.data.post.userId);
-    if (imgKey) {
-      try {
-        const url = await axios.get(`${api}/activityPostPics/get/${imgKey}`);
-        setImgUrl(url.data.coursePostPicKey);
-      } catch (e) {
-        console.error(e);
-      }
-    }
-    if (profile.data.data.profilePicKey) {
+    // if (imgKey) {
+      // try {
+        // const url = await axios.get(`${api}/activityPostPics/get/${imgKey}`);
+        // setImgUrl(url.data.coursePostPicKey);
+      // } catch (e) {
+        // console.error(e);
+      // }
+    // }
+    // if (profile.data.data.profilePicKey) {
       // const picUrl = await axios.get(`${api}/profilePics/get/${profile.data.data.profilePicKey}`);
       // setProfilePic(picUrl.data.imageUrl);
-    }
+    // }
     setLoadedPost(true);
   }
 

@@ -61,9 +61,11 @@ const ReportCard : FC<props> = (props) => {
     const response = await axios.get(url);
     const profile = response.data.data;
     if (profile.profilePicKey) {
-      const picUrl = `${api}/profilePics/get/${profile.profilePicKey}`;
-      const picResponse = await axios.get(picUrl);
-      setReporterPic(picResponse.data.imageUrl);
+      // const picUrl = `${api}/profilePics/get/${profile.profilePicKey}`;
+      // const picResponse = await axios.get(picUrl);
+      const key = profile.data.data[0].profilePicKey;
+      const url = `https://tutorhubprofilepics.s3.amazonaws.com/${key}`
+      setReporterPic(url);
     } else {
       setReporterPic('/defaultimg.jpeg')
     }
@@ -74,9 +76,11 @@ const ReportCard : FC<props> = (props) => {
     const response = await axios.get(url);
     const profile = response.data.data;
     if (profile.profilePicKey) {
-      const picUrl = `${api}/profilePics/get/${profile.profilePicKey}`;
-      const picResponse = await axios.get(picUrl);
-      setReporteePic(picResponse.data.imageUrl);
+      // const picUrl = `${api}/profilePics/get/${profile.profilePicKey}`;
+      // const picResponse = await axios.get(picUrl);
+      const key = profile.data.data[0].profilePicKey;
+      const url = `https://tutorhubprofilepics.s3.amazonaws.com/${key}`
+      setReporterPic(url);
     } else {
       setReporteePic('/defaultimg.jpeg')
     }
