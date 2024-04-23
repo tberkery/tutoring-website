@@ -5,6 +5,7 @@ import '@sendbird/uikit-react/dist/index.css';
 import { useUser } from "@clerk/nextjs";
 import NavBar from '@/components/Navbar';
 import { useEffect, useState } from 'react';
+import '@/styles/global.css';
 
 const DynamicAppWithNoSSR = dynamic(() => import("../../components/Chat"), {
   ssr: false,
