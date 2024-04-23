@@ -311,7 +311,7 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
           lg:grid-cols-3 gap-4"
         >
           { posts.map((post) => (
-            <PostCard key={post._id} post={post} />
+            <PostCard key={post._id} post={post} onUpdateBookmark={handleBookmarkUpdate}/>
           )) }
         </div>
       )
