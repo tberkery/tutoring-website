@@ -60,10 +60,6 @@ const CoursePostSchema = new mongoose.Schema({
         type: String,
         default: null
     },
-    coursePostPicKey: {
-        type: String,
-        default: null
-    },
     reviews: {
         type: [PostReviewSchema],
         default: []
@@ -72,11 +68,6 @@ const CoursePostSchema = new mongoose.Schema({
         type: [ViewSchema],
         default: []
     }
-    // courseId: { // this field will be null if it's non-academic
-    //   type: Number,
-    //   ref: 'Course',
-    //   default: null
-    // },
 });
 
 const CoursePost = mongoose.model("CoursePost", CoursePostSchema);
