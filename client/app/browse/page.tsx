@@ -173,7 +173,7 @@ const Page : FC = () => {
             filtered = [...filtered.sort((a, b) => a.price - b.price)];
         }
 
-        if (tagFilters.music || tagFilters.athletic || tagFilters.cooking || tagFilters.performingArt || tagFilters.visualArt) {
+        if (!typeFilters.courses && (tagFilters.music || tagFilters.athletic || tagFilters.cooking || tagFilters.performingArt || tagFilters.visualArt)) {
             filtered = filtered.filter(post => {
                 return (tagFilters.music && 'activityTitle' in post && post.tags.includes('Music')) || 
                        (tagFilters.athletic && 'activityTitle' in post && post.tags.includes('Athletic')) ||
@@ -340,6 +340,8 @@ const Page : FC = () => {
                             </div>
                         </AccordionContent>
                     </AccordionItem>
+                    {/** AIUBDIOWBAFUBAWBFIUABFS */}
+                    {!typeFilters.courses &&
                     <AccordionItem value="item-3">
                         <AccordionTrigger>By Tag</AccordionTrigger>
                         <AccordionContent>
@@ -400,6 +402,8 @@ const Page : FC = () => {
                             </div>
                         </AccordionContent>
                     </AccordionItem>
+                    }
+                    {/** apiushfdboyvelufaepousidbfefs */}
                     <AccordionItem value="item-4">
                         <AccordionTrigger>By Availability</AccordionTrigger>
                             <AccordionContent>
