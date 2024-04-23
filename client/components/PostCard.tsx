@@ -65,15 +65,10 @@ const PostCard: React.FC<PostCardProps> = ({ post, onUpdateBookmark }) => {
   }, [post])
 
   const loadImage = async (post : Post) => {
-    let endpoint;
-    if (post.coursePostPicKey) {
-      endpoint = `${api}/coursePostPics/get/${post.coursePostPicKey}`;
-      const response = await axios.get(endpoint);
-      setImgUrl(response.data.imageUrl);
-    } else if (post.activityPostPicKey) {
-      endpoint = `${api}/activityPostPics/get/${post.activityPostPicKey}`;
-      const response = await axios.get(endpoint);
-      setImgUrl(response.data.activityPostPicKey);
+    if (post.activityPostPicKey) {
+      const key = post.activityPostPicKey;
+      const url = `https://tutorhubactivitypostpics.s3.amazonaws.com/${key}`;
+      setImgUrl(url);
     }
   }
 

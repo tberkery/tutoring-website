@@ -140,14 +140,18 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
             })
         })
         setReviews(reviews);
-        if (userInfo.data.data.profilePicKey) {
-        const picUrl = await axios.get(`${api}/profilePics/get/${userInfo.data.data.profilePicKey}`);
-        setImgUrl(picUrl.data.imageUrl);
-        }
         const profileId = userInfo.data.data._id;
         const reviewEndpoint = `${api}/postReviews/getByProfileId/${profileId}`;
         const reviewResponse = await axios.get(reviewEndpoint);
         console.log(reviewResponse);
+      }
+      if (userInfo.data.data.profilePicKey) {
+        // const picUrl = await axios.get(`${api}/profilePics/get/${userInfo.data.data.profilePicKey}`);
+        // setImgUrl(picUrl.data.imageUrl);
+        const key = userInfo.data.data.profilePicKey;
+        const url = `https://tutorhubprofilepics.s3.amazonaws.com/${key}`
+        console.log(url);
+        setImgUrl(url);
       }
     } catch (error) {
       console.error('Error fetching posts', error);

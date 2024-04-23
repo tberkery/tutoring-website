@@ -56,9 +56,9 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
 
   const [post, setPost] = useState<activityPostType>({});
   const [poster, setPoster] = useState<userType>({});
-  const [imgUrl, setImgUrl] = useState("/jhulogo.jpeg");
+  // const [imgUrl, setImgUrl] = useState("/jhulogo.jpeg");
   const [loadedPost, setLoadedPost] = useState(false);
-  const [profilePic, setProfilePic] = useState("/defaultimg.jpeg");
+  // const [profilePic, setProfilePic] = useState("/defaultimg.jpeg");
 
   const [posterId, setPosterId] = useState('');
   const [reviewerId, setReviewerId] = useState('');
@@ -127,18 +127,18 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
     const profile = await axios.get(`${api}/profiles/${response.data.post.userId}`)
     setPoster(profile.data.data);
     setPosterId(response.data.post.userId);
-    if (imgKey) {
-      try {
-        const url = await axios.get(`${api}/activityPostPics/get/${imgKey}`);
-        setImgUrl(url.data.coursePostPicKey);
-      } catch (e) {
-        console.error(e);
-      }
-    }
-    if (profile.data.data.profilePicKey) {
-      const picUrl = await axios.get(`${api}/profilePics/get/${profile.data.data.profilePicKey}`);
-      setProfilePic(picUrl.data.imageUrl);
-    }
+    // if (imgKey) {
+      // try {
+        // const url = await axios.get(`${api}/activityPostPics/get/${imgKey}`);
+        // setImgUrl(url.data.coursePostPicKey);
+      // } catch (e) {
+        // console.error(e);
+      // }
+    // }
+    // if (profile.data.data.profilePicKey) {
+      // const picUrl = await axios.get(`${api}/profilePics/get/${profile.data.data.profilePicKey}`);
+      // setProfilePic(picUrl.data.imageUrl);
+    // }
     setLoadedPost(true);
   }
 
@@ -217,11 +217,11 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
           <h1 className="pt-2 mt-0 mb-1 font-sans text-5xl font-extrabold leading-none uppercase text-slate-800">{post.activityTitle}</h1>
           <h3 className="w-full mb-3 text-xs font-medium leading-tight tracking-wide capitalize text-slate-700">${post.price} / hour</h3>
           <div className="flex items-center justify-between space-x-2">
-          <img
+          {/* <img
             src={profilePic}
             alt={`Avatar`}
             className="w-10 h-10 rounded-full"
-          />
+          /> */}
           <div className="flex flex-col justify-center flex-grow">
             <span className="text-sm font-semibold">by {poster.firstName} {poster.lastName} - Tutor Hub</span>
             <span className="text-xs text-gray-500">published Mar 30, 2024</span>

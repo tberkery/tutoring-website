@@ -25,9 +25,12 @@ const PostCard: FC<{profile: profileType}> = ({ profile }) => {
 
   const loadImage = async () => {
     if (profile.profilePicKey) {
-      const api = process.env.NEXT_PUBLIC_BACKEND_URL;
-      const url = await axios.get(`${api}/profilePics/get/${profile.profilePicKey}`);
-      setImg(url.data.imageUrl);
+      const key = profile.profilePicKey;
+      const url = `https://tutorhubprofilepics.s3.amazonaws.com/${key}`
+      setImg(url);
+      // const api = process.env.NEXT_PUBLIC_BACKEND_URL;
+      // const url = await axios.get(`${api}/profilePics/get/${profile.profilePicKey}`);
+      // setImg(url.data.imageUrl);
     }
   }
 
