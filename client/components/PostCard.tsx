@@ -52,6 +52,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onUpdateBookmark }) => {
   const [avgRating, setAvgRating] = useState(5);
   const [isBookmarked, setIsBookmarked] = useState(false); // State to track bookmark status
   const [imgUrl, setImgUrl] = useState(defaultImage);
+  const [bookmarkHover, setBookmarkHover] = useState(false);
 
   const router = useRouter();
 
@@ -95,11 +96,11 @@ const PostCard: React.FC<PostCardProps> = ({ post, onUpdateBookmark }) => {
     // Prevent the event from propagating to the parent div
     event.stopPropagation();
     
-    setIsBookmarked(prevState => !prevState);
     const isCoursePost = post.courseName ? true : false;
     const bookmark = post._id;
 
     await onUpdateBookmark(bookmark, isCoursePost); // Trigger callback with postId and new bookmark status
+    setIsBookmarked(prevState => !prevState);
   };
 
   return (<> 
@@ -113,9 +114,11 @@ const PostCard: React.FC<PostCardProps> = ({ post, onUpdateBookmark }) => {
       <div className="absolute top-2 right-2" onClick={toggleBookmark}>
         {/* Use conditional rendering to fill the bookmark icon in black if the post is bookmarked */}
         <Bookmark 
-          className={`relative ${isBookmarked ? 'fill-black' : ''}`}
+          className={`relative 
+          ${isBookmarked ? 
+            'fill-black hover:fill-red-500' 
+            : 'hover:fill-green-500'}`}
         />
-        <Plus className='hidden hover:inline relative fill-black'/>
       </div>
       <img
         className="w-full h-48 object-cover"
