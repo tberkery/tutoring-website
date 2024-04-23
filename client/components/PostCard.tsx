@@ -1,6 +1,6 @@
 import React, { MouseEvent, useEffect, useState } from 'react';
 import { useRouter } from "next/navigation";
-import { Star } from 'lucide-react';
+import { Bookmark, Plus, Star } from 'lucide-react';
 import BookmarkIcon from './ui/bookmark';
 import axios from 'axios';
 
@@ -52,6 +52,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onUpdateBookmark }) => {
   const [avgRating, setAvgRating] = useState(5);
   const [isBookmarked, setIsBookmarked] = useState(false); // State to track bookmark status
   const [imgUrl, setImgUrl] = useState(defaultImage);
+  const [bookmarkHover, setBookmarkHover] = useState(false);
 
   const router = useRouter();
 
@@ -90,13 +91,12 @@ const PostCard: React.FC<PostCardProps> = ({ post, onUpdateBookmark }) => {
     // Prevent the event from propagating to the parent div
     event.stopPropagation();
     
-    setIsBookmarked(prevState => !prevState);
     const isCoursePost = post.courseName ? true : false;
     const bookmark = post._id;
 
     await onUpdateBookmark(bookmark, isCoursePost); // Trigger callback with postId and new bookmark status
+    setIsBookmarked(prevState => !prevState);
   };
-
 
   return (<> 
     <div 
@@ -108,8 +108,11 @@ const PostCard: React.FC<PostCardProps> = ({ post, onUpdateBookmark }) => {
       {/* Bookmark icon positioned at the top right corner */}
       <div className="absolute top-2 right-2" onClick={toggleBookmark}>
         {/* Use conditional rendering to fill the bookmark icon in black if the post is bookmarked */}
-        <BookmarkIcon
-          className={`h-6 w-6 ${isBookmarked ? 'text-black' : 'text-gray-500'}`}
+        <Bookmark 
+          className={`relative 
+          ${isBookmarked ? 
+            'fill-black hover:fill-red-500' 
+            : 'hover:fill-green-500'}`}
         />
       </div>
       <img
