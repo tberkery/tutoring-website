@@ -16,7 +16,7 @@ router.post("/", async (req: any, res: any) => {
 });
 
 router.get("/findOne/:id", async (req: any, res: any) => {
-    const { id }: { id: number } = req.params;
+    const { id }: { id: string } = req.params;
     try {
       const course = await CourseDao.readOne(id);
       if (!course) {
@@ -28,25 +28,6 @@ router.get("/findOne/:id", async (req: any, res: any) => {
     }
   });
 
-router.get("getByCourseTitle/:courseTitle", async (req: any, res: any) => {
-  const {courseTitle} : {courseTitle: string} = req.params;
-  try {
-    const courses = await CourseDao.readAll({courseTitle});
-    res.status(200).json({courses});
-  } catch (err) {
-    res.status(500).send("Server Error");
-  }
-});
-
-router.get("getByCourseNumber/:courseNumber", async (req: any, res: any) => {
-  const {courseNumber} : {courseNumber: string} = req.params;
-  try {
-    const courses = await CourseDao.readAll({courseNumber});
-    res.status(200).json({courses});
-  } catch (err) {
-    res.status(500).send("Server Error");
-  }
-});
 
 router.get("/all", async (req: any, res: any ) => {
   try {
