@@ -245,7 +245,7 @@ test('test readAll() on non empty table with filter for firstName with more than
     expect(profile[0].description).toBe(description);
 });
 
-test('test readAll() on non empty table with multiple filters', async ()=> {
+test('test readAll() on non empty table with multiple matches for filter', async ()=> {
     const profileDao = new ProfileDao();
     await profileDao.deleteAll()
     await mg.connect(URI);
@@ -266,6 +266,40 @@ test('test readAll() on non empty table with multiple filters', async ()=> {
     expect(profiles.length).toBe(2);
     expect(profiles[0].firstName).toBe(firstName);
     expect(profiles[1].firstName).toBe(firstName);
+
+});
+
+test('test readAll() on non empty table with multiple filters', async ()=> {
+    const profileDao = new ProfileDao();
+    await profileDao.deleteAll()
+    await mg.connect(URI);
+    let firstName;
+    let lastName;
+    let sameLastName =  faker.person.lastName();
+    let email;
+    for(let i = 0; i < 5; i++){
+        firstName =  i <= 3 ? faker.person.firstName(): firstName;
+        lastName = ( i==3 || i == 4)? sameLastName : faker.person.lastName();
+        email = faker.internet.email();
+        const affiliation = "student";
+        const graduationYear = "2024";
+        const department = faker.lorem.word();
+        const description = faker.lorem.paragraph();
+        const profile =  await profileDao.create(firstName, lastName, email, affiliation, department, {graduationYear, description});
+    }
+    let profiles = await profileDao.readAll({firstName, sameLastName, email });
+    expect(profiles.length).toBe(1);
+    expect(profiles[0].firstName).toBe(firstName);
+    expect(profiles[0].lastName).toBe(sameLastName);
+    expect(profiles[0].email).toBe(email);
+    let profiles2 = await profileDao.readAll({firstName: sameLastName});
+    expect(profiles2.length).toBe(2);
+    expect(profiles2[0].lastName).toBe(sameLastName);
+    expect(profiles2[1].lastName).toBe(sameLastName);
+    let profiles3 = await profileDao.readAll({email});
+    expect(profiles3.length).toBe(1);
+    expect(profiles3[0].email).toBe(email);
+
 
 });
 
@@ -392,6 +426,34 @@ test('test updateBookmarks() when none exist', async ()=> {
 
 });
 
+test('test updateBookmarks() for course', async ()=> {
+    await mg.connect(URI);
+    const firstName = faker.person.firstName();
+    const lastName = faker.person.lastName();
+    const email = faker.internet.email();
+    const affiliation = "faculty";
+    const department = faker.lorem.word();
+    const profileDao = new ProfileDao();
+
+    
+    const profile =  await profileDao.create(firstName, lastName, email, affiliation, department);
+    expect(profile.courseBookmarks).toHaveLength(0);
+    expect(profile.activityBookmarks).toHaveLength(0);
+
+    const bookmark1 = new ObjectId()
+
+    const id = profile._id;
+    const profileUpdated = await profileDao.updateBookmarks(id, bookmark1, true);
+    expect(profileUpdated.firstName).toBe(firstName);
+    expect(profileUpdated.lastName).toBe(lastName);
+    expect(profileUpdated.email).toBe(email);
+    expect(profileUpdated.affiliation).toBe(affiliation);
+    expect(profileUpdated.department).toBe(department);
+    expect(profileUpdated.activityBookmarks).toHaveLength(0)
+    expect(profileUpdated.courseBookmarks).toHaveLength(1);
+
+});
+
 
 
 test('test updateBookmarks() when some exist', async ()=> {
@@ -457,7 +519,7 @@ test('test readBookmarksById() when some exist', async ()=> {
 
 
 
-test('test deletBookmark()', async ()=> {
+test('test deleteBookmark()', async ()=> {
     await mg.connect(URI);
     const firstName = faker.person.firstName();
     const lastName = faker.person.lastName();
@@ -472,13 +534,21 @@ test('test deletBookmark()', async ()=> {
     const id = profile._id;
     const bookmark1 = new ObjectId()
     const bookmark2 = new ObjectId()
+    const bookmark3 = new ObjectId()
     const profileUpdate1 = await profileDao.updateBookmarks(id, bookmark1, false);
     expect(profileUpdate1.activityBookmarks).toHaveLength(1)
-    const profileUpdated = await profileDao.updateBookmarks(id, bookmark2, false);
-    expect(profileUpdated.activityBookmarks).toHaveLength(2)
-    expect(profileUpdated.courseBookmarks).toHaveLength(0);
+    const profileUpdate2 = await profileDao.updateBookmarks(id, bookmark2, false);
+    expect(profileUpdate2.activityBookmarks).toHaveLength(2)
+    const profileUpdated = await profileDao.updateBookmarks(id, bookmark3, true);
+    expect(profileUpdated.courseBookmarks).toHaveLength(1);
     const deleted = await profileDao.deleteBookmark(id, bookmark1, false)
     expect(deleted.activityBookmarks).toHaveLength(1);
+    expect(deleted.courseBookmarks).toHaveLength(1);
+    const deleted2 = await profileDao.deleteBookmark(id, bookmark3, true)
+    expect(deleted2.activityBookmarks).toHaveLength(1);
+    expect(deleted2.courseBookmarks).toHaveLength(0);
+
+
 
 });
 
