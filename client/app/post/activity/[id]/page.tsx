@@ -84,7 +84,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
   const timeSpentRef = useRef<Number>();
   useEffect(() => {
     timeSpentRef.current = timeSpent;
-  }, [onPage]);
+  }, [timeSpent]);
 
   const visitorIdRef = useRef<string>();
   useEffect(() => {
@@ -122,6 +122,8 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
     const response = await axios.put(endpoint, body);
     console.log("Here is the API response to the asynchronous noting of the view:")
     console.log(response)
+    console.log("Time noted:")
+    console.log(body)
     return;
   }
 
@@ -138,8 +140,21 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
     const response = axios.put(endpoint, body);
     console.log("Here is the API response to the noting of the view:")
     console.log(response)
+    console.log("Time noted:")
+    console.log(body)
     return;
   }
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      if (onPage) {
+        setTimeSpent(prev => prev + 1);
+        console.log("Time spent has been noted");
+      }
+    }, 1000);
+    return () => clearInterval(intervalId);
+  }, [onPage]);
+
 
   const reviewSortMethods = [
     "Highest Rating",
@@ -258,6 +273,8 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
     }
   };
 
+  useEffect(() => updateProfileViews, [])
+
   useEffect(() => {
     window.addEventListener("blur", () => setOnPage(false));
     window.addEventListener("focus", () => setOnPage(true));
@@ -364,8 +381,11 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
         )) }
       </div>
       <div className="flex flex-row gap-x-4 mb-4">
-        <h1 className="font-sans font-extrabold uppercase text-3xl leading-none mt-0 mb-1 text-slate-800 py-2">Post Analytics</h1>
-        <PostAnalytics postId={postId} postType={postType}/>
+        { visitorId == posterId ?
+          <PostAnalytics postId={postId} postType={postType}/>
+        :
+          <></>
+        }
       </div>
     </div>
       <div className="flex flex-col items-center w-full px-4 lg:w-1/3 lg:my-10">

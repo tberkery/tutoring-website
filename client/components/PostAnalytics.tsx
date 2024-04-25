@@ -71,9 +71,6 @@ const PostAnalytics : FC<props> = (props) => {
   const [affiliationData, setAffiliationData] = useState<pieGraphPoint[]>([]);
   const postType = props.postType;
 
-  console.log("In Post Analytics, postType is set to:")
-  console.log(postType)
-
   const capitalize = (s : string) => {
     const pieces = s.split(" ");
     const newPieces = pieces.map((piece) => {
@@ -430,89 +427,96 @@ const PostAnalytics : FC<props> = (props) => {
     </>
   }
 
+  if (rawViewsData.length < 3) {
+    return <>Not enough views for post analytics.</>
+  }
+
   return (
-    <div className="flex flex-col flex-grow">
-      <div className="flex justify-center mb-4">
-        <div 
-          className="flex flex-row flex-grow-0 px-1 py-1 bg-sky-50 gap-x-1
-          rounded-lg"
-        >
-          { analyticsSections.map((section) => {
-            return (
-              <button 
-                className={`text-lg px-2 py-1 rounded-md transition
-                ${section === activeAnalytics ? 'bg-sky-200' 
-                : 'hover:bg-blue-300'}`}
-                disabled={section === activeAnalytics}
-                onClick={() => setActiveAnalytics(section)}
-                key={section}
+    <>
+       <h1 className="font-sans font-extrabold uppercase text-3xl leading-none mt-0 mb-1 text-slate-800 py-2">Post Analytics</h1>
+      <div className="flex flex-col flex-grow">
+        <div className="flex justify-center mb-4">
+          <div 
+            className="flex flex-row flex-grow-0 px-1 py-1 bg-sky-50 gap-x-1
+            rounded-lg"
+          >
+            { analyticsSections.map((section) => {
+              return (
+                <button 
+                  className={`text-lg px-2 py-1 rounded-md transition
+                  ${section === activeAnalytics ? 'bg-sky-200' 
+                  : 'hover:bg-blue-300'}`}
+                  disabled={section === activeAnalytics}
+                  onClick={() => setActiveAnalytics(section)}
+                  key={section}
+                >
+                  {section}
+                </button>
+              )
+            })}
+          </div>
+        </div>
+        <div className='flex justify-center mb-6 z-10'>
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              <Button 
+                className='text-lg font-bold bg-custom-blue hover:bg-blue-900
+                rounded-lg'
               >
-                {section}
-              </button>
-            )
-          })}
+                {timeScale} <ChevronDown/>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent 
+              className='bg-blue-300 rounded-xl px-2 py-1.5 border mt-1'
+            >
+              <DropdownMenuItem 
+                className='p-0 mb-1 hover:cursor-pointer text-lg font-bold
+                rounded-xl overflow-hidden'
+                onClick={ () => setTimeScale("Last Week") }
+              >
+                <div className='hover:bg-sky-100 px-3 py-1 w-full'>
+                  Last Week
+                </div>
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                className='p-0 mb-1 hover:cursor-pointer text-lg font-bold
+                rounded-xl overflow-hidden'
+                onClick={ () => setTimeScale("Last 30 Days") }
+              >
+                <div className='hover:bg-sky-100 px-3 py-1 w-full'>
+                  Last 30 Days
+                </div>
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                className='p-0 mb-1 hover:cursor-pointer text-lg font-bold
+                rounded-xl overflow-hidden'
+                onClick={ () => setTimeScale("Last 90 Days") }
+              >
+                <div className='hover:bg-sky-100 px-3 py-1 w-full'>
+                  Last 90 Days
+                </div>
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                className='p-0 hover:cursor-pointer text-lg font-bold
+                rounded-xl overflow-hidden'
+                onClick={ () => setTimeScale("Last 6 Months") }
+              >
+                <div className='hover:bg-sky-100 px-3 py-1 w-full'>
+                  Last 6 Months
+                </div>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+        <div className="flex justify-center flex-wrap flex-grow gap-x-8">
+          { activeAnalytics === "Overview" ? 
+            getAnalyticsOverview()
+          :
+            getViewersSection()
+          }
         </div>
       </div>
-      <div className='flex justify-center mb-6 z-10'>
-        <DropdownMenu>
-          <DropdownMenuTrigger>
-            <Button 
-              className='text-lg font-bold bg-custom-blue hover:bg-blue-900
-              rounded-lg'
-            >
-              {timeScale} <ChevronDown/>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent 
-            className='bg-blue-300 rounded-xl px-2 py-1.5 border mt-1'
-          >
-            <DropdownMenuItem 
-              className='p-0 mb-1 hover:cursor-pointer text-lg font-bold
-              rounded-xl overflow-hidden'
-              onClick={ () => setTimeScale("Last Week") }
-            >
-              <div className='hover:bg-sky-100 px-3 py-1 w-full'>
-                Last Week
-              </div>
-            </DropdownMenuItem>
-            <DropdownMenuItem 
-              className='p-0 mb-1 hover:cursor-pointer text-lg font-bold
-              rounded-xl overflow-hidden'
-              onClick={ () => setTimeScale("Last 30 Days") }
-            >
-              <div className='hover:bg-sky-100 px-3 py-1 w-full'>
-                Last 30 Days
-              </div>
-            </DropdownMenuItem>
-            <DropdownMenuItem 
-              className='p-0 mb-1 hover:cursor-pointer text-lg font-bold
-              rounded-xl overflow-hidden'
-              onClick={ () => setTimeScale("Last 90 Days") }
-            >
-              <div className='hover:bg-sky-100 px-3 py-1 w-full'>
-                Last 90 Days
-              </div>
-            </DropdownMenuItem>
-            <DropdownMenuItem 
-              className='p-0 hover:cursor-pointer text-lg font-bold
-              rounded-xl overflow-hidden'
-              onClick={ () => setTimeScale("Last 6 Months") }
-            >
-              <div className='hover:bg-sky-100 px-3 py-1 w-full'>
-                Last 6 Months
-              </div>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-      <div className="flex justify-center flex-wrap flex-grow gap-x-8">
-        { activeAnalytics === "Overview" ? 
-          getAnalyticsOverview()
-        :
-          getViewersSection()
-        }
-      </div>
-    </div>
+      </>
   );
 }
 

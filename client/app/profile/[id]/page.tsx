@@ -132,7 +132,7 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
   const timeSpentRef = useRef<Number>();
   useEffect(() => {
     timeSpentRef.current = timeSpent;
-  }, [onPage]);
+  }, [timeSpent]);
 
   const visitorIdRef = useRef<string>();
   useEffect(() => {
