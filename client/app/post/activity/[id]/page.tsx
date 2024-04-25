@@ -21,6 +21,7 @@ import { useUser } from '@clerk/clerk-react';
 import ReviewCard from "@/components/ReviewCard";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import PostAnalytics  from "@/components/PostAnalytics";
 
 type activityPostType = {
   _id? : string,
@@ -53,6 +54,7 @@ type review = {
 const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
 	const api : string = process.env.NEXT_PUBLIC_BACKEND_URL;
   const postId = params.id;
+  const postType = "activityPosts"
 
   const [post, setPost] = useState<activityPostType>({});
   const [poster, setPoster] = useState<userType>({});
@@ -283,6 +285,10 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
             className="mb-4 bg-white rounded-lg shadow-md"
           />
         )) }
+      </div>
+      <div className="flex flex-row gap-x-4 mb-4">
+        <h1 className="font-sans font-extrabold uppercase text-3xl leading-none mt-0 mb-1 text-slate-800 py-2">Post Analytics</h1>
+        <PostAnalytics postId={postId} postType={postType}/>
       </div>
     </div>
       <div className="flex flex-col items-center w-full px-4 lg:w-1/3 lg:my-10">
