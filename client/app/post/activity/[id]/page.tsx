@@ -120,10 +120,6 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
       duration: timeSpentRef.current
     };
     const response = await axios.put(endpoint, body);
-    console.log("Here is the API response to the asynchronous noting of the view:")
-    console.log(response)
-    console.log("Time noted:")
-    console.log(body)
     return;
   }
 
@@ -138,10 +134,6 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
       duration: timeSpentRef.current
     };
     const response = axios.put(endpoint, body);
-    console.log("Here is the API response to the noting of the view:")
-    console.log(response)
-    console.log("Time noted:")
-    console.log(body)
     return;
   }
 
@@ -149,7 +141,6 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
     const intervalId = setInterval(() => {
       if (onPage) {
         setTimeSpent(prev => prev + 1);
-        console.log("Time spent has been noted");
       }
     }, 1000);
     return () => clearInterval(intervalId);
@@ -254,7 +245,6 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      console.log(postId, posterId, reviewerId, rating, comment, isAnonymous)
       const response = await axios.post(`${api}/postReviews/${postId}`, {
         postId,
         posterId,
@@ -263,7 +253,6 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
         rating,
         isAnonymous: isAnonymous
       });
-      console.log('Review submitted:', response.data);
       setReviews(prevReviews => [...prevReviews, response.data.review]);
       setRating(0);
       setComment('');
