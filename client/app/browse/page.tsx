@@ -254,13 +254,9 @@ const Page : FC = () => {
             bookmarkIds = new Set(allBookmarks.data.data.activityBookmarks);
           }
           if (bookmarkIds.has(bookmark)) {
-            const response = await axios.put(`${api}/profiles/deleteBookmark/${visitorId}`, { bookmark: bookmark, isCourse: isCourse });
-            window.alert("Post was previously bookmarked and has now been unbookmarked!")
-            console.log("Bookmark deleted")
+            await axios.put(`${api}/profiles/deleteBookmark/${visitorId}`, { bookmark: bookmark, isCourse: isCourse });
           } else {
-            const response = await axios.put(`${api}/profiles/addBookmark/${visitorId}`, { bookmark: bookmark, isCourse: isCourse });
-            window.alert("Post has been bookmarked!")
-            console.log("Bookmark added")
+            await axios.put(`${api}/profiles/addBookmark/${visitorId}`, { bookmark: bookmark, isCourse: isCourse });
           } 
         } catch (error) {
           console.error('Error updating bookmark status:', error);

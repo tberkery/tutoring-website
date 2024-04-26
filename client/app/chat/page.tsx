@@ -23,10 +23,10 @@ export default function Home() {
       if (atIndex !== -1 && email.endsWith('@jhu.edu')) {
         setJhed(email.substring(0, atIndex));
       } else {
-        console.log('Invalid email format');
+        console.error('Invalid email format');
       }
     } else {
-      console.log('Email address not available');
+      console.error('Email address not available');
     }
   }
 

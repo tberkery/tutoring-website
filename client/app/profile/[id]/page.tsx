@@ -97,13 +97,9 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
         bookmarkIds = new Set(allBookmarks.data.data.activityBookmarks);
       }
       if (bookmarkIds.has(bookmark)) {
-        const response = await axios.put(`${api}/profiles/deleteBookmark/${visitorId}`, { bookmark: bookmark, isCourse: isCourse });
-        window.alert("Post was previously bookmarked and has now been unbookmarked!")
-        console.log("Bookmark deleted")
+        await axios.put(`${api}/profiles/deleteBookmark/${visitorId}`, { bookmark: bookmark, isCourse: isCourse });
       } else {
-        const response = await axios.put(`${api}/profiles/addBookmark/${visitorId}`, { bookmark: bookmark, isCourse: isCourse });
-        window.alert("Post has been bookmarked!")
-        console.log("Bookmark added")
+        await axios.put(`${api}/profiles/addBookmark/${visitorId}`, { bookmark: bookmark, isCourse: isCourse });
       } 
     } catch (error) {
       console.error('Error updating bookmark status:', error);
@@ -283,7 +279,7 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
         const response = await axios.get(`${api}/profiles/allBookmarks/${visitorId}`);
         return response.data;
       } catch (error) {
-        console.log('Error retrieving bookmarks for current viewer');
+        console.error('Error retrieving bookmarks for current viewer');
       }
     };
   
@@ -292,7 +288,7 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
         const idsOfBookmarkedPosts = await getAllBookmarkedPosts();
         setBookmarkedPosts(idsOfBookmarkedPosts);
       } catch (error) {
-        console.log('Error retrieving bookmarks for current viewer:', error);
+        console.error('Error retrieving bookmarks for current viewer:', error);
       }
     };
   

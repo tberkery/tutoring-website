@@ -82,7 +82,6 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
   useEffect(() => {
     let ratingTotal = 0;
     reviews.forEach((review) => ratingTotal += review.rating);
-    console.log(ratingTotal);
     setReviewAvg(ratingTotal / reviews.length);
   }, [reviews])
   
@@ -94,40 +93,19 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
       if (!user) {
         return;
       }
-      console.log("here")
       const email = user.primaryEmailAddress.toString();
-      console.log(email)
-      console.log("here2")
       const mongooseUserIdResponse = await axios.get(`${api}/profiles/getByEmail/${email}`)
-      console.log("here3")
       const mongooseUserId = mongooseUserIdResponse.data.data[0]._id;
-      console.log("here4")
       const userInfo = await axios.get(`${api}/profiles/${mongooseUserId}`);
-      console.log("here5")
-      console.log(userInfo)
       setProfile(userInfo.data.data);
       const profileId = userInfo.data.data._id
-      console.log("profileId")
-      console.log(profileId)
       const bookmarksResponse = await axios.get(`${api}/profiles/allBookmarks/${profileId}`);
       const coursePostBookmarkIds = bookmarksResponse.data.data.courseBookmarks
-      console.log("coursePostBookmarkIds")
-      console.log(coursePostBookmarkIds)
       const activityPostBookmarkIds = bookmarksResponse.data.data.activityBookmarks
-      console.log("activityPostBookmarkIds")
-      console.log(activityPostBookmarkIds)
       const bookmarks = coursePostBookmarkIds.concat(activityPostBookmarkIds);
-      console.log("bookmarks");
-      console.log(bookmarks);
-      console.log("Noted bookmarks:");
-      console.log(bookmarks);
 
       const postsResponse = await axios.get(`${api}/allPosts/`);
-      console.log("postsResponse.data")
-      console.log(postsResponse.data)
       const filteredPosts = postsResponse.data.filter(post => bookmarks.includes(post._id));
-      console.log("Here is filteredPosts:")
-      console.log(filteredPosts)
       if (filteredPosts.length !== 0) {
         setPosts(filteredPosts);
         let reviews : Review[] = [];
@@ -142,15 +120,13 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
         setReviews(reviews);
         const profileId = userInfo.data.data._id;
         const reviewEndpoint = `${api}/postReviews/getByProfileId/${profileId}`;
-        const reviewResponse = await axios.get(reviewEndpoint);
-        console.log(reviewResponse);
+        await axios.get(reviewEndpoint);
       }
       if (userInfo.data.data.profilePicKey) {
         // const picUrl = await axios.get(`${api}/profilePics/get/${userInfo.data.data.profilePicKey}`);
         // setImgUrl(picUrl.data.imageUrl);
         const key = userInfo.data.data.profilePicKey;
         const url = `https://tutorhubprofilepics.s3.amazonaws.com/${key}`
-        console.log(url);
         setImgUrl(url);
       }
     } catch (error) {
@@ -187,16 +163,12 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
         bookmarkIds = new Set(allBookmarks.data.data.activityBookmarks);
       }
       if (bookmarkIds.has(bookmark)) {
-        const response = await axios.put(`${api}/profiles/deleteBookmark/${visitorId}`, { bookmark: bookmark, isCourse: isCourse });
-        window.alert("Post was previously bookmarked and has now been unbookmarked!")
-        console.log("Bookmark deleted");
+        await axios.put(`${api}/profiles/deleteBookmark/${visitorId}`, { bookmark: bookmark, isCourse: isCourse });
         
         // Remove the unbookmarked post from the state
         setPosts(prevPosts => prevPosts.filter(post => post._id !== bookmark));
       } else {
-        const response = await axios.put(`${api}/profiles/addBookmark/${visitorId}`, { bookmark: bookmark, isCourse: isCourse });
-        window.alert("Post has been bookmarked!")
-        console.log("Bookmark added");
+        await axios.put(`${api}/profiles/addBookmark/${visitorId}`, { bookmark: bookmark, isCourse: isCourse });
       }
     } catch (error) {
       console.error('Error updating bookmark status:', error);

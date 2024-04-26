@@ -32,7 +32,6 @@ const Page : FC = () => {
     const fetchProfiles = async () => {
       try {
         const response = await axios.get(`${api}/profiles`);
-        console.log(response.data.data);
         setProfiles(response.data.data);
       } catch (error) {
           console.error('Error fetching posts', error);
