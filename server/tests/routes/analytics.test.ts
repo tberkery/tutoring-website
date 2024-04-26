@@ -786,7 +786,7 @@ describe('Test analytics reporting capabilities', () => {
         await request(app).delete(`/activityPosts/${otherPostId}`);
     });
 
-    test('GET demographics for invalid profile ID', async () => {
+    test('GET demographics for invalid profile ID with start date', async () => {
         const invalid_id = '1234567890abcdefg'
         const res = await request(app)
         .get(`/profiles/demographics/${invalid_id}?start=2020-03-05T19:49:35.744Z`)
@@ -963,13 +963,13 @@ describe('Test analytics reporting capabilities', () => {
         await request(app).delete(`/profiles/${profile2Id}`);
     })
 
-    test("Get demographics for invalid profile ID", async () => {
+    test("GET demographics for invalid profile ID", async () => {
        const response = await request(app)
         .get("/profiles/demographics/nonsenseInvalidId")
        expect(response.status).toBe(500)
     })
 
-    test("Get demographics for valid profile ID with no views", async () => {
+    test("GET demographics for valid profile ID with no views", async () => {
         const profile1 = {
             "firstName": "Ilana",
             "lastName": "Chalom",
