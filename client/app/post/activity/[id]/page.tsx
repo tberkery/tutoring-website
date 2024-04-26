@@ -2,7 +2,7 @@
 import "@/styles/global.css";
 import Navbar from "@/components/Navbar";
 import axios from "axios";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -21,6 +21,8 @@ import { useUser } from '@clerk/clerk-react';
 import ReviewCard from "@/components/ReviewCard";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import PostAnalytics  from "@/components/PostAnalytics";
+import { useRouter } from "next/navigation";
 
 type activityPostType = {
   _id? : string,
@@ -53,6 +55,7 @@ type review = {
 const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
 	const api : string = process.env.NEXT_PUBLIC_BACKEND_URL;
   const postId = params.id;
+  const postType = "activityPosts"
 
   const [post, setPost] = useState<activityPostType>({});
   const [poster, setPoster] = useState<userType>({});
@@ -66,12 +69,83 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
   const [comment, setComment] = useState('');
   const [isAnonymous, setIsAnonymous] = useState(false);
   const { isLoaded, isSignedIn, user } = useUser();
+  const router = useRouter();
 
   const [reviews, setReviews] = useState<review[]>([]);
   const [averageRating, setAverageRating] = useState(0);
   const [reviewCount, setReviewCount] = useState(0);
   const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(false);
   const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
+
+  const [visitorId, setVisitorId] = useState('');
+  const [timeSpent, setTimeSpent] = useState(0);
+  const [onPage, setOnPage] = useState(true);
+
+  const timeSpentRef = useRef<Number>();
+  useEffect(() => {
+    timeSpentRef.current = timeSpent;
+  }, [timeSpent]);
+
+  const visitorIdRef = useRef<string>();
+  useEffect(() => {
+    visitorIdRef.current = visitorId;
+  }, [visitorId])
+
+  const getVisitor = async () => {
+    if (!isLoaded || !isSignedIn || !user) {
+      return;
+    }
+    try {
+      const response = await axios.get(`${api}/profiles/getByEmail/${user.primaryEmailAddress.toString()}`);
+      const id = response.data.data[0]._id;
+      setVisitorId(id);
+      if (id === params.id) {
+        router.replace('profile');
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  useEffect(() => { getVisitor() }, [isLoaded, isSignedIn, user]);
+
+  const updatePostViewsAsync = async () => {
+    if (visitorIdRef.current === '') {
+      return;
+    }
+    const endpoint = `${api}/${postType}/views/${postId}`;
+    const body = { 
+      viewerId: visitorIdRef.current,
+      timestamp: new Date(),
+      duration: timeSpentRef.current
+    };
+    const response = await axios.put(endpoint, body);
+    return;
+  }
+
+  const updatePostViews = () => {
+    if (visitorIdRef.current === '') {
+      return;
+    }
+    const endpoint = `${api}/${postType}/views/${postId}`;
+    const body = { 
+      viewerId: visitorIdRef.current,
+      timestamp: new Date(),
+      duration: timeSpentRef.current
+    };
+    const response = axios.put(endpoint, body);
+    return;
+  }
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      if (onPage) {
+        setTimeSpent(prev => prev + 1);
+      }
+    }, 1000);
+    return () => clearInterval(intervalId);
+  }, [onPage]);
+
 
   const reviewSortMethods = [
     "Highest Rating",
@@ -120,7 +194,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
     const userInfo = await axios.get(`${api}/profiles/getByEmail/${user.primaryEmailAddress.toString()}`);
     setReviewerId(userInfo.data.data[0]._id);
 
-    const response = await axios.get(`${api}/activityPosts/findOne/${postId}`);
+    const response = await axios.get(`${api}/${postType}/findOne/${postId}`);
     setPost(response.data.post);
 
     const imgKey = response.data.post.coursePostPicKey;
@@ -171,7 +245,6 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      console.log(postId, posterId, reviewerId, rating, comment, isAnonymous)
       const response = await axios.post(`${api}/postReviews/${postId}`, {
         postId,
         posterId,
@@ -180,7 +253,6 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
         rating,
         isAnonymous: isAnonymous
       });
-      console.log('Review submitted:', response.data);
       setReviews(prevReviews => [...prevReviews, response.data.review]);
       setRating(0);
       setComment('');
@@ -189,6 +261,19 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
       console.error('Error submitting review:', error);
     }
   };
+
+  useEffect(() => updatePostViews, [])
+
+  useEffect(() => {
+    window.addEventListener("blur", () => setOnPage(false));
+    window.addEventListener("focus", () => setOnPage(true));
+    window.addEventListener("beforeunload", updatePostViewsAsync);
+    return () => {
+      window.removeEventListener("blur", () => setOnPage(false));
+      window.removeEventListener("focus", () => setOnPage(true));
+      window.removeEventListener("beforeunload", updatePostViewsAsync);
+    }
+  }, []);
 
   if (!loadedPost) {
     return <></>;
@@ -283,6 +368,13 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
             className="mb-4 bg-white rounded-lg shadow-md"
           />
         )) }
+      </div>
+      <div className="flex flex-row gap-x-4 mb-4">
+        { visitorId == posterId ?
+          <PostAnalytics postId={postId} postType={postType}/>
+        :
+          <></>
+        }
       </div>
     </div>
       <div className="flex flex-col items-center w-full px-4 lg:w-1/3 lg:my-10">
