@@ -98,6 +98,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onUpdateBookmark }) => {
     setIsBookmarked(prevState => !prevState);
   };
 
+  console.log(imgUrl)
   return (<> 
     <div 
       className="relative max-w-sm overflow-hidden bg-white rounded shadow-lg cursor-pointer hover:-translate-y-2 transition duration-75" 
