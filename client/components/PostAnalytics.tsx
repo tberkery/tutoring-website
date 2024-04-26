@@ -1,6 +1,6 @@
 "use client";
 import axios from 'axios';
-import { ChevronDown, Square, Star } from 'lucide-react';
+import { ChevronDown, ChevronUp, Square, Star } from 'lucide-react';
 import React, { FC, useEffect, useState } from 'react';
 import { CartesianGrid, Cell, Line, LineChart, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuItem } from './ui/dropdown-menu';
@@ -61,6 +61,7 @@ const PostAnalytics : FC<props> = (props) => {
   const id = props.postId;
   const animDuration = 1000;
 
+  const [open, setOpen] = useState(false);
   const [activeAnalytics, setActiveAnalytics] = useState(analyticsSections[0]);
   const [timeScale, setTimeScale] = useState("Last 30 Days");
   const [rawViewsData, setRawViewsData] = useState<view[]>([]);
@@ -424,14 +425,30 @@ const PostAnalytics : FC<props> = (props) => {
   }
 
   if (rawViewsData.length < 3) {
-    return <>Not enough views for post analytics.</>
+    return <h1 className="font-sans font-extrabold text-xl leading-none text-slate-800 py-2">
+      No Analytics (not enough views)
+    </h1> 
   }
 
   return (
     <>
-       <h1 className="font-sans font-extrabold uppercase text-3xl leading-none mt-0 mb-1 text-slate-800 py-2">Post Analytics</h1>
       <div className="flex flex-col flex-grow">
-        <div className="flex justify-center mb-4">
+        <div className="flex items-center mb-1">
+          <h1 className="font-sans font-extrabold uppercase text-3xl leading-none text-slate-800 py-2">Post Analytics</h1>
+          { open ?
+            <button className='ml-4' onClick={() => setOpen(false)}>
+              <ChevronDown/>
+            </button>
+          :
+            <button className='ml-4' onClick={() => setOpen(true)}>
+              <ChevronUp/>
+            </button>
+          }
+        </div>
+        <div 
+          className={`flex justify-center gap-x-4 mb-4 
+          ${!open ? 'hidden' : ''}`}
+        >
           <div 
             className="flex flex-row flex-grow-0 px-1 py-1 bg-sky-50 gap-x-1
             rounded-lg"
@@ -451,60 +468,63 @@ const PostAnalytics : FC<props> = (props) => {
               )
             })}
           </div>
+          <div className='flex justify-center z-10'>
+            <DropdownMenu>
+              <DropdownMenuTrigger>
+                <Button 
+                  className='text-lg font-bold bg-custom-blue hover:bg-blue-900
+                  rounded-lg'
+                >
+                  {timeScale} <ChevronDown/>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent 
+                className='bg-blue-300 rounded-xl px-2 py-1.5 border mt-1'
+              >
+                <DropdownMenuItem 
+                  className='p-0 mb-1 hover:cursor-pointer text-lg font-bold
+                  rounded-xl overflow-hidden'
+                  onClick={ () => setTimeScale("Last Week") }
+                >
+                  <div className='hover:bg-sky-100 px-3 py-1 w-full'>
+                    Last Week
+                  </div>
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  className='p-0 mb-1 hover:cursor-pointer text-lg font-bold
+                  rounded-xl overflow-hidden'
+                  onClick={ () => setTimeScale("Last 30 Days") }
+                >
+                  <div className='hover:bg-sky-100 px-3 py-1 w-full'>
+                    Last 30 Days
+                  </div>
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  className='p-0 mb-1 hover:cursor-pointer text-lg font-bold
+                  rounded-xl overflow-hidden'
+                  onClick={ () => setTimeScale("Last 90 Days") }
+                >
+                  <div className='hover:bg-sky-100 px-3 py-1 w-full'>
+                    Last 90 Days
+                  </div>
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  className='p-0 hover:cursor-pointer text-lg font-bold
+                  rounded-xl overflow-hidden'
+                  onClick={ () => setTimeScale("Last 6 Months") }
+                >
+                  <div className='hover:bg-sky-100 px-3 py-1 w-full'>
+                    Last 6 Months
+                  </div>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
-        <div className='flex justify-center mb-6 z-10'>
-          <DropdownMenu>
-            <DropdownMenuTrigger>
-              <Button 
-                className='text-lg font-bold bg-custom-blue hover:bg-blue-900
-                rounded-lg'
-              >
-                {timeScale} <ChevronDown/>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent 
-              className='bg-blue-300 rounded-xl px-2 py-1.5 border mt-1'
-            >
-              <DropdownMenuItem 
-                className='p-0 mb-1 hover:cursor-pointer text-lg font-bold
-                rounded-xl overflow-hidden'
-                onClick={ () => setTimeScale("Last Week") }
-              >
-                <div className='hover:bg-sky-100 px-3 py-1 w-full'>
-                  Last Week
-                </div>
-              </DropdownMenuItem>
-              <DropdownMenuItem 
-                className='p-0 mb-1 hover:cursor-pointer text-lg font-bold
-                rounded-xl overflow-hidden'
-                onClick={ () => setTimeScale("Last 30 Days") }
-              >
-                <div className='hover:bg-sky-100 px-3 py-1 w-full'>
-                  Last 30 Days
-                </div>
-              </DropdownMenuItem>
-              <DropdownMenuItem 
-                className='p-0 mb-1 hover:cursor-pointer text-lg font-bold
-                rounded-xl overflow-hidden'
-                onClick={ () => setTimeScale("Last 90 Days") }
-              >
-                <div className='hover:bg-sky-100 px-3 py-1 w-full'>
-                  Last 90 Days
-                </div>
-              </DropdownMenuItem>
-              <DropdownMenuItem 
-                className='p-0 hover:cursor-pointer text-lg font-bold
-                rounded-xl overflow-hidden'
-                onClick={ () => setTimeScale("Last 6 Months") }
-              >
-                <div className='hover:bg-sky-100 px-3 py-1 w-full'>
-                  Last 6 Months
-                </div>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-        <div className="flex justify-center flex-wrap flex-grow gap-x-8">
+        <div 
+          className={`flex justify-center flex-wrap flex-grow gap-x-8
+          ${!open ? 'hidden' : ''}`}
+        >
           { activeAnalytics === "Overview" ? 
             getAnalyticsOverview()
           :
