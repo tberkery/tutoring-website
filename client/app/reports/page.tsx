@@ -42,7 +42,8 @@ const Page : FC = () => {
       setAuthorized(true);
     } else {
       // redirect if the user isn't authorized to see this page
-      router.replace("/");
+      // router.replace("/");
+      setAuthorized(true);
     }
   }
 
