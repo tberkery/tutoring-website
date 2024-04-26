@@ -526,8 +526,10 @@ const CreatePost : FC<createPostProps> =
       />
       <Button 
         id="submit" 
-        className="text-lg mt-8"
-        disabled={!isLoaded || (!realCourse && postType === "course")}
+        className="text-lg mt-8 w-28"
+        disabled={
+          submitText === "Finish" && !isLoaded || (!realCourse && postType === "course")
+        }
         onClick={ submit }
       >
         { submitText }
