@@ -201,7 +201,7 @@ const PostAnalytics : FC<props> = (props) => {
           border-slate-300"
         >
           <p className="font-bold text-slate-800">{label}</p>
-          <p className="text-gray-600">{`${valueLabel}: ${payload[0].value}`}</p>
+          <p className="text-gray-600">{`${valueLabel}: ${payload[0].value.toFixed(1)}`}</p>
         </div>
       );
     }
@@ -233,12 +233,6 @@ const PostAnalytics : FC<props> = (props) => {
       </text>
     );
   };
-
-  const getRating = (post : Post) => {
-    let total = 0;
-    post.reviews.forEach((r) => total += r.rating);
-    return (total / post.reviews.length).toFixed(1);
-  }
 
   const getAnalyticsOverview = () => {
     return (
