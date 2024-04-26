@@ -129,8 +129,6 @@ const PostAnalytics : FC<props> = (props) => {
     const endpoint = `${api}/${postType}/views/${id}`;
     const response = await axios.get(endpoint);
     const rawData : view[] = response.data.data.views;
-    console.log("Here's the detected views:");
-    console.log(rawData);
     setRawViewsData(rawData);
   }
 
@@ -167,8 +165,6 @@ const PostAnalytics : FC<props> = (props) => {
     const params = { params: { start: getDaysAgo(timeScaleToDays()) }};
     const response = await axios.get(endpoint, params);
     const data = response.data;
-    console.log("Here's the detected analytics");
-    console.log(data)
     let majors : pieGraphPoint[] = data.departments;
     majors = majors.map((point) => {
       point._id = capitalize(point._id);

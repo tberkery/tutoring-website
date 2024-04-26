@@ -12,7 +12,7 @@ const CreateUser : FC = () => {
     try {
       await axios.post(url, { name });
     } catch(err) {
-      console.log(err);
+      console.error(err);
     }
     setName("");
   };
