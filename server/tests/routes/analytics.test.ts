@@ -48,9 +48,9 @@ describe('Test analytics reporting capabilities', () => {
         const resAnalytics = await request(app)
             .get(`/profiles/demographics/${profile1Id}?start=2020-03-05T19:49:35.744Z`)
 
-        expect(resAnalytics.body.departments).toMatchObject([]);
-        expect(resAnalytics.body.affiliations).toMatchObject([]);
-        expect(resAnalytics.body.graduationYears).toMatchObject([]);
+        expect(resAnalytics.body.departments).toMatchObject({});
+        expect(resAnalytics.body.affiliations).toMatchObject({});
+        expect(resAnalytics.body.graduationYears).toMatchObject({});
 
         // Clean up: Delete the post created during the test
         await request(app).delete(`/profiles/${profile1Id}`);
@@ -123,9 +123,9 @@ describe('Test analytics reporting capabilities', () => {
         const resAnalytics2 = await request(app)
             .get(`/profiles/demographics/${profile2Id}?start=2020-03-05T19:49:35.744Z`)
 
-        expect(resAnalytics2.body.departments).toMatchObject([]);
-        expect(resAnalytics2.body.affiliations).toMatchObject([]);
-        expect(resAnalytics2.body.graduationYears).toMatchObject([]);
+        expect(resAnalytics2.body.departments).toMatchObject({});
+        expect(resAnalytics2.body.affiliations).toMatchObject({});
+        expect(resAnalytics2.body.graduationYears).toMatchObject({});
 
         // Clean up: Delete the post created during the test
         await request(app).delete(`/profiles/${profile1Id}`);
@@ -231,17 +231,17 @@ describe('Test analytics reporting capabilities', () => {
         const resAnalytics2 = await request(app)
             .get(`/profiles/demographics/${profile2Id}?start=2021-03-05T19:49:35.744Z`)
 
-        expect(resAnalytics2.body.departments).toMatchObject([]);
-        expect(resAnalytics2.body.affiliations).toMatchObject([]);
-        expect(resAnalytics2.body.graduationYears).toMatchObject([]);
+        expect(resAnalytics2.body.departments).toMatchObject({});
+        expect(resAnalytics2.body.affiliations).toMatchObject({});
+        expect(resAnalytics2.body.graduationYears).toMatchObject({});
 
 
         const resAnalytics3 = await request(app)
             .get(`/profiles/demographics/${profile3Id}?start=2021-03-05T19:49:35.744Z`)
 
-        expect(resAnalytics3.body.departments).toMatchObject([]);
-        expect(resAnalytics3.body.affiliations).toMatchObject([]);
-        expect(resAnalytics3.body.graduationYears).toMatchObject([]);
+        expect(resAnalytics3.body.departments).toMatchObject({});
+        expect(resAnalytics3.body.affiliations).toMatchObject({});
+        expect(resAnalytics3.body.graduationYears).toMatchObject({});
 
         // Clean up: Delete the post created during the test
         await request(app).delete(`/profiles/${profile1Id}`);
@@ -292,9 +292,9 @@ describe('Test analytics reporting capabilities', () => {
         const resAnalytics = await request(app)
             .get(`/coursePosts/demographics/${coursePost1Id}?start=2020-03-05T19:49:35.744Z`)
     
-        expect(resAnalytics.body.departments).toMatchObject([]);
-        expect(resAnalytics.body.affiliations).toMatchObject([]);
-        expect(resAnalytics.body.graduationYears).toMatchObject([]);
+        expect(resAnalytics.body.departments).toMatchObject({});
+        expect(resAnalytics.body.affiliations).toMatchObject({});
+        expect(resAnalytics.body.graduationYears).toMatchObject({});
     
         // Clean up: Delete the post created during the test
         await request(app).delete(`/profiles/${profileRes.body.data._id}`);
@@ -511,9 +511,9 @@ describe('Test analytics reporting capabilities', () => {
         const resAnalytics2 = await request(app)
             .get(`/coursePosts/demographics/${otherPostId}?start=2021-03-05T19:49:35.744Z`)
     
-        expect(resAnalytics2.body.departments).toMatchObject([]);
-        expect(resAnalytics2.body.affiliations).toMatchObject([]);
-        expect(resAnalytics2.body.graduationYears).toMatchObject([]);
+        expect(resAnalytics2.body.departments).toMatchObject({});
+        expect(resAnalytics2.body.affiliations).toMatchObject({});
+        expect(resAnalytics2.body.graduationYears).toMatchObject({});
     
     
         // Clean up: Delete the post created during the test
@@ -565,9 +565,9 @@ describe('Test analytics reporting capabilities', () => {
         const resAnalytics = await request(app)
             .get(`/activityPosts/demographics/${activityPostId}?start=2020-03-05T19:49:35.744Z`)
     
-        expect(resAnalytics.body.departments).toMatchObject([]);
-        expect(resAnalytics.body.affiliations).toMatchObject([]);
-        expect(resAnalytics.body.graduationYears).toMatchObject([]);
+        expect(resAnalytics.body.departments).toMatchObject({});
+        expect(resAnalytics.body.affiliations).toMatchObject({});
+        expect(resAnalytics.body.graduationYears).toMatchObject({});
     
         // Clean up: Delete the post created during the test
         await request(app).delete(`/profiles/${profileRes.body.data._id}`);
@@ -773,9 +773,9 @@ describe('Test analytics reporting capabilities', () => {
         const resAnalytics2 = await request(app)
             .get(`/activityPosts/demographics/${otherPostId}?start=2021-03-05T19:49:35.744Z`)
     
-        expect(resAnalytics2.body.departments).toMatchObject([]);
-        expect(resAnalytics2.body.affiliations).toMatchObject([]);
-        expect(resAnalytics2.body.graduationYears).toMatchObject([]);
+        expect(resAnalytics2.body.departments).toMatchObject({});
+        expect(resAnalytics2.body.affiliations).toMatchObject({});
+        expect(resAnalytics2.body.graduationYears).toMatchObject({});
     
     
         // Clean up: Delete the post created during the test
@@ -785,6 +785,240 @@ describe('Test analytics reporting capabilities', () => {
         await request(app).delete(`/activityPosts/${postId}`);
         await request(app).delete(`/activityPosts/${otherPostId}`);
     });
+
+    test('GET demographics for invalid profile ID', async () => {
+        const invalid_id = '1234567890abcdefg'
+        const res = await request(app)
+        .get(`/profiles/demographics/${invalid_id}?start=2020-03-05T19:49:35.744Z`)
+        expect(res.status).toBe(500);
+    });
+
+    test('GET /activityPosts/demographics/:_id with no views of profile _id', async () => {
+        
+        const profile1 = {
+            "firstName": "Ilana",
+            "lastName": "Chalom",
+            "email": "ichalom1@jhu.edu",
+            "affiliation": "Student",
+            "graduationYear": 2024,
+            "department": "Computer Science",
+            "description": "I'm a member of the JHU Class of 2024"
+        }
+        const profileRes1 = await request(app)
+        .post('/profiles')
+        .send(profile1);
+    
+    
+        const profile2 = {
+            "firstName": "Tad",
+            "lastName": "Berkery",
+            "email": "tberker2@jhu.edu",
+            "affiliation": "Student",
+            "graduationYear": 2023,
+            "department": "Computer Science",
+            "description": "I'm a member of the JHU Class of 2023"
+        }
+        const profileRes2 = await request(app)
+        .post('/profiles')
+        .send(profile2);
+    
+        const activityPost1 = {
+            "userId": profileRes1.body.data._id,
+            "userFirstName": "Ilana",
+            "userLastName": "Chalom",
+            "activityTitle": "Testing your code"
+        }
+    
+        const res1 = await request(app)
+            .post('/activityPosts')
+            .send(activityPost1);
+    
+        // Extract the created post ID from the response
+        const activityPostId = res1.body.newPost._id;
+        const profile2Id = profileRes2.body.data._id;
+    
+    
+        const resAnalytics = await request(app)
+            .get(`/activityPosts/demographics/${activityPostId}?start=2020-03-05T19:49:35.744Z`)
+    
+        expect(resAnalytics.body.departments).toHaveLength(0);
+        expect(resAnalytics.body.affiliations).toHaveLength(0);
+        expect(resAnalytics.body.graduationYears).toHaveLength(0);
+    
+        // Clean up: Delete the post created during the test
+        await request(app).delete(`/profiles/${profileRes1.body.data._id}`);
+        await request(app).delete(`/profiles/${profile2Id}`);
+        await request(app).delete(`/activityPosts/${activityPostId}`);
+    });
+
+    test("PUT view for bogus profile ID", async () => {
+        const profile1 = {
+            "firstName": "Ilana",
+            "lastName": "Chalom",
+            "email": "ichalom1@jhu.edu",
+            "affiliation": "Student",
+            "graduationYear": 2024,
+            "department": "Computer Science",
+            "description": "I'm a member of the JHU Class of 2024"
+        }
+    
+        const profile2 = {
+            "firstName": "Kat",
+            "lastName": "Forbes",
+            "email": "kforbes6@jhu.edu",
+            "affiliation": "Student",
+            "graduationYear": 2023,
+            "department": "Computer Science",
+            "description": "I'm a member of the JHU Class of 2023"
+        }
+    
+        const res1 = await request(app)
+            .post('/profiles')
+            .send(profile1);
+    
+        const res2 = await request(app)
+            .post('/profiles')
+            .send(profile2);
+
+        // Extract the created post ID from the response
+        const profile1Id = res1.body.data._id;
+        const profile2Id = res2.body.data._id;
+        
+        const viewInfo1 = {
+            "viewerId": profile2Id,
+            "timestamp": "2022-02-17T13:36:45.954Z",
+            "duration": 120
+        }
+    
+        const resView1 = await request(app)
+            .put(`/profiles/views/notARealId}`)
+            .send(viewInfo1)
+
+        expect(resView1.status).toBe(500);
+    
+        // Clean up: Delete the post created during the test
+        await request(app).delete(`/profiles/${profile1Id}`);
+        await request(app).delete(`/profiles/${profile2Id}`);
+    })
+
+    test("PUT view for bogus viewer ID and other bogus combinations", async () => {
+        const profile1 = {
+            "firstName": "Ilana",
+            "lastName": "Chalom",
+            "email": "ichalom1@jhu.edu",
+            "affiliation": "Student",
+            "graduationYear": 2024,
+            "department": "Computer Science",
+            "description": "I'm a member of the JHU Class of 2024"
+        }
+    
+        const profile2 = {
+            "firstName": "Kat",
+            "lastName": "Forbes",
+            "email": "kforbes6@jhu.edu",
+            "affiliation": "Student",
+            "graduationYear": 2023,
+            "department": "Computer Science",
+            "description": "I'm a member of the JHU Class of 2023"
+        }
+    
+        const res1 = await request(app)
+            .post('/profiles')
+            .send(profile1);
+    
+        const res2 = await request(app)
+            .post('/profiles')
+            .send(profile2);
+
+        // Extract the created post ID from the response
+        const profile1Id = res1.body.data._id;
+        const profile2Id = res2.body.data._id;
+        
+        const viewInfo1 = {
+            "viewerId": "notARealId",
+            "timestamp": "2022-02-17T13:36:45.954Z",
+            "duration": 120
+        };
+    
+        const resView1Put = await request(app)
+            .put(`/profiles/views/${profile1Id}}`)
+            .send(viewInfo1);
+
+        expect(resView1Put.status).toBe(500);
+
+        const resViewGetInvalid = await request(app)
+            .get(`/profiles/views/bogusInvalidId`)
+            .send(viewInfo1);
+
+        expect(resViewGetInvalid.status).toBe(500);
+
+        const resViewGetValid = await request(app)
+            .get(`/profiles/views/${profile1Id}`)
+            .send(viewInfo1);
+
+        expect(resViewGetValid.status).toBe(200);
+
+        // Clean up: Delete the post created during the test
+        await request(app).delete(`/profiles/${profile1Id}`);
+        await request(app).delete(`/profiles/${profile2Id}`);
+    })
+
+    test("Get demographics for invalid profile ID", async () => {
+       const response = await request(app)
+        .get("/profiles/demographics/nonsenseInvalidId")
+       expect(response.status).toBe(500)
+    })
+
+    test("Get demographics for valid profile ID with no views", async () => {
+        const profile1 = {
+            "firstName": "Ilana",
+            "lastName": "Chalom",
+            "email": "ichalom1@jhu.edu",
+            "affiliation": "Student",
+            "graduationYear": 2024,
+            "department": "Computer Science",
+            "description": "I'm a member of the JHU Class of 2024"
+        }
+    
+        const profile2 = {
+            "firstName": "Kat",
+            "lastName": "Forbes",
+            "email": "kforbes6@jhu.edu",
+            "affiliation": "Student",
+            "graduationYear": 2023,
+            "department": "Computer Science",
+            "description": "I'm a member of the JHU Class of 2023"
+        }
+    
+        const res1 = await request(app)
+            .post('/profiles')
+            .send(profile1);
+    
+        const res2 = await request(app)
+            .post('/profiles')
+            .send(profile2);
+
+        // Extract the created post ID from the response
+        const profile1Id = res1.body.data._id;
+        const profile2Id = res2.body.data._id;
+
+        const resView = await request(app)
+            .get(`/profiles/demographics/${profile1Id}`)
+
+        expect(resView.status).toBe(200);
+        expect(resView.body.departments).toMatchObject({});
+        expect(resView.body.affiliations).toMatchObject({});
+        expect(resView.body.graduationYears).toMatchObject({});
+
+        await request(app).delete(`/profiles/${profile1Id}`);
+        await request(app).delete(`/profiles/${profile2Id}`);
+     })
+ 
+
+
+    
+
+
   
   afterAll(async () => {
         await App.close(); // Close the MongoDB connection
