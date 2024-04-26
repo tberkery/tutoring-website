@@ -97,10 +97,6 @@ router.put("/views/:_id", async (req: any, res: any) => {
   const { viewerId, timestamp, duration }: { viewerId: string, timestamp: string, duration: number } = req.body; // start_time should be a date/time. duration should be a number of seconds.
   try {
     const data = await profiles.updateViews(_id, viewerId, timestamp, duration) 
-    if (!data) {
-      res.status(404).json({ msg: "Profile view update not made" });
-      return;
-    }
     res.status(200).json({ data });
   } catch (err) {
     res.status(500).send("Server Error");
@@ -145,16 +141,11 @@ router.get("/demographics/:_id", async (req: any, res: any) => {
   const { start }: { start: string} = req.query;
   try {
     const startProfile = await profiles.readViewsById(_id);
-    if (!startProfile) {
-      res.status(500).send("Profile not found. Invalid ID");
-    }
     let viewerIds: any[] = [];
-    try {
-      viewerIds = startProfile.views
+    viewerIds = startProfile.views
         .filter((view: { timestamp: string }) => new Date(view.timestamp) >= new Date(start))
         .map((view: { viewerId: any; }) => view.viewerId)
-    }
-    catch(error) { // If no views, return empty dictionaries, not an error
+    if (!viewerIds || viewerIds.length == 0) { // If no views, return empty dictionaries, not an error
       const departments = {};
       const affiliations = {};
       const graduationYears = {};
