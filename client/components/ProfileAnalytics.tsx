@@ -159,6 +159,20 @@ const ProfileAnalytics : FC<props> = (props) => {
     setTimeGraphData(timeData);
   }
 
+  const createOtherCategory = (points : pieGraphPoint[]) => {
+    let total = 0;
+    points.forEach((point) => (total += point.count));
+    const lowerBound = total * 0.02;
+    let abovePoints = points.filter((point) => point.count > lowerBound);
+    const belowPoints = points.filter((point) => point.count <= lowerBound);
+    let otherTotal = 0;
+    belowPoints.forEach((point) => (otherTotal += point.count));
+    if (otherTotal > 0) {
+      abovePoints = abovePoints.concat({ _id: "Other", count: otherTotal});
+    }
+    return abovePoints;
+  }
+
   const getDemographicsData = async () => {
     const endpoint = `${api}/profiles/demographics/${id}`;
     const params = { params: { start: getDaysAgo(timeScaleToDays()) }};
@@ -169,16 +183,16 @@ const ProfileAnalytics : FC<props> = (props) => {
       point._id = capitalize(point._id);
       return point;
     })
-    setMajorData(majors);
+    setMajorData(createOtherCategory(majors));
     let affiliations : pieGraphPoint[] = data.affiliations;
     affiliations = affiliations.map((point) => {
       point._id = capitalize(point._id);
       return point;
     })
-    setAffiliationData(affiliations);
+    setAffiliationData(createOtherCategory(affiliations));
     let grads : pieGraphPoint[] = data.graduationYears;
     grads = grads.filter((obj) => obj._id );
-    setYearData(grads);
+    setYearData(createOtherCategory(grads));
   }
 
   useEffect(() => { getViewsData() }, [])
@@ -199,7 +213,7 @@ const ProfileAnalytics : FC<props> = (props) => {
           border-slate-300"
         >
           <p className="font-bold text-slate-800">{label}</p>
-          <p className="text-gray-600">{`${valueLabel}: ${payload[0].value}`}</p>
+          <p className="text-gray-600">{`${valueLabel}: ${payload[0].value.toFixed(1)}`}</p>
         </div>
       );
     }
@@ -322,7 +336,7 @@ const ProfileAnalytics : FC<props> = (props) => {
   }
 
   const getViewersSection = () => {
-    if (majorData.length < 1) {
+    if (rawViewsData.length < 5) {
       return <div className='h-96'>
         <h3 className='text-2xl'>
           Your profile does not have enough views!
