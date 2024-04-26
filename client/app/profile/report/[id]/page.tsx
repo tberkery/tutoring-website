@@ -40,8 +40,6 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
         setProfileData(response.data);
 		
 		const response2 = await axios.get(`${BACKEND_URL}/profiles/${params.id}`);
-		console.log('response2:')
-		console.log(response2.data.data)
 		setReporteeFirstName(response2.data.data.firstName);
 		setReporteeLastName(response2.data.data.lastName);
 
@@ -84,8 +82,6 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
 				"reporteeFirstName" : reporteeFirstName,
 				"reporteeLastName" : reporteeLastName,
 			}
-      		console.log(body);
-	  		console.log(`${process.env.NEXT_PUBLIC_BACKEND_URL}/reports`)
 			await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/reports/`, body);
 			alert('Report submitted successfully!')
 			router.replace('/profiles');

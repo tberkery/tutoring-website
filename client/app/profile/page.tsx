@@ -129,7 +129,6 @@ const Page : FC = () => {
   useEffect(() => {
     let ratingTotal = 0;
     reviews.forEach((review) => ratingTotal += review.rating);
-    console.log(ratingTotal);
     setReviewAvg(ratingTotal / reviews.length);
   }, [reviews])
 
