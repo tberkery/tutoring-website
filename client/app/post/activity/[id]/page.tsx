@@ -109,11 +109,11 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
 
   useEffect(() => { getVisitor() }, [isLoaded, isSignedIn, user]);
 
-  const updateProfileViewsAsync = async () => {
+  const updatePostViewsAsync = async () => {
     if (visitorIdRef.current === '') {
       return;
     }
-    const endpoint = `${api}/activityPosts/views/${postId}`;
+    const endpoint = `${api}/${postType}/views/${postId}`;
     const body = { 
       viewerId: visitorIdRef.current,
       timestamp: new Date(),
@@ -127,11 +127,11 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
     return;
   }
 
-  const updateProfileViews = () => {
+  const updatePostViews = () => {
     if (visitorIdRef.current === '') {
       return;
     }
-    const endpoint = `${api}/activityPosts/views/${postId}`;
+    const endpoint = `${api}/${postType}/views/${postId}`;
     const body = { 
       viewerId: visitorIdRef.current,
       timestamp: new Date(),
@@ -203,7 +203,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
     const userInfo = await axios.get(`${api}/profiles/getByEmail/${user.primaryEmailAddress.toString()}`);
     setReviewerId(userInfo.data.data[0]._id);
 
-    const response = await axios.get(`${api}/activityPosts/findOne/${postId}`);
+    const response = await axios.get(`${api}/${postType}/findOne/${postId}`);
     setPost(response.data.post);
 
     const imgKey = response.data.post.coursePostPicKey;
@@ -273,16 +273,16 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
     }
   };
 
-  useEffect(() => updateProfileViews, [])
+  useEffect(() => updatePostViews, [])
 
   useEffect(() => {
     window.addEventListener("blur", () => setOnPage(false));
     window.addEventListener("focus", () => setOnPage(true));
-    window.addEventListener("beforeunload", updateProfileViewsAsync);
+    window.addEventListener("beforeunload", updatePostViewsAsync);
     return () => {
       window.removeEventListener("blur", () => setOnPage(false));
       window.removeEventListener("focus", () => setOnPage(true));
-      window.removeEventListener("beforeunload", updateProfileViewsAsync);
+      window.removeEventListener("beforeunload", updatePostViewsAsync);
     }
   }, []);
 
