@@ -154,6 +154,9 @@ const Page : FC = () => {
 
   const getTabSection = () => {
     if (activeSection === "Posts") {
+      if (posts.length === 0) {
+        return <h3 className="mt-8 text-xl">You haven't made any posts yet!</h3>
+      }
       return (
         <div 
           className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2
