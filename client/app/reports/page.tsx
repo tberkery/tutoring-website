@@ -41,9 +41,9 @@ const Page : FC = () => {
     if (user.primaryEmailAddress.toString() === "admin@jhu.edu") {
       setAuthorized(true);
     } else {
-      // redirect if the user isn't authorized to see this page
-      // router.replace("/");
-      setAuthorized(true);
+      // to debug without logging in as admin, comment out 45 and uncomment 46
+      router.replace("/");
+      // setAuthorized(true);
     }
   }
 
