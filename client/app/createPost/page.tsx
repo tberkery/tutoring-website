@@ -31,6 +31,7 @@ const Page : FC = () => {
   const [description, setDescription] = useState("");
   const [photoFile, setPhotoFile] = useState<File>(null);
 	const [refilling, setRefilling] = useState(false);
+  const [submitText, setSubmitText] = useState("Finish");
 
   const [sisCourses, setSisCourses] = useState<sisCourse[]>([]);
 
@@ -129,13 +130,15 @@ const Page : FC = () => {
       alert('Please fill out all required fields');
       setRefilling(true);
     } else {
-      alert(`Your ${title} post has been created!`);
+      setSubmitText("Loading...")
       let response;
       if (postType === "course") {
         response = await createCoursePost();
       } else {
         response = await createActivityPost();
       }
+      alert(`Your ${title} post has been created!`);
+      setSubmitText("Done!");
       router.replace('/profile');
     }
   }
@@ -171,7 +174,7 @@ const Page : FC = () => {
         setPhotoFile={handleFileSelected}
         refilling={refilling}
         setRefilling={setRefilling}
-        submitText="Finish"
+        submitText={submitText}
         submit={checkAndSubmit}
       />
     </div>

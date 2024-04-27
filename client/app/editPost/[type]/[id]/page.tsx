@@ -29,6 +29,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
 	const [refilling, setRefilling] = useState(false);
   const [photoFile, setPhotoFile] = useState<File>(null);
   const [loadedPost, setLoadedPost] = useState(false);
+  const [submitText, setSubmitText] = useState("Update");
   
   useEffect(() => { getProfile() }, [user]);
 
@@ -148,13 +149,14 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
       alert('Please fill out all required fields');
       setRefilling(true);
     } else {
-      alert(`Your ${title} post has been created!`);
+      setSubmitText("Loading...")
       let response;
       if (postType === "course") {
         response = await editCoursePost();
       } else {
         response = await editActivityPost();
       }
+      alert(`Your ${title} post has been edited!`);
       router.replace('/profile');
     }
   }
@@ -190,7 +192,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
         setPhotoFile={handleFileSelected}
         refilling={refilling}
         setRefilling={setRefilling}
-        submitText="Update"
+        submitText={submitText}
         submit={checkAndSubmit}
       />
     </div>
