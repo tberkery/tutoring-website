@@ -4,6 +4,8 @@ const express = require('express');
 const router = require('../../../server/routes/index.ts')
 const coursePost = require('../../../server/model/CoursePost'); 
 const App = require('../../../server/app.ts')
+import { ObjectId } from "mongodb";
+
 
 App.dbConnection(true)
 const app = App.app
@@ -73,6 +75,46 @@ describe('Test coursePosts routes', () => {
         await request(app).delete(`/coursePosts/${postId}`);
     });
     
+
+    test('GET /coursePosts/findOne/:id when id does not exist', async () => {
+        const id = new ObjectId();
+        const getRes = await request(app).get(`/coursePosts/findOne/${id}`);
+
+        expect(getRes.status).toBe(404);
+    });
+
+
+    test('GET /coursePosts/findAllByUserId/:userId', async () => {
+        const newPostData = {
+            userId: 'exampleUserId',
+            userFirstName: 'Ilana',
+            userLastName: 'Chalom',
+            courseName: 'Intro to Example',
+            description: 'Example description',
+            price: 20,
+            courseNumber: "AS.000.000",
+            takenAtHopkins: true
+        };
+
+        const r = await request(app)
+        .post('/coursePosts')
+        .send(newPostData);
+
+        const postId = r.body.newPost._id;
+
+        const getRes = await request(app).get(`/coursePosts/findAllByUserId/exampleUserId`);
+
+        expect(getRes.status).toBe(200);
+        expect(getRes.body).toHaveProperty('post');
+        expect(getRes.body.post._id).toBe(postId);
+        expect(getRes.body.post).toEqual(expect.objectContaining({
+            ...newPostData,
+            // tags: expect.any(Array) // Assert that 'tags' is an array
+        }));
+
+
+    });
+
     // Test for GET /coursePosts with empty database
     test('GET /coursePosts with empty database', async () => {
         await coursePost.deleteMany({});
