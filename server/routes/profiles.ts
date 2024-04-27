@@ -122,10 +122,10 @@ router.put("/availability/:_id", async (req: any, res: any) => {
 
 router.put("/:_id", async (req: any, res: any) => {
     const { _id }: { _id: string } = req.params;
-    const {firstName, lastName, email, affiliation, graduationYear, department, description, posts} : {firstName: string, lastName: string, email: string, affiliation: string, graduationYear: string, department: string, description: string, posts: []} = req.body;
+    const {firstName, lastName, email, affiliation, graduationYear, department, description} : {firstName: string, lastName: string, email: string, affiliation: string, graduationYear: string, department: string, description: string, posts: []} = req.body;
     try {
 
-      const data = await profiles.update(_id, firstName, lastName, email, affiliation, department, {graduationYear, description, posts});
+      const data = await profiles.update(_id, firstName, lastName, email, affiliation, department, {graduationYear, description});
       if (!data) {
         res.status(404).json({ msg: "User not found" });
         return;
@@ -146,9 +146,9 @@ router.get("/demographics/:_id", async (req: any, res: any) => {
         .filter((view: { timestamp: string }) => new Date(view.timestamp) >= new Date(start))
         .map((view: { viewerId: any; }) => view.viewerId)
     if (!viewerIds || viewerIds.length == 0) { // If no views, return empty dictionaries, not an error
-      const departments = {};
-      const affiliations = {};
-      const graduationYears = {};
+      const departments: any[] = [];
+      const affiliations: any[] = [];
+      const graduationYears: any[] = [];
       res.status(200).json({ departments, affiliations, graduationYears });
       return;
     }
