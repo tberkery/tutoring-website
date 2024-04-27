@@ -88,6 +88,12 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
   const [timeSpent, setTimeSpent] = useState(0);
   const [onPage, setOnPage] = useState(true);
   const [showEditButton, setShowEditButton] = useState(false);
+  const [postDeleted, setPostDeleted] = useState(false);
+  const postDeletedRef = useRef(postDeleted);
+
+  useEffect(() => {
+    postDeletedRef.current = postDeleted;
+  }, [postDeleted]);
 
   const timeSpentRef = useRef<Number>();
   useEffect(() => {
@@ -118,7 +124,10 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
   useEffect(() => { getVisitor() }, [isLoaded, isSignedIn, user]);
 
   const updatePostViewsAsync = async () => {
-    if (visitorIdRef.current === '') {
+    if (postDeletedRef.current) {
+      return;
+    }
+    if (visitorIdRef.current === '' || postDeleted) {
       return;
     }
     const endpoint = `${api}/${postType}/views/${postId}`;
@@ -132,7 +141,10 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
   }
 
   const updatePostViews = () => {
-    if (visitorIdRef.current === '') {
+    if (postDeletedRef.current) {
+      return;
+    }
+    if (visitorIdRef.current === ''|| postDeleted) {
       return;
     }
     const endpoint = `${api}/${postType}/views/${postId}`;
@@ -279,6 +291,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
 
   const deletePost = async () => {
     try {
+      setPostDeleted(true); 
       await axios.delete(`${api}/coursePosts/${postId}`);
       alert('Post deleted successfully')
       router.push('/profile');

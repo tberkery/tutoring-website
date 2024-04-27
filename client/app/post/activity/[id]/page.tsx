@@ -23,6 +23,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Button } from "@/components/ui/button";
 import PostAnalytics  from "@/components/PostAnalytics";
 import { useRouter } from "next/navigation";
+import { set } from "cypress/types/lodash";
 
 type activityPostType = {
   _id? : string,
@@ -81,7 +82,13 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
   const [timeSpent, setTimeSpent] = useState(0);
   const [onPage, setOnPage] = useState(true);
   const [showEditButton, setShowEditButton] = useState(false);
+  const [postDeleted, setPostDeleted] = useState(false);
+  const postDeletedRef = useRef(postDeleted);
 
+  useEffect(() => {
+    postDeletedRef.current = postDeleted;
+  }, [postDeleted]);
+  
   const timeSpentRef = useRef<Number>();
   useEffect(() => {
     timeSpentRef.current = timeSpent;
@@ -111,6 +118,9 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
   useEffect(() => { getVisitor() }, [isLoaded, isSignedIn, user]);
 
   const updatePostViewsAsync = async () => {
+    if (postDeletedRef.current) {
+      return;
+    }
     if (visitorIdRef.current === '') {
       return;
     }
@@ -125,6 +135,9 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
   }
 
   const updatePostViews = () => {
+    if (postDeletedRef.current) {
+      return;
+    }
     if (visitorIdRef.current === '') {
       return;
     }
@@ -273,13 +286,14 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
 
   const deletePost = async () => {
     try {
+      setPostDeleted(true); 
       await axios.delete(`${api}/activityposts/${postId}`);
       alert('Post deleted successfully');
       router.push('/profile');      
     } catch (error) {
       console.error('Error deleting post:', error);
     }
-  }
+  };
 
   if (!loadedPost) {
     return <></>;
