@@ -38,6 +38,7 @@
     "react-router-dom": "^6.21.3",
     "react-scripts": "5.0.1",
     "recharts": "^2.12.3",
+    "sendbird": "^3.1.33",
     "start-server-and-test": "^2.0.3",
     "tailwind-merge": "^2.2.1",
     "tailwindcss-animate": "^1.0.7",
