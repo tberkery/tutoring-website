@@ -75,9 +75,9 @@ router.get("/demographics/:_id", async (req: any, res: any) => {
       .filter((view: { timestamp: string }) => new Date(view.timestamp) >= new Date(start))
       .map((view: { viewerId: any; }) => view.viewerId)
     if (!viewerIds || viewerIds.length == 0) { // If no views, return empty dictionaries, not an error
-      const departments = {};
-      const affiliations = {};
-      const graduationYears = {};
+      const departments: any[] = [];
+      const affiliations: any[] = [];
+      const graduationYears: any[] = [];
       res.status(200).json({ departments, affiliations, graduationYears });
       return;
     }
