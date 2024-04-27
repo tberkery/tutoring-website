@@ -48,9 +48,9 @@ describe('Test analytics reporting capabilities', () => {
         const resAnalytics = await request(app)
             .get(`/profiles/demographics/${profile1Id}?start=2020-03-05T19:49:35.744Z`)
 
-        expect(resAnalytics.body.departments).toMatchObject({});
-        expect(resAnalytics.body.affiliations).toMatchObject({});
-        expect(resAnalytics.body.graduationYears).toMatchObject({});
+        expect(resAnalytics.body.departments).toEqual([]);
+        expect(resAnalytics.body.affiliations).toEqual([]);
+        expect(resAnalytics.body.graduationYears).toEqual([]);
 
         // Clean up: Delete the post created during the test
         await request(app).delete(`/profiles/${profile1Id}`);
@@ -123,9 +123,9 @@ describe('Test analytics reporting capabilities', () => {
         const resAnalytics2 = await request(app)
             .get(`/profiles/demographics/${profile2Id}?start=2020-03-05T19:49:35.744Z`)
 
-        expect(resAnalytics2.body.departments).toMatchObject({});
-        expect(resAnalytics2.body.affiliations).toMatchObject({});
-        expect(resAnalytics2.body.graduationYears).toMatchObject({});
+        expect(resAnalytics2.body.departments).toEqual([]);
+        expect(resAnalytics2.body.affiliations).toEqual([]);
+        expect(resAnalytics2.body.graduationYears).toEqual([]);
 
         // Clean up: Delete the post created during the test
         await request(app).delete(`/profiles/${profile1Id}`);
@@ -231,17 +231,17 @@ describe('Test analytics reporting capabilities', () => {
         const resAnalytics2 = await request(app)
             .get(`/profiles/demographics/${profile2Id}?start=2021-03-05T19:49:35.744Z`)
 
-        expect(resAnalytics2.body.departments).toMatchObject({});
-        expect(resAnalytics2.body.affiliations).toMatchObject({});
-        expect(resAnalytics2.body.graduationYears).toMatchObject({});
+        expect(resAnalytics2.body.departments).toEqual([]);
+        expect(resAnalytics2.body.affiliations).toEqual([]);
+        expect(resAnalytics2.body.graduationYears).toEqual([]);
 
 
         const resAnalytics3 = await request(app)
             .get(`/profiles/demographics/${profile3Id}?start=2021-03-05T19:49:35.744Z`)
 
-        expect(resAnalytics3.body.departments).toMatchObject({});
-        expect(resAnalytics3.body.affiliations).toMatchObject({});
-        expect(resAnalytics3.body.graduationYears).toMatchObject({});
+        expect(resAnalytics3.body.departments).toEqual([]);
+        expect(resAnalytics3.body.affiliations).toEqual([]);
+        expect(resAnalytics3.body.graduationYears).toEqual([]);
 
         // Clean up: Delete the post created during the test
         await request(app).delete(`/profiles/${profile1Id}`);
@@ -283,9 +283,9 @@ describe('Test analytics reporting capabilities', () => {
         const resAnalytics = await request(app)
             .get(`/coursePosts/demographics/${coursePost1Id}?start=2020-03-05T19:49:35.744Z`)
     
-        expect(resAnalytics.body.departments).toMatchObject({});
-        expect(resAnalytics.body.affiliations).toMatchObject({});
-        expect(resAnalytics.body.graduationYears).toMatchObject({});
+        expect(resAnalytics.body.departments).toEqual([]);
+        expect(resAnalytics.body.affiliations).toEqual([]);
+        expect(resAnalytics.body.graduationYears).toEqual([]);
     
         // Clean up: Delete the post created during the test
         await request(app).delete(`/profiles/${profileRes.body.data._id}`);
@@ -502,9 +502,9 @@ describe('Test analytics reporting capabilities', () => {
         const resAnalytics2 = await request(app)
             .get(`/coursePosts/demographics/${otherPostId}?start=2021-03-05T19:49:35.744Z`)
     
-        expect(resAnalytics2.body.departments).toMatchObject({});
-        expect(resAnalytics2.body.affiliations).toMatchObject({});
-        expect(resAnalytics2.body.graduationYears).toMatchObject({});
+        expect(resAnalytics2.body.departments).toEqual([]);
+        expect(resAnalytics2.body.affiliations).toEqual([]);
+        expect(resAnalytics2.body.graduationYears).toEqual([]);
     
     
         // Clean up: Delete the post created during the test
@@ -662,9 +662,9 @@ describe('Test analytics reporting capabilities', () => {
         const response = await request(app)
             .get(`/coursePosts/demographics/${coursePost1Id}?start=2020-03-05T19:49:35.744Z`)
         expect(response.status).toBe(200);
-        expect(response.body.departments).toMatchObject({});
-        expect(response.body.affiliations).toMatchObject({});
-        expect(response.body.graduationYears).toMatchObject({});
+        expect(response.body.departments).toEqual([]);
+        expect(response.body.affiliations).toEqual([]);
+        expect(response.body.graduationYears).toEqual([]);
         // Clean up: Delete the post created during the test
         await request(app).delete(`/profiles/${profileRes1.body.data._id}`);
         await request(app).delete(`/coursePosts/${coursePost1Id}`);
@@ -705,9 +705,9 @@ describe('Test analytics reporting capabilities', () => {
         const resAnalytics = await request(app)
             .get(`/activityPosts/demographics/${activityPostId}?start=2020-03-05T19:49:35.744Z`)
     
-        expect(resAnalytics.body.departments).toMatchObject({});
-        expect(resAnalytics.body.affiliations).toMatchObject({});
-        expect(resAnalytics.body.graduationYears).toMatchObject({});
+        expect(resAnalytics.body.departments).toEqual([]);
+        expect(resAnalytics.body.affiliations).toEqual([]);
+        expect(resAnalytics.body.graduationYears).toEqual([]);
     
         // Clean up: Delete the post created during the test
         await request(app).delete(`/profiles/${profileRes.body.data._id}`);
@@ -913,9 +913,9 @@ describe('Test analytics reporting capabilities', () => {
         const resAnalytics2 = await request(app)
             .get(`/activityPosts/demographics/${otherPostId}?start=2021-03-05T19:49:35.744Z`)
     
-        expect(resAnalytics2.body.departments).toMatchObject({});
-        expect(resAnalytics2.body.affiliations).toMatchObject({});
-        expect(resAnalytics2.body.graduationYears).toMatchObject({});
+        expect(resAnalytics2.body.departments).toEqual([]);
+        expect(resAnalytics2.body.affiliations).toEqual([]);
+        expect(resAnalytics2.body.graduationYears).toEqual([]);
     
     
         // Clean up: Delete the post created during the test
@@ -1146,9 +1146,9 @@ describe('Test analytics reporting capabilities', () => {
             .get(`/profiles/demographics/${profile1Id}`)
 
         expect(resView.status).toBe(200);
-        expect(resView.body.departments).toMatchObject({});
-        expect(resView.body.affiliations).toMatchObject({});
-        expect(resView.body.graduationYears).toMatchObject({});
+        expect(resView.body.departments).toEqual([]);
+        expect(resView.body.affiliations).toEqual([]);
+        expect(resView.body.graduationYears).toEqual([]);
 
         await request(app).delete(`/profiles/${profile1Id}`);
         await request(app).delete(`/profiles/${profile2Id}`);
@@ -1335,9 +1335,9 @@ describe('Test analytics reporting capabilities', () => {
         const resAnalytics2 = await request(app)
             .get(`/activityPosts/demographics/${otherPostId}?start=2021-03-05T19:49:35.744Z`)
     
-        expect(resAnalytics2.body.departments).toMatchObject({});
-        expect(resAnalytics2.body.affiliations).toMatchObject({});
-        expect(resAnalytics2.body.graduationYears).toMatchObject({});
+        expect(resAnalytics2.body.departments).toEqual([]);
+        expect(resAnalytics2.body.affiliations).toEqual([]);
+        expect(resAnalytics2.body.graduationYears).toEqual([]);
     
     
         // Clean up: Delete the post created during the test
