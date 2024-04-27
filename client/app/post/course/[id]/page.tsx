@@ -87,6 +87,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
   const [visitorId, setVisitorId] = useState('');
   const [timeSpent, setTimeSpent] = useState(0);
   const [onPage, setOnPage] = useState(true);
+  const [showEditButton, setShowEditButton] = useState(false);
 
   const timeSpentRef = useRef<Number>();
   useEffect(() => {
@@ -207,18 +208,9 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
     const profile = await axios.get(`${api}/profiles/${response.data.post.userId}`)
     setPoster(profile.data.data);
     setPosterId(response.data.post.userId);
-    // if (imgKey) {
-      // try {
-        // const url = await axios.get(`${api}/coursePostPics/get/${imgKey}`);
-        // setImgUrl(url.data.coursePostPicKey);
-      // } catch (e) {
-        // console.error(e);
-      // }
-    // }
-    // if (profile.data.data.profilePicKey) {
-      // const picUrl = await axios.get(`${api}/profilePics/get/${profile.data.data.profilePicKey}`);
-      // setProfilePic(picUrl.data.imageUrl);
-    // }
+    if (userInfo.data.data[0]._id === response.data.post.userId) {
+      setShowEditButton(true);
+    }
     setLoadedPost(true);
   }
 
@@ -251,6 +243,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
     event.preventDefault();
     try {
       const body = {
+        postName: post.courseName,
         postId,
         posterId,
         reviewerId: reviewerId,
@@ -259,7 +252,10 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
         isAnonymous: isAnonymous,
       };
       const response = await axios.post(`${api}/postReviews/${postId}`, body);
-      setReviews(prevReviews => [...prevReviews, response.data.review]);
+      const newReview = response.data.review;
+      newReview.postName = post.courseName;      
+      setReviews(prevReviews => [...prevReviews, newReview]);
+      setAverageRating((averageRating * reviewCount + rating) / (reviewCount + 1));
       setRating(0);
       setComment('');
       setIsAnonymous(false);
@@ -280,6 +276,16 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
       window.removeEventListener("beforeunload", updatePostViewsAsync);
     }
   }, []);
+
+  const deletePost = async () => {
+    try {
+      await axios.delete(`${api}/coursePosts/${postId}`);
+      alert('Post deleted successfully')
+      router.push('/profile');
+    } catch (error) {
+      console.error('Error deleting post:', error);
+    }
+  }
 
   if (!loadedPost) {
     return <></>;
@@ -324,6 +330,20 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
             </span>
           </div>
         </div>
+        { showEditButton ? 
+          <div className="flex justify-between mt-4">
+              <Button className="bg-blue-300 text-color-black hover:bg-blue-500">
+                <Link href={`/editPost/course/${post._id}`}>
+                  Edit Post
+                </Link>
+              </Button>
+              <Button className="bg-red-500" onClick={deletePost}>
+                Delete Post
+              </Button>
+            </div>
+          : 
+          <></>
+        }
       </div>
       <p className="py-8">{post.description}</p>
       <div className="flex flex-row gap-x-4 mb-4">
