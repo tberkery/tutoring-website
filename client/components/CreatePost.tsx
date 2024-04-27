@@ -3,7 +3,6 @@ import { ChangeEventHandler, Dispatch, FC, SetStateAction, useState } from "reac
 import { Label } from "./ui/label";
 import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 import { Input } from "./ui/input";
-import ComboBox from "./ComboBox";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
@@ -297,6 +296,7 @@ const CreatePost : FC<createPostProps> =
               ? "outline outline-red-500"
               : ''
             }`}
+            disabled={editing && postType === "course"}
             placeholder="Title"
             autoComplete="off"
             value={ title }
@@ -304,7 +304,7 @@ const CreatePost : FC<createPostProps> =
             onFocus={ () => setShowCourseDropdown(postType === "course") }
             onBlur={ () => { hideCourseDropdown() }}
           />
-          { getCourseDropdown() }
+          { !editing ? getCourseDropdown() : '' }
         </div>
         { postType === "course" ?
           <div className="relative flex flex-col flex-grow basis-1 z-10">
@@ -315,6 +315,7 @@ const CreatePost : FC<createPostProps> =
                 ? "outline outline-red-500"
                 : ''
               }`}
+              disabled={editing}
               placeholder="Number"
               autoComplete="off"
               value={ number }
@@ -322,7 +323,7 @@ const CreatePost : FC<createPostProps> =
               onFocus={ () => setShowNumberDropdown(true) }
               onBlur={ () => { hideNumberDropdown() } }
             />
-            { getNumberDropdown() }
+            { !editing ? getNumberDropdown() : '' }
           </div>
         :
           <></>
@@ -526,8 +527,11 @@ const CreatePost : FC<createPostProps> =
       />
       <Button 
         id="submit" 
-        className="text-lg mt-8"
-        disabled={!isLoaded || (!realCourse && postType === "course")}
+        className="text-lg mt-8 w-28"
+        disabled={
+          !isLoaded || submitText == "Loading..."
+          || (!editing && !realCourse && postType === "course")
+        }
         onClick={ submit }
       >
         { submitText }

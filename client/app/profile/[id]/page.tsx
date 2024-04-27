@@ -13,6 +13,11 @@ import { useRouter } from "next/navigation";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { ChevronDown } from "lucide-react";
 import CompareAvailability from "@/components/CompareAvailability";
+import SendBird from 'sendbird';
+
+
+const APP_ID = process.env.NEXT_PUBLIC_SEND_BIRD_APP_ID;
+const sb = new SendBird({ appId: APP_ID });
 
 interface Profile {
   affiliation: string;
@@ -86,6 +91,8 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
   const [onPage, setOnPage] = useState(true);
   const [visitorId, setVisitorId] = useState('');
   const [bookmarkedPosts, setBookmarkedPosts] = useState<Post[]>([]);
+  const [visitorSendBirdId, setVisitorSendBirdId] = useState('');
+  const [visiteeSendBirdId, setVisiteeSendBirdId] = useState('');
 
   const handleBookmarkUpdate = async (bookmark: string, isCourse: boolean) => {
     try {
@@ -164,6 +171,15 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
     try {
       const userInfo = await axios.get(`${api}/profiles/${params.id}`);
       setProfile(userInfo.data.data);
+      const visiteeEmail = userInfo.data.data.email;
+      const atIndex = visiteeEmail.indexOf('@');
+      if (atIndex !== -1 && visiteeEmail.endsWith('@jhu.edu')) {
+        setVisiteeSendBirdId(visiteeEmail.substring(0, atIndex));
+      } else {
+        console.error('Invalid email format');
+      }
+
+      console.log(userInfo.data.data.email);
       const posts = await axios.get(`${api}/allPosts/findAllByUserId/${userInfo.data.data._id}`);
       if (posts.data.length !== 0) {
         setPosts(posts.data);
@@ -201,6 +217,18 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
       return;
     }
     try {
+      if (user && user.primaryEmailAddress) {
+        const email = user.primaryEmailAddress.toString();
+        const atIndex = email.indexOf('@');
+        if (atIndex !== -1 && email.endsWith('@jhu.edu')) {
+          setVisitorSendBirdId(email.substring(0, atIndex));
+        } else {
+          console.error('Invalid email format');
+        }
+      } else {
+        console.error('Email address not available');
+      }
+
       const response = await axios.get(`${api}/profiles/getByEmail/${user.primaryEmailAddress.toString()}`);
       const id = response.data.data[0]._id;
       setVisitorId(id);
@@ -242,6 +270,37 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
 
   const handleClickReportUser = () => {
     router.push(`/profile/report/${params.id}`);
+  }
+
+  const handleSendMessage = async () => {
+    console.log('current user sendbird id:', visitorSendBirdId);
+    await sb.connect(visitorSendBirdId, (user, error) => {
+      if (error) {
+        console.error('SendBird connection error:', error);
+      } else {
+        console.log('Sendbird user connected:', user);
+
+        const params = new sb.GroupChannelParams();
+            params.isDistinct = true;
+            params.addUserIds([visiteeSendBirdId]);
+
+            sb.GroupChannel.createChannel(params, (groupChannel, error) => {
+                if (error) {
+                    console.error('Sendbird channel creation error:', error);
+                } else {
+                    console.log('Sendbird group channel created:', groupChannel);
+                    groupChannel.sendUserMessage('Hello!', (message, error) => {
+                        if (error) {
+                            console.error('Sendbird message sending error:', error);
+                        } else {
+                            console.log('Sendbird message sent successfully:', message);
+                        }
+                    });
+                }
+            });
+      }
+    })
+    router.push(`/chat`);
   }
 
 
@@ -403,12 +462,14 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
         </div>
         <div className="flex flex-col items-center gap-y-2 mt-2 gap-x-4">
           <img className="hidden md:block w-48 h-48 object-cover rounded-md" src={imgUrl} alt={`${profileData.firstName}`} />
-          {/* <button className="bg-custom-blue hover:bg-blue-900 text-white font-bold py-2 px-4 rounded-md" onClick={() => compareAvail()}>
-            Compare Availability
-          </button> */}
-          <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-md" onClick={() => handleClickReportUser()}>
-            Report this user
-          </button>
+          <div className="flex gap-x-4">
+            <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-md" onClick={() => handleClickReportUser()}>
+              Report this user
+            </button>
+            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md" onClick={() => handleSendMessage()}>
+              Message this user
+            </button>
+          </div>
         </div>
       </div>
       <div className="w-full bg-blue-300 relative">

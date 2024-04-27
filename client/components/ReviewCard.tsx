@@ -61,7 +61,6 @@ const ReviewCard : FC<Props> = (props) => {
   const handleDeleteReview = async () => {
     try {
       const response = await axios.delete(`${api}/postReviews/${review._id}`);
-      alert('Review deleted successfully');
       window.location.reload();
     } catch (error) {
       console.error('Error deleting review:', error);

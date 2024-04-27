@@ -34,6 +34,7 @@ test('test create() with all fields', async ()=> {
     expect(postReview.reviewDescription).toBe(reviewDescription);
     expect(postReview.rating).toBe(rating);
     expect(postReview.isAnonymous).toBe(isAnonymous);
+    await PostReviewSchema.deleteMany({});
 });
 
 test('test create() with missing fields', async ()=> {
@@ -66,6 +67,34 @@ test('test create() with missing fields', async ()=> {
     reviewDescription = faker.lorem.word();
     rating = undefined;
     await expect(postReviewDao.create(postId, posterId, reviewerId, reviewDescription, rating)).rejects.toThrow();
+});
+
+test('test readAll()', async ()=> {
+    const postReviewDao = new PostReviewDao();
+    await mg.connect(URI);
+    PostReviewSchema.deleteMany({});
+
+    // Create some test reviews
+    const postId = String(faker.number.int());
+    const posterId = String(faker.number.int());
+    const reviewerId = String(faker.number.int());
+    const reviewDescription =  faker.lorem.word();
+    const rating =  faker.number.int();
+    const isAnonymous = faker.datatype.boolean();
+
+    await postReviewDao.create(postId, posterId, reviewerId, reviewDescription, rating, isAnonymous);
+
+    // Fetch reviews by postId
+    const postReviews = await postReviewDao.readAll();
+    
+    // Check if the retrieved reviews match the created ones
+    expect(postReviews).toHaveLength(1);
+    expect(postReviews[0].postId).toBe(postId);
+    expect(postReviews[0].posterId).toBe(posterId);
+    expect(postReviews[0].reviewerId).toBe(reviewerId);
+    expect(postReviews[0].reviewDescription).toBe(reviewDescription);
+    expect(postReviews[0].rating).toBe(rating);
+    expect(postReviews[0].isAnonymous).toBe(isAnonymous);
 });
 
 test('test readAllByPostId()', async ()=> {
@@ -141,3 +170,4 @@ test('test delete()', async ()=> {
     // Check if the deleted review is null
     expect(deletedReview).toBeNull();
 });
+
