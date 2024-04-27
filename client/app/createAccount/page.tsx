@@ -36,6 +36,8 @@ const Page : FC = () => {
 	const [refilling, setRefilling] = useState(false);
 	const [affliiateType, setAffiliateType] = useState("student");
 	const [photoFile, setPhotoFile] = useState<File>(null);
+	const [canSubmit, setCanSubmit] = useState(true);
+	const [submitText, setSubmitText] = useState("Finish");
 
 	const checkIfProfileExists = async () => {
 		if (!isLoaded)
@@ -102,7 +104,8 @@ const Page : FC = () => {
 			setRefilling(true);
 		} else {
 			// form success!
-			alert(`Your account has been created!`);
+			setCanSubmit(false);
+			setSubmitText("Loading...");
 			let body = {
 				"firstName" : firstName,
 				"lastName" : lastName,
@@ -134,7 +137,6 @@ const Page : FC = () => {
 			} else {
 				console.error('Invalid email format');
 			}
-
 			const sendBirdBody = {
 				"user_id" : jhed_id,
 				"nickname" : `${firstName} ${lastName}`,
@@ -151,8 +153,7 @@ const Page : FC = () => {
 			} catch (e) {
 				console.error(e);
 			}
-			
-
+			alert(`Your account has been created!`);
 			router.replace('/profile');
 		}
 	}
@@ -283,8 +284,13 @@ const Page : FC = () => {
 						}
 					</div>
 				</div>
-				<Button id="submit" className="mt-8" onClick={ checkAndSubmit }>
-					Finish
+				<Button 
+					id="submit"
+					className="mt-8"
+					disabled={!canSubmit}
+					onClick={ checkAndSubmit }
+				>
+					{submitText}
 				</Button>
 			</div>
 		</div>
