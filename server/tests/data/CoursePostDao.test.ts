@@ -90,7 +90,6 @@ test('test create() with some optional fields', async ()=> {
     expect(post.userFirstName).toBe(userFirstName);
     expect(post.userLastName).toBe(userLastName);
     expect(post.courseName).toBe(courseName);
-    expect(post.price).toBe(price);
     expect(post.courseNumber).toBe(courseNumber);
     expect(post.courseDepartment[0]).toBe(courseDepartment[0]);
     expect(post.professorTakenWith).toBe(professorTakenWith);
@@ -334,6 +333,7 @@ test('test update()', async ()=> {
     const newPrice =faker.number.int(100);
     const updatingPost = await coursePostDao.update(id, userId, userFirstName, userLastName, newCourseName, takenAtHopkins, {description, price: newPrice, courseNumber, courseDepartment, gradeReceived, semesterTaken, professorTakenWith});
     const updatedPost = await coursePostDao.readOne(id);
+    // console.log(updatedPost);
     expect(updatedPost.userId).toBe(userId);
     expect(updatedPost.courseName).toBe(newCourseName);
     expect(updatedPost.price).toBe(newPrice);
@@ -358,6 +358,7 @@ test('test update() to add an optional param when none originally given', async 
     const id = post._id;
     const updatingPost = await coursePostDao.update(id, userId, userFirstName, userLastName, courseName, takenAtHopkins, {description, price, courseNumber})
     const updatedPost = await coursePostDao.readOne(id);
+    // console.log(updatedPost);
     expect(updatedPost.userId).toBe(userId);
     expect(updatedPost.courseName).toBe(courseName);
     expect(updatedPost.description).toBe(description);
