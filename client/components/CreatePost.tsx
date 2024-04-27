@@ -297,6 +297,7 @@ const CreatePost : FC<createPostProps> =
               ? "outline outline-red-500"
               : ''
             }`}
+            disabled={editing && postType === "course"}
             placeholder="Title"
             autoComplete="off"
             value={ title }
@@ -304,7 +305,7 @@ const CreatePost : FC<createPostProps> =
             onFocus={ () => setShowCourseDropdown(postType === "course") }
             onBlur={ () => { hideCourseDropdown() }}
           />
-          { getCourseDropdown() }
+          { !editing ? getCourseDropdown() : '' }
         </div>
         { postType === "course" ?
           <div className="relative flex flex-col flex-grow basis-1 z-10">
@@ -315,6 +316,7 @@ const CreatePost : FC<createPostProps> =
                 ? "outline outline-red-500"
                 : ''
               }`}
+              disabled={editing}
               placeholder="Number"
               autoComplete="off"
               value={ number }
@@ -322,7 +324,7 @@ const CreatePost : FC<createPostProps> =
               onFocus={ () => setShowNumberDropdown(true) }
               onBlur={ () => { hideNumberDropdown() } }
             />
-            { getNumberDropdown() }
+            { !editing ? getNumberDropdown() : '' }
           </div>
         :
           <></>
@@ -528,7 +530,8 @@ const CreatePost : FC<createPostProps> =
         id="submit" 
         className="text-lg mt-8 w-28"
         disabled={
-          submitText === "Finish" && !isLoaded || (!realCourse && postType === "course")
+          !isLoaded || submitText == "Loading..."
+          || (!editing && !realCourse && postType === "course")
         }
         onClick={ submit }
       >
