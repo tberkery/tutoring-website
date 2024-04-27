@@ -63,7 +63,7 @@ const ReportCard : FC<props> = (props) => {
     if (profile.profilePicKey) {
       // const picUrl = `${api}/profilePics/get/${profile.profilePicKey}`;
       // const picResponse = await axios.get(picUrl);
-      const key = profile.data.data[0].profilePicKey;
+      const key = profile.profilePicKey;
       const url = `https://tutorhubprofilepics.s3.amazonaws.com/${key}`
       setReporterPic(url);
     } else {
@@ -78,9 +78,9 @@ const ReportCard : FC<props> = (props) => {
     if (profile.profilePicKey) {
       // const picUrl = `${api}/profilePics/get/${profile.profilePicKey}`;
       // const picResponse = await axios.get(picUrl);
-      const key = profile.data.data[0].profilePicKey;
+      const key = profile.profilePicKey;
       const url = `https://tutorhubprofilepics.s3.amazonaws.com/${key}`
-      setReporterPic(url);
+      setReporteePic(url);
     } else {
       setReporteePic('/defaultimg.jpeg')
     }
@@ -111,7 +111,7 @@ const ReportCard : FC<props> = (props) => {
           <img
             src={reporterPic}
             alt={`Avatar`}
-            className="hidden md:inline-block mr-1 w-8 h-8 rounded-full"
+            className="hidden md:inline-block mr-1 w-8 h-8 rounded-full object-cover"
           />
           { reporterFullName() }
         </a>
@@ -123,7 +123,7 @@ const ReportCard : FC<props> = (props) => {
           <img
             src={reporteePic}
             alt={`Avatar`}
-            className="hidden md:inline-block mr-1 w-8 h-8 rounded-full"
+            className="hidden md:inline-block mr-1 w-8 h-8 rounded-full object-cover"
           />
           { reporteeFullName() }
         </a>
