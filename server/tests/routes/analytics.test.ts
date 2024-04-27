@@ -273,15 +273,6 @@ describe('Test analytics reporting capabilities', () => {
             "takenAtHopkins": true
         }
     
-        const coursePost2 = {
-            "userId": profileRes.body.data._id,
-            "userFirstName": "Ilana",
-            "userLastName": "Chalom",
-            "courseName": "Data Structures",
-            "takenAtHopkins": true
-        }
-    
-    
         const res1 = await request(app)
             .post('/coursePosts')
             .send(coursePost1);
@@ -524,11 +515,160 @@ describe('Test analytics reporting capabilities', () => {
         await request(app).delete(`/coursePosts/${otherPostId}`);
     });
 
+    test('PUT /coursePosts/views/:_id with bogus profile id', async () => {
+        
+        const profile1 = {
+            "firstName": "Ilana",
+            "lastName": "Chalom",
+            "email": "ichalom1@jhu.edu",
+            "affiliation": "Student",
+            "graduationYear": 2024,
+            "department": "Computer Science",
+            "description": "I'm a member of the JHU Class of 2024"
+        }
+
+        const profileRes1 = await request(app)
+        .post('/profiles')
+        .send(profile1);
+
+        const profile2 = {
+            "firstName": "Kat",
+            "lastName": "Forbes",
+            "email": "kforbes6@jhu.edu",
+            "affiliation": "Student",
+            "graduationYear": 2023,
+            "department": "Computer Science",
+            "description": "I'm a member of the JHU Class of 2023"
+        }
+
+        const profileRes2 = await request(app)
+        .post('/profiles')
+        .send(profile2);
+
+        const profile2Id = profileRes2.body.data._id;
+    
+        const coursePost1 = {
+            "userId": profileRes1.body.data._id,
+            "userFirstName": "Ilana",
+            "userLastName": "Chalom",
+            "courseName": "Linear Algebra",
+            "takenAtHopkins": true
+        }
+    
+        const res1 = await request(app)
+            .post('/coursePosts')
+            .send(coursePost1);
+    
+        // Extract the created post ID from the response
+        const coursePost1Id = res1.body.newPost._id;
+    
+        const viewInfo = {
+            "viewerId": profile2Id,
+            "timestamp": "2022-02-17T13:36:45.954Z",
+            "duration": 120
+        }
+    
+        const resView = await request(app)
+            .put(`/coursePosts/views/nonSenseCoursePostId`)
+            .send(viewInfo)
+    
+        expect(resView.status).toBe(500);
+    
+        // Clean up: Delete the post created during the test
+        await request(app).delete(`/profiles/${profileRes1.body.data._id}`);
+        await request(app).delete(`/profiles/${profileRes2.body.data._id}`);
+        await request(app).delete(`/coursePosts/${coursePost1Id}`);
+    });
 
 
+    test('GET /coursePosts/demographics/:_id with bogus of viewer Id', async () => {
+        
+        const profile1 = {
+            "firstName": "Ilana",
+            "lastName": "Chalom",
+            "email": "ichalom1@jhu.edu",
+            "affiliation": "Student",
+            "graduationYear": 2024,
+            "department": "Computer Science",
+            "description": "I'm a member of the JHU Class of 2024"
+        }
+        const profileRes1 = await request(app)
+        .post('/profiles')
+        .send(profile1);
+    
+        const coursePost1 = {
+            "userId": profileRes1.body.data._id,
+            "userFirstName": "Ilana",
+            "userLastName": "Chalom",
+            "courseName": "Linear Algebra",
+            "takenAtHopkins": true
+        }
+    
+        const res1 = await request(app)
+            .post('/coursePosts')
+            .send(coursePost1);
+    
+        // Extract the created post ID from the response
+        const coursePost1Id = res1.body.newPost._id;
+    
+        const viewInfo = {
+            "viewerId": "nonsenseViewerId",
+            "timestamp": "2022-02-17T13:36:45.954Z",
+            "duration": 120
+        }
+    
+        const resView = await request(app)
+            .put(`/coursePosts/views/${coursePost1Id}`)
+            .send(viewInfo)
+    
+        expect(resView.status).toBe(500);
+    
+        // Clean up: Delete the post created during the test
+        await request(app).delete(`/profiles/${profileRes1.body.data._id}`);
+        await request(app).delete(`/coursePosts/${coursePost1Id}`);
+    });
 
 
+    test('GET /coursePosts/demographics/:_id with no views of post', async () => {
+        
+        const profile1 = {
+            "firstName": "Ilana",
+            "lastName": "Chalom",
+            "email": "ichalom1@jhu.edu",
+            "affiliation": "Student",
+            "graduationYear": 2024,
+            "department": "Computer Science",
+            "description": "I'm a member of the JHU Class of 2024"
+        }
+        const profileRes1 = await request(app)
+        .post('/profiles')
+        .send(profile1);
+    
+        const coursePost1 = {
+            "userId": profileRes1.body.data._id,
+            "userFirstName": "Ilana",
+            "userLastName": "Chalom",
+            "courseName": "Linear Algebra",
+            "takenAtHopkins": true
+        }
+    
+        const res1 = await request(app)
+            .post('/coursePosts')
+            .send(coursePost1);
+    
+        // Extract the created post ID from the response
+        const coursePost1Id = res1.body.newPost._id;
 
+        const response = await request(app)
+            .get(`/coursePosts/demographics/${coursePost1Id}?start=2020-03-05T19:49:35.744Z`)
+        expect(response.status).toBe(200);
+        expect(response.body.departments).toMatchObject({});
+        expect(response.body.affiliations).toMatchObject({});
+        expect(response.body.graduationYears).toMatchObject({});
+        // Clean up: Delete the post created during the test
+        await request(app).delete(`/profiles/${profileRes1.body.data._id}`);
+        await request(app).delete(`/coursePosts/${coursePost1Id}`);
+    });
 
 
     test('GET /activityPosts/demographics/:_id with no views of coursePost _id', async () => {

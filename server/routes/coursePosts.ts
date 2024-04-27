@@ -71,12 +71,10 @@ router.get("/demographics/:_id", async (req: any, res: any) => {
       res.status(500).send("Course Post not found. Invalid ID");
     }
     let viewerIds: any[] = [];
-    try {
-      viewerIds = startProfile.views
-        .filter((view: { timestamp: string }) => new Date(view.timestamp) >= new Date(start))
-        .map((view: { viewerId: any; }) => view.viewerId)
-    }
-    catch(error) { // If no views, return empty dictionaries, not an error
+    viewerIds = startProfile.views
+      .filter((view: { timestamp: string }) => new Date(view.timestamp) >= new Date(start))
+      .map((view: { viewerId: any; }) => view.viewerId)
+    if (!viewerIds || viewerIds.length == 0) { // If no views, return empty dictionaries, not an error
       const departments = {};
       const affiliations = {};
       const graduationYears = {};
@@ -129,10 +127,9 @@ router.put("/:id", async (req: any, res: any) => {
     const {userId, userFirstName, userLastName, courseName, description, price, courseNumber, courseDepartment, gradeReceived, semesterTaken, professorTakenWith, takenAtHopkins, schoolTakenAt}: {userId: string, userFirstName: string, userLastName: string, courseName: string, description: string, price: number, courseNumber: string, courseDepartment: string[], gradeReceived: string, semesterTaken: string, professorTakenWith: string, takenAtHopkins: boolean, schoolTakenAt: string} = req.body;
     try {
         const post = await CoursePostDao.update( id, userId, userFirstName, userLastName, courseName, takenAtHopkins, {description, price, courseNumber, courseDepartment, gradeReceived, semesterTaken, professorTakenWith, schoolTakenAt} );
-        if (!post) {
-        return res.status(404).json({ msg: "Post not found" });
+        if (post) {
+          res.status(200).json({ post });
         }
-        res.status(200).json({ post });
     } catch (err) {
         console.error(err);
         res.status(500).send("Server Error");
