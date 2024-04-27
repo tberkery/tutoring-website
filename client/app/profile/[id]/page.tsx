@@ -241,7 +241,7 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
   }
 
   const updateProfileViewsAsync = async () => {
-    if (visitorIdRef.current === '') {
+    if (visitorIdRef.current === '' || visitorId === params.id) {
       return;
     }
     const endpoint = `${api}/profiles/views/${params.id}`;
@@ -255,7 +255,7 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
   }
 
   const updateProfileViews = () => {
-    if (visitorIdRef.current === '') {
+    if (visitorIdRef.current === '' || visitorId === params.id) {
       return;
     }
     const endpoint = `${api}/profiles/views/${params.id}`;

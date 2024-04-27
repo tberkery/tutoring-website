@@ -124,10 +124,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
   useEffect(() => { getVisitor() }, [isLoaded, isSignedIn, user]);
 
   const updatePostViewsAsync = async () => {
-    if (postDeletedRef.current) {
-      return;
-    }
-    if (visitorIdRef.current === '' || postDeleted) {
+    if (visitorIdRef.current === '' || visitorIdRef.current === posterId || postDeletedRef.current) {
       return;
     }
     const endpoint = `${api}/${postType}/views/${postId}`;
@@ -141,10 +138,7 @@ const Page : FC = ({ params }: { params : { id: string, type: string }}) => {
   }
 
   const updatePostViews = () => {
-    if (postDeletedRef.current) {
-      return;
-    }
-    if (visitorIdRef.current === ''|| postDeleted) {
+    if (visitorIdRef.current === '' || visitorIdRef.current === posterId || postDeletedRef.current) {
       return;
     }
     const endpoint = `${api}/${postType}/views/${postId}`;
