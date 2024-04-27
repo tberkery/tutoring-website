@@ -3,7 +3,9 @@ const request = require('supertest');
 const express = require('express');
 const router = require('../../../server/routes/index.ts')
 const activityPost = require('../../../server/model/ActivityPost'); 
-const App = require('../../../server/app.ts')
+const ActivityPostDaoClass = require('../../data/ActivityPostDao');
+const App = require('../../../server/app.ts');
+import { ObjectId } from "mongodb";
 
 App.dbConnection(true)
 const app = App.app
@@ -39,7 +41,6 @@ describe('Test activityPosts routes', () => {
         await request(app).delete(`/activityPosts/${postId}`);
     });
 
-  
     // Test for GET /activityPosts/:id
     test('GET /activityPosts/findOne/:id', async () => {
         const newPostData = {
@@ -70,6 +71,48 @@ describe('Test activityPosts routes', () => {
 
         // Clean up: Delete the post created during the test
         await request(app).delete(`/activityPosts/${postId}`);
+    });
+
+    // Test for GET /activityPosts/findAllByUserId/:userId
+    test('GET /activityPosts/findAllByUserId/:userId', async () => {
+        const newPostData = {
+            userId: 'exampleUserId',
+            userFirstName: 'Katherine',
+            userLastName: 'Forbes',
+            activityTitle: 'Example Activity',
+            activityDescription: 'Example description',
+            activityPostPicKey: 'exampleactivityPostPicKey',
+            price: 1,
+            tags: ['exampleTag1', 'exampleTag2']
+        };
+        
+        // Make a POST request to create the post
+        const postRes = await request(app).post('/activityPosts').send(newPostData);
+    
+        // Extract the created post ID from the response
+        const postId = postRes.body.newPost._id;
+        const userId = postRes.body.newPost.userId;
+
+        const res = await request(app).get(`/activityPosts/findAllByUserId/${userId}`);
+
+        expect(res.status).toBe(200);
+        expect(res.body).toHaveProperty('posts');
+        expect(res.body.posts[0]).toEqual(expect.objectContaining({
+            ...newPostData,
+            tags: expect.any(Array) // Assert that 'tags' is an array
+        }));
+
+        // Clean up: Delete the post created during the test
+        await request(app).delete(`/activityPosts/${postId}`);
+    });
+
+    test('GET /activityPosts/findAllByUserId/:userId with non-existing user', async () => {
+        const userId = new ObjectId();
+
+        const res = await request(app).get(`/activityPosts/findAllByUserId/${userId}`);
+
+        expect(res.status).toBe(200);
+        expect(res.body.posts).toHaveLength(0);
     });
     
     // Test for GET /activityPosts with empty database
@@ -180,6 +223,57 @@ describe('Test activityPosts routes', () => {
             price: finalPostData.price,
             tags: finalPostData.tags
         }));
+
+        // Clean up: Delete the post created during the test
+        await request(app).delete(`/activityPosts/${postId}`);
+    });
+
+    // Test for PUT /activityPosts/:id with invalid id
+    test('PUT /activityPosts/:id with invalid id', async () => {
+        const newPostData = {
+            userId: 'exampleUserId',
+            userFirstName: 'Nolan',
+            userLastName: 'Fogarty',
+            activityTitle: 'Example Activity',
+            activityDescription: 'Example description',
+            activityPostPicKey: 'exampleactivityPostPicKey',
+            price: 1,
+            tags: ['exampleTag1', 'exampleTag2']
+        };
+        
+        // Make a POST request to create the post
+        const postRes = await request(app).post('/activityPosts').send(newPostData);
+
+        // Extract the created post ID from the response
+        const postId = postRes.body.newPost._id;
+        const invalidPostId = 1;
+    
+        const updatedData = {
+            id: postId,
+            userId: 'exampleUserId',
+            userFirstName: 'Ilana',
+            userLastName: 'Chalom',
+            activityTitle: 'Updated Title',
+            activityDescription: 'Updated Description',
+        };
+
+        const finalPostData = {
+            userId: 'exampleUserId',
+            userFirstName: 'Ilana',
+            userLastName: 'Chalom',
+            activityTitle: 'Updated Title',
+            activityDescription: 'Updated Description',
+            activityPostPicKey: 'exampleactivityPostPicKey',
+            price: 1,
+            tags: ['exampleTag1', 'exampleTag2']
+        };
+    
+        const res = await request(app)
+        .put(`/activityPosts/${invalidPostId}`)
+        .send(updatedData);
+    
+        expect(res.status).toBe(500);
+        expect(res.text).toBe("Server Error");
 
         // Clean up: Delete the post created during the test
         await request(app).delete(`/activityPosts/${postId}`);
@@ -633,6 +727,64 @@ describe('Test activityPosts routes', () => {
         // Assertions
         expect(res.status).toBe(200);
         expect(res.body).toHaveLength(3); // Ensure only one post is returned
+        // Remark: assumes (tolerably right now but perhaps not in time) that return order will be the same as creation order.
+        expect(res.body[0]).toMatchObject(example1PostData); // Verify it matches contents of post that satisifes query
+        expect(res.body[1]).toMatchObject(example2PostData); // Verify it matches contents of post that satisifes query
+        expect(res.body[2]).toMatchObject(example3PostData); // Verify it matches contents of post that satisifes query
+        // Clean up: Delete all activity posts
+        await activityPost.deleteMany({});
+    });
+
+    // Test for GET with no specific query
+    test('GET /activityPosts with no specific query', async () => {
+        // Clear all existing activity posts
+        await activityPost.deleteMany({});
+    
+        // Create example data for activity posts
+        const example1PostData = {
+            userId: 'example1UserId',
+            userFirstName: 'exampleName',
+            userLastName: 'exampleName',
+            activityTitle: 'Example1 Activity',
+            activityDescription: 'Example1 description',
+            activityPostPicKey: 'example1activityPostPicKey',
+            price: 1,
+            tags: ['example1Tag1', 'example1Tag2']
+        };
+    
+        const example2PostData = {
+            userId: 'example2UserId',
+            userFirstName: 'exampleName',
+            userLastName: 'exampleName',
+            activityTitle: 'Example2 Activity',
+            activityDescription: 'Example2 description',
+            activityPostPicKey: 'example2activityPostPicKey',
+            price: 2,
+            tags: ['example2Tag1', 'example2Tag2']
+        };
+
+        const example3PostData = {
+            userId: 'example3UserId', 
+            userFirstName: 'exampleName',
+            userLastName: 'exampleName',
+            activityTitle: 'Example3 Activity',
+            activityDescription: 'Example3 description',
+            activityPostPicKey: 'example3activityPostPicKey',
+            price: 2, // NOTE the 2s here
+            tags: ['example3Tag1', 'example3Tag2']
+        };
+        
+        // Make POST requests to create the posts
+        const postRes1 = await request(app).post('/activityPosts').send(example1PostData);
+        const postRes2 = await request(app).post('/activityPosts').send(example2PostData);
+        const postRes3 = await request(app).post('/activityPosts').send(example3PostData);
+
+        // Make a GET request to query activity posts by userId
+        const res = await request(app).get('/activityPosts');
+    
+        // Assertions
+        expect(res.status).toBe(200);
+        expect(res.body).toHaveLength(3);
         // Remark: assumes (tolerably right now but perhaps not in time) that return order will be the same as creation order.
         expect(res.body[0]).toMatchObject(example1PostData); // Verify it matches contents of post that satisifes query
         expect(res.body[1]).toMatchObject(example2PostData); // Verify it matches contents of post that satisifes query
