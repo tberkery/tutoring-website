@@ -17,8 +17,6 @@ router.use('/activityPosts', require('./activityPosts.ts'))
 
 router.use('/activityPostPics', require('./activityPostPics'))
 
-router.use('/coursePostPics', require('./coursePostPics'))
-
 router.use('/allPosts', require('./allPosts.ts'))
 
 router.use('/postReviews', require('./postReviews.ts'))
