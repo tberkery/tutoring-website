@@ -251,6 +251,19 @@ describe('Test allPosts routes', () => {
     
     });
 
+    // test('GET /allPosts with invalid user ID', async () => {
+    //     const invalidUserId = 'invalidUserId'; // Provide an invalid user ID
+    //     const res = await request(app).get(`/allPosts/findAllByUserId/${invalidUserId}`);
+    //     expect(res.status).toBe(500); // Assuming an invalid user ID results in a server error
+    // });
+    
+    test('GET /allPosts with invalid route', async () => {
+        const res = await request(app).get('/invalidRoute');
+        console.log('status:')
+        console.log(res.status);
+        expect(res.status).toBe(404); // Assuming accessing an invalid route results in a 404
+    });
+
     afterAll(async () => {
         await App.close(); // Close the MongoDB connection
     });

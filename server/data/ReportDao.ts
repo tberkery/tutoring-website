@@ -20,12 +20,8 @@ export class ReportDao {
     }
 
     async readAll() {
-        try {
-            const reports = await Report.find();
-            return reports
-        } catch (error) {
-            console.error('Error fetching reports:', error);
-        }
+        const reports = await Report.find();
+        return reports
     }
 
     async readOne( id: any ) { // find one Report by _id

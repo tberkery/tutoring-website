@@ -29,9 +29,9 @@ router.get("/", async (req: any, res: any ) => {
         if (allPosts.length === 0) {
             return res.status(404).json({ msg: "No posts found" });
         }
-        res.status(200).json(allPosts);
+        return res.status(200).json(allPosts);
     } catch (err) {
-        res.status(500).send("Server Error");
+        return res.status(500).send("Server Error");
     }
 });
 
@@ -47,12 +47,12 @@ router.get("/findAllByUserId/:userId", async (req: any, res: any ) => {
             return timestampB - timestampA;
         });
         if (allPosts.length === 0) {
-            res.status(200).json([]);
+            return res.status(200).json([]);
         }
         res.status(200).json(allPosts);
     } catch (err) {
         console.error(err);
-        res.status(500).send("Server Error");
+        return res.status(500).send("Server Error");
     }
 });
 
@@ -89,7 +89,7 @@ router.get("/getAllAvailable/:userId", async (req: any, res: any ) => {
     if (returnPosts.length === 0) {
         return res.status(200).json([]);
     }
-    res.status(200).json(returnPosts);
+    return res.status(200).json(returnPosts);
 
 });
 
