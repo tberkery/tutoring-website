@@ -105,9 +105,9 @@ describe('Test coursePosts routes', () => {
         const getRes = await request(app).get(`/coursePosts/findAllByUserId/exampleUserId`);
 
         expect(getRes.status).toBe(200);
-        expect(getRes.body).toHaveProperty('post');
-        expect(getRes.body.post._id).toBe(postId);
-        expect(getRes.body.post).toEqual(expect.objectContaining({
+        expect(getRes.body).toHaveProperty('posts');
+        expect(getRes.body.posts[0]._id).toBe(postId);
+        expect(getRes.body.posts[0]).toEqual(expect.objectContaining({
             ...newPostData,
             // tags: expect.any(Array) // Assert that 'tags' is an array
         }));
