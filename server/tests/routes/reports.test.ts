@@ -29,6 +29,7 @@ describe('Test Report Routes', () => {
 
         expect(res.status).toBe(201);
         expect(res.body).toHaveProperty('newReport');
+        await request(app).delete(`/reports/${res.body.newReport._id}`);
     });
 
     // Test GET /reports/findAll
@@ -67,9 +68,8 @@ describe('Test Report Routes', () => {
     });
 
     test('should return all reports by a specific reporter', async () => {
-        // Create mock data for the reports by the specific reporter
         const reporterId = 'exampleReporterId';
-        const mockReports = [
+        const newReportData =
             {
                 id: 1,
                 reporterId: reporterId,
@@ -79,18 +79,11 @@ describe('Test Report Routes', () => {
                 reporteeId: 'reporteeId1',
                 reporteeFirstName: 'Jane',
                 reporteeLastName: 'Doe'
-            },
-            {
-                id: 2,
-                reporterId: reporterId,
-                reporterFirstName: 'John',
-                reporterLastName: 'Doe',
-                content: 'Report 2 by John Doe',
-                reporteeId: 'reporteeId2',
-                reporteeFirstName: 'Alice',
-                reporteeLastName: 'Smith'
             }
-        ];
+        const createRes = await request(app)
+        .post('/reports')
+        .send(newReportData);
+        const reportId = createRes.body.newReport._id;
     
         // Make a GET request to fetch reports by the specific reporter
         const res = await request(app).get(`/reports/findAllByReporterId/${reporterId}`);
@@ -98,13 +91,14 @@ describe('Test Report Routes', () => {
         // Assertions
         expect(res.status).toBe(200);
         expect(res.body).toHaveProperty('reports');
-        expect(res.body.reports).toHaveLength(2);
+        expect(res.body.reports).toHaveLength(1);
+        await request(app).delete(`/reports/${reportId}`);
     });
 
     test('should return all reports for a specific reportee', async () => {
         // Create mock data for the reports for the specific reportee
         const reporteeId = 'exampleReporteeId';
-        const mockReports = [
+        const newReportData = 
             {
                 id: 1,
                 reporterId: 'reporterId1',
@@ -114,70 +108,145 @@ describe('Test Report Routes', () => {
                 reporteeId: reporteeId,
                 reporteeFirstName: 'Jane',
                 reporteeLastName: 'Doe'
-            },
-            {
-                id: 2,
-                reporterId: 'reporterId2',
-                reporterFirstName: 'Alice',
-                reporterLastName: 'Smith',
-                content: 'Report 2 for Jane Doe',
-                reporteeId: reporteeId,
-                reporteeFirstName: 'Jane',
-                reporteeLastName: 'Doe'
             }
-        ];
-    
-        // Make a GET request to fetch reports for the specific reportee
+        const createRes = await request(app)
+        .post('/reports')
+        .send(newReportData);
+        const reportId = createRes.body.newReport._id;
+
         const res = await request(app).get(`/reports/findAllByReporteeId/${reporteeId}`);
         
-        // Assertions
         expect(res.status).toBe(200);
         expect(res.body).toHaveProperty('reports');
-        expect(res.body.reports).toHaveLength(2);});
+        expect(res.body.reports).toHaveLength(1);
+        await request(app).delete(`/reports/${reportId}`)
+    })
+
+    test('should update a report by ID', async () => {
+        const newReportData = {
+            reporterId: 'exampleReporterId',
+            reporterFirstName: 'John',
+            reporterLastName: 'Doe',
+            content: 'Example content',
+            reporteeId: 'exampleReporteeId',
+            reporteeFirstName: 'Jane',
+            reporteeLastName: 'Doe'
+        };
+    
+        const createRes = await request(app)
+            .post('/reports')
+            .send(newReportData);
+        
+        const reportId = createRes.body.newReport._id;
+    
+        const updatedReportData = {
+            reporterId: 'updatedReporterId',
+            reporterFirstName: 'Updated John',
+            reporterLastName: 'Updated Doe',
+            content: 'Updated content',
+            reporteeId: 'updatedReporteeId',
+            reporteeFirstName: 'Updated Jane',
+            reporteeLastName: 'Updated Doe'
+        };
+    
+        const updateRes = await request(app)
+            .put(`/reports/${reportId}`)
+            .send(updatedReportData);
+    
+        expect(updateRes.status).toBe(200);
+        expect(updateRes.body).toHaveProperty('report');
+        expect(updateRes.body.report).toMatchObject(updatedReportData);
+    
+        await request(app).delete(`/reports/${reportId}`);
+    });
+
+    test('should delete a report by ID', async () => {
+        const newReportData = {
+            reporterId: 'exampleReporterId',
+            reporterFirstName: 'John',
+            reporterLastName: 'Doe',
+            content: 'Example content',
+            reporteeId: 'exampleReporteeId',
+            reporteeFirstName: 'Jane',
+            reporteeLastName: 'Doe'
+        };
+    
+        const createRes = await request(app)
+            .post('/reports')
+            .send(newReportData);
+        
+        const reportId = createRes.body.newReport._id;
+    
+        const deleteRes = await request(app)
+            .delete(`/reports/${reportId}`);
+
+        const getRes = await request(app).get(`/reports/findOne/${reportId}`);
+        expect(getRes.status).toBe(404);
+    });
+
+    test('should resolve a report by ID', async () => {
+        const newReportData = {
+            reporterId: 'exampleReporterId',
+            reporterFirstName: 'John',
+            reporterLastName: 'Doe',
+            content: 'Example content',
+            reporteeId: 'exampleReporteeId',
+            reporteeFirstName: 'Jane',
+            reporteeLastName: 'Doe'
+        };
+    
+        const createRes = await request(app)
+            .post('/reports')
+            .send(newReportData);
+        
+        const reportId = createRes.body.newReport._id;
+        const resolveRes = await request(app)
+            .put(`/reports/resolve/${reportId}`);
+
+        const getRes = await request(app).get(`/reports/findOne/${reportId}`);
+        expect(getRes.status).toBe(200);
+        expect(getRes.body.report.resolved).toBe(true);
+        await request(app).delete(`/reports/${reportId}`);
+    });
+
+    test('should return server error if deleting non-existing report', async () => {
+        const res = await request(app).delete('/reports/nonExistingReportId');
+        expect(res.status).toBe(500);
+        expect(res.text).toBe('Server Error');
+    });
+
+    test('should return server error when updating non-existing report', async () => {
+        const nonExistingId = 'nonExistingId';
+    
+        const invalidData = {
+        };
+    
+        const updateRes = await request(app)
+            .put(`/reports/${nonExistingId}`)
+            .send(invalidData);
+    
+        expect(updateRes.status).toBe(500);
+        expect(updateRes.text).toBe('Server Error');
     });
     
+    test('should return server error when fetching a non-existing report', async () => {
+        const nonExistingId = 'nonExistingId';
+    
+        const getRes = await request(app).get(`/reports/findOne/${nonExistingId}`);
+    
+        expect(getRes.status).toBe(500);
+        expect(getRes.text).toBe('Server Error');
+    });
+    
+    
+    test('should return server error when resolving a non-existing report', async () => {
+        const nonExistingId = 'nonExistingId';
+            const putRes = await request(app).put(`/reports/resolve/${nonExistingId}`);
+    
+        expect(putRes.status).toBe(500);
+        expect(putRes.text).toBe('Server Error');
+    });
+    
+    
 
-    // // Test GET /reports/findAllByReporteeId/:reporteeId
-    // test('GET /reports/findAllByReporteeId/:reporteeId', async () => {
-    //     const res = await request(app)
-    //         .get('/reports/findAllByReporteeId/exampleReporteeId');
-
-    //     expect(res.status).toBe(200);
-    //     expect(res.body).toHaveProperty('reports');
-    // });
-
-    // // Test PUT /reports/resolve/:id
-    // test('PUT /reports/resolve/:id', async () => {
-    //     const res = await request(app)
-    //         .put('/reports/resolve/1');
-
-    //     expect(res.status).toBe(200);
-    //     expect(res.body).toHaveProperty('report');
-    // });
-
-    // // Test PUT /reports/:id
-    // test('PUT /reports/:id', async () => {
-    //     const res = await request(app)
-    //         .put('/reports/1')
-    //         .send({
-    //             reporterId: 'updatedReporterId',
-    //             reporterFirstName: 'Updated',
-    //             reporterLastName: 'Name',
-    //             content: 'Updated content',
-    //             reporteeId: 'updatedReporteeId',
-    //             reporteeFirstName: 'Updated',
-    //             reporteeLastName: 'Name'
-    //         });
-
-    //     expect(res.status).toBe(200);
-    //     expect(res.body).toHaveProperty('report');
-    // });
-
-    // // Test DELETE /reports/:id
-    // test('DELETE /reports/:id', async () => {
-    //     const res = await request(app)
-    //         .delete('/reports/1');
-
-    //     expect(res.status).toBe(200);
-    //     expect(res.body.msg).toBe('Report deleted successfully');
-    // });
+});
