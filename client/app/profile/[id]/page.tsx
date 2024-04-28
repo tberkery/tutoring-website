@@ -179,7 +179,6 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
         console.error('Invalid email format');
       }
 
-      console.log(userInfo.data.data.email);
       const posts = await axios.get(`${api}/allPosts/findAllByUserId/${userInfo.data.data._id}`);
       if (posts.data.length !== 0) {
         setPosts(posts.data);
