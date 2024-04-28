@@ -100,6 +100,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onUpdateBookmark }) => {
 
   return (<> 
     <div 
+      id={`post-${post._id}`}
       className="relative max-w-sm overflow-hidden bg-white rounded shadow-lg cursor-pointer hover:-translate-y-2 transition duration-75" 
       onClick={handleClick}
       onMouseEnter={() => setTitleUnderline(true)}
@@ -108,7 +109,8 @@ const PostCard: React.FC<PostCardProps> = ({ post, onUpdateBookmark }) => {
       {/* Bookmark icon positioned at the top right corner */}
       <div className="absolute top-2 right-2" onClick={toggleBookmark}>
         {/* Use conditional rendering to fill the bookmark icon in black if the post is bookmarked */}
-        <Bookmark 
+        <Bookmark
+          id={`bookmark-${post._id}`}
           className={`relative 
           ${isBookmarked ? 
             'fill-black hover:fill-red-500' 
