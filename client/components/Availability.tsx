@@ -87,7 +87,6 @@ const Page = () => {
         if (select) {
             axios.put(`${api}/profiles/availability/${userId}`, { availability: availability });
         }
-        console.log('availability:....\n\n', availability);
         setSelect((prevSelect) => !prevSelect);
     };
 

@@ -13,6 +13,11 @@ import { useRouter } from "next/navigation";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { ChevronDown } from "lucide-react";
 import CompareAvailability from "@/components/CompareAvailability";
+import SendBird from 'sendbird';
+
+
+const APP_ID = process.env.NEXT_PUBLIC_SEND_BIRD_APP_ID;
+const sb = new SendBird({ appId: APP_ID });
 
 interface Profile {
   affiliation: string;
@@ -86,6 +91,8 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
   const [onPage, setOnPage] = useState(true);
   const [visitorId, setVisitorId] = useState('');
   const [bookmarkedPosts, setBookmarkedPosts] = useState<Post[]>([]);
+  const [visitorSendBirdId, setVisitorSendBirdId] = useState('');
+  const [visiteeSendBirdId, setVisiteeSendBirdId] = useState('');
 
   const handleBookmarkUpdate = async (bookmark: string, isCourse: boolean) => {
     try {
@@ -97,13 +104,9 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
         bookmarkIds = new Set(allBookmarks.data.data.activityBookmarks);
       }
       if (bookmarkIds.has(bookmark)) {
-        const response = await axios.put(`${api}/profiles/deleteBookmark/${visitorId}`, { bookmark: bookmark, isCourse: isCourse });
-        window.alert("Post was previously bookmarked and has now been unbookmarked!")
-        console.log("Bookmark deleted")
+        await axios.put(`${api}/profiles/deleteBookmark/${visitorId}`, { bookmark: bookmark, isCourse: isCourse });
       } else {
-        const response = await axios.put(`${api}/profiles/addBookmark/${visitorId}`, { bookmark: bookmark, isCourse: isCourse });
-        window.alert("Post has been bookmarked!")
-        console.log("Bookmark added")
+        await axios.put(`${api}/profiles/addBookmark/${visitorId}`, { bookmark: bookmark, isCourse: isCourse });
       } 
     } catch (error) {
       console.error('Error updating bookmark status:', error);
@@ -132,7 +135,7 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
   const timeSpentRef = useRef<Number>();
   useEffect(() => {
     timeSpentRef.current = timeSpent;
-  }, [onPage]);
+  }, [timeSpent]);
 
   const visitorIdRef = useRef<string>();
   useEffect(() => {
@@ -168,6 +171,14 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
     try {
       const userInfo = await axios.get(`${api}/profiles/${params.id}`);
       setProfile(userInfo.data.data);
+      const visiteeEmail = userInfo.data.data.email;
+      const atIndex = visiteeEmail.indexOf('@');
+      if (atIndex !== -1 && visiteeEmail.endsWith('@jhu.edu')) {
+        setVisiteeSendBirdId(visiteeEmail.substring(0, atIndex));
+      } else {
+        console.error('Invalid email format');
+      }
+
       const posts = await axios.get(`${api}/allPosts/findAllByUserId/${userInfo.data.data._id}`);
       if (posts.data.length !== 0) {
         setPosts(posts.data);
@@ -184,8 +195,11 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
         setReviews(reviews);
       }
       if (userInfo.data.data.profilePicKey) {
-        const picUrl = await axios.get(`${api}/profilePics/get/${userInfo.data.data.profilePicKey}`);
-        setImgUrl(picUrl.data.imageUrl);
+        const key = userInfo.data.data.profilePicKey;
+        const url = `https://tutorhubprofilepics.s3.amazonaws.com/${key}`;
+        setImgUrl(url);
+        // const picUrl = await axios.get(`${api}/profilePics/get/${userInfo.data.data.profilePicKey}`);
+        // setImgUrl(picUrl.data.imageUrl);
       }
       const profileId = userInfo.data.data._id;
       const reviewEndpoint = `${api}/postReviews/getByProfileId/${profileId}`;
@@ -202,6 +216,18 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
       return;
     }
     try {
+      if (user && user.primaryEmailAddress) {
+        const email = user.primaryEmailAddress.toString();
+        const atIndex = email.indexOf('@');
+        if (atIndex !== -1 && email.endsWith('@jhu.edu')) {
+          setVisitorSendBirdId(email.substring(0, atIndex));
+        } else {
+          console.error('Invalid email format');
+        }
+      } else {
+        console.error('Email address not available');
+      }
+
       const response = await axios.get(`${api}/profiles/getByEmail/${user.primaryEmailAddress.toString()}`);
       const id = response.data.data[0]._id;
       setVisitorId(id);
@@ -214,7 +240,7 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
   }
 
   const updateProfileViewsAsync = async () => {
-    if (visitorIdRef.current === '') {
+    if (visitorIdRef.current === '' || visitorId === params.id) {
       return;
     }
     const endpoint = `${api}/profiles/views/${params.id}`;
@@ -228,7 +254,7 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
   }
 
   const updateProfileViews = () => {
-    if (visitorIdRef.current === '') {
+    if (visitorIdRef.current === '' || visitorId === params.id) {
       return;
     }
     const endpoint = `${api}/profiles/views/${params.id}`;
@@ -243,6 +269,37 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
 
   const handleClickReportUser = () => {
     router.push(`/profile/report/${params.id}`);
+  }
+
+  const handleSendMessage = async () => {
+    console.log('current user sendbird id:', visitorSendBirdId);
+    await sb.connect(visitorSendBirdId, (user, error) => {
+      if (error) {
+        console.error('SendBird connection error:', error);
+      } else {
+        console.log('Sendbird user connected:', user);
+
+        const params = new sb.GroupChannelParams();
+            params.isDistinct = true;
+            params.addUserIds([visiteeSendBirdId]);
+
+            sb.GroupChannel.createChannel(params, (groupChannel, error) => {
+                if (error) {
+                    console.error('Sendbird channel creation error:', error);
+                } else {
+                    console.log('Sendbird group channel created:', groupChannel);
+                    groupChannel.sendUserMessage('Hello!', (message, error) => {
+                        if (error) {
+                            console.error('Sendbird message sending error:', error);
+                        } else {
+                            console.log('Sendbird message sent successfully:', message);
+                        }
+                    });
+                }
+            });
+      }
+    })
+    router.push(`/chat`);
   }
 
 
@@ -280,7 +337,7 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
         const response = await axios.get(`${api}/profiles/allBookmarks/${visitorId}`);
         return response.data;
       } catch (error) {
-        console.log('Error retrieving bookmarks for current viewer');
+        console.error('Error retrieving bookmarks for current viewer');
       }
     };
   
@@ -289,7 +346,7 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
         const idsOfBookmarkedPosts = await getAllBookmarkedPosts();
         setBookmarkedPosts(idsOfBookmarkedPosts);
       } catch (error) {
-        console.log('Error retrieving bookmarks for current viewer:', error);
+        console.error('Error retrieving bookmarks for current viewer:', error);
       }
     };
   
@@ -302,13 +359,16 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
 
   const getTabSection = () => {
     if (activeSection === "Posts") {
+      if (posts.length === 0) {
+        return <h3 className="mt-8 text-xl">This user hasn't made any posts yet!</h3>
+      }
       return (
         <div 
           className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2
           lg:grid-cols-3 gap-4"
         >
           { posts.map((post) => (
-            <PostCard key={post._id} post={post} />
+            <PostCard key={post._id} post={post} onUpdateBookmark={handleBookmarkUpdate}/>
           )) }
         </div>
       )
@@ -404,12 +464,14 @@ const Page : FC = ({ params }: { params : { id: string }}) => {
         </div>
         <div className="flex flex-col items-center gap-y-2 mt-2 gap-x-4">
           <img className="hidden md:block w-48 h-48 object-cover rounded-md" src={imgUrl} alt={`${profileData.firstName}`} />
-          {/* <button className="bg-custom-blue hover:bg-blue-900 text-white font-bold py-2 px-4 rounded-md" onClick={() => compareAvail()}>
-            Compare Availability
-          </button> */}
-          <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-md" onClick={() => handleClickReportUser()}>
-            Report this user
-          </button>
+          <div className="flex gap-x-4">
+            <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-md" onClick={() => handleClickReportUser()}>
+              Report this user
+            </button>
+            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md" onClick={() => handleSendMessage()}>
+              Message this user
+            </button>
+          </div>
         </div>
       </div>
       <div className="w-full bg-blue-300 relative">

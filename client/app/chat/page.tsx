@@ -5,6 +5,7 @@ import '@sendbird/uikit-react/dist/index.css';
 import { useUser } from "@clerk/nextjs";
 import NavBar from '@/components/Navbar';
 import { useEffect, useState } from 'react';
+import '@/styles/global.css';
 
 const DynamicAppWithNoSSR = dynamic(() => import("../../components/Chat"), {
   ssr: false,
@@ -22,10 +23,10 @@ export default function Home() {
       if (atIndex !== -1 && email.endsWith('@jhu.edu')) {
         setJhed(email.substring(0, atIndex));
       } else {
-        console.log('Invalid email format');
+        console.error('Invalid email format');
       }
     } else {
-      console.log('Email address not available');
+      console.error('Email address not available');
     }
   }
 

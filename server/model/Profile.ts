@@ -32,11 +32,6 @@ const ProfileSchema = new mongoose.Schema({
         type: String,
         default: null,
     },
-    posts: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Post',
-        default: null,
-    }],
     profilePicKey: {
         type: String,
         default: null,
@@ -44,10 +39,6 @@ const ProfileSchema = new mongoose.Schema({
     views: {
         type: [ViewSchema],
         default: []
-    },
-    viewsCounter: {
-        type: Number,
-        default: null
     },
     availability: {
         type: [Number],

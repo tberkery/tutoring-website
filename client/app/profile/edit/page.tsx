@@ -96,7 +96,6 @@ const Page : FC = () => {
 			value = current - 4
 		}
 		setYear(value);
-		console.log(process.env.NEXT_PUBLIC_BACKEND_URL);
 	}
 
 	const handleFileSelected = (e: React.ChangeEvent<HTMLInputElement>): void => {

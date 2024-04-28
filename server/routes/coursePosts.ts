@@ -71,15 +71,13 @@ router.get("/demographics/:_id", async (req: any, res: any) => {
       res.status(500).send("Course Post not found. Invalid ID");
     }
     let viewerIds: any[] = [];
-    try {
-      viewerIds = startProfile.views
-        .filter((view: { timestamp: string }) => new Date(view.timestamp) >= new Date(start))
-        .map((view: { viewerId: any; }) => view.viewerId)
-    }
-    catch(error) { // If no views, return empty dictionaries, not an error
-      const departments = {};
-      const affiliations = {};
-      const graduationYears = {};
+    viewerIds = startProfile.views
+      .filter((view: { timestamp: string }) => new Date(view.timestamp) >= new Date(start))
+      .map((view: { viewerId: any; }) => view.viewerId)
+    if (!viewerIds || viewerIds.length == 0) { // If no views, return empty dictionaries, not an error
+      const departments: any[] = [];
+      const affiliations: any[] = [];
+      const graduationYears: any[] = [];
       res.status(200).json({ departments, affiliations, graduationYears });
       return;
     }
@@ -130,7 +128,7 @@ router.put("/:id", async (req: any, res: any) => {
     try {
         const post = await CoursePostDao.update( id, userId, userFirstName, userLastName, courseName, takenAtHopkins, {description, price, courseNumber, courseDepartment, gradeReceived, semesterTaken, professorTakenWith, schoolTakenAt} );
         if (!post) {
-        return res.status(404).json({ msg: "Post not found" });
+          return res.status(404).json({ msg: "Post not found" });
         }
         res.status(200).json({ post });
     } catch (err) {

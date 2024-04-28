@@ -31,7 +31,6 @@ const NavBar: FC = () => {
   const [imgUrl, setImgUrl] = useState("/defaultimg.jpeg");
 
   const fetchUserData = async () => {
-    console.log('!');
     if (!isLoaded || !isSignedIn) {
       return false;
     }
@@ -39,7 +38,6 @@ const NavBar: FC = () => {
     if (userInfo.data.data.length === 0) {
       return;
     }
-    console.log(userInfo.data.data[0]);
     if (userInfo.data.data[0].profilePicKey) {
       const key = userInfo.data.data[0].profilePicKey;
       const url = `https://tutorhubprofilepics.s3.amazonaws.com/${key}`

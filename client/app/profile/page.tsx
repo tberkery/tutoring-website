@@ -129,7 +129,6 @@ const Page : FC = () => {
   useEffect(() => {
     let ratingTotal = 0;
     reviews.forEach((review) => ratingTotal += review.rating);
-    console.log(ratingTotal);
     setReviewAvg(ratingTotal / reviews.length);
   }, [reviews])
 
@@ -155,6 +154,9 @@ const Page : FC = () => {
 
   const getTabSection = () => {
     if (activeSection === "Posts") {
+      if (posts.length === 0) {
+        return <h3 className="mt-8 text-xl">You haven't made any posts yet!</h3>
+      }
       return (
         <div 
           className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2
@@ -250,7 +252,7 @@ const Page : FC = () => {
             <img
               src={imgUrl}
               alt={`Avatar`}
-              className="mr-1 w-12 h-12 rounded-full"
+              className="mr-1 w-12 h-12 rounded-full object-cover"
             />
             <h1 className="text-2xl text-center font-extrabold font-sans uppercase text-black">
               {profileData.firstName} {profileData.lastName}

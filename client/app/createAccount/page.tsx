@@ -36,6 +36,8 @@ const Page : FC = () => {
 	const [refilling, setRefilling] = useState(false);
 	const [affliiateType, setAffiliateType] = useState("student");
 	const [photoFile, setPhotoFile] = useState<File>(null);
+	const [canSubmit, setCanSubmit] = useState(true);
+	const [submitText, setSubmitText] = useState("Finish");
 
 	const checkIfProfileExists = async () => {
 		if (!isLoaded)
@@ -61,7 +63,6 @@ const Page : FC = () => {
 		const response = await axios.get(`${api}/courses/all`);
 		const courses : sisCourse[] = response.data.courses;
 		const departmentSet = new Set<string>();
-		console.log(courses);
 		courses.forEach((course) => {
 			course.courseDepartment.forEach((department) => {
 				departmentSet.add(department.substring(3));
@@ -89,7 +90,6 @@ const Page : FC = () => {
 			value = current - 4
 		}
 		setYear(value);
-		console.log(process.env.NEXT_PUBLIC_BACKEND_URL);
 	}
 
 	const handleFileSelected = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -104,7 +104,8 @@ const Page : FC = () => {
 			setRefilling(true);
 		} else {
 			// form success!
-			alert(`Your account has been created!`);
+			setCanSubmit(false);
+			setSubmitText("Loading...");
 			let body = {
 				"firstName" : firstName,
 				"lastName" : lastName,
@@ -128,25 +129,20 @@ const Page : FC = () => {
 			}
 			// reigster the new user to the SendBird app for the chat
 			const sendBirdUri = `https://api-${APP_ID}.sendbird.com/v3/users`
-			console.log('uri: ', sendBirdUri);
 			let email = user.primaryEmailAddress.toString();
 			const atIndex = email.indexOf('@');
 			let jhed_id = '';
 			if (atIndex !== -1 && email.endsWith('@jhu.edu')) {
 				jhed_id = email.substring(0, atIndex);
-				console.log(jhed_id);
 			} else {
-				console.log('Invalid email format');
+				console.error('Invalid email format');
 			}
-
 			const sendBirdBody = {
 				"user_id" : jhed_id,
 				"nickname" : `${firstName} ${lastName}`,
 				"profile_url": "",
 				"profile_file": photoFile
 			}
-			console.log('sending to sendbird!\n\n\n\n')
-			console.log(sendBirdBody);
 			try {
 				const sendBirdResponse = (await axios.post(sendBirdUri, sendBirdBody, {
 					headers: {
@@ -154,12 +150,10 @@ const Page : FC = () => {
 						"Content-Type": "application/json",
 					}
 				})).data;
-				console.log('response: ' + sendBirdResponse);
 			} catch (e) {
-				console.log(e);
+				console.error(e);
 			}
-			
-
+			alert(`Your account has been created!`);
 			router.replace('/profile');
 		}
 	}
@@ -290,8 +284,13 @@ const Page : FC = () => {
 						}
 					</div>
 				</div>
-				<Button id="submit" className="mt-8" onClick={ checkAndSubmit }>
-					Finish
+				<Button 
+					id="submit"
+					className="mt-8"
+					disabled={!canSubmit}
+					onClick={ checkAndSubmit }
+				>
+					{submitText}
 				</Button>
 			</div>
 		</div>

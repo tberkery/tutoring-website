@@ -1,6 +1,6 @@
 "use client";
 import axios from 'axios';
-import { ChevronDown, Square, Star } from 'lucide-react';
+import { ChevronDown, ChevronUp, Square, Star } from 'lucide-react';
 import React, { FC, useEffect, useState } from 'react';
 import { CartesianGrid, Cell, Line, LineChart, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuItem } from './ui/dropdown-menu';
@@ -11,6 +11,17 @@ type view = {
   viewerId: string,
   timestamp: string,
   durationInSeconds: number,
+}
+
+type Review = {
+  postId: string,
+  postName?: string,
+  postType?: string,
+  posterId: string,
+  reviewerId: string,
+  title?: string,
+  reviewDescription: string,
+  rating: number,
 }
 
 type lineGraphPoint = { label: string, value: number }
@@ -40,27 +51,17 @@ type Post = {
 }
 
 type props = {
-  profileId: string,
-  bestPosts: Post[],
-}
-
-type Review = {
   postId: string,
-  postName?: string,
-  postType?: string,
-  posterId: string,
-  reviewerId: string,
-  title?: string,
-  reviewDescription: string,
-  rating: number,
+  postType: string
 }
 
-const ProfileAnalytics : FC<props> = (props) => {
-  const analyticsSections = ["Overview", "Profile Viewers"];
+const PostAnalytics : FC<props> = (props) => {
+  const analyticsSections = ["Overview", "Post Viewers"];
   const api = process.env.NEXT_PUBLIC_BACKEND_URL;
-  const id = props.profileId;
+  const id = props.postId;
   const animDuration = 1000;
 
+  const [open, setOpen] = useState(false);
   const [activeAnalytics, setActiveAnalytics] = useState(analyticsSections[0]);
   const [timeScale, setTimeScale] = useState("Last 30 Days");
   const [rawViewsData, setRawViewsData] = useState<view[]>([]);
@@ -69,6 +70,7 @@ const ProfileAnalytics : FC<props> = (props) => {
   const [majorData, setMajorData] = useState<pieGraphPoint[]>([]);
   const [yearData, setYearData] = useState<pieGraphPoint[]>([]);
   const [affiliationData, setAffiliationData] = useState<pieGraphPoint[]>([]);
+  const postType = props.postType;
 
   const capitalize = (s : string) => {
     const pieces = s.split(" ");
@@ -125,7 +127,7 @@ const ProfileAnalytics : FC<props> = (props) => {
   }
 
   const getViewsData = async () => {
-    const endpoint = `${api}/profiles/views/${id}`;
+    const endpoint = `${api}/${postType}/views/${id}`;
     const response = await axios.get(endpoint);
     const rawData : view[] = response.data.data.views;
     setRawViewsData(rawData);
@@ -159,22 +161,8 @@ const ProfileAnalytics : FC<props> = (props) => {
     setTimeGraphData(timeData);
   }
 
-  const createOtherCategory = (points : pieGraphPoint[]) => {
-    let total = 0;
-    points.forEach((point) => (total += point.count));
-    const lowerBound = total * 0.02;
-    let abovePoints = points.filter((point) => point.count > lowerBound);
-    const belowPoints = points.filter((point) => point.count <= lowerBound);
-    let otherTotal = 0;
-    belowPoints.forEach((point) => (otherTotal += point.count));
-    if (otherTotal > 0) {
-      abovePoints = abovePoints.concat({ _id: "Other", count: otherTotal});
-    }
-    return abovePoints;
-  }
-
   const getDemographicsData = async () => {
-    const endpoint = `${api}/profiles/demographics/${id}`;
+    const endpoint = `${api}/${postType}/demographics/${id}`;
     const params = { params: { start: getDaysAgo(timeScaleToDays()) }};
     const response = await axios.get(endpoint, params);
     const data = response.data;
@@ -183,16 +171,16 @@ const ProfileAnalytics : FC<props> = (props) => {
       point._id = capitalize(point._id);
       return point;
     })
-    setMajorData(createOtherCategory(majors));
+    setMajorData(majors);
     let affiliations : pieGraphPoint[] = data.affiliations;
     affiliations = affiliations.map((point) => {
       point._id = capitalize(point._id);
       return point;
     })
-    setAffiliationData(createOtherCategory(affiliations));
+    setAffiliationData(affiliations);
     let grads : pieGraphPoint[] = data.graduationYears;
     grads = grads.filter((obj) => obj._id );
-    setYearData(createOtherCategory(grads));
+    setYearData(grads);
   }
 
   useEffect(() => { getViewsData() }, [])
@@ -246,12 +234,6 @@ const ProfileAnalytics : FC<props> = (props) => {
     );
   };
 
-  const getRating = (post : Post) => {
-    let total = 0;
-    post.reviews.forEach((r) => total += r.rating);
-    return (total / post.reviews.length).toFixed(1);
-  }
-
   const getAnalyticsOverview = () => {
     return (
       <>
@@ -261,7 +243,7 @@ const ProfileAnalytics : FC<props> = (props) => {
         >
           <div className="bg-white md:px-8 py-8 mb-8 md:rounded-xl md:shadow-md">
             <h3 className="text-2xl font-bold mb-4 text-center">
-              Number of Profile Views
+              Number of Post Views
             </h3>
             <ResponsiveContainer width="100%" height={300} className="pr-4 md:pr-0">
               <LineChart data={viewsGraphData}>
@@ -275,7 +257,7 @@ const ProfileAnalytics : FC<props> = (props) => {
           </div>
           <div className="bg-white md:px-8 py-8 mb-8 md:rounded-xl md:shadow-md">
             <h3 className="text-2xl font-bold mb-4 text-center">
-              Average Time Spent on Profile
+              Average Time Spent on Post
             </h3>
             <ResponsiveContainer width="100%" height={300} className="pr-4 md:pr-0"> 
               <LineChart data={timeGraphData}>
@@ -288,58 +270,15 @@ const ProfileAnalytics : FC<props> = (props) => {
             </ResponsiveContainer>
           </div>
         </div>
-        <div 
-          className="flex flex-col flex-grow basis-[320px] 
-          min-w-[320px] max-w-[560px]"
-        >
-          <div className="bg-white px-8 py-8 mb-8 md:rounded-xl md:shadow-md">
-            <h3 className="text-2xl font-bold mb-4 text-center">
-              Highest Rated Posts
-            </h3>
-            { props.bestPosts.length > 0 ?
-              props.bestPosts.map((post, index) => {
-                return <>
-                  <div 
-                    className="flex justify-between items-center mb-2"
-                    key={`rated-post-${index}`}
-                  >
-                    <div className="flex items-center">
-                      <div
-                        className="w-9 h-9 mr-5 flex flex-shrink-0
-                        justify-center items-center bg-sky-800 rounded-3xl"
-                      >
-                        <p className="text-white font-bold text-2xl">
-                          {index + 1}
-                        </p>
-                      </div>
-                      <a
-                        className="text-lg mr-2 line-clamp-1
-                        hover:cursor-pointer hover:underline"
-                      >
-                        {post.courseName ? post.courseName : post.activityTitle }
-                      </a>
-                    </div>
-                    <div className="flex items-center gap-x-1">
-                      <Star size={20} strokeWidth={1} className="fill-yellow-300"/>
-                      <p>{ getRating(post) }</p>
-                    </div>
-                  </div>
-                </>
-              })
-            :
-              <h3 className='text-lg'>Not enough ratings on your posts!</h3>
-            }
-          </div>
-        </div>
       </>
     )
   }
 
   const getViewersSection = () => {
-    if (rawViewsData.length < 5) {
+    if (majorData.length < 1) {
       return <div className='h-96'>
         <h3 className='text-2xl'>
-          Your profile does not have enough views!
+          Your post does not have enough views!
         </h3>
       </div>;
     }
@@ -349,7 +288,7 @@ const ProfileAnalytics : FC<props> = (props) => {
         flex-grow md:basis-[480px] md:min-w-[480px] max-w-[540px]"
       >
         <h3 className="text-2xl font-bold mb-4 text-center">
-          Profile Viewers by Major
+          Post Viewers by Major
         </h3>
         <div className="flex md:flex-row flex-col">
           <PieChart width={300} height={300}>
@@ -393,7 +332,7 @@ const ProfileAnalytics : FC<props> = (props) => {
         flex-grow md:basis-[480px] md:min-w-[480px] max-w-[540px]"
       >
         <h3 className="text-2xl font-bold mb-4 text-center">
-          Profile Viewers by Graduation Year
+          Post Viewers by Graduation Year
         </h3>
         <div className="flex md:flex-row flex-col">
           <PieChart width={300} height={300}>
@@ -437,7 +376,7 @@ const ProfileAnalytics : FC<props> = (props) => {
         flex-grow md:basis-[480px] md:min-w-[480px] max-w-[540px]"
       >
         <h3 className="text-2xl font-bold mb-4 text-center">
-          Profile Viewers by Affiliation Type
+          Post Viewers by Affiliation Type
         </h3>
         <div className="flex md:flex-row flex-col">
           <PieChart width={300} height={300}>
@@ -479,90 +418,116 @@ const ProfileAnalytics : FC<props> = (props) => {
     </>
   }
 
+  if (rawViewsData.length < 3) {
+    return <h1 className="font-sans font-extrabold text-xl leading-none text-slate-800 py-2">
+      No Analytics (not enough views)
+    </h1> 
+  }
+
   return (
-    <div className="flex flex-col flex-grow">
-      <div className="flex justify-center mb-4">
+    <>
+      <div className="flex flex-col flex-grow">
+        <div className="flex items-center mb-1">
+          <h1 className="font-sans font-extrabold uppercase text-3xl leading-none text-slate-800 py-2">Post Analytics</h1>
+          { open ?
+            <button className='ml-4' onClick={() => setOpen(false)}>
+              <ChevronDown/>
+            </button>
+          :
+            <button className='ml-4' onClick={() => setOpen(true)}>
+              <ChevronUp/>
+            </button>
+          }
+        </div>
         <div 
-          className="flex flex-row flex-grow-0 px-1 py-1 bg-sky-50 gap-x-1
-          rounded-lg"
+          className={`flex justify-center gap-x-4 mb-4 
+          ${!open ? 'hidden' : ''}`}
         >
-          { analyticsSections.map((section) => {
-            return (
-              <button 
-                className={`text-lg px-2 py-1 rounded-md transition
-                ${section === activeAnalytics ? 'bg-sky-200' 
-                : 'hover:bg-blue-300'}`}
-                disabled={section === activeAnalytics}
-                onClick={() => setActiveAnalytics(section)}
-                key={section}
+          <div 
+            className="flex flex-row flex-grow-0 px-1 py-1 bg-sky-50 gap-x-1
+            rounded-lg"
+          >
+            { analyticsSections.map((section) => {
+              return (
+                <button 
+                  className={`text-lg px-2 py-1 rounded-md transition
+                  ${section === activeAnalytics ? 'bg-sky-200' 
+                  : 'hover:bg-blue-300'}`}
+                  disabled={section === activeAnalytics}
+                  onClick={() => setActiveAnalytics(section)}
+                  key={section}
+                >
+                  {section}
+                </button>
+              )
+            })}
+          </div>
+          <div className='flex justify-center z-10'>
+            <DropdownMenu>
+              <DropdownMenuTrigger>
+                <Button 
+                  className='text-lg font-bold bg-custom-blue hover:bg-blue-900
+                  rounded-lg'
+                >
+                  {timeScale} <ChevronDown/>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent 
+                className='bg-blue-300 rounded-xl px-2 py-1.5 border mt-1'
               >
-                {section}
-              </button>
-            )
-          })}
+                <DropdownMenuItem 
+                  className='p-0 mb-1 hover:cursor-pointer text-lg font-bold
+                  rounded-xl overflow-hidden'
+                  onClick={ () => setTimeScale("Last Week") }
+                >
+                  <div className='hover:bg-sky-100 px-3 py-1 w-full'>
+                    Last Week
+                  </div>
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  className='p-0 mb-1 hover:cursor-pointer text-lg font-bold
+                  rounded-xl overflow-hidden'
+                  onClick={ () => setTimeScale("Last 30 Days") }
+                >
+                  <div className='hover:bg-sky-100 px-3 py-1 w-full'>
+                    Last 30 Days
+                  </div>
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  className='p-0 mb-1 hover:cursor-pointer text-lg font-bold
+                  rounded-xl overflow-hidden'
+                  onClick={ () => setTimeScale("Last 90 Days") }
+                >
+                  <div className='hover:bg-sky-100 px-3 py-1 w-full'>
+                    Last 90 Days
+                  </div>
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  className='p-0 hover:cursor-pointer text-lg font-bold
+                  rounded-xl overflow-hidden'
+                  onClick={ () => setTimeScale("Last 6 Months") }
+                >
+                  <div className='hover:bg-sky-100 px-3 py-1 w-full'>
+                    Last 6 Months
+                  </div>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
+        <div 
+          className={`flex justify-center flex-wrap flex-grow gap-x-8
+          ${!open ? 'hidden' : ''}`}
+        >
+          { activeAnalytics === "Overview" ? 
+            getAnalyticsOverview()
+          :
+            getViewersSection()
+          }
         </div>
       </div>
-      <div className='flex justify-center mb-6 z-10'>
-        <DropdownMenu>
-          <DropdownMenuTrigger>
-            <Button 
-              className='text-lg font-bold bg-custom-blue hover:bg-blue-900
-              rounded-lg'
-            >
-              {timeScale} <ChevronDown/>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent 
-            className='bg-blue-300 rounded-xl px-2 py-1.5 border mt-1'
-          >
-            <DropdownMenuItem 
-              className='p-0 mb-1 hover:cursor-pointer text-lg font-bold
-              rounded-xl overflow-hidden'
-              onClick={ () => setTimeScale("Last Week") }
-            >
-              <div className='hover:bg-sky-100 px-3 py-1 w-full'>
-                Last Week
-              </div>
-            </DropdownMenuItem>
-            <DropdownMenuItem 
-              className='p-0 mb-1 hover:cursor-pointer text-lg font-bold
-              rounded-xl overflow-hidden'
-              onClick={ () => setTimeScale("Last 30 Days") }
-            >
-              <div className='hover:bg-sky-100 px-3 py-1 w-full'>
-                Last 30 Days
-              </div>
-            </DropdownMenuItem>
-            <DropdownMenuItem 
-              className='p-0 mb-1 hover:cursor-pointer text-lg font-bold
-              rounded-xl overflow-hidden'
-              onClick={ () => setTimeScale("Last 90 Days") }
-            >
-              <div className='hover:bg-sky-100 px-3 py-1 w-full'>
-                Last 90 Days
-              </div>
-            </DropdownMenuItem>
-            <DropdownMenuItem 
-              className='p-0 hover:cursor-pointer text-lg font-bold
-              rounded-xl overflow-hidden'
-              onClick={ () => setTimeScale("Last 6 Months") }
-            >
-              <div className='hover:bg-sky-100 px-3 py-1 w-full'>
-                Last 6 Months
-              </div>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-      <div className="flex justify-center flex-wrap flex-grow gap-x-8">
-        { activeAnalytics === "Overview" ? 
-          getAnalyticsOverview()
-        :
-          getViewersSection()
-        }
-      </div>
-    </div>
+      </>
   );
 }
 
-export default ProfileAnalytics;
+export default PostAnalytics;

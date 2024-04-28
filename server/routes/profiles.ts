@@ -97,10 +97,6 @@ router.put("/views/:_id", async (req: any, res: any) => {
   const { viewerId, timestamp, duration }: { viewerId: string, timestamp: string, duration: number } = req.body; // start_time should be a date/time. duration should be a number of seconds.
   try {
     const data = await profiles.updateViews(_id, viewerId, timestamp, duration) 
-    if (!data) {
-      res.status(404).json({ msg: "Profile view update not made" });
-      return;
-    }
     res.status(200).json({ data });
   } catch (err) {
     res.status(500).send("Server Error");
@@ -126,10 +122,10 @@ router.put("/availability/:_id", async (req: any, res: any) => {
 
 router.put("/:_id", async (req: any, res: any) => {
     const { _id }: { _id: string } = req.params;
-    const {firstName, lastName, email, affiliation, graduationYear, department, description, posts} : {firstName: string, lastName: string, email: string, affiliation: string, graduationYear: string, department: string, description: string, posts: []} = req.body;
+    const {firstName, lastName, email, affiliation, graduationYear, department, description} : {firstName: string, lastName: string, email: string, affiliation: string, graduationYear: string, department: string, description: string, posts: []} = req.body;
     try {
 
-      const data = await profiles.update(_id, firstName, lastName, email, affiliation, department, {graduationYear, description, posts});
+      const data = await profiles.update(_id, firstName, lastName, email, affiliation, department, {graduationYear, description});
       if (!data) {
         res.status(404).json({ msg: "User not found" });
         return;
@@ -145,19 +141,14 @@ router.get("/demographics/:_id", async (req: any, res: any) => {
   const { start }: { start: string} = req.query;
   try {
     const startProfile = await profiles.readViewsById(_id);
-    if (!startProfile) {
-      res.status(500).send("Profile not found. Invalid ID");
-    }
     let viewerIds: any[] = [];
-    try {
-      viewerIds = startProfile.views
+    viewerIds = startProfile.views
         .filter((view: { timestamp: string }) => new Date(view.timestamp) >= new Date(start))
         .map((view: { viewerId: any; }) => view.viewerId)
-    }
-    catch(error) { // If no views, return empty dictionaries, not an error
-      const departments = {};
-      const affiliations = {};
-      const graduationYears = {};
+    if (!viewerIds || viewerIds.length == 0) { // If no views, return empty dictionaries, not an error
+      const departments: any[] = [];
+      const affiliations: any[] = [];
+      const graduationYears: any[] = [];
       res.status(200).json({ departments, affiliations, graduationYears });
       return;
     }

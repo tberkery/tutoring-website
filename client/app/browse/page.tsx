@@ -173,7 +173,7 @@ const Page : FC = () => {
             filtered = [...filtered.sort((a, b) => a.price - b.price)];
         }
 
-        if (tagFilters.music || tagFilters.athletic || tagFilters.cooking || tagFilters.performingArt || tagFilters.visualArt) {
+        if (!typeFilters.courses && (tagFilters.music || tagFilters.athletic || tagFilters.cooking || tagFilters.performingArt || tagFilters.visualArt)) {
             filtered = filtered.filter(post => {
                 return (tagFilters.music && 'activityTitle' in post && post.tags.includes('Music')) || 
                        (tagFilters.athletic && 'activityTitle' in post && post.tags.includes('Athletic')) ||
@@ -254,13 +254,9 @@ const Page : FC = () => {
             bookmarkIds = new Set(allBookmarks.data.data.activityBookmarks);
           }
           if (bookmarkIds.has(bookmark)) {
-            const response = await axios.put(`${api}/profiles/deleteBookmark/${visitorId}`, { bookmark: bookmark, isCourse: isCourse });
-            window.alert("Post was previously bookmarked and has now been unbookmarked!")
-            console.log("Bookmark deleted")
+            await axios.put(`${api}/profiles/deleteBookmark/${visitorId}`, { bookmark: bookmark, isCourse: isCourse });
           } else {
-            const response = await axios.put(`${api}/profiles/addBookmark/${visitorId}`, { bookmark: bookmark, isCourse: isCourse });
-            window.alert("Post has been bookmarked!")
-            console.log("Bookmark added")
+            await axios.put(`${api}/profiles/addBookmark/${visitorId}`, { bookmark: bookmark, isCourse: isCourse });
           } 
         } catch (error) {
           console.error('Error updating bookmark status:', error);
@@ -340,6 +336,8 @@ const Page : FC = () => {
                             </div>
                         </AccordionContent>
                     </AccordionItem>
+                    {/** AIUBDIOWBAFUBAWBFIUABFS */}
+                    {!typeFilters.courses &&
                     <AccordionItem value="item-3">
                         <AccordionTrigger>By Tag</AccordionTrigger>
                         <AccordionContent>
@@ -400,6 +398,8 @@ const Page : FC = () => {
                             </div>
                         </AccordionContent>
                     </AccordionItem>
+                    }
+                    {/** apiushfdboyvelufaepousidbfefs */}
                     <AccordionItem value="item-4">
                         <AccordionTrigger>By Availability</AccordionTrigger>
                             <AccordionContent>
