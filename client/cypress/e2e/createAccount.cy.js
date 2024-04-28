@@ -6,7 +6,8 @@ describe('Create Account Page', () => {
     .then((response) => {
       if (response.body.data.length > 0) {
         const id = response.body.data[0]._id;
-        // cy.request('DELETE', `${profiles}${id}`);
+
+        cy.request('DELETE', `${profiles}${id}`);
       }
     })
   });

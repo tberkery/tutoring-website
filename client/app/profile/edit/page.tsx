@@ -198,6 +198,7 @@ const Page : FC = () => {
 				<Textarea
 					className="resize-none"
 					defaultValue={ about }
+					id="about"
 					onChange={ (event) => setAbout(event.target.value) }
 				/>
 				<h3 className="mt-6 text-2xl font-bold">Hopkins Information</h3>
