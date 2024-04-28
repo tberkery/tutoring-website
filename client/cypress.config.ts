@@ -7,6 +7,6 @@ export default defineConfig({
   },
   env: {
     "test_email": "mflynn24@jhu.edu",
-    "test_password": "testPassword",
+    "test_password": "testingPassword",
   },
 });

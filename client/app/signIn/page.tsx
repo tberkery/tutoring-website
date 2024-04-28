@@ -5,7 +5,7 @@ import "../../styles/global.css";
 const Page : FC = () => {
   return (
 		<div className="flex flex-wrap h-screen justify-center content-center">
-			<SignIn/>
+			<SignIn path="/signIn"/>
 		</div>
 	);
 };
