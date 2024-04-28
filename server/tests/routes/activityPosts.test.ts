@@ -14,6 +14,18 @@ app.use(express.json());
 app.use('/activityPosts', router);
 
 describe('Test activityPosts routes', () => {
+
+    // beforeEach(async () => {
+    //     App.dbConnection(true)
+    //     const app = App.app
+    //     app.use(express.json());
+    //     app.use('/activityPosts', router);
+    // });
+    
+    // afterEach(async () => {
+    //     App.close();
+    // });
+    
     test('POST /activityPosts', async () => {
         // Create a post to get a valid post ID
         const newPostData = {
@@ -41,7 +53,28 @@ describe('Test activityPosts routes', () => {
         await request(app).delete(`/activityPosts/${postId}`);
     });
 
-    // Test for GET /activityPosts/:id
+    test('POST /activityPosts with server error', async () => {
+        // Create a post to get a valid post ID
+        const newPostData = {
+            // notice lack of required userID
+            userFirstName: 'Ilana',
+            userLastName: 'Chalom',
+            activityTitle: 'Example Activity',
+            activityDescription: 'Example description',
+            activityPostPicKey: 'exampleactivityPostPicKey',
+            price: 1,
+            tags: ['exampleTag1', 'exampleTag2']
+        };
+
+        const res = await request(app)
+        .post('/activityPosts')
+        .send(newPostData);
+      
+        expect(res.status).toBe(500);
+        expect(res.text).toBe("Server Error");
+    });
+
+    // Test for GET /activityPosts/findOne/:id
     test('GET /activityPosts/findOne/:id', async () => {
         const newPostData = {
             userId: 'exampleUserId',
@@ -71,6 +104,17 @@ describe('Test activityPosts routes', () => {
 
         // Clean up: Delete the post created during the test
         await request(app).delete(`/activityPosts/${postId}`);
+    });
+
+    // Test for GET /activityPosts/findOne/:id with invalid id
+    test('GET /activityPosts/findOne/:id with invalid id', async () => {
+        // Extract the created post ID from the response
+        const postId = new ObjectId();
+
+        const res = await request(app).get(`/activityPosts/findOne/${postId}`);
+
+        expect(res.status).toBe(404);
+        expect(res.body.msg).toBe("Post not found");
     });
 
     // Test for GET /activityPosts/findAllByUserId/:userId
