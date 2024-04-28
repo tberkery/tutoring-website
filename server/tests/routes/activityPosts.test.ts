@@ -14,17 +14,6 @@ app.use(express.json());
 app.use('/activityPosts', router);
 
 describe('Test activityPosts routes', () => {
-
-    // beforeEach(async () => {
-    //     App.dbConnection(true)
-    //     const app = App.app
-    //     app.use(express.json());
-    //     app.use('/activityPosts', router);
-    // });
-    
-    // afterEach(async () => {
-    //     App.close();
-    // });
     
     test('POST /activityPosts', async () => {
         // Create a post to get a valid post ID
