@@ -19,9 +19,6 @@ const objectId = new ObjectId(objectIdString);
 // Extracting the timestamp from the ObjectID
 const timestamp = objectId.getTimestamp();
 
-console.log(timestamp); // This will log the timestamp
-
-
 app.use(express.json());
 app.use('/allPosts', router);
 
@@ -256,8 +253,6 @@ describe('Test allPosts routes', () => {
     
     test('GET /allPosts with invalid route', async () => {
         const res = await request(app).get('/invalidRoute');
-        console.log('status:')
-        console.log(res.status);
         expect(res.status).toBe(404); 
     });
 
@@ -325,8 +320,6 @@ describe('Test allPosts routes', () => {
         };
         const profileRes = await profile.create(newProfileData);
         const profileResId = profileRes._id;
-
-        console.log('profileResId:', profileResId);
     
         // Create a new activity post
         const newActivityPostData = {

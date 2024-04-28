@@ -247,6 +247,8 @@ describe('Test Report Routes', () => {
         expect(putRes.text).toBe('Server Error');
     });
     
-    
+    afterAll(async () => {
+        await App.close(); // Close the MongoDB connection
+    });
 
 });
