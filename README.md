@@ -82,7 +82,3 @@ To confirm that it is working, you can visit the url and check if you see "Hello
 ### Navigating the App
 
 Since we haven't created a landing page, please click the poorly formatted 'Sign-In' button to create an account using your JHU email(must end in @jhu.edu). Once an account is created, add '/profile' to the URL to navigate to your profile page. From here, you should be able to Edit Profile as well as Create Posts using the designated buttons. Note that rapid navigation between pages that accrues many requests in a short amount of time can result in the app crashing and needing to reset the server. Specifically in relation to messaging, we suspect that sendbird restrictions related to the free account might be a contributing factor.
-
-### Remark
-
-Post analytics was scrubbed in favor of having full bookmarking capabilties built well. We considered this acceptable because of our advisor's direct suggestion that we let additional analytics tasks be the first thing to go if we need more time to build a seamless app with price analytics and bookmarking. In addition, in a number of team documents, we considered profile analytics (done last iteration) to be a must-have and had just two charts for post analytics as potential inclusions in the road map. We feel very content with the state of the app and what we prioritized, what we spent our time on, and how much time was put in on these tasks.
