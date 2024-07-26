@@ -1,10 +1,10 @@
-# Team 2: Object-Oriented Software Engineering
-
-The goal is to create TutorHub.
+# Object-Oriented Software Engineering Project
 
 Team members: Tad Berkery, Ilana Chalom, Matthew Flynn, Katherine Forbes, Nolan Fogarty, Dokyung Yang
 
-It's built using the MERN stack and other technologies detailed in our "Tech Stack" github issue
+TutorHub was built using MERN stack and other technologies detailed in our "Tech Stack" issue
+
+View an overview here: https://docs.google.com/presentation/d/1WR7jA-tGc01Hs1lCPtze69hDLfAj6UUkvK5s18X1m_I/edit?usp=sharing
 
 # TutorHub
 <br />
@@ -81,4 +81,4 @@ To confirm that it is working, you can visit the url and check if you see "Hello
 
 ### Navigating the App
 
-Since we haven't created a landing page, please click the poorly formatted 'Sign-In' button to create an account using your JHU email(must end in @jhu.edu). Once an account is created, add '/profile' to the URL to navigate to your profile page. From here, you should be able to Edit Profile as well as Create Posts using the designated buttons. Note that rapid navigation between pages that accrues many requests in a short amount of time can result in the app crashing and needing to reset the server. Specifically in relation to messaging, we suspect that sendbird restrictions related to the free account might be a contributing factor.
+Since we haven't created a landing page, please click the  'Sign-In' button to create an account using your JHU email(must end in @jhu.edu). Once an account is created, add '/profile' to the URL to navigate to your profile page. From here, you should be able to Edit Profile as well as Create Posts using the designated buttons. 
