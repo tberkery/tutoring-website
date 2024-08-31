@@ -9,7 +9,6 @@ View an overview here: https://docs.google.com/presentation/d/1WR7jA-tGc01Hs1lCP
 # The Tutoring Website
 <br />
 <p align="center">
-    <img src="./assets/TuturHubLogo.png">
     <h3 align="center">Comprehensive Tutoring/Learning Platform for BlueJays</h3>
 
   <p align="center">
