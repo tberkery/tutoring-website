@@ -2,11 +2,11 @@
 
 Team members: Tad Berkery, Ilana Chalom, Matthew Flynn, Katherine Forbes, Nolan Fogarty, Dokyung Yang
 
-TutorHub was built using MERN stack and other technologies detailed in our "Tech Stack" issue
+The tutoring website was built using MERN stack and other technologies detailed in our "Tech Stack" issue
 
 View an overview here: https://docs.google.com/presentation/d/1WR7jA-tGc01Hs1lCPtze69hDLfAj6UUkvK5s18X1m_I/edit?usp=sharing
 
-# TutorHub
+# The Tutoring Website
 <br />
 <p align="center">
     <img src="./assets/TuturHubLogo.png">
@@ -19,7 +19,7 @@ View an overview here: https://docs.google.com/presentation/d/1WR7jA-tGc01Hs1lCP
     ·
     <a href="https://project-team-02-git-frontenddepl-b0804a-nolan-fogartys-projects.vercel.app/">Vercel Demo 🚀</a>
   </p>
-      <p align="center"> *TutorHub is a comprehensive tutoring/learning platform for all JHU affiliates. </p>
+      <p align="center"> *The tutoring website is a comprehensive tutoring/learning platform for all JHU affiliates. </p>
 </p>
 
 ## Installing / Getting started
@@ -63,7 +63,7 @@ See the `package.json` and `package-lock.json` files.
 AWS_ACCESS_KEY_ID=
 AWS_SECRET_ACCESS_KEY=
 AWS_REGION=us-east-2
-AWS_BUCKET_NAME=tutorhubprofilepics
+AWS_BUCKET_NAME=The tutoring websiteprofilepics
 ```
 
 3. Make sure you have installed the AWS SDK (one way to do this is `npm install aws-sdk`). Note that installing all contains of the `*.json` files above on the server-side should have already sufficiently accomplished this. This will be integral for ensuring the code and S3 are able to communicate and interact.
@@ -76,7 +76,7 @@ From the root directory (after appropriate installation), start both the fronten
 ### Viewing Deployed App (Server)
 
 An earlier version of our app is deployed at https://project-team-02-git-frontenddepl-b0804a-nolan-fogartys-projects.vercel.app/
-The backend (server) is deployed at : https://tutorhub-server.onrender.com
+The backend (server) is deployed at : https://The tutoring website-server.onrender.com
 To confirm that it is working, you can visit the url and check if you see "Hello World!" message. 
 
 ### Navigating the App
